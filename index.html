@@ -11,6 +11,15 @@
     <style>
         /* Define custom fonts */
         body {
+            .hero-bg {
+             /* Opacity set to 0.2 (20%) */
+             /* Path set to local image */
+             background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('images/my-miami-bg.jpg'); 
+             background-size: cover;
+             background-position: center;
+             /* --- ADD THIS LINE --- */
+             filter: brightness(1.1) saturate(1.2); 
+        }
             font-family: 'Inter', sans-serif; /* Modern sans-serif for body */
         }
         h1, h2, h3 {
