@@ -1,0 +1,23 @@
+{
+  "name": "aisito-landing-page",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AndresMiami/aisito-landing-page.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AndresMiami/aisito-landing-page/issues"
+  },
+  "homepage": "https://github.com/AndresMiami/aisito-landing-page#readme",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.8.4"
+  }
+}
