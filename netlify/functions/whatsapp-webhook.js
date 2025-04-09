@@ -2,7 +2,6 @@
 
 // Load environment variables from .env file for local development
 // Netlify automatically loads environment variables set in the UI during deployment
-require('dotenv').config(); 
 
 // Import axios for making HTTP requests
 const axios = require('axios'); 
