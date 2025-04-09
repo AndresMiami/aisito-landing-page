@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - I ❤️ Miami Concierge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        .brand-gradient-text {
+             background: linear-gradient(to right, #f97316, #ef4444); /* Orange-Red Gradient */
+             -webkit-background-clip: text;
+             background-clip: text;
+             color: transparent;
+        }
+        /* Basic styling for active/inactive tabs */
+        .tab-button {
+            padding: 0.75rem 1.5rem; /* py-3 px-6 */
+            font-weight: 600; /* font-semibold */
+            border-bottom: 3px solid transparent;
+            color: #6b7280; /* text-gray-500 */
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        .tab-button.active {
+            color: #111827; /* text-gray-900 */
+            border-bottom-color: #f97316; /* border-orange-500 */
+        }
+        .tab-button:hover {
+             color: #111827; /* text-gray-900 */
+        }
+        /* Style for select dropdown arrow */
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="%236b7280" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>');
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.25em;
+            padding-right: 2.5rem; /* Make space for arrow */
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <header class="bg-white shadow-sm">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+            <div>
+                 <a href="index.html" class="text-2xl font-bold text-gray-900"> 
+                    I ❤️ <span class="brand-gradient-text">Miami</span>
+                 </a>
+            </div>
+            <div>
+                <span class="text-gray-600 mr-4">Welcome, [Name]!</span> 
+                <a href="#" class="text-sm font-medium text-orange-600 hover:text-orange-500">Logout</a> 
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <h2 class="text-3xl font-bold text-gray-900 mb-6">Book Your Ride</h2>
+
+        <div class="bg-white p-6 md:p-8 rounded-xl shadow-md max-w-lg mx-auto"> 
+            
+            <div class="flex border-b border-gray-200 mb-6">
+                <button class="tab-button active" id="one-way-tab" data-target="one-way-form">One way</button>
+                <button class="tab-button" id="by-the-hour-tab" data-target="by-the-hour-form">By the hour</button>
+            </div>
+
+            <form action="#" method="POST" id="one-way-form" class="space-y-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-1 sr-only">One Way Booking</h3> <div class="relative">
+                    <label for="from-oneway" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">From</label>
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg>
+                    </span> 
+                    <input type="text" name="from-oneway" id="from-oneway" required
+                           class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-500 sm:text-sm sm:leading-6" 
+                           placeholder="Address, airport, hotel, ...">
+                </div>
+
+                <div class="relative">
+                    <label for="to-oneway" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">To</label>
+                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg>
+                    </span> 
+                    <input type="text" name="to-oneway" id="to-oneway" required
+                           class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-500 sm:text-sm sm:leading-6" 
+                           placeholder="Address, airport, hotel, ...">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="relative">
+                         <label for="date-oneway" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Date</label>
+                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4">
+                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5v-5Z"></path></svg>
+                        </span> 
+                        <input type="date" name="date-oneway" id="date-oneway" required 
+                               class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-500 sm:text-sm sm:leading-6"
+                               placeholder="Select Date"> </div>
+                     <div class="relative">
+                         <label for="time-oneway" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Time</label>
+                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg>
+                         </span> 
+                         <input type="time" name="time-oneway" id="time-oneway" required
+                                class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-500 sm:text-sm sm:leading-6"
+                                placeholder="Select Time">
+                    </div>
+                </div>
+
+                <p class="text-xs text-gray-500 text-center pt-2">Chauffeur will wait 15 minutes free of charge.</p>
+
+                <div>
+                    <button type="submit" 
+                            class="mt-4 w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-semibold text-white 
+                                   bg-gradient-to-r from-red-500 to-orange-500 
+                                   hover:from-red-600 hover:to-orange-600 
+                                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500
+                                   transition duration-300">
+                        Search
+                    </button>
+                </div>
+            </form>
+
+            <form action="#" method="POST" id="by-the-hour-form" class="hidden space-y-4"> <h3 class="text-lg font-semibold text-gray-800 mb-1 sr-only">By The Hour Booking</h3> <div class="relative">
+                    <label for="from-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">From</label>
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg>
+                    </span> 
+                    <input type="text" name="from-hourly" id="from-hourly" required
+                           class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-500 sm:text-sm sm:leading-6" 
+                           placeholder="Pickup address, airport, hotel, ...">
+                </div>
+
+                <div class="relative">
+                    <label for="duration-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Duration</label>
+                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg>
+                     </span> 
+                    <select name="duration-hourly" id="duration-hourly" required
+                           class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-500 sm:text-sm sm:leading-6">
+                           <option value="2">2 hours</option>
+                           <option value="3">3 hours</option>
+                           <option value="4">4 hours</option>
+                           <option value="5">5 hours</option>
+                           <option value="6">6 hours</option>
+                           <option value="7">7 hours</option>
+                           <option value="8">8 hours</option>
+                           <option value="9">9 hours</option>
+                           <option value="10">10 hours</option>
+                           <option value="11">11 hours</option>
+                           <option value="12">12 hours</option>
+                           </select>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="relative">
+                         <label for="date-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Date</label>
+                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4">
+                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5v-5Z"></path></svg>
+                        </span> 
+                        <input type="date" name="date-hourly" id="date-hourly" required 
+                               class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-500 sm:text-sm sm:leading-6"
+                               placeholder="Select Date"> 
+                    </div>
+                     <div class="relative">
+                         <label for="time-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Start Time</label>
+                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg>
+                         </span> 
+                         <input type="time" name="time-hourly" id="time-hourly" required
+                                class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-500 sm:text-sm sm:leading-6"
+                                placeholder="Select Time">
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" 
+                            class="mt-4 w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-semibold text-white 
+                                   bg-gradient-to-r from-red-500 to-orange-500 
+                                   hover:from-red-600 hover:to-orange-600 
+                                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500
+                                   transition duration-300">
+                        Search
+                    </button>
+                </div>
+            </form>
+
+        </div>
+
+    </main>
+
+    <script>
+        const oneWayTab = document.getElementById('one-way-tab');
+        const byTheHourTab = document.getElementById('by-the-hour-tab');
+        const oneWayForm = document.getElementById('one-way-form');
+        const byTheHourForm = document.getElementById('by-the-hour-form');
+        const tabs = [oneWayTab, byTheHourTab];
+        const forms = [oneWayForm, byTheHourForm];
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Deactivate all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                // Hide all forms
+                forms.forEach(f => f.classList.add('hidden'));
+
+                // Activate clicked tab
+                tab.classList.add('active');
+                // Show corresponding form
+                const targetFormId = tab.getAttribute('data-target');
+                const targetForm = document.getElementById(targetFormId);
+                if (targetForm) {
+                    targetForm.classList.remove('hidden');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
