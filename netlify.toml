@@ -1,0 +1,13 @@
+# Basic Netlify configuration file
+
+[build]
+  # Specifies the directory Netlify builds from and deploys.
+  # "." means the root directory (where your index.html, dashboard.html are).
+  publish = "."
+  # Specifies where your Netlify Functions live.
+  functions = "netlify/functions"
+
+[dev]
+  # Optional but good practice: Explicitly tell the dev server the same info.
+  publish = "."
+  functions = "netlify/functions"

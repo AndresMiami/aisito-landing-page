@@ -1,280 +1,305 @@
 // netlify/functions/whatsapp-webhook.js
 
-// Load environment variables from .env file for local development
-// Netlify automatically loads environment variables set in the UI during deployment
+const axios = require('axios');
 
-// Import axios for making HTTP requests
-const axios = require('axios'); 
+// ==================================================
+// == PRICING CONFIGURATION ==
+// ==================================================
+// Easily modify your rates and rules here!
 
-// --- Placeholder function for NLP ---
-// Replace with actual implementation later
-async function getIntentAndEntities(messageText, conversationState) {
-  // TODO: Call your chosen NLP service (Dialogflow, LLM API, etc.)
-  console.log(`NLP processing (Placeholder): ${messageText}`);
-  // This basic logic is just for illustration and needs proper NLP
-  if (messageText.toLowerCase().includes(' to ')) {
-     const parts = messageText.split(/ to /i); 
-     if (parts.length === 2 && conversationState.pickup) {
-       return { intent: 'provide_dropoff', entities: { dropoff_location: parts[1].trim() }, newState: 'ready_for_quote' };
-     }
-  }
-  if (conversationState.state === 'awaiting_pickup' || !conversationState.pickup) {
-     return { intent: 'provide_pickup', entities: { pickup_location: messageText.trim() }, newState: 'awaiting_dropoff' };
-  }
-   return { intent: 'unknown', entities: {}, newState: conversationState.state }; 
+// --- One-Way Rates ---
+const ONE_WAY_BASE_FARE_USD = 10.00; // UPDATED base fare
+const ONE_WAY_RATE_PER_KM_USD = 1.12; // Approx $1.80 per mile
+const ONE_WAY_RATE_PER_MINUTE_USD = 0.35;
+const MINIMUM_ONE_WAY_FARE_USD = 25.00; // Example minimum fare
+
+// --- Hourly Rates ---
+const HOURLY_RATE_USD = 75.00; // UPDATED hourly rate
+const HOURLY_MINIMUM_HOURS = 3;
+
+// --- Peak Time Surcharges ---
+const PEAK_MULTIPLIER = 1.2; // 1.2x = 20% surcharge
+// Define peak ranges using 24-hour format (hour starts, hour ends - exclusive)
+const PEAK_HOUR_RANGES = [
+    { start: 7, end: 9 },   // 7:00 AM - 8:59 AM
+    { start: 17, end: 19 }, // 5:00 PM - 6:59 PM
+    { start: 22, end: 24 }  // 10:00 PM - 11:59 PM
+];
+
+// --- Airport Fees ---
+const AIRPORT_PICKUP_FEE_USD = 10.00;
+// Keywords to identify airport pickups (lowercase)
+const AIRPORT_IDENTIFIERS = ["airport", "mia", "fll", "pbi"]; // Add more as needed
+
+// ==================================================
+// == HELPER FUNCTIONS ==
+// ==================================================
+
+// Helper function to get Google Maps API key
+function getGoogleMapsApiKey() {
+    const apiKey = process.env.Maps_API_KEY;
+    if (!apiKey) {
+        console.error("Missing Maps_API_KEY environment variable.");
+        return null;
+    }
+    return apiKey;
 }
 
-// --- Google Maps API Functions ---
-
-async function geocodeAddress(address) {
-  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-  if (!apiKey) {
-    console.error("Missing GOOGLE_MAPS_API_KEY environment variable.");
-    return null;
-  }
-  if (!address) {
-    console.error("Geocode function called with no address.");
-    return null;
-  }
-
-  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
-  console.log(`Geocoding address: "${address}"`);
-
-  try {
-    const response = await axios.get(url);
-    if (response.data.status === 'OK' && response.data.results && response.data.results.length > 0) {
-      const location = response.data.results[0].geometry.location; // { lat: number, lng: number }
-      console.log(`Geocoded "${address}" to:`, location);
-      return location; 
-    } else {
-      console.error(`Geocoding API Error for "${address}": ${response.data.status}`, response.data.error_message || '');
-      return null;
+// --- UPDATED: Helper to check if a time falls within peak hours ---
+function isPeakTime(timeStr) { // expects "HH:MM" format
+    // 1. Basic check and Regex validation for HH:MM format
+    if (!timeStr || typeof timeStr !== 'string' || !/^\d{2}:\d{2}$/.test(timeStr)) {
+        console.log(`Peak check: Invalid time format received: ${timeStr}. Expected HH:MM.`);
+        return false;
     }
-  } catch (error) {
-    console.error(`Network error during geocoding for "${address}":`, error.message);
-    return null;
-  }
+
+    try {
+        // 2. Parse hours and minutes
+        const [hourStr, minuteStr] = timeStr.split(':');
+        const hour = parseInt(hourStr, 10);
+        const minute = parseInt(minuteStr, 10);
+
+        // 3. Validate numeric ranges
+        if (isNaN(hour) || isNaN(minute) || hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+            console.log(`Peak check: Invalid time values parsed: ${timeStr}`);
+            return false;
+        }
+
+        // 4. Check against defined peak ranges
+        for (const range of PEAK_HOUR_RANGES) {
+            if (hour >= range.start && hour < range.end) {
+                console.log(`Peak check: Time ${timeStr} (hour ${hour}) IS within peak range ${range.start}-${range.end}`);
+                return true; // It's a peak hour
+            }
+        }
+    } catch (e) {
+        // Catch any unexpected parsing errors
+        console.error(`Error parsing time string "${timeStr}" in isPeakTime:`, e);
+        return false;
+    }
+
+    // 5. If no peak range matched
+    console.log(`Peak check: Time ${timeStr} is NOT within any peak range.`);
+    return false;
+}
+
+// Helper to check if it's an airport pickup
+function isAirportPickup(addressStr) {
+    if (!addressStr || typeof addressStr !== 'string') {
+        return false;
+    }
+    const lowerCaseAddress = addressStr.toLowerCase();
+    for (const keyword of AIRPORT_IDENTIFIERS) {
+        if (lowerCaseAddress.includes(keyword)) {
+            console.log(`Airport check: Address "${addressStr}" identified as airport pickup.`);
+            return true;
+        }
+    }
+    return false;
+}
+
+// --- Placeholder function for NLP (Keep original - not used by form handler) ---
+async function getIntentAndEntities(messageText, conversationState) {
+    console.log(`NLP processing (Placeholder): ${messageText}`);
+    // ... (rest of original function) ...
+    return { intent: 'unknown', entities: {}, newState: conversationState.state };
+}
+
+// --- Google Maps API Functions (Keep original, uses helper now) ---
+async function geocodeAddress(address) {
+    const apiKey = getGoogleMapsApiKey();
+    if (!apiKey) { return null; }
+    if (!address) { console.error("Geocode function called with no address."); return null; }
+
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
+    console.log(`Geocoding address: "${address}"`);
+    try {
+        const response = await axios.get(url);
+        if (response.data.status === 'OK' && response.data.results?.length > 0) {
+            const location = response.data.results[0].geometry.location;
+            console.log(`Geocoded "${address}" to:`, location);
+            return location;
+        } else { console.error(`Geocoding API Error for "${address}": ${response.data.status}`, response.data.error_message || ''); return null; }
+    } catch (error) { console.error(`Network error during geocoding for "${address}":`, error.message); return null; }
 }
 
 async function getRouteDetails(originCoords, destCoords) {
-  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-   if (!apiKey) {
-    console.error("Missing GOOGLE_MAPS_API_KEY environment variable.");
-    return null;
-  }
-  if (!originCoords || !destCoords) {
-      console.error("getRouteDetails function called with missing coordinates.");
-      return null;
-  }
+    const apiKey = getGoogleMapsApiKey();
+    if (!apiKey) { return null; }
+    if (!originCoords || !destCoords) { console.error("getRouteDetails function called with missing coordinates."); return null; }
 
-  // Using Distance Matrix API for distance and duration
-  const origin = `${originCoords.lat},${originCoords.lng}`;
-  const destination = `${destCoords.lat},${destCoords.lng}`;
-  const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&key=${apiKey}&units=metric`; // Using metric units
+    const origin = `${originCoords.lat},${originCoords.lng}`;
+    const destination = `${destCoords.lat},${destCoords.lng}`;
+    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&key=${apiKey}&units=metric`;
+    console.log(`Getting route details from ${origin} to ${destination}`);
+    try {
+        const response = await axios.get(url);
+        if (response.data.status === 'OK' && response.data.rows?.[0]?.elements?.[0]) {
+            const element = response.data.rows[0].elements[0];
+            if (element.status === 'OK') {
+                const details = { distanceMeters: element.distance.value, durationSeconds: element.duration.value };
+                console.log(`Route details found:`, details);
+                return details;
+            } else { console.error(`Distance Matrix Element Error for route: ${element.status}`); return null; }
+        } else { console.error(`Distance Matrix API Error for route: ${response.data.status}`, response.data.error_message || ''); return null; }
+    } catch (error) { console.error(`Network error during route detail fetching:`, error.message); return null; }
+}
 
-  console.log(`Getting route details from ${origin} to ${destination}`);
-
-  try {
-    const response = await axios.get(url);
-    // Check top-level status and row status
-    if (response.data.status === 'OK' && response.data.rows && response.data.rows.length > 0 && response.data.rows[0].elements && response.data.rows[0].elements.length > 0) {
-       const element = response.data.rows[0].elements[0];
-       // Check element status
-       if (element.status === 'OK') {
-           const details = { 
-               distanceMeters: element.distance.value, // Distance in meters
-               durationSeconds: element.duration.value // Duration in seconds (usually based on typical traffic)
-           };
-           console.log(`Route details found:`, details);
-           return details;
-       } else {
-           console.error(`Distance Matrix Element Error for route: ${element.status}`);
-           return null;
-       }
-    } else {
-      console.error(`Distance Matrix API Error for route: ${response.data.status}`, response.data.error_message || '');
-      return null;
+// --- UPDATED Cost Calculation (for one-way) ---
+function calculateOneWayCost(routeDetails, pickupAddressStr, pickupTimeStr) {
+    if (!routeDetails || typeof routeDetails.distanceMeters !== 'number' || typeof routeDetails.durationSeconds !== 'number') {
+        console.error("Invalid route details for cost calculation:", routeDetails);
+        return 'N/A';
     }
-  } catch (error) {
-    console.error(`Network error during route detail fetching:`, error.message);
-    return null;
-  }
+
+    const distanceKm = routeDetails.distanceMeters / 1000;
+    const durationMinutes = routeDetails.durationSeconds / 60;
+
+    // Calculate base cost using constants
+    let cost = ONE_WAY_BASE_FARE_USD + (ONE_WAY_RATE_PER_KM_USD * distanceKm) + (ONE_WAY_RATE_PER_MINUTE_USD * durationMinutes);
+    console.log(`Base calculated cost (before adjustments): $${cost.toFixed(2)}`);
+
+    // Apply peak hour surcharge if applicable
+    if (isPeakTime(pickupTimeStr)) {
+        cost = cost * PEAK_MULTIPLIER;
+        console.log(`Applied peak hour multiplier (${PEAK_MULTIPLIER}x). Cost now: $${cost.toFixed(2)}`);
+    }
+
+    // Apply airport pickup fee if applicable
+    if (isAirportPickup(pickupAddressStr)) {
+        cost = cost + AIRPORT_PICKUP_FEE_USD;
+        console.log(`Added airport pickup fee ($${AIRPORT_PICKUP_FEE_USD}). Cost now: $${cost.toFixed(2)}`);
+    }
+
+    // Apply minimum fare
+    if (cost < MINIMUM_ONE_WAY_FARE_USD) {
+        console.log(`Calculated cost $${cost.toFixed(2)} is below minimum $${MINIMUM_ONE_WAY_FARE_USD}. Using minimum.`);
+        cost = MINIMUM_ONE_WAY_FARE_USD;
+    }
+
+    console.log(`Final calculated one-way cost: $${cost.toFixed(2)}`);
+    return cost.toFixed(2); // Return final cost as string
 }
 
-// --- Placeholder Cost Calculation ---
-function calculateCost(routeDetails) {
-  // TODO: Implement your specific pricing logic
-  const baseFare = 15; // Example base fare ($)
-  const pricePerKm = 2.5; // Example price per km ($)
-  const pricePerMinute = 0.5; // Example price per minute ($)
-
-  if (!routeDetails || typeof routeDetails.distanceMeters !== 'number' || typeof routeDetails.durationSeconds !== 'number') {
-      console.error("Invalid route details for cost calculation:", routeDetails);
-      return 'N/A'; // Or throw an error
-  }
-
-  const distanceKm = routeDetails.distanceMeters / 1000;
-  const durationMinutes = routeDetails.durationSeconds / 60;
-
-  const cost = baseFare + (pricePerKm * distanceKm) + (pricePerMinute * durationMinutes);
-  console.log(`Calculated cost: $${cost.toFixed(2)}`);
-  return cost.toFixed(2); // Return cost as string rounded to 2 decimal places
-}
-
-// --- Placeholder WhatsApp Sending Function ---
+// --- Placeholder WhatsApp Sending Function (Keep original - not used by form handler) ---
 async function sendWhatsAppMessage(senderId, messageText) {
-  // TODO: Call WhatsApp Business API (via Twilio, Meta Cloud API client, etc.)
-  // Use credentials like process.env.WHATSAPP_PROVIDER_AUTH_TOKEN, process.env.YOUR_WA_NUMBER etc.
-  console.log(`Sending WA (Placeholder) to ${senderId}: ${messageText}`);
-  return true; // Assume success for placeholder
+    console.log(`Sending WA (Placeholder) to ${senderId}: ${messageText}`);
+    return true;
 }
 
-// --- Netlify Function Handler ---
+// ==========================================================
+// == HANDLER FUNCTION FOR WEB FORM DATA (Includes new pricing logic) ==
+// ==========================================================
 exports.handler = async (event) => {
-  // Only process POST requests
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
-  }
-
-  console.log("Webhook received:", event.body);
-
-  // TODO: Secure webhook with signature verification if possible (depends on WA provider)
-
-  // 1. Parse incoming message (structure depends on your WA provider - Twilio, Meta, etc.)
-  // This is a highly simplified example - ADAPT FOR YOUR PROVIDER
-  let incomingData;
-  let senderId;
-  let messageText;
-  try {
-    incomingData = typeof event.body === 'string' ? JSON.parse(event.body) : event.body; 
-    
-    // --- VERY IMPORTANT: Adapt parsing based on YOUR WhatsApp provider's payload ---
-    // Example for Meta Cloud API (highly simplified)
-    const messageEntry = incomingData?.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
-    if (!messageEntry || messageEntry.type !== 'text') {
-        console.log("Ignoring non-text message or status update.");
-        return { statusCode: 200, body: 'Ignoring non-text message.' }; 
+    // 1. Only allow POST requests
+    if (event.httpMethod !== 'POST') {
+        return { statusCode: 405, body: 'Method Not Allowed' };
     }
-    senderId = messageEntry.from; 
-    messageText = messageEntry.text.body; 
-    // --- End Provider Specific Parsing Example ---
-
-    if (!senderId || typeof messageText === 'undefined') {
-       throw new Error("Missing senderId or messageText after parsing payload");
+    console.log("Backend function received request body:", event.body);
+    let formData;
+    try {
+        // 2. Parse JSON Body
+        if (!event.body) { throw new Error("Request body is empty."); }
+        formData = JSON.parse(event.body);
+        console.log("Parsed form data:", formData);
+    } catch (error) {
+        console.error("Error parsing request body:", error);
+        return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Bad request: Invalid JSON format." }) };
     }
-  } catch (error) {
-     console.error("Failed to parse request body or extract message data:", error);
-     return { statusCode: 400, body: 'Bad request - invalid payload format.' };
-  }
 
+    // 3. Basic validation
+    if (!formData || !formData.type || !formData.pickupAddress || !formData.pickupDate || !formData.pickupTime) {
+       console.error("Missing required form data fields.");
+       return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Bad request: Missing required fields." }) };
+    }
 
-  // TODO: Implement proper conversation state management (fetch/save from DB based on senderId)
-  let conversationState = { state: 'start', pickup: null, dropoff: null }; 
-  console.log(`Current state for ${senderId} (before NLP): ${conversationState.state}`);
+    // --- Main Logic ---
+    try {
+        // 4. Handle based on type
+        if (formData.type === 'one-way') {
+            console.log("Processing one-way request...");
+            if (!formData.dropoffAddress) { return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Bad request: Missing dropoff address for one-way." }) }; }
 
-
-  // 2. Process with NLP
-  const nlpResult = await getIntentAndEntities(messageText, conversationState);
-  conversationState.state = nlpResult.newState; 
-  if (nlpResult.entities.pickup_location) conversationState.pickup = nlpResult.entities.pickup_location;
-  if (nlpResult.entities.dropoff_location) conversationState.dropoff = nlpResult.entities.dropoff_location;
-  console.log(`New state for ${senderId} (after NLP): ${conversationState.state}`);
-
-
-  let replyMessage = "Sorry, I didn't understand that. Can you please rephrase?"; 
-
-  // 3. Handle different intents and states
-  try {
-      switch (conversationState.state) {
-        case 'awaiting_pickup':
-          replyMessage = "Sure! Where would you like to be picked up?";
-          break;
-        case 'awaiting_dropoff':
-          replyMessage = "Got it. And where are you heading?";
-          break;
-        case 'ready_for_quote':
-          const pickupAddr = conversationState.pickup; 
-          const dropoffAddr = conversationState.dropoff;
-
-          if (pickupAddr && dropoffAddr) {
-            await sendWhatsAppMessage(senderId, `Okay, calculating fare & ETA for luxury ride: ${pickupAddr} to ${dropoffAddr}...`); 
-
-            // 4. Geocode addresses
-            const originCoords = await geocodeAddress(pickupAddr);
-            const destCoords = await geocodeAddress(dropoffAddr);
-
-            if (originCoords && destCoords) {
-              // 5. Get Route Details
-              const routeDetails = await getRouteDetails(originCoords, destCoords);
-
-              if (routeDetails) {
-                // 6. Calculate Cost
-                const estimatedCost = calculateCost(routeDetails);
-                const etaMinutes = Math.round(routeDetails.durationSeconds / 60);
-                const distanceKm = (routeDetails.distanceMeters / 1000).toFixed(1);
-
-                // 7. Format and Send Quote
-                replyMessage = `Est. trip: ${distanceKm} km / ${etaMinutes} min. Fare: $${estimatedCost}. Confirm request? (Reply Yes/No)`;
-                conversationState.state = 'awaiting_confirmation'; 
-              } else {
-                replyMessage = "Sorry, I couldn't get route details. Please try again later.";
-                conversationState.state = 'start'; // Reset state?
-              }
-            } else {
-              replyMessage = "Sorry, I couldn't understand one or both addresses. Can you provide the pickup location again?";
-              conversationState.state = 'awaiting_pickup'; // Reset state
-              conversationState.pickup = null;
-              conversationState.dropoff = null;
+            // Call existing helper functions (which now use correct API Key name!)
+            const originCoords = await geocodeAddress(formData.pickupAddress);
+            // NEW check for origin:
+            if (!originCoords) {
+                console.error(`Geocoding failed for pickup address: "${formData.pickupAddress}"`);
+                return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Invalid or unrecognized pickup address." }) };
             }
-          } else {
-             replyMessage = "Sorry, I'm missing location details. Where would you like to be picked up?";
-             conversationState.state = 'awaiting_pickup'; // Reset state
-          }
-          break;
-        
-        case 'awaiting_confirmation':
-           if (messageText.toLowerCase() === 'yes') {
-              replyMessage = "Great! Searching for a driver now...";
-              // TODO: Trigger driver matching logic
-              conversationState.state = 'finding_driver'; 
-           } else if (messageText.toLowerCase() === 'no') {
-              replyMessage = "Okay, request cancelled. Let me know if there's anything else.";
-              conversationState.state = 'start'; // Reset state
-           } else {
-              replyMessage = "Please reply with 'Yes' to confirm or 'No' to cancel the quote.";
-              // Keep state as 'awaiting_confirmation'
-           }
-           break;
-           
-        // TODO: Add other states/intents as needed 
 
-        default:
-          if (conversationState.state === 'start') {
-              replyMessage = "Hi! How can I help you with your luxury transport needs today?";
-          } 
-          break;
-      }
+            const destCoords = await geocodeAddress(formData.dropoffAddress);
+            // NEW check for destination:
+            if (!destCoords) {
+                console.error(`Geocoding failed for drop-off address: "${formData.dropoffAddress}"`);
+                return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Invalid or unrecognized drop-off address." }) };
+            }
 
-      // 8. Send the reply back to the user
-      await sendWhatsAppMessage(senderId, replyMessage);
+            // Continue if both are okay...
+            const routeDetails = await getRouteDetails(originCoords, destCoords);
+            if (!routeDetails) { return { statusCode: 500, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Server error: Could not calculate route details." }) }; }
 
-      // TODO: Update conversation state persistently here based on senderId
+            // Call UPDATED one-way cost function
+            const estimatedCostValue = calculateOneWayCost(routeDetails, formData.pickupAddress, formData.pickupTime);
 
-      // Return success to the webhook provider
-      return {
-        statusCode: 200,
-        body: 'Message processed.', 
-      };
+            const distanceKm = routeDetails.distanceMeters > 0 ? (routeDetails.distanceMeters / 1000).toFixed(1) : 'N/A';
+            const durationMinutes = routeDetails.durationSeconds > 0 ? Math.round(routeDetails.durationSeconds / 60) : 'N/A';
 
-  } catch (error) { // Catch errors in the main logic block
-      console.error("Error processing message:", error);
-      // Try to send a generic error message back to the user
-      try {
-          await sendWhatsAppMessage(senderId, "Sorry, something went wrong on my end. Please try again in a moment.");
-      } catch (sendError) {
-          console.error("Failed to send error message to user:", sendError);
-      }
-      // Return server error status code
-      return { statusCode: 500, body: 'Internal Server Error' };
-  }
-};
+            // Return success response
+            const responsePayload = {
+                message: "Quote calculated successfully.",
+                price: estimatedCostValue !== 'N/A' ? `$${estimatedCostValue}` : 'N/A',
+                distance: distanceKm !== 'N/A' ? `${distanceKm} km` : 'N/A',
+                duration: durationMinutes !== 'N/A' ? `${durationMinutes} min` : 'N/A',
+            };
+            console.log("Sending response:", responsePayload);
+            return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(responsePayload) };
+
+        } else if (formData.type === 'hourly') {
+            console.log("Processing hourly request...");
+            if (!formData.durationHours) { return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Bad request: Missing duration for hourly." }) }; }
+
+            const duration = parseInt(formData.durationHours, 10);
+            // Enforce minimum hours
+            if (isNaN(duration) || duration < HOURLY_MINIMUM_HOURS) {
+               console.log(`Hourly duration ${duration} is less than minimum ${HOURLY_MINIMUM_HOURS}.`)
+               return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Bad request: Minimum booking is ${HOURLY_MINIMUM_HOURS} hours.` }) };
+            }
+
+            // Calculate base hourly cost using constant
+            let cost = HOURLY_RATE_USD * duration;
+            console.log(`Base hourly cost (${duration} hrs @ $${HOURLY_RATE_USD}/hr): $${cost.toFixed(2)}`);
+
+            // Apply peak hour surcharge
+            if (isPeakTime(formData.pickupTime)) {
+                cost = cost * PEAK_MULTIPLIER;
+                console.log(`Applied peak hour multiplier (${PEAK_MULTIPLIER}x). Cost now: $${cost.toFixed(2)}`);
+            }
+
+            // Apply airport pickup fee (Optional for hourly - currently applies based on config)
+            if (isAirportPickup(formData.pickupAddress)) {
+                cost = cost + AIRPORT_PICKUP_FEE_USD;
+                console.log(`Added airport pickup fee ($${AIRPORT_PICKUP_FEE_USD}) to hourly rate. Cost now: $${cost.toFixed(2)}`);
+            }
+
+            const estimatedCostValue = cost.toFixed(2);
+
+            // Return success response for hourly
+            const responsePayload = {
+                message: "Quote calculated successfully.",
+                price: `$${estimatedCostValue}`,
+                duration: `${duration} hours`
+            };
+            console.log("Sending response:", responsePayload);
+            return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(responsePayload) };
+
+        } else {
+            console.error("Invalid booking type received:", formData.type);
+            return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Bad request: Invalid booking type." }) };
+        }
+
+    } catch (error) {
+        console.error("Internal server error during quote processing:", error);
+        return { statusCode: 500, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Internal Server Error processing your request." }) };
+    }
+}; // End of exports.handler
