@@ -26,6 +26,7 @@ function initAutocomplete() {
     };
 
     // --- Helper Function to Show/Hide Airport Fields ---
+    // (This function remains the same as the previous version)
     function updateAirportFieldVisibility(addressInputId, isAirport) {
         let typeContainerId, notesContainerId, hiddenInputId;
         let typeInput, notesInput; // To potentially reset values
@@ -123,13 +124,14 @@ function initAutocomplete() {
     }
 
     // --- Setup Form Listeners ---
-    setupFormListeners();
+    setupFormListeners(); // Call the function that now includes the Clear button listener
 
     // --- Initialize the tab switching functionality ---
-    initializeTabSwitching();
+    initializeTabSwitching(); // Call the function that now hides results on tab switch
 }
 
 // --- Function to get current location using Geolocation API ---
+// (This function remains the same as the previous version)
 function getCurrentLocation(inputId) {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -205,6 +207,9 @@ function setupFormListeners() {
     // --- Get location buttons ---
     const oneWayLocationBtn = document.getElementById('get-location-oneway-btn');
     const hourlyLocationBtn = document.getElementById('get-location-hourly-btn');
+     // --- Get clear button ---
+    const clearFormBtn = document.getElementById('clear-form-btn');
+
 
     // Form submit listeners (existing)
     if (oneWayForm) {
@@ -241,6 +246,58 @@ function setupFormListeners() {
     } else {
         console.warn("Hourly location button not found.");
     }
+
+    // ---> ADDED: Listener for Clear Form button <---
+    if (clearFormBtn) {
+        clearFormBtn.addEventListener('click', () => {
+            console.log('Clear Form button clicked');
+            const resultsArea = document.getElementById('quote-results-area');
+            const errorDisplay = document.getElementById('quote-error');
+            // Find the active form (the one *not* hidden)
+            const oneWayFormActive = !document.getElementById('one-way-form').classList.contains('hidden');
+            const hourlyFormActive = !document.getElementById('by-the-hour-form').classList.contains('hidden');
+
+
+            // Hide results and clear errors
+            if (resultsArea) resultsArea.style.display = 'none'; // Hide results
+            if (errorDisplay) errorDisplay.textContent = '';
+
+            // Reset the active form
+            if (oneWayFormActive) {
+                document.getElementById('one-way-form').reset(); // Clear standard inputs
+                // Manually reset hidden inputs and hide airport fields
+                document.getElementById('isPickupAirportOneWay').value = 'false';
+                document.getElementById('isDropoffAirportOneWay').value = 'false';
+                // updateAirportFieldVisibility might not be defined here if moved outside initAutocomplete
+                // Safest to call directly if needed or ensure it's globally available
+                 if (typeof updateAirportFieldVisibility === 'function') {
+                    updateAirportFieldVisibility('from-oneway', false);
+                    updateAirportFieldVisibility('to-oneway', false);
+                 } else { // Fallback if function not accessible (e.g., scope issue) - less ideal
+                    document.getElementById('pickup-type-container')?.classList.add('hidden');
+                    document.getElementById('pickup-notes-container')?.classList.add('hidden');
+                    document.getElementById('dropoff-type-container')?.classList.add('hidden');
+                    document.getElementById('dropoff-notes-container')?.classList.add('hidden');
+                 }
+                console.log('One-way form cleared.');
+            } else if (hourlyFormActive) { // Use else if to be specific
+                document.getElementById('by-the-hour-form').reset(); // Clear standard inputs
+                 // Manually reset hidden inputs and hide airport fields
+                document.getElementById('isPickupAirportHourly').value = 'false';
+                 if (typeof updateAirportFieldVisibility === 'function') {
+                    updateAirportFieldVisibility('from-hourly', false);
+                 } else {
+                    document.getElementById('pickup-type-container')?.classList.add('hidden');
+                    document.getElementById('pickup-notes-container')?.classList.add('hidden');
+                 }
+                console.log('Hourly form cleared.');
+            }
+        });
+        console.log("Clear form listener added.");
+    } else {
+        console.warn("Clear form button not found.");
+    }
+    // --- End of Add listener for Clear Form button ---
 }
 
 // --- Function to handle tab switching ---
@@ -249,6 +306,11 @@ function initializeTabSwitching() {
     const byTheHourTab = document.getElementById('by-the-hour-tab');
     const oneWayForm = document.getElementById('one-way-form');
     const byTheHourForm = document.getElementById('by-the-hour-form');
+
+    // Get references to results/error area for clearing on tab switch
+    const resultsArea = document.getElementById('quote-results-area');
+    const errorDisplay = document.getElementById('quote-error');
+
 
     if (!oneWayTab || !byTheHourTab || !oneWayForm || !byTheHourForm) {
         console.error("One or more tab/form elements not found. Tab switching disabled.");
@@ -260,6 +322,13 @@ function initializeTabSwitching() {
 
     tabs.forEach((tab) => {
         tab.addEventListener('click', (event) => {
+            // ---> ADDED: Hide results and clear errors when tab is clicked <---
+            console.log('Tab clicked, hiding results area.');
+            if (resultsArea) resultsArea.style.display = 'none'; // Hide results
+            if (errorDisplay) errorDisplay.textContent = '';     // Clear errors
+            // ---> End of Added lines <---
+
+            // Existing code follows:
             tabs.forEach((t) => t.classList.remove('active'));
             forms.forEach((f) => f.classList.add('hidden'));
             const clickedTab = event.currentTarget;
@@ -304,6 +373,7 @@ function initializeTabSwitching() {
 // ==================================================
 
 // --- Handle One-Way Form Submission ---
+// (This function remains the same as the previous version, uses classList if HTML was updated, otherwise style.display is fine)
 async function handleOneWaySubmit(event) {
     event.preventDefault();
     console.log('Handling one-way form submission...');
@@ -318,12 +388,12 @@ async function handleOneWaySubmit(event) {
     const errorDisplay = document.getElementById('quote-error');
     const quoteDetailsDisplay = document.getElementById('quote-details');
 
-    if (resultsArea) resultsArea.style.display = 'block'; // Show area
-    if (quoteDetailsDisplay) quoteDetailsDisplay.style.display = 'none'; // Hide details
+    if (resultsArea) resultsArea.style.display = 'block'; // Show area using style.display
+    if (quoteDetailsDisplay) quoteDetailsDisplay.style.display = 'none'; // Hide details initially using style.display
     if (errorDisplay) errorDisplay.textContent = ''; // Clear errors
-    if (loadingIndicator) loadingIndicator.style.display = 'block'; // Show loading
+    if (loadingIndicator) loadingIndicator.style.display = 'block'; // Show loading using style.display
 
-    // Gather form data
+    // Gather form data (includes isPickupAirport/isDropoffAirport from hidden inputs)
     const formData = {
         type: 'one-way',
         pickupAddress: document.getElementById('from-oneway').value,
@@ -341,7 +411,7 @@ async function handleOneWaySubmit(event) {
     // Basic validation
     if (!formData.pickupAddress || !formData.dropoffAddress || !formData.pickupDate || !formData.pickupTime) {
         if (errorDisplay) errorDisplay.textContent = 'Please fill in all required fields for the one-way booking.';
-        if (loadingIndicator) loadingIndicator.style.display = 'none';
+        if (loadingIndicator) loadingIndicator.style.display = 'none'; // Ensure loading hidden
         submitButton.disabled = false;
         submitButton.innerText = originalButtonText;
         return;
@@ -356,6 +426,7 @@ async function handleOneWaySubmit(event) {
 }
 
 // --- Handle Hourly Form Submission ---
+// (This function remains the same as the previous version, uses classList if HTML was updated, otherwise style.display is fine)
 async function handleHourlySubmit(event) {
     event.preventDefault();
     console.log('Handling hourly form submission...');
@@ -370,12 +441,12 @@ async function handleHourlySubmit(event) {
     const errorDisplay = document.getElementById('quote-error');
     const quoteDetailsDisplay = document.getElementById('quote-details');
 
-    if (resultsArea) resultsArea.style.display = 'block'; // Show area
-    if (quoteDetailsDisplay) quoteDetailsDisplay.style.display = 'none'; // Hide details
+    if (resultsArea) resultsArea.style.display = 'block'; // Show area using style.display
+    if (quoteDetailsDisplay) quoteDetailsDisplay.style.display = 'none'; // Hide details initially using style.display
     if (errorDisplay) errorDisplay.textContent = ''; // Clear errors
-    if (loadingIndicator) loadingIndicator.style.display = 'block'; // Show loading
+    if (loadingIndicator) loadingIndicator.style.display = 'block'; // Show loading using style.display
 
-    // Gather form data
+    // Gather form data (includes isPickupAirport from hidden input)
     const formData = {
         type: 'hourly',
         pickupAddress: document.getElementById('from-hourly').value,
@@ -388,7 +459,7 @@ async function handleHourlySubmit(event) {
     // Basic validation
     if (!formData.pickupAddress || !formData.durationHours || !formData.pickupDate || !formData.pickupTime) {
         if (errorDisplay) errorDisplay.textContent = 'Please fill in all fields for the hourly booking.';
-        if (loadingIndicator) loadingIndicator.style.display = 'none';
+         if (loadingIndicator) loadingIndicator.style.display = 'none'; // Ensure loading hidden
         submitButton.disabled = false;
         submitButton.innerText = originalButtonText;
         return;
@@ -403,6 +474,7 @@ async function handleHourlySubmit(event) {
 }
 
 // --- Reusable Fetch Function to Send Data & Update UI ---
+// (This function remains the same, uses classList if HTML was updated, otherwise style.display is fine)
 async function submitBookingRequest(data) {
     // Get references to the UI elements for results, loading, and errors
     const resultsArea = document.getElementById('quote-results-area');
@@ -412,28 +484,27 @@ async function submitBookingRequest(data) {
     const priceDisplay = document.getElementById('quote-price');
     const distanceDisplay = document.getElementById('quote-distance');
     const durationDisplay = document.getElementById('quote-duration');
-    const pickupTypeDisplay = document.getElementById('quote-pickup-type');
+    const pickupTypeRow = document.getElementById('pickup-type-row'); // Get row elements
+    const pickupNotesRow = document.getElementById('pickup-notes-row');
+    const dropoffTypeRow = document.getElementById('dropoff-type-row');
+    const dropoffNotesRow = document.getElementById('dropoff-notes-row');
+    const pickupTypeDisplay = document.getElementById('quote-pickup-type'); // Get display elements
     const pickupNotesDisplay = document.getElementById('quote-pickup-notes');
     const dropoffTypeDisplay = document.getElementById('quote-dropoff-type');
     const dropoffNotesDisplay = document.getElementById('quote-dropoff-notes');
 
+
     // Check if elements exist (should be called only after DOM is ready)
-    if (
-        !resultsArea ||
-        !loadingIndicator ||
-        !errorDisplay ||
-        !quoteDetailsDisplay ||
-        !priceDisplay ||
-        !distanceDisplay ||
-        !durationDisplay ||
-        !pickupTypeDisplay ||
-        !pickupNotesDisplay ||
-        !dropoffTypeDisplay ||
-        !dropoffNotesDisplay
+     if (
+        !resultsArea || !loadingIndicator || !errorDisplay || !quoteDetailsDisplay ||
+        !priceDisplay || !distanceDisplay || !durationDisplay ||
+        !pickupTypeRow || !pickupNotesRow || !dropoffTypeRow || !dropoffNotesRow || // Check rows
+        !pickupTypeDisplay || !pickupNotesDisplay || !dropoffTypeDisplay || !dropoffNotesDisplay // Check displays
     ) {
         console.error("Critical Error: One or more quote display elements not found in HTML! Cannot proceed.");
-        return;
+        return; // Added return
     }
+
 
     // Endpoint for Netlify function
     const endpoint = '/.netlify/functions/whatsapp-webhook';
@@ -465,29 +536,29 @@ async function submitBookingRequest(data) {
         distanceDisplay.textContent = result.distance || '---';
         durationDisplay.textContent = result.duration || 'N/A';
 
-        // Display airport-specific fields if applicable
+        // Display airport-specific fields if applicable using style.display
         if (result.isPickupAirport) {
-            document.getElementById('pickup-type-row').style.display = 'flex';
+             pickupTypeRow.style.display = 'flex'; // Show row
             pickupTypeDisplay.textContent = result.pickupType
                 ? result.pickupType.charAt(0).toUpperCase() + result.pickupType.slice(1)
                 : 'N/A';
-            document.getElementById('pickup-notes-row').style.display = 'flex';
+             pickupNotesRow.style.display = 'flex'; // Show row
             pickupNotesDisplay.textContent = result.pickupNotes || 'None';
         } else {
-            document.getElementById('pickup-type-row').style.display = 'none';
-            document.getElementById('pickup-notes-row').style.display = 'none';
+             pickupTypeRow.style.display = 'none'; // Hide row
+             pickupNotesRow.style.display = 'none'; // Hide row
         }
 
         if (result.isDropoffAirport) {
-            document.getElementById('dropoff-type-row').style.display = 'flex';
+             dropoffTypeRow.style.display = 'flex'; // Show row
             dropoffTypeDisplay.textContent = result.dropoffType
                 ? result.dropoffType.charAt(0).toUpperCase() + result.dropoffType.slice(1)
                 : 'N/A';
-            document.getElementById('dropoff-notes-row').style.display = 'flex';
+             dropoffNotesRow.style.display = 'flex'; // Show row
             dropoffNotesDisplay.textContent = result.dropoffNotes || 'None';
         } else {
-            document.getElementById('dropoff-type-row').style.display = 'none';
-            document.getElementById('dropoff-notes-row').style.display = 'none';
+             dropoffTypeRow.style.display = 'none'; // Hide row
+             dropoffNotesRow.style.display = 'none'; // Hide row
         }
 
         errorDisplay.textContent = ''; // Clear any previous error message
@@ -503,7 +574,7 @@ async function submitBookingRequest(data) {
         // This block runs whether the fetch succeeded or failed
         console.log('Fetch request finished.');
         // Ensure loading indicator is hidden
-        if (loadingIndicator) loadingIndicator.style.display = 'none';
+        if (loadingIndicator) loadingIndicator.style.display = 'none'; // Hide loading
     }
 } // End of submitBookingRequest
 
