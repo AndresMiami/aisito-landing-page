@@ -1,5 +1,3 @@
-// netlify/functions/whatsapp-webhook.js
-
 const axios = require('axios');
 
 // ==================================================
@@ -28,8 +26,6 @@ const PEAK_HOUR_RANGES = [
 
 // --- Airport Fees ---
 const AIRPORT_PICKUP_FEE_USD = 10.00;
-// Keywords to identify airport pickups (lowercase)
-const AIRPORT_IDENTIFIERS = ["airport", "mia", "fll", "pbi"]; // Add more as needed
 
 // ==================================================
 // == HELPER FUNCTIONS ==
@@ -83,33 +79,22 @@ function isPeakTime(timeStr) { // expects "HH:MM" format
     return false;
 }
 
-// Helper to check if it's an airport pickup
-function isAirportPickup(addressStr) {
-    if (!addressStr || typeof addressStr !== 'string') {
-        return false;
-    }
-    const lowerCaseAddress = addressStr.toLowerCase();
-    for (const keyword of AIRPORT_IDENTIFIERS) {
-        if (lowerCaseAddress.includes(keyword)) {
-            console.log(`Airport check: Address "${addressStr}" identified as airport pickup.`);
-            return true;
-        }
-    }
-    return false;
-}
-
 // --- Placeholder function for NLP (Keep original - not used by form handler) ---
 async function getIntentAndEntities(messageText, conversationState) {
     console.log(`NLP processing (Placeholder): ${messageText}`);
-    // ... (rest of original function) ...
     return { intent: 'unknown', entities: {}, newState: conversationState.state };
 }
 
-// --- Google Maps API Functions (Keep original, uses helper now) ---
+// --- Google Maps API Functions ---
 async function geocodeAddress(address) {
     const apiKey = getGoogleMapsApiKey();
-    if (!apiKey) { return null; }
-    if (!address) { console.error("Geocode function called with no address."); return null; }
+    if (!apiKey) {
+        return null;
+    }
+    if (!address) {
+        console.error("Geocode function called with no address.");
+        return null;
+    }
 
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
     console.log(`Geocoding address: "${address}"`);
@@ -119,14 +104,25 @@ async function geocodeAddress(address) {
             const location = response.data.results[0].geometry.location;
             console.log(`Geocoded "${address}" to:`, location);
             return location;
-        } else { console.error(`Geocoding API Error for "${address}": ${response.data.status}`, response.data.error_message || ''); return null; }
-    } catch (error) { console.error(`Network error during geocoding for "${address}":`, error.message); return null; }
+        } else {
+            console.error(`Geocoding API Error for "${address}": ${response.data.status}`, response.data.error_message || '');
+            return null;
+        }
+    } catch (error) {
+        console.error(`Network error during geocoding for "${address}":`, error.message);
+        return null;
+    }
 }
 
 async function getRouteDetails(originCoords, destCoords) {
     const apiKey = getGoogleMapsApiKey();
-    if (!apiKey) { return null; }
-    if (!originCoords || !destCoords) { console.error("getRouteDetails function called with missing coordinates."); return null; }
+    if (!apiKey) {
+        return null;
+    }
+    if (!originCoords || !destCoords) {
+        console.error("getRouteDetails function called with missing coordinates.");
+        return null;
+    }
 
     const origin = `${originCoords.lat},${originCoords.lng}`;
     const destination = `${destCoords.lat},${destCoords.lng}`;
@@ -137,16 +133,28 @@ async function getRouteDetails(originCoords, destCoords) {
         if (response.data.status === 'OK' && response.data.rows?.[0]?.elements?.[0]) {
             const element = response.data.rows[0].elements[0];
             if (element.status === 'OK') {
-                const details = { distanceMeters: element.distance.value, durationSeconds: element.duration.value };
+                const details = {
+                    distanceMeters: element.distance.value,
+                    durationSeconds: element.duration.value,
+                };
                 console.log(`Route details found:`, details);
                 return details;
-            } else { console.error(`Distance Matrix Element Error for route: ${element.status}`); return null; }
-        } else { console.error(`Distance Matrix API Error for route: ${response.data.status}`, response.data.error_message || ''); return null; }
-    } catch (error) { console.error(`Network error during route detail fetching:`, error.message); return null; }
+            } else {
+                console.error(`Distance Matrix Element Error for route: ${element.status}`);
+                return null;
+            }
+        } else {
+            console.error(`Distance Matrix API Error for route: ${response.data.status}`, response.data.error_message || '');
+            return null;
+        }
+    } catch (error) {
+        console.error(`Network error during route detail fetching:`, error.message);
+        return null;
+    }
 }
 
 // --- UPDATED Cost Calculation (for one-way) ---
-function calculateOneWayCost(routeDetails, pickupAddressStr, pickupTimeStr) {
+function calculateOneWayCost(routeDetails, isPickupAirport, isDropoffAirport, pickupTimeStr) {
     if (!routeDetails || typeof routeDetails.distanceMeters !== 'number' || typeof routeDetails.durationSeconds !== 'number') {
         console.error("Invalid route details for cost calculation:", routeDetails);
         return 'N/A';
@@ -156,7 +164,7 @@ function calculateOneWayCost(routeDetails, pickupAddressStr, pickupTimeStr) {
     const durationMinutes = routeDetails.durationSeconds / 60;
 
     // Calculate base cost using constants
-    let cost = ONE_WAY_BASE_FARE_USD + (ONE_WAY_RATE_PER_KM_USD * distanceKm) + (ONE_WAY_RATE_PER_MINUTE_USD * durationMinutes);
+    let cost = ONE_WAY_BASE_FARE_USD + ONE_WAY_RATE_PER_KM_USD * distanceKm + ONE_WAY_RATE_PER_MINUTE_USD * durationMinutes;
     console.log(`Base calculated cost (before adjustments): $${cost.toFixed(2)}`);
 
     // Apply peak hour surcharge if applicable
@@ -166,9 +174,15 @@ function calculateOneWayCost(routeDetails, pickupAddressStr, pickupTimeStr) {
     }
 
     // Apply airport pickup fee if applicable
-    if (isAirportPickup(pickupAddressStr)) {
+    if (isPickupAirport) {
         cost = cost + AIRPORT_PICKUP_FEE_USD;
-        console.log(`Added airport pickup fee ($${AIRPORT_PICKUP_FEE_USD}). Cost now: $${cost.toFixed(2)}`);
+        console.log(`Added airport pickup fee ($${AIRPORT_PICKUP_FEE_USD}) based on flag. Cost now: $${cost.toFixed(2)}`);
+    }
+
+    // Apply airport drop-off fee if applicable
+    if (isDropoffAirport) {
+        cost = cost + AIRPORT_PICKUP_FEE_USD;
+        console.log(`Added airport drop-off fee ($${AIRPORT_PICKUP_FEE_USD}) based on flag. Cost now: $${cost.toFixed(2)}`);
     }
 
     // Apply minimum fare
@@ -181,7 +195,7 @@ function calculateOneWayCost(routeDetails, pickupAddressStr, pickupTimeStr) {
     return cost.toFixed(2); // Return final cost as string
 }
 
-// --- Placeholder WhatsApp Sending Function (Keep original - not used by form handler) ---
+// --- Placeholder WhatsApp Sending Function ---
 async function sendWhatsAppMessage(senderId, messageText) {
     console.log(`Sending WA (Placeholder) to ${senderId}: ${messageText}`);
     return true;
@@ -199,18 +213,28 @@ exports.handler = async (event) => {
     let formData;
     try {
         // 2. Parse JSON Body
-        if (!event.body) { throw new Error("Request body is empty."); }
+        if (!event.body) {
+            throw new Error("Request body is empty.");
+        }
         formData = JSON.parse(event.body);
         console.log("Parsed form data:", formData);
     } catch (error) {
         console.error("Error parsing request body:", error);
-        return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Bad request: Invalid JSON format." }) };
+        return {
+            statusCode: 400,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: "Bad request: Invalid JSON format." }),
+        };
     }
 
     // 3. Basic validation
     if (!formData || !formData.type || !formData.pickupAddress || !formData.pickupDate || !formData.pickupTime) {
-       console.error("Missing required form data fields.");
-       return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Bad request: Missing required fields." }) };
+        console.error("Missing required form data fields.");
+        return {
+            statusCode: 400,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: "Bad request: Missing required fields." }),
+        };
     }
 
     // --- Main Logic ---
@@ -218,52 +242,107 @@ exports.handler = async (event) => {
         // 4. Handle based on type
         if (formData.type === 'one-way') {
             console.log("Processing one-way request...");
-            if (!formData.dropoffAddress) { return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Bad request: Missing dropoff address for one-way." }) }; }
+            if (!formData.dropoffAddress) {
+                return {
+                    statusCode: 400,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: "Bad request: Missing dropoff address for one-way." }),
+                };
+            }
 
-            // Call existing helper functions (which now use correct API Key name!)
+            // Extract new airport-specific fields
+            const pickupType = formData.pickupType || null;
+            const pickupNotes = formData.pickupNotes || null;
+            const dropoffType = formData.dropoffType || null;
+            const dropoffNotes = formData.dropoffNotes || null;
+
+            // Read airport flags directly from formData (converting string 'true'/'false' to boolean)
+            const isPickupAirport = formData.isPickupAirport === 'true';
+            const isDropoffAirport = formData.isDropoffAirport === 'true';
+
+            // Call existing helper functions
             const originCoords = await geocodeAddress(formData.pickupAddress);
-            // NEW check for origin:
             if (!originCoords) {
                 console.error(`Geocoding failed for pickup address: "${formData.pickupAddress}"`);
-                return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Invalid or unrecognized pickup address." }) };
+                return {
+                    statusCode: 400,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: "Invalid or unrecognized pickup address." }),
+                };
             }
 
             const destCoords = await geocodeAddress(formData.dropoffAddress);
-            // NEW check for destination:
             if (!destCoords) {
                 console.error(`Geocoding failed for drop-off address: "${formData.dropoffAddress}"`);
-                return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Invalid or unrecognized drop-off address." }) };
+                return {
+                    statusCode: 400,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: "Invalid or unrecognized drop-off address." }),
+                };
             }
 
             // Continue if both are okay...
             const routeDetails = await getRouteDetails(originCoords, destCoords);
-            if (!routeDetails) { return { statusCode: 500, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Server error: Could not calculate route details." }) }; }
+            if (!routeDetails) {
+                return {
+                    statusCode: 500,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: "Server error: Could not calculate route details." }),
+                };
+            }
 
-            // Call UPDATED one-way cost function
-            const estimatedCostValue = calculateOneWayCost(routeDetails, formData.pickupAddress, formData.pickupTime);
+            // Call UPDATED one-way cost function with boolean flags
+            const estimatedCostValue = calculateOneWayCost(
+                routeDetails,
+                isPickupAirport,
+                isDropoffAirport,
+                formData.pickupTime
+            );
 
             const distanceKm = routeDetails.distanceMeters > 0 ? (routeDetails.distanceMeters / 1000).toFixed(1) : 'N/A';
             const durationMinutes = routeDetails.durationSeconds > 0 ? Math.round(routeDetails.durationSeconds / 60) : 'N/A';
 
-            // Return success response
+            // Return success response with new fields included
             const responsePayload = {
                 message: "Quote calculated successfully.",
                 price: estimatedCostValue !== 'N/A' ? `$${estimatedCostValue}` : 'N/A',
                 distance: distanceKm !== 'N/A' ? `${distanceKm} km` : 'N/A',
                 duration: durationMinutes !== 'N/A' ? `${durationMinutes} min` : 'N/A',
+                isPickupAirport: isPickupAirport,
+                isDropoffAirport: isDropoffAirport,
+                pickupType: pickupType,
+                pickupNotes: pickupNotes,
+                dropoffType: dropoffType,
+                dropoffNotes: dropoffNotes,
             };
             console.log("Sending response:", responsePayload);
-            return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(responsePayload) };
-
+            return {
+                statusCode: 200,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(responsePayload),
+            };
         } else if (formData.type === 'hourly') {
             console.log("Processing hourly request...");
-            if (!formData.durationHours) { return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Bad request: Missing duration for hourly." }) }; }
+            if (!formData.durationHours) {
+                return {
+                    statusCode: 400,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: "Bad request: Missing duration for hourly." }),
+                };
+            }
 
             const duration = parseInt(formData.durationHours, 10);
+            // Read airport flag for hourly pickup
+            const isPickupAirport = formData.isPickupAirport === 'true';
+
             // Enforce minimum hours
             if (isNaN(duration) || duration < HOURLY_MINIMUM_HOURS) {
-               console.log(`Hourly duration ${duration} is less than minimum ${HOURLY_MINIMUM_HOURS}.`)
-               return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Bad request: Minimum booking is ${HOURLY_MINIMUM_HOURS} hours.` }) };
+                console.log(`Hourly duration ${duration} is less than minimum ${HOURLY_MINIMUM_HOURS}.`);
+                return {
+                    statusCode: 400,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: `Bad request: Minimum booking is ${HOURLY_MINIMUM_HOURS} hours.` }),
+                };
             }
 
             // Calculate base hourly cost using constant
@@ -276,10 +355,10 @@ exports.handler = async (event) => {
                 console.log(`Applied peak hour multiplier (${PEAK_MULTIPLIER}x). Cost now: $${cost.toFixed(2)}`);
             }
 
-            // Apply airport pickup fee (Optional for hourly - currently applies based on config)
-            if (isAirportPickup(formData.pickupAddress)) {
+            // Apply airport pickup fee based on flag
+            if (isPickupAirport) {
                 cost = cost + AIRPORT_PICKUP_FEE_USD;
-                console.log(`Added airport pickup fee ($${AIRPORT_PICKUP_FEE_USD}) to hourly rate. Cost now: $${cost.toFixed(2)}`);
+                console.log(`Added airport pickup fee ($${AIRPORT_PICKUP_FEE_USD}) to hourly rate based on flag. Cost now: $${cost.toFixed(2)}`);
             }
 
             const estimatedCostValue = cost.toFixed(2);
@@ -288,18 +367,28 @@ exports.handler = async (event) => {
             const responsePayload = {
                 message: "Quote calculated successfully.",
                 price: `$${estimatedCostValue}`,
-                duration: `${duration} hours`
+                duration: `${duration} hours`,
             };
             console.log("Sending response:", responsePayload);
-            return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(responsePayload) };
-
+            return {
+                statusCode: 200,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(responsePayload),
+            };
         } else {
             console.error("Invalid booking type received:", formData.type);
-            return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Bad request: Invalid booking type." }) };
+            return {
+                statusCode: 400,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: "Bad request: Invalid booking type." }),
+            };
         }
-
     } catch (error) {
         console.error("Internal server error during quote processing:", error);
-        return { statusCode: 500, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Internal Server Error processing your request." }) };
+        return {
+            statusCode: 500,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: "Internal Server Error processing your request." }),
+        };
     }
 }; // End of exports.handler

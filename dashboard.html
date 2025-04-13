@@ -13,28 +13,26 @@
         body { font-family: 'Inter', sans-serif; }
         h1, h2, h3 { font-family: 'Playfair Display', serif; }
         .brand-gradient-text {
-            background: linear-gradient(to right, #f97316, #ef4444); /* Orange-Red Gradient */
+            background: linear-gradient(to right, #f97316, #ef4444);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
-        /* Basic styling for active/inactive tabs */
         .tab-button {
-            padding: 0.75rem 1.5rem; /* py-3 px-6 */
-            font-weight: 600; /* font-semibold */
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
             border-bottom: 3px solid transparent;
-            color: #6b7280; /* text-gray-500 */
+            color: #6b7280;
             cursor: pointer;
             transition: all 0.2s ease-in-out;
         }
         .tab-button.active {
-            color: #111827; /* text-gray-900 */
-            border-bottom-color: #f97316; /* border-orange-500 */
+            color: #111827;
+            border-bottom-color: #f97316;
         }
         .tab-button:hover {
-            color: #111827; /* text-gray-900 */
+            color: #111827;
         }
-        /* Style for select dropdown arrow */
         select {
             appearance: none;
             -webkit-appearance: none;
@@ -43,40 +41,39 @@
             background-repeat: no-repeat;
             background-position: right 0.75rem center;
             background-size: 1.25em;
-            padding-right: 2.5rem; /* Make space for arrow */
+            padding-right: 2.5rem;
         }
-        /* Style for Google Places Autocomplete dropdown */
         .pac-container {
             background-color: #FFF;
-            z-index: 1000; /* Ensure it appears above other elements */
-            position: fixed; /* Use fixed positioning */
+            z-index: 1000;
+            position: fixed;
             display: inline-block;
             float: left;
-            border-radius: 0.375rem; /* rounded-md */
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* shadow-md */
-            margin-top: 0.25rem; /* Add slight margin */
-            overflow: hidden; /* Prevents scroll bar issues sometimes */
+            border-radius: 0.375rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            margin-top: 0.25rem;
+            overflow: hidden;
         }
         .pac-item {
-            padding: 0.5rem 1rem; /* py-2 px-4 */
-            font-size: 0.875rem; /* text-sm */
-            color: #374151; /* text-gray-700 */
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            color: #374151;
             cursor: pointer;
-            border: none; /* Remove default borders */
-            border-top: 1px solid #e5e7eb; /* border-gray-200 - add top border for separation */
+            border: none;
+            border-top: 1px solid #e5e7eb;
         }
         .pac-item:first-child {
-            border-top: none; /* No top border for the first item */
+            border-top: none;
         }
         .pac-item:hover {
-            background-color: #f3f4f6; /* bg-gray-100 */
+            background-color: #f3f4f6;
         }
         .pac-item-query {
-            font-weight: 600; /* font-semibold */
-            color: #111827; /* text-gray-900 */
+            font-weight: 600;
+            color: #111827;
         }
         .pac-icon {
-            display: none; /* Hide default Maps icon if desired */
+            display: none;
         }
     </style>
 </head>
@@ -119,11 +116,35 @@
                            placeholder="Address, airport, hotel, ...">
                     <button type="button" id="get-location-oneway-btn" title="Use Current Location" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600 focus:outline-none">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-                          <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.274 1.765 11.842 11.842 0 0 0 1.038.573l.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" />
+                            <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.274 1.765 11.842 11.842 0 0 0 1.038.573l.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" />
                         </svg>
                     </button>
+                    <input type="hidden" id="isPickupAirportOneWay" name="isPickupAirport" value="false">
                 </div>
 
+                <!-- Pickup Type (Hidden by Default) -->
+                <div id="pickup-type-container" class="relative hidden">
+                    <label for="pickup-type" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Pickup Type</label>
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg>
+                    </span>
+                    <select name="pickup-type" id="pickup-type"
+                            class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-500 sm:text-sm sm:leading-6">
+                        <option value="">Select Type</option>
+                        <option value="arrival" selected>Arrival (Level 1)</option>
+                        <option value="departure">Departure (Level 2)</option>
+                    </select>
+                </div>
+
+                <!-- Pickup Notes (Hidden by Default) -->
+                <div id="pickup-notes-container" class="relative hidden">
+                    <label for="pickup-notes" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Pickup Notes (e.g., Flight AA123 arriving at 10:00 AM)</label>
+                    <textarea name="pickup-notes" id="pickup-notes" rows="2"
+                              class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-500 sm:text-sm sm:leading-6"
+                              placeholder="Optional notes"></textarea>
+                </div>
+
+                <!-- Drop-off Address -->
                 <div class="relative">
                     <label for="to-oneway" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">To</label>
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4">
@@ -132,6 +153,29 @@
                     <input type="text" name="to-oneway" id="to-oneway" required
                            class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-500 sm:text-sm sm:leading-6"
                            placeholder="Address, airport, hotel, ...">
+                    <input type="hidden" id="isDropoffAirportOneWay" name="isDropoffAirport" value="false">
+                </div>
+
+                <!-- Drop-off Type (Hidden by Default) -->
+                <div id="dropoff-type-container" class="relative hidden">
+                    <label for="dropoff-type" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Drop-off Type</label>
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg>
+                    </span>
+                    <select name="dropoff-type" id="dropoff-type"
+                            class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-500 sm:text-sm sm:leading-6">
+                        <option value="">Select Type</option>
+                        <option value="arrival">Arrival (Level 1)</option>
+                        <option value="departure" selected>Departure (Level 2)</option>
+                    </select>
+                </div>
+
+                <!-- Drop-off Notes (Hidden by Default) -->
+                <div id="dropoff-notes-container" class="relative hidden">
+                    <label for="dropoff-notes" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Drop-off Notes (e.g., Flight DL456 departing at 2:00 PM)</label>
+                    <textarea name="dropoff-notes" id="dropoff-notes" rows="2"
+                              class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-500 sm:text-sm sm:leading-6"
+                              placeholder="Optional notes"></textarea>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -145,13 +189,13 @@
                                placeholder="Select Date">
                     </div>
                     <div class="relative">
-                         <label for="time-oneway" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Time</label>
-                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4">
-                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg>
-                         </span>
-                         <input type="time" name="time-oneway" id="time-oneway" required
-                                class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-500 sm:text-sm sm:leading-6"
-                                placeholder="Select Time">
+                        <label for="time-oneway" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Time</label>
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg>
+                        </span>
+                        <input type="time" name="time-oneway" id="time-oneway" required
+                               class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-500 sm:text-sm sm:leading-6"
+                               placeholder="Select Time">
                     </div>
                 </div>
 
@@ -181,9 +225,10 @@
                            placeholder="Address, airport, hotel, ...">
                     <button type="button" id="get-location-hourly-btn" title="Use Current Location" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600 focus:outline-none">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-                          <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.274 1.765 11.842 11.842 0 0 0 1.038.573l.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" />
+                            <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.274 1.765 11.842 11.842 0 0 0 1.038.573l.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" />
                         </svg>
                     </button>
+                    <input type="hidden" id="isPickupAirportHourly" name="isPickupAirport" value="false">
                 </div>
 
                 <div class="relative">
@@ -239,29 +284,56 @@
                     </button>
                 </div>
             </form>
-            <div id="quote-results-area" class="mt-6 pt-4 border-t border-gray-200" style="display: none;">
+
+            <!-- Quote Results Area -->
+            <div id="quote-results-area" class="mt-6 pt-6 border-t border-gray-200" style="display: none;">
                 <div id="loading-indicator" class="text-center text-gray-600 font-semibold" style="display: none;">
                     Calculating your quote...
                 </div>
                 <p id="quote-error" class="text-center text-red-600 font-semibold mb-3"></p>
-                <div id="quote-details">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-3 text-center">Your Quote</h3>
+                <div id="quote-details" class="bg-gray-50 p-4 rounded-lg">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3 text-center">Your Quote</h3>
                     <dl class="space-y-2">
-                        <div class="flex justify-between">
-                            <dt class="text-sm font-medium text-gray-500">Estimated Price:</dt>
-                            <dd id="quote-price" class="text-sm font-semibold text-gray-900"></dd>
+                        <div class="flex justify-between items-center">
+                            <dt class="text-sm font-semibold text-gray-600">Estimated Price:</dt>
+                            <dd id="quote-price" class="text-xl font-bold text-orange-600"></dd>
                         </div>
-                        <div class="flex justify-between">
-                            <dt class="text-sm font-medium text-gray-500">Estimated Distance:</dt>
-                            <dd id="quote-distance" class="text-sm text-gray-900"></dd>
+                        <div class="flex justify-between items-center">
+                            <dt class="text-sm font-semibold text-gray-600">Estimated Distance:</dt>
+                            <dd id="quote-distance" class="text-sm font-medium text-gray-900"></dd>
                         </div>
-                        <div class="flex justify-between">
-                            <dt class="text-sm font-medium text-gray-500">Estimated Duration:</dt>
-                            <dd id="quote-duration" class="text-sm text-gray-900"></dd>
+                        <div class="flex justify-between items-center">
+                            <dt class="text-sm font-semibold text-gray-600">Estimated Duration:</dt>
+                            <dd id="quote-duration" class="text-sm font-medium text-gray-900"></dd>
+                        </div>
+                        <div id="pickup-type-row" class="flex justify-between items-center" style="display: none;">
+                            <dt class="text-sm font-semibold text-gray-600">Pickup Type:</dt>
+                            <dd id="quote-pickup-type" class="text-sm font-medium text-gray-900"></dd>
+                        </div>
+                        <div id="pickup-notes-row" class="flex justify-between items-center" style="display: none;">
+                            <dt class="text-sm font-semibold text-gray-600">Pickup Notes:</dt>
+                            <dd id="quote-pickup-notes" class="text-sm font-medium text-gray-900"></dd>
+                        </div>
+                        <div id="dropoff-type-row" class="flex justify-between items-center" style="display: none;">
+                            <dt class="text-sm font-semibold text-gray-600">Drop-off Type:</dt>
+                            <dd id="quote-dropoff-type" class="text-sm font-medium text-gray-900"></dd>
+                        </div>
+                        <div id="dropoff-notes-row" class="flex justify-between items-center" style="display: none;">
+                            <dt class="text-sm font-semibold text-gray-600">Drop-off Notes:</dt>
+                            <dd id="quote-dropoff-notes" class="text-sm font-medium text-gray-900"></dd>
                         </div>
                     </dl>
+                    <div class="flex space-x-4 mt-4">
+                        <button id="book-now-btn" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-semibold text-white bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-300">
+                            Book Now
+                        </button>
+                        <button id="clear-form-btn" class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-lg font-semibold text-gray-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-300">
+                            Clear Form
+                        </button>
+                    </div>
                 </div>
             </div>
+
         </div>
 
     </main>
