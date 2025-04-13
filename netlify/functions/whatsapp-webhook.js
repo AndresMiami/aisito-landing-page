@@ -1,3 +1,5 @@
+// netlify/functions/whatsapp-webhook.js
+
 const axios = require('axios');
 
 // ==================================================
@@ -31,17 +33,20 @@ const AIRPORT_PICKUP_FEE_USD = 10.00;
 // == HELPER FUNCTIONS ==
 // ==================================================
 
-// Helper function to get Google Maps API key
+// Helper function to get the backend-specific Google Maps API key
 function getGoogleMapsApiKey() {
-    const apiKey = process.env.Maps_API_KEY;
+    // *** UPDATED to use the new environment variable for backend calls ***
+    const apiKey = process.env.BACKEND_MAPS_API_KEY;
     if (!apiKey) {
-        console.error("Missing Maps_API_KEY environment variable.");
+        // *** UPDATED error message ***
+        console.error("Missing BACKEND_MAPS_API_KEY environment variable.");
         return null;
     }
     return apiKey;
 }
 
 // --- UPDATED: Helper to check if a time falls within peak hours ---
+// (Function remains the same)
 function isPeakTime(timeStr) { // expects "HH:MM" format
     // 1. Basic check and Regex validation for HH:MM format
     if (!timeStr || typeof timeStr !== 'string' || !/^\d{2}:\d{2}$/.test(timeStr)) {
@@ -80,14 +85,16 @@ function isPeakTime(timeStr) { // expects "HH:MM" format
 }
 
 // --- Placeholder function for NLP (Keep original - not used by form handler) ---
+// (Function remains the same)
 async function getIntentAndEntities(messageText, conversationState) {
     console.log(`NLP processing (Placeholder): ${messageText}`);
     return { intent: 'unknown', entities: {}, newState: conversationState.state };
 }
 
 // --- Google Maps API Functions ---
+// (These now use the key returned by the updated getGoogleMapsApiKey)
 async function geocodeAddress(address) {
-    const apiKey = getGoogleMapsApiKey();
+    const apiKey = getGoogleMapsApiKey(); // Uses the backend key now
     if (!apiKey) {
         return null;
     }
@@ -105,17 +112,20 @@ async function geocodeAddress(address) {
             console.log(`Geocoded "${address}" to:`, location);
             return location;
         } else {
+            // Log the error from Google more clearly if possible
             console.error(`Geocoding API Error for "${address}": ${response.data.status}`, response.data.error_message || '');
             return null;
         }
     } catch (error) {
+        // Log network or other errors
         console.error(`Network error during geocoding for "${address}":`, error.message);
+        // Optionally check error response if available: error.response?.data
         return null;
     }
 }
 
 async function getRouteDetails(originCoords, destCoords) {
-    const apiKey = getGoogleMapsApiKey();
+    const apiKey = getGoogleMapsApiKey(); // Uses the backend key now
     if (!apiKey) {
         return null;
     }
@@ -149,11 +159,13 @@ async function getRouteDetails(originCoords, destCoords) {
         }
     } catch (error) {
         console.error(`Network error during route detail fetching:`, error.message);
+         // Optionally check error response if available: error.response?.data
         return null;
     }
 }
 
 // --- UPDATED Cost Calculation (for one-way) ---
+// (Function remains the same)
 function calculateOneWayCost(routeDetails, isPickupAirport, isDropoffAirport, pickupTimeStr) {
     if (!routeDetails || typeof routeDetails.distanceMeters !== 'number' || typeof routeDetails.durationSeconds !== 'number') {
         console.error("Invalid route details for cost calculation:", routeDetails);
@@ -196,6 +208,7 @@ function calculateOneWayCost(routeDetails, isPickupAirport, isDropoffAirport, pi
 }
 
 // --- Placeholder WhatsApp Sending Function ---
+// (Function remains the same)
 async function sendWhatsAppMessage(senderId, messageText) {
     console.log(`Sending WA (Placeholder) to ${senderId}: ${messageText}`);
     return true;
@@ -204,6 +217,7 @@ async function sendWhatsAppMessage(senderId, messageText) {
 // ==========================================================
 // == HANDLER FUNCTION FOR WEB FORM DATA (Includes new pricing logic) ==
 // ==========================================================
+// (Handler function remains the same, it implicitly uses the updated getGoogleMapsApiKey via helpers)
 exports.handler = async (event) => {
     // 1. Only allow POST requests
     if (event.httpMethod !== 'POST') {
@@ -260,7 +274,7 @@ exports.handler = async (event) => {
             const isPickupAirport = formData.isPickupAirport === 'true';
             const isDropoffAirport = formData.isDropoffAirport === 'true';
 
-            // Call existing helper functions
+            // Call existing helper functions (these will now use the BACKEND_MAPS_API_KEY)
             const originCoords = await geocodeAddress(formData.pickupAddress);
             if (!originCoords) {
                 console.error(`Geocoding failed for pickup address: "${formData.pickupAddress}"`);
@@ -368,6 +382,8 @@ exports.handler = async (event) => {
                 message: "Quote calculated successfully.",
                 price: `$${estimatedCostValue}`,
                 duration: `${duration} hours`,
+                // Include airport flag in response if frontend needs it for hourly display?
+                isPickupAirport: isPickupAirport
             };
             console.log("Sending response:", responsePayload);
             return {
