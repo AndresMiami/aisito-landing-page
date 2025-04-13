@@ -131,8 +131,10 @@ function initAutocomplete() {
 }
 
 // --- Function to get current location using Geolocation API ---
-// (This function remains the same as the previous version)
 function getCurrentLocation(inputId) {
+    // ---> ADDED THIS LINE FOR DEBUGGING <---
+    console.log(`getCurrentLocation called for input: ${inputId} at ${new Date().toISOString()}`);
+    // Existing code follows:
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             async (position) => {
@@ -247,7 +249,7 @@ function setupFormListeners() {
         console.warn("Hourly location button not found.");
     }
 
-    // ---> ADDED: Listener for Clear Form button <---
+    // Added: Listener for Clear Form button
     if (clearFormBtn) {
         clearFormBtn.addEventListener('click', () => {
             console.log('Clear Form button clicked');
@@ -322,11 +324,11 @@ function initializeTabSwitching() {
 
     tabs.forEach((tab) => {
         tab.addEventListener('click', (event) => {
-            // ---> ADDED: Hide results and clear errors when tab is clicked <---
+            // Added: Hide results and clear errors when tab is clicked
             console.log('Tab clicked, hiding results area.');
             if (resultsArea) resultsArea.style.display = 'none'; // Hide results
             if (errorDisplay) errorDisplay.textContent = '';     // Clear errors
-            // ---> End of Added lines <---
+            // End of Added lines
 
             // Existing code follows:
             tabs.forEach((t) => t.classList.remove('active'));
@@ -344,6 +346,7 @@ function initializeTabSwitching() {
     });
 
     // --- Ensure the default active tab's form is visible on initial load ---
+    // (This logic remains the same)
     const initiallyActiveTab = document.querySelector('.tab-button.active');
     let activeFormFound = false;
     if (initiallyActiveTab) {
@@ -373,7 +376,7 @@ function initializeTabSwitching() {
 // ==================================================
 
 // --- Handle One-Way Form Submission ---
-// (This function remains the same as the previous version, uses classList if HTML was updated, otherwise style.display is fine)
+// (This function remains the same as the previous version)
 async function handleOneWaySubmit(event) {
     event.preventDefault();
     console.log('Handling one-way form submission...');
@@ -426,7 +429,7 @@ async function handleOneWaySubmit(event) {
 }
 
 // --- Handle Hourly Form Submission ---
-// (This function remains the same as the previous version, uses classList if HTML was updated, otherwise style.display is fine)
+// (This function remains the same as the previous version)
 async function handleHourlySubmit(event) {
     event.preventDefault();
     console.log('Handling hourly form submission...');
@@ -474,7 +477,7 @@ async function handleHourlySubmit(event) {
 }
 
 // --- Reusable Fetch Function to Send Data & Update UI ---
-// (This function remains the same, uses classList if HTML was updated, otherwise style.display is fine)
+// (This function remains the same, uses style.display)
 async function submitBookingRequest(data) {
     // Get references to the UI elements for results, loading, and errors
     const resultsArea = document.getElementById('quote-results-area');
