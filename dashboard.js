@@ -5,6 +5,55 @@ let map;
 let directionsService;
 let directionsRenderer;
 
+// --- Helper Function to Show/Hide Airport Fields ---
+// Moved outside initAutocomplete to fix scope issue for getCurrentLocation and Clear Button
+function updateAirportFieldVisibility(addressInputId, isAirport) {
+    let typeContainerId, notesContainerId, hiddenInputId;
+    let typeInput, notesInput; // To potentially reset values
+
+    console.log(`Updating airport fields for ${addressInputId}. Is Airport: ${isAirport}`);
+
+    if (addressInputId === 'from-oneway' || addressInputId === 'from-hourly') {
+        typeContainerId = 'pickup-type-container';
+        notesContainerId = 'pickup-notes-container';
+        hiddenInputId = addressInputId === 'from-oneway' ? 'isPickupAirportOneWay' : 'isPickupAirportHourly';
+        typeInput = document.getElementById('pickup-type');
+        notesInput = document.getElementById('pickup-notes');
+    } else if (addressInputId === 'to-oneway') {
+        typeContainerId = 'dropoff-type-container';
+        notesContainerId = 'dropoff-notes-container';
+        hiddenInputId = 'isDropoffAirportOneWay';
+        typeInput = document.getElementById('dropoff-type');
+        notesInput = document.getElementById('dropoff-notes');
+    } else {
+        console.warn(`Unknown address input ID in updateAirportFieldVisibility: ${addressInputId}`);
+        return;
+    }
+
+    const typeContainer = document.getElementById(typeContainerId);
+    const notesContainer = document.getElementById(notesContainerId);
+    const hiddenInput = document.getElementById(hiddenInputId);
+
+    if (!typeContainer || !notesContainer || !hiddenInput) {
+        console.error(`Could not find all elements for ${addressInputId}:`, typeContainerId, notesContainerId, hiddenInputId);
+        return;
+    }
+
+    if (isAirport) {
+        typeContainer.classList.remove('hidden');
+        notesContainer.classList.remove('hidden');
+        hiddenInput.value = 'true';
+    } else {
+        typeContainer.classList.add('hidden');
+        notesContainer.classList.add('hidden');
+        hiddenInput.value = 'false';
+        // Optional: Reset fields when hidden
+        if (typeInput) typeInput.selectedIndex = 0; // Reset dropdown to first option (e.g., "Select Type")
+        if (notesInput) notesInput.value = '';
+    }
+}
+
+
 // This function is called by the Google Maps script tag (callback=initAutocomplete)
 function initAutocomplete() {
     console.log("Google Maps API loaded, initializing Autocomplete, Tabs, and Map.");
@@ -25,54 +74,6 @@ function initAutocomplete() {
         strictBounds: false,
     };
 
-    // --- Helper Function to Show/Hide Airport Fields ---
-    // (This function remains the same as the previous version)
-    function updateAirportFieldVisibility(addressInputId, isAirport) {
-        let typeContainerId, notesContainerId, hiddenInputId;
-        let typeInput, notesInput; // To potentially reset values
-
-        console.log(`Updating airport fields for ${addressInputId}. Is Airport: ${isAirport}`);
-
-        if (addressInputId === 'from-oneway' || addressInputId === 'from-hourly') {
-            typeContainerId = 'pickup-type-container';
-            notesContainerId = 'pickup-notes-container';
-            hiddenInputId = addressInputId === 'from-oneway' ? 'isPickupAirportOneWay' : 'isPickupAirportHourly';
-            typeInput = document.getElementById('pickup-type');
-            notesInput = document.getElementById('pickup-notes');
-        } else if (addressInputId === 'to-oneway') {
-            typeContainerId = 'dropoff-type-container';
-            notesContainerId = 'dropoff-notes-container';
-            hiddenInputId = 'isDropoffAirportOneWay';
-            typeInput = document.getElementById('dropoff-type');
-            notesInput = document.getElementById('dropoff-notes');
-        } else {
-            console.warn(`Unknown address input ID in updateAirportFieldVisibility: ${addressInputId}`);
-            return;
-        }
-
-        const typeContainer = document.getElementById(typeContainerId);
-        const notesContainer = document.getElementById(notesContainerId);
-        const hiddenInput = document.getElementById(hiddenInputId);
-
-        if (!typeContainer || !notesContainer || !hiddenInput) {
-            console.error(`Could not find all elements for ${addressInputId}:`, typeContainerId, notesContainerId, hiddenInputId);
-            return;
-        }
-
-        if (isAirport) {
-            typeContainer.classList.remove('hidden');
-            notesContainer.classList.remove('hidden');
-            hiddenInput.value = 'true';
-        } else {
-            typeContainer.classList.add('hidden');
-            notesContainer.classList.add('hidden');
-            hiddenInput.value = 'false';
-            // Optional: Reset fields when hidden
-            if (typeInput) typeInput.selectedIndex = 0; // Reset dropdown to first option (e.g., "Select Type")
-            if (notesInput) notesInput.value = '';
-        }
-    }
-
     // --- Create Autocomplete objects ---
     // (Error checks added for robustness)
     if (fromOneWayInput) {
@@ -82,7 +83,7 @@ function initAutocomplete() {
                 const place = autocompleteFromOneWay.getPlace();
                 console.log("Place Changed (From One Way):", place);
                 const isAirport = place?.types?.includes('airport') || false;
-                updateAirportFieldVisibility('from-oneway', isAirport);
+                updateAirportFieldVisibility('from-oneway', isAirport); // Call the helper (now globally accessible)
             });
         } catch (e) {
             console.error("Error initializing Autocomplete for from-oneway:", e);
@@ -98,7 +99,7 @@ function initAutocomplete() {
                 const place = autocompleteToOneWay.getPlace();
                 console.log("Place Changed (To One Way):", place);
                 const isAirport = place?.types?.includes('airport') || false;
-                updateAirportFieldVisibility('to-oneway', isAirport);
+                updateAirportFieldVisibility('to-oneway', isAirport); // Call the helper
             });
         } catch (e) {
             console.error("Error initializing Autocomplete for to-oneway:", e);
@@ -114,7 +115,7 @@ function initAutocomplete() {
                 const place = autocompleteFromHourly.getPlace();
                 console.log("Place Changed (From Hourly):", place);
                 const isAirport = place?.types?.includes('airport') || false;
-                updateAirportFieldVisibility('from-hourly', isAirport);
+                updateAirportFieldVisibility('from-hourly', isAirport); // Call the helper
             });
         } catch (e) {
             console.error("Error initializing Autocomplete for from-hourly:", e);
@@ -132,9 +133,8 @@ function initAutocomplete() {
 
 // --- Function to get current location using Geolocation API ---
 function getCurrentLocation(inputId) {
-    // ---> ADDED THIS LINE FOR DEBUGGING <---
+    // Debug log from previous step (can be removed later if desired)
     console.log(`getCurrentLocation called for input: ${inputId} at ${new Date().toISOString()}`);
-    // Existing code follows:
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             async (position) => {
@@ -165,16 +165,18 @@ function getCurrentLocation(inputId) {
                         inputField.value = address;
                         console.log(`Updated input '${inputId}' with address: ${address}`);
                         // Force hide airport fields when geocoding fills input
-                        updateAirportFieldVisibility(inputId, false);
+                        updateAirportFieldVisibility(inputId, false); // Call the helper (now globally accessible)
                     } else {
                         console.error(`Input field with ID '${inputId}' not found.`);
                     }
                 } catch (error) {
+                    // This catch block will now only catch actual geocoding errors
                     console.error('Error geocoding location:', error);
                     alert('Unable to retrieve address for your location. Please try again.');
                 }
             },
             (error) => {
+                // This error callback handles initial geolocation failures
                 console.error('Geolocation error:', error);
                 let errorMessage = 'Unable to retrieve your location.';
                 switch (error.code) {
@@ -270,28 +272,14 @@ function setupFormListeners() {
                 // Manually reset hidden inputs and hide airport fields
                 document.getElementById('isPickupAirportOneWay').value = 'false';
                 document.getElementById('isDropoffAirportOneWay').value = 'false';
-                // updateAirportFieldVisibility might not be defined here if moved outside initAutocomplete
-                // Safest to call directly if needed or ensure it's globally available
-                 if (typeof updateAirportFieldVisibility === 'function') {
-                    updateAirportFieldVisibility('from-oneway', false);
-                    updateAirportFieldVisibility('to-oneway', false);
-                 } else { // Fallback if function not accessible (e.g., scope issue) - less ideal
-                    document.getElementById('pickup-type-container')?.classList.add('hidden');
-                    document.getElementById('pickup-notes-container')?.classList.add('hidden');
-                    document.getElementById('dropoff-type-container')?.classList.add('hidden');
-                    document.getElementById('dropoff-notes-container')?.classList.add('hidden');
-                 }
+                updateAirportFieldVisibility('from-oneway', false); // Call the helper (now globally accessible)
+                updateAirportFieldVisibility('to-oneway', false);   // Call the helper
                 console.log('One-way form cleared.');
             } else if (hourlyFormActive) { // Use else if to be specific
                 document.getElementById('by-the-hour-form').reset(); // Clear standard inputs
                  // Manually reset hidden inputs and hide airport fields
                 document.getElementById('isPickupAirportHourly').value = 'false';
-                 if (typeof updateAirportFieldVisibility === 'function') {
-                    updateAirportFieldVisibility('from-hourly', false);
-                 } else {
-                    document.getElementById('pickup-type-container')?.classList.add('hidden');
-                    document.getElementById('pickup-notes-container')?.classList.add('hidden');
-                 }
+                updateAirportFieldVisibility('from-hourly', false); // Call the helper
                 console.log('Hourly form cleared.');
             }
         });
