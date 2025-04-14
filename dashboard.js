@@ -1,10 +1,11 @@
 // dashboard.js
+// Reverted Version: Quote functionality only, no booking logic
 
 // Global variables
 let map;
 let directionsService;
 let directionsRenderer;
-let lastQuoteDetails = null; // To store details for booking
+// let lastQuoteDetails = null; // REMOVED: Not needed without booking
 
 // --- Helper Function to Show/Hide Airport Fields ---
 function updateAirportFieldVisibility(addressInputId, isAirport) {
@@ -45,18 +46,18 @@ function initAutocomplete() {
         strictBounds: false,
     };
 
-    // Init Autocompletes (with error handling)
-    if (fromOneWayInput) { try { /* ...Autocomplete setup for fromOneWayInput... */
+    // Init Autocompletes
+    if (fromOneWayInput) { try {
         const ac = new google.maps.places.Autocomplete(fromOneWayInput, options);
         ac.addListener('place_changed', () => { const p = ac.getPlace(); updateAirportFieldVisibility('from-oneway', p?.types?.includes('airport')||false); });
     } catch(e){console.error('Autocomplete failed (from-oneway)', e)} } else { console.error("Input 'from-oneway' not found"); }
 
-    if (toOneWayInput) { try { /* ...Autocomplete setup for toOneWayInput... */
+    if (toOneWayInput) { try {
         const ac = new google.maps.places.Autocomplete(toOneWayInput, options);
         ac.addListener('place_changed', () => { const p = ac.getPlace(); updateAirportFieldVisibility('to-oneway', p?.types?.includes('airport')||false); });
     } catch(e){console.error('Autocomplete failed (to-oneway)', e)} } else { console.error("Input 'to-oneway' not found"); }
 
-    if (fromHourlyInput) { try { /* ...Autocomplete setup for fromHourlyInput... */
+    if (fromHourlyInput) { try {
         const ac = new google.maps.places.Autocomplete(fromHourlyInput, options);
         ac.addListener('place_changed', () => { const p = ac.getPlace(); updateAirportFieldVisibility('from-hourly', p?.types?.includes('airport')||false); });
      } catch(e){console.error('Autocomplete failed (from-hourly)', e)} } else { console.error("Input 'from-hourly' not found"); }
@@ -92,14 +93,14 @@ function getCurrentLocation(inputId) {
             alert(`Unable to retrieve address: ${error.message}`);
         }
     }, (error) => {
-        console.error('Geolocation error:', error);
-        let errorMessage = 'Unable to retrieve your location.';
-        switch(error.code) { /* ... error messages ... */
-            case error.PERMISSION_DENIED: errorMessage = 'Location access denied.'; break;
-            case error.POSITION_UNAVAILABLE: errorMessage = 'Location information unavailable.'; break;
-            case error.TIMEOUT: errorMessage = 'Location request timed out.'; break;
-        }
-        alert(errorMessage);
+         console.error('Geolocation error:', error);
+         let errorMessage = 'Unable to retrieve your location.';
+         switch(error.code) {
+             case error.PERMISSION_DENIED: errorMessage = 'Location access denied.'; break;
+             case error.POSITION_UNAVAILABLE: errorMessage = 'Location information unavailable.'; break;
+             case error.TIMEOUT: errorMessage = 'Location request timed out.'; break;
+         }
+         alert(errorMessage);
     }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
 }
 
@@ -110,7 +111,7 @@ function setupFormListeners() {
     const oneWayLocationBtn = document.getElementById('get-location-oneway-btn');
     const hourlyLocationBtn = document.getElementById('get-location-hourly-btn');
     const clearFormBtn = document.getElementById('clear-form-btn');
-    const bookNowBtn = document.getElementById('book-now-btn');
+    // const bookNowBtn = document.getElementById('book-now-btn'); // REMOVED: No book listener needed
 
     // Form submit listeners
     if (oneWayForm) { oneWayForm.addEventListener('submit', handleOneWaySubmit); console.log("Submit listener added (one-way)."); } else { console.error("One-way form missing."); }
@@ -132,7 +133,7 @@ function setupFormListeners() {
 
             if (resultsArea) resultsArea.style.display = 'none';
             if (errorDisplay) errorDisplay.textContent = '';
-            lastQuoteDetails = null; // Clear stored details
+            // lastQuoteDetails = null; // REMOVED: Not needed
 
             if (oneWayFormActive) {
                 oneWayFormEl.reset();
@@ -150,9 +151,9 @@ function setupFormListeners() {
         console.log("Clear form listener added.");
     } else { console.warn("Clear form button missing."); }
 
-    // Book Now button listener
-    if (bookNowBtn) { bookNowBtn.addEventListener('click', handleBookingSubmit); console.log("Book Now listener added."); }
-    else { console.warn("Book Now button missing initially (expected inside results)."); }
+    // REMOVED: Listener for Book Now button
+    // if (bookNowBtn) { bookNowBtn.addEventListener('click', handleBookingSubmit); console.log("Book Now listener added."); }
+    // else { console.warn("Book Now button missing initially (expected inside results)."); }
 }
 
 // --- Function to handle tab switching ---
@@ -171,7 +172,7 @@ function initializeTabSwitching() {
             console.log('Tab clicked, hiding results area.');
             if (resultsArea) resultsArea.style.display = 'none';
             if (errorDisplay) errorDisplay.textContent = '';
-            lastQuoteDetails = null; // Clear stored details
+            // lastQuoteDetails = null; // REMOVED: Not needed
 
             tabs.forEach((t) => t.classList.remove('active')); forms.forEach((f) => f.classList.add('hidden'));
             const clickedTab = event.currentTarget; clickedTab.classList.add('active');
@@ -179,9 +180,9 @@ function initializeTabSwitching() {
             if (targetForm) { targetForm.classList.remove('hidden'); } else { console.warn(`Target form '${targetFormId}' not found.`); }
         });
     });
-    // Initial active tab logic remains the same
-    const initiallyActiveTab = document.querySelector('.tab-button.active'); /*...*/
-    if (initiallyActiveTab) { /* ... */ } else { /* ... */ }
+     // Initial active tab logic remains the same
+     const initiallyActiveTab = document.querySelector('.tab-button.active'); /*...*/
+     if (initiallyActiveTab) { /* ... */ } else { /* ... */ }
 }
 
 // ==================================================
@@ -195,12 +196,12 @@ async function handleOneWaySubmit(event) {
     const errorDisplay = document.getElementById('quote-error');
 
     // Reset state
-    lastQuoteDetails = null;
+    // lastQuoteDetails = null; // REMOVED: Not needed
     if(errorDisplay) errorDisplay.textContent = '';
 
     // Gather form data
     const formData = {
-        action: 'getQuote', // <<< Action added
+        action: 'getQuote', // Action added correctly
         type: 'one-way',
         pickupAddress: document.getElementById('from-oneway').value,
         dropoffAddress: document.getElementById('to-oneway').value,
@@ -217,19 +218,16 @@ async function handleOneWaySubmit(event) {
     // Basic validation
     if (!formData.pickupAddress || !formData.dropoffAddress || !formData.pickupDate || !formData.pickupTime) {
         if (errorDisplay) errorDisplay.textContent = 'Please fill in all required fields for the one-way booking.';
-        return; // Stop if validation fails
+        return;
     }
 
-    // Disable button before sending request
     if(submitButton) {
-        submitButton.disabled = true;
-        submitButton.dataset.originalText = submitButton.innerText; // Store original text
-        submitButton.innerText = 'Searching...';
+        submitButton.disabled = true; submitButton.dataset.originalText = submitButton.innerText; submitButton.innerText = 'Searching...';
     }
 
-    await submitRequest(formData); // Call generic submit function
+    await submitQuoteRequest(formData); // Use quote-specific function name
 
-    // Button state restored in submitRequest's finally block
+    // Button state restored in submitQuoteRequest's finally block
 }
 
 // --- Handle Hourly Form Submission (for getting quote) ---
@@ -239,12 +237,12 @@ async function handleHourlySubmit(event) {
     const errorDisplay = document.getElementById('quote-error');
 
     // Reset state
-    lastQuoteDetails = null;
+    // lastQuoteDetails = null; // REMOVED: Not needed
      if(errorDisplay) errorDisplay.textContent = '';
 
     // Gather form data
     const formData = {
-        action: 'getQuote', // <<< Action added
+        action: 'getQuote', // Action added correctly
         type: 'hourly',
         pickupAddress: document.getElementById('from-hourly').value,
         durationHours: document.getElementById('duration-hourly').value,
@@ -256,78 +254,22 @@ async function handleHourlySubmit(event) {
     // Basic validation
     if (!formData.pickupAddress || !formData.durationHours || !formData.pickupDate || !formData.pickupTime) {
         if (errorDisplay) errorDisplay.textContent = 'Please fill in all fields for the hourly booking.';
-        return; // Stop if validation fails
-    }
-
-     // Disable button before sending request
-    if(submitButton) {
-        submitButton.disabled = true;
-        submitButton.dataset.originalText = submitButton.innerText; // Store original text
-        submitButton.innerText = 'Searching...';
-    }
-
-    await submitRequest(formData); // Call generic submit function
-
-    // Button state restored in submitRequest's finally block
-}
-
-// --- Handle Book Now Button Click ---
-async function handleBookingSubmit() {
-    console.log('Handling booking submission...');
-    const bookNowBtn = document.getElementById('book-now-btn');
-    const clearFormBtn = document.getElementById('clear-form-btn');
-    const resultsArea = document.getElementById('quote-results-area');
-    const errorDisplay = document.getElementById('quote-error');
-    const quoteDetailsDisplay = document.getElementById('quote-details');
-
-    if (!lastQuoteDetails) {
-        console.error("No quote details found to book.");
-        if(errorDisplay) errorDisplay.textContent = 'Cannot book. Please get a valid quote first.';
-        if (resultsArea) resultsArea.style.display = 'block';
-        if (quoteDetailsDisplay) quoteDetailsDisplay.style.display = 'none';
         return;
     }
 
-    // Disable buttons, show loading state
-    if (bookNowBtn) { bookNowBtn.disabled = true; bookNowBtn.innerText = 'Booking...'; }
-    if (clearFormBtn) { clearFormBtn.disabled = true; } // Also disable clear during booking
-    if(errorDisplay) errorDisplay.textContent = '';
+     if(submitButton) {
+        submitButton.disabled = true; submitButton.dataset.originalText = submitButton.innerText; submitButton.innerText = 'Searching...';
+    }
 
-    // Construct payload for backend 'book' action
-    const bookingData = {
-        action: 'book',
-        // Pass all relevant details stored from the quote request/response
-        type: lastQuoteDetails.type,
-        pickupAddress: lastQuoteDetails.pickupAddress,
-        dropoffAddress: lastQuoteDetails.dropoffAddress,
-        pickupDate: lastQuoteDetails.pickupDate,
-        pickupTime: lastQuoteDetails.pickupTime,
-        durationHours: lastQuoteDetails.durationHours,
-        isPickupAirport: lastQuoteDetails.isPickupAirport,
-        isDropoffAirport: lastQuoteDetails.isDropoffAirport,
-        pickupType: lastQuoteDetails.pickupType,
-        pickupNotes: lastQuoteDetails.pickupNotes,
-        dropoffType: lastQuoteDetails.dropoffType,
-        dropoffNotes: lastQuoteDetails.dropoffNotes,
-        quotePrice: lastQuoteDetails.quotePrice,
-        quoteDistance: lastQuoteDetails.quoteDistance,
-        quoteDuration: lastQuoteDetails.quoteDuration,
-        // Add passenger placeholders
-        passengerName: 'N/A (Web Form)',
-        passengerPhone: 'N/A',
-        passengerEmail: 'N/A'
-    };
+    await submitQuoteRequest(formData); // Use quote-specific function name
 
-    console.log('Sending booking data:', bookingData);
-    await submitRequest(bookingData, true); // Pass true for booking action
-
-    // If submitRequest fails, it re-enables buttons in finally block
-    // If successful, buttons remain disabled, success message shown
+    // Button state restored in submitQuoteRequest's finally block
 }
 
+// REMOVED: handleBookingSubmit function
 
-// ---> ADDED BACK: Reusable Fetch Function (Handles both Quote and Book) <---
-async function submitRequest(data, isBookingAction = false) {
+// --- Reusable Fetch Function for QUOTES ONLY ---
+async function submitQuoteRequest(data) {
     const resultsArea = document.getElementById('quote-results-area');
     const loadingIndicator = document.getElementById('loading-indicator');
     const errorDisplay = document.getElementById('quote-error');
@@ -343,31 +285,18 @@ async function submitRequest(data, isBookingAction = false) {
     const pickupNotesDisplay = document.getElementById('quote-pickup-notes');
     const dropoffTypeDisplay = document.getElementById('quote-dropoff-type');
     const dropoffNotesDisplay = document.getElementById('quote-dropoff-notes');
-    const bookNowBtn = document.getElementById('book-now-btn');
+    const bookNowBtn = document.getElementById('book-now-btn'); // Still needed to show/hide
     const clearFormBtn = document.getElementById('clear-form-btn');
-    // Find the correct submit button based on active form
-    const activeSubmitButton = data.type === 'one-way'
-        ? document.querySelector('#one-way-form button[type="submit"]')
-        : document.querySelector('#by-the-hour-form button[type="submit"]');
+    const activeSubmitButton = data.type === 'one-way' ? document.querySelector('#one-way-form button[type="submit"]') : document.querySelector('#by-the-hour-form button[type="submit"]');
 
-    // Ensure elements exist
-    if (!resultsArea || !loadingIndicator || !errorDisplay || !quoteDetailsDisplay || !priceDisplay || !distanceDisplay || !durationDisplay || !pickupTypeRow || !pickupNotesRow || !dropoffTypeRow || !dropoffNotesRow || !pickupTypeDisplay || !pickupNotesDisplay || !dropoffTypeDisplay || !dropoffNotesDisplay || !bookNowBtn || !clearFormBtn) {
-        console.error("Critical Error: One or more UI elements not found!");
-        // Attempt to restore submit button if possible
-         if(activeSubmitButton && activeSubmitButton.dataset.originalText) {
-             activeSubmitButton.disabled = false;
-             activeSubmitButton.innerText = activeSubmitButton.dataset.originalText;
-         }
-        return;
-    }
+     // Check if elements exist
+     if ( /* ... element checks ... */ !resultsArea || !loadingIndicator || !errorDisplay || !quoteDetailsDisplay || !priceDisplay || !distanceDisplay || !durationDisplay || !pickupTypeRow || !pickupNotesRow || !dropoffTypeRow || !dropoffNotesRow || !pickupTypeDisplay || !pickupNotesDisplay || !dropoffTypeDisplay || !dropoffNotesDisplay || !bookNowBtn || !clearFormBtn ) { console.error("UI elements missing!"); return; }
 
-    // Show results area, hide details, show loading (except for booking action)
-    if (!isBookingAction) {
-        resultsArea.style.display = 'block';
-        quoteDetailsDisplay.style.display = 'none';
-        loadingIndicator.style.display = 'block';
-    }
-     errorDisplay.textContent = ''; // Clear errors always
+    // Show loading state
+    resultsArea.style.display = 'block';
+    quoteDetailsDisplay.style.display = 'none';
+    loadingIndicator.style.display = 'block';
+    errorDisplay.textContent = '';
 
     const endpoint = '/.netlify/functions/whatsapp-webhook';
     console.log(`Sending data to endpoint: ${endpoint}`);
@@ -375,80 +304,45 @@ async function submitRequest(data, isBookingAction = false) {
 
     try {
         const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', },
-            body: JSON.stringify(data),
+            method: 'POST', headers: { 'Content-Type': 'application/json', }, body: JSON.stringify(data),
         });
-
         const result = await response.json();
-
-        if (!response.ok) {
-            throw new Error(result.message || `Request failed with status ${response.status}`);
-        }
+        if (!response.ok) { throw new Error(result.message || `Request failed with status ${response.status}`); }
 
         console.log('Received response from server:', result);
 
-        // --- Handle SUCCESS response ---
-        if (data.action === 'getQuote') {
-            // Store details for potential booking
-             lastQuoteDetails = {
-                ...data, // Original form inputs
-                quotePrice: result.price, quoteDistance: result.distance, quoteDuration: result.duration,
-                // Use results from backend for airport flags/details
-                isPickupAirport: result.isPickupAirport, isDropoffAirport: result.isDropoffAirport,
-                pickupType: result.pickupType, pickupNotes: result.pickupNotes,
-                dropoffType: result.dropoffType, dropoffNotes: result.dropoffNotes
-            };
-            console.log('Stored lastQuoteDetails for booking:', lastQuoteDetails);
+        // --- Display SUCCESS results in HTML ---
+        priceDisplay.textContent = result.price || 'N/A';
+        distanceDisplay.textContent = result.distance || '---';
+        durationDisplay.textContent = result.duration || 'N/A';
+        result.isPickupAirport ? pickupTypeRow.style.display = 'flex' : pickupTypeRow.style.display = 'none';
+        if(result.isPickupAirport) pickupTypeDisplay.textContent = result.pickupType ? result.pickupType.charAt(0).toUpperCase() + result.pickupType.slice(1) : 'N/A';
+        result.isPickupAirport ? pickupNotesRow.style.display = 'flex' : pickupNotesRow.style.display = 'none';
+        if(result.isPickupAirport) pickupNotesDisplay.textContent = result.pickupNotes || 'None';
+        result.isDropoffAirport ? dropoffTypeRow.style.display = 'flex' : dropoffTypeRow.style.display = 'none';
+        if(result.isDropoffAirport) dropoffTypeDisplay.textContent = result.dropoffType ? result.dropoffType.charAt(0).toUpperCase() + result.dropoffType.slice(1) : 'N/A';
+        result.isDropoffAirport ? dropoffNotesRow.style.display = 'flex' : dropoffNotesRow.style.display = 'none';
+        if(result.isDropoffAirport) dropoffNotesDisplay.textContent = result.dropoffNotes || 'None';
 
-            // Display quote details in HTML
-            priceDisplay.textContent = result.price || 'N/A';
-            distanceDisplay.textContent = result.distance || '---';
-            durationDisplay.textContent = result.duration || 'N/A';
-            // Show/Hide airport result rows
-            result.isPickupAirport ? pickupTypeRow.style.display = 'flex' : pickupTypeRow.style.display = 'none';
-            if(result.isPickupAirport) pickupTypeDisplay.textContent = result.pickupType ? result.pickupType.charAt(0).toUpperCase() + result.pickupType.slice(1) : 'N/A';
-            result.isPickupAirport ? pickupNotesRow.style.display = 'flex' : pickupNotesRow.style.display = 'none';
-            if(result.isPickupAirport) pickupNotesDisplay.textContent = result.pickupNotes || 'None';
-            result.isDropoffAirport ? dropoffTypeRow.style.display = 'flex' : dropoffTypeRow.style.display = 'none';
-            if(result.isDropoffAirport) dropoffTypeDisplay.textContent = result.dropoffType ? result.dropoffType.charAt(0).toUpperCase() + result.dropoffType.slice(1) : 'N/A';
-            result.isDropoffAirport ? dropoffNotesRow.style.display = 'flex' : dropoffNotesRow.style.display = 'none';
-            if(result.isDropoffAirport) dropoffNotesDisplay.textContent = result.dropoffNotes || 'None';
-
-            quoteDetailsDisplay.style.display = 'block'; // Show the quote details section
-
-        } else if (data.action === 'book') {
-            // Display booking success message
-             if (resultsArea) {
-                 resultsArea.innerHTML = `<div class="text-center p-4 bg-green-100 text-green-800 rounded-lg">
-                                            <h3 class="text-lg font-semibold mb-2">Booking Request Sent!</h3>
-                                            <p>${result.message || 'You will be contacted shortly to confirm.'}</p>
-                                         </div>`;
-                 resultsArea.style.display = 'block';
-            }
-            // Buttons remain disabled after successful booking
-        }
+        quoteDetailsDisplay.style.display = 'block'; // Show the quote details section
 
     } catch (error) {
         // --- Handle ERROR response ---
         console.error(`Error submitting ${data.action} request:`, error);
         errorDisplay.textContent = error.message || `An unknown error occurred during ${data.action}.`;
-        quoteDetailsDisplay.style.display = 'none'; // Hide details section on error
-
-        // Re-enable buttons only if it was a booking attempt that failed
-        if (isBookingAction) {
-             if (bookNowBtn) { bookNowBtn.disabled = false; bookNowBtn.innerText = 'Book Now'; }
-             if (clearFormBtn) { clearFormBtn.disabled = false; }
-        }
+        quoteDetailsDisplay.style.display = 'none';
     } finally {
-        // This block runs always
+        // Runs whether fetch succeeded or failed
         console.log('Fetch request finished.');
         if (loadingIndicator) loadingIndicator.style.display = 'none'; // Hide loading
-        // Restore the correct Submit button state only if it's NOT a successful booking
-        if (activeSubmitButton && !(data.action === 'book' && !errorDisplay.textContent)) { // Restore unless booking succeeded
+        // Restore the correct Submit button state
+        if (activeSubmitButton) {
              if(activeSubmitButton.dataset.originalText) {
                 activeSubmitButton.disabled = false;
                 activeSubmitButton.innerText = activeSubmitButton.dataset.originalText;
+             } else { // Fallback if original text wasn't stored
+                 activeSubmitButton.disabled = false;
+                 activeSubmitButton.innerText = 'Search';
              }
         }
     }
