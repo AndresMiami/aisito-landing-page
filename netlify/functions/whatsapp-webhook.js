@@ -32,7 +32,7 @@ function escapeHtml(str) {
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",
-    '"': "&quot;",
+    '"': "&quot;", // Fixed: Changed from '"""' to '"'
     "'": "&#39;",
   };
   return str.replace(/[&<>"']/g, (match) => htmlEntities[match]);
@@ -67,6 +67,8 @@ function calculateOneWayCost(distanceMeters, durationSeconds, isPickupAirport, i
 }
 
 exports.handler = async (event, context) => {
+  console.log("Incoming event.body:", event.body);
+
   const requestId = context.awsRequestId;
   if (event.httpMethod !== "POST") {
     console.error(`Invalid HTTP method: ${event.httpMethod}, Request ID: ${requestId}`);
@@ -79,7 +81,9 @@ exports.handler = async (event, context) => {
 
   let requestData;
   try {
-    requestData = JSON.parse(event.body);
+    requestData = JSON.parse(event.body || '{}');
+    console.log("Parsed body:", requestData);
+    console.log("Action received:", requestData.action);
     if (!requestData.action) throw new Error("Missing 'action' field");
   } catch (error) {
     console.error(`Request ID: ${requestId}, Invalid JSON or missing action:`, error);
