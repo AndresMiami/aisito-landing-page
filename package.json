@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/AndresMiami/aisito-landing-page#readme",
   "dependencies": {
+    "@getbrevo/brevo": "^2.2.0",
     "@googlemaps/google-maps-services-js": "^3.4.1",
     "@sendgrid/mail": "^8.1.5",
     "axios": "^1.8.4"
