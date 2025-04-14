@@ -1,482 +1,521 @@
-// dashboard.js
+// netlify/functions/whatsapp-webhook.js
 
-// Global variables
-let map;
-let directionsService;
-let directionsRenderer;
-let lastQuoteDetails = null; // <<<<<<< ADDED: To store details for booking
+// Import necessary libraries
+const { Client } = require("@googlemaps/google-maps-services-js");
+const sgMail = require("@sendgrid/mail");
 
-// --- Helper Function to Show/Hide Airport Fields ---
-// (Moved outside for scope fix)
-function updateAirportFieldVisibility(addressInputId, isAirport) {
-    let typeContainerId, notesContainerId, hiddenInputId;
-    let typeInput, notesInput;
-    console.log(`Updating airport fields for ${addressInputId}. Is Airport: ${isAirport}`);
-    if (addressInputId === 'from-oneway' || addressInputId === 'from-hourly') {
-        typeContainerId = 'pickup-type-container'; notesContainerId = 'pickup-notes-container';
-        hiddenInputId = addressInputId === 'from-oneway' ? 'isPickupAirportOneWay' : 'isPickupAirportHourly';
-        typeInput = document.getElementById('pickup-type'); notesInput = document.getElementById('pickup-notes');
-    } else if (addressInputId === 'to-oneway') {
-        typeContainerId = 'dropoff-type-container'; notesContainerId = 'dropoff-notes-container';
-        hiddenInputId = 'isDropoffAirportOneWay';
-        typeInput = document.getElementById('dropoff-type'); notesInput = document.getElementById('dropoff-notes');
-    } else { return; }
-    const typeContainer = document.getElementById(typeContainerId);
-    const notesContainer = document.getElementById(notesContainerId);
-    const hiddenInput = document.getElementById(hiddenInputId);
-    if (!typeContainer || !notesContainer || !hiddenInput) { console.error(`Could not find all elements for ${addressInputId}`); return; }
-    if (isAirport) {
-        typeContainer.classList.remove('hidden'); notesContainer.classList.remove('hidden'); hiddenInput.value = 'true';
-    } else {
-        typeContainer.classList.add('hidden'); notesContainer.classList.add('hidden'); hiddenInput.value = 'false';
-        if (typeInput) typeInput.selectedIndex = 0; if (notesInput) notesInput.value = '';
-    }
-}
+// Initialize Google Maps client (key passed per request)
+const mapsClient = new Client({});
 
-// This function is called by the Google Maps script tag (callback=initAutocomplete)
-function initAutocomplete() {
-    console.log("Google Maps API loaded, initializing Autocomplete, Tabs, and Map.");
-    const fromOneWayInput = document.getElementById('from-oneway');
-    const toOneWayInput = document.getElementById('to-oneway');
-    const fromHourlyInput = document.getElementById('from-hourly');
-    const options = { /* ... autocomplete options ... */
-        componentRestrictions: { country: "us" },
-        fields: ["address_components", "geometry", "name", "formatted_address", "types"],
-        bounds: new google.maps.LatLngBounds(new google.maps.LatLng(25.5, -80.5), new google.maps.LatLng(26.1, -80.0)),
-        strictBounds: false,
-    };
-
-    // Initialize Autocomplete (One Way From)
-    if (fromOneWayInput) { try {
-        const autocompleteFromOneWay = new google.maps.places.Autocomplete(fromOneWayInput, options);
-        autocompleteFromOneWay.addListener('place_changed', () => {
-            const place = autocompleteFromOneWay.getPlace();
-            const isAirport = place?.types?.includes('airport') || false;
-            updateAirportFieldVisibility('from-oneway', isAirport);
-        }); } catch (e) { console.error("Error initializing Autocomplete for from-oneway:", e); }
-    } else { console.error("Input 'from-oneway' not found"); }
-
-    // Initialize Autocomplete (One Way To)
-    if (toOneWayInput) { try {
-        const autocompleteToOneWay = new google.maps.places.Autocomplete(toOneWayInput, options);
-        autocompleteToOneWay.addListener('place_changed', () => {
-            const place = autocompleteToOneWay.getPlace();
-            const isAirport = place?.types?.includes('airport') || false;
-            updateAirportFieldVisibility('to-oneway', isAirport);
-        }); } catch (e) { console.error("Error initializing Autocomplete for to-oneway:", e); }
-    } else { console.error("Input 'to-oneway' not found"); }
-
-     // Initialize Autocomplete (Hourly From)
-    if (fromHourlyInput) { try {
-        const autocompleteFromHourly = new google.maps.places.Autocomplete(fromHourlyInput, options);
-        autocompleteFromHourly.addListener('place_changed', () => {
-            const place = autocompleteFromHourly.getPlace();
-            const isAirport = place?.types?.includes('airport') || false;
-            updateAirportFieldVisibility('from-hourly', isAirport);
-        }); } catch (e) { console.error("Error initializing Autocomplete for from-hourly:", e); }
-    } else { console.error("Input 'from-hourly' not found"); }
-
-    setupFormListeners();
-    initializeTabSwitching();
-}
-
-// --- Function to get current location using Geolocation API ---
-function getCurrentLocation(inputId) {
-    console.log(`getCurrentLocation called for input: ${inputId} at ${new Date().toISOString()}`);
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition( async (position) => {
-            const { latitude, longitude } = position.coords;
-            console.log(`Geolocation retrieved: Lat ${latitude}, Lng ${longitude}`);
-            const geocoder = new google.maps.Geocoder();
-            const latlng = { lat: latitude, lng: longitude };
-            try {
-                const response = await new Promise((resolve, reject) => {
-                    geocoder.geocode({ location: latlng }, (results, status) => {
-                        if (status === 'OK' && results[0]) { resolve(results); }
-                        else { reject(new Error('Geocoding failed: ' + status)); }
-                    });
-                });
-                const address = response[0].formatted_address;
-                console.log(`Geocoded address: ${address}`);
-                const inputField = document.getElementById(inputId);
-                if (inputField) {
-                    inputField.value = address;
-                    console.log(`Updated input '${inputId}' with address: ${address}`);
-                    updateAirportFieldVisibility(inputId, false);
-                } else { console.error(`Input field with ID '${inputId}' not found.`); }
-            } catch (error) {
-                console.error('Error geocoding location:', error);
-                alert('Unable to retrieve address for your location. Please try again.');
-            }
-        }, (error) => { /* ... error handling ... */
-             console.error('Geolocation error:', error);
-             let errorMessage = 'Unable to retrieve your location.';
-             switch(error.code) {
-                 case error.PERMISSION_DENIED: errorMessage = 'Location access denied.'; break;
-                 case error.POSITION_UNAVAILABLE: errorMessage = 'Location information unavailable.'; break;
-                 case error.TIMEOUT: errorMessage = 'Location request timed out.'; break;
-             }
-             alert(errorMessage);
-        }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
-    } else { alert('Geolocation is not supported by your browser.'); }
-}
-
-// --- Setup form AND button listeners ---
-function setupFormListeners() {
-    const oneWayForm = document.getElementById('one-way-form');
-    const hourlyForm = document.getElementById('by-the-hour-form');
-    const oneWayLocationBtn = document.getElementById('get-location-oneway-btn');
-    const hourlyLocationBtn = document.getElementById('get-location-hourly-btn');
-    const clearFormBtn = document.getElementById('clear-form-btn');
-    const bookNowBtn = document.getElementById('book-now-btn'); // <<<<< ADDED: Get Book Now button
-
-    // Form submit listeners
-    if (oneWayForm) { oneWayForm.addEventListener('submit', handleOneWaySubmit); console.log("Submit listener added to one-way form."); }
-    else { console.error("One-way form element not found."); }
-    if (hourlyForm) { hourlyForm.addEventListener('submit', handleHourlySubmit); console.log("Submit listener added to hourly form."); }
-    else { console.error("Hourly form element not found."); }
-
-    // Location button listeners
-    if (oneWayLocationBtn) { oneWayLocationBtn.addEventListener('click', () => getCurrentLocation('from-oneway')); console.log("Location listener added to one-way button."); }
-    else { console.warn("One-way location button not found."); }
-    if (hourlyLocationBtn) { hourlyLocationBtn.addEventListener('click', () => getCurrentLocation('from-hourly')); console.log("Location listener added to hourly button."); }
-    else { console.warn("Hourly location button not found."); }
-
-    // Clear Form button listener
-    if (clearFormBtn) { /* ... clear button logic ... */
-        clearFormBtn.addEventListener('click', () => {
-            console.log('Clear Form button clicked');
-            const resultsArea = document.getElementById('quote-results-area');
-            const errorDisplay = document.getElementById('quote-error');
-            const oneWayFormActive = !document.getElementById('one-way-form').classList.contains('hidden');
-            const hourlyFormActive = !document.getElementById('by-the-hour-form').classList.contains('hidden');
-            if (resultsArea) resultsArea.style.display = 'none';
-            if (errorDisplay) errorDisplay.textContent = '';
-            lastQuoteDetails = null; // <<<<< ADDED: Clear stored quote details
-            if (oneWayFormActive) {
-                document.getElementById('one-way-form').reset();
-                document.getElementById('isPickupAirportOneWay').value = 'false';
-                document.getElementById('isDropoffAirportOneWay').value = 'false';
-                updateAirportFieldVisibility('from-oneway', false); updateAirportFieldVisibility('to-oneway', false);
-                console.log('One-way form cleared.');
-            } else if (hourlyFormActive) {
-                document.getElementById('by-the-hour-form').reset();
-                document.getElementById('isPickupAirportHourly').value = 'false';
-                updateAirportFieldVisibility('from-hourly', false);
-                console.log('Hourly form cleared.');
-            }
-        });
-        console.log("Clear form listener added.");
-    } else { console.warn("Clear form button not found."); }
-
-    // ---> ADDED: Listener for Book Now button <---
-    if (bookNowBtn) {
-        bookNowBtn.addEventListener('click', handleBookingSubmit); // Call new handler function
-        console.log("Book Now listener added.");
-    } else {
-        console.warn("Book Now button not found."); // Should exist inside results area
-    }
-}
-
-// --- Function to handle tab switching ---
-function initializeTabSwitching() {
-    // ... (tab switching logic remains the same - includes hiding results area) ...
-    const oneWayTab = document.getElementById('one-way-tab');
-    const byTheHourTab = document.getElementById('by-the-hour-tab');
-    const oneWayForm = document.getElementById('one-way-form');
-    const byTheHourForm = document.getElementById('by-the-hour-form');
-    const resultsArea = document.getElementById('quote-results-area');
-    const errorDisplay = document.getElementById('quote-error');
-
-    if (!oneWayTab || !byTheHourTab || !oneWayForm || !byTheHourForm) { console.error("Tab/form elements missing."); return; }
-    const tabs = [oneWayTab, byTheHourTab]; const forms = [oneWayForm, byTheHourForm];
-
-    tabs.forEach((tab) => {
-        tab.addEventListener('click', (event) => {
-            console.log('Tab clicked, hiding results area.');
-            if (resultsArea) resultsArea.style.display = 'none'; // Hide results
-            if (errorDisplay) errorDisplay.textContent = '';     // Clear errors
-            lastQuoteDetails = null; // <<<<< ADDED: Clear stored quote details on tab switch
-
-            tabs.forEach((t) => t.classList.remove('active'));
-            forms.forEach((f) => f.classList.add('hidden'));
-            const clickedTab = event.currentTarget; clickedTab.classList.add('active');
-            const targetFormId = clickedTab.getAttribute('data-target');
-            const targetForm = document.getElementById(targetFormId);
-            if (targetForm) { targetForm.classList.remove('hidden'); }
-             else { console.warn(`Target form '${targetFormId}' not found.`); }
-        });
-    });
-     // Initial load logic remains the same
-     const initiallyActiveTab = document.querySelector('.tab-button.active'); /*...*/
-     if (initiallyActiveTab) { /* ... */ } else { /* ... */ }
-}
+// Log environment variable presence (not values) for debugging
+console.log("Environment variables configured:", {
+  hasMapsKey: !!process.env.BACKEND_MAPS_API_KEY,
+  hasSendGridKey: !!process.env.SENDGRID_API_KEY,
+  hasToEmail: !!process.env.TO_EMAIL_ADDRESS,
+  hasFromEmail: !!process.env.FROM_EMAIL_ADDRESS,
+});
 
 // ==================================================
-// == FORM SUBMISSION LOGIC ==
+// == PRICING CONFIGURATION == (Your original values)
+// ==================================================
+const ONE_WAY_BASE_FARE_USD = 10.00;
+const ONE_WAY_RATE_PER_KM_USD = 1.12; // Approx $1.80 per mile
+const ONE_WAY_RATE_PER_MINUTE_USD = 0.35;
+const MINIMUM_ONE_WAY_FARE_USD = 25.00;
+const HOURLY_RATE_USD = 75.00;
+const HOURLY_MINIMUM_HOURS = 3;
+const PEAK_MULTIPLIER = 1.2;
+const PEAK_HOUR_RANGES = [{ start: 7, end: 9 }, { start: 17, end: 19 }, { start: 22, end: 24 }];
+const AIRPORT_PICKUP_FEE_USD = 10.00;
+
+// ==================================================
+// == HELPER FUNCTIONS ==
 // ==================================================
 
-// --- Handle One-Way Form Submission (for getting quote) ---
-async function handleOneWaySubmit(event) {
-    event.preventDefault(); console.log('Handling one-way form submission...');
-    const submitButton = event.target.querySelector('button[type="submit"]'); /*...*/
-    const resultsArea = document.getElementById('quote-results-area'); /*...*/
-    const loadingIndicator = document.getElementById('loading-indicator'); /*...*/
-    const errorDisplay = document.getElementById('quote-error'); /*...*/
-    const quoteDetailsDisplay = document.getElementById('quote-details'); /*...*/
-
-    // Reset state
-    lastQuoteDetails = null; // <<<<< ADDED: Clear previous quote data on new search
-    if (resultsArea) resultsArea.style.display = 'block';
-    if (quoteDetailsDisplay) quoteDetailsDisplay.style.display = 'none';
-    if (errorDisplay) errorDisplay.textContent = '';
-    if (loadingIndicator) loadingIndicator.style.display = 'block';
-    submitButton.disabled = true; submitButton.innerText = 'Searching...';
-
-    // Gather form data
-    const formData = {
-        action: 'getQuote', // <<<<< Specify action
-        type: 'one-way',
-        pickupAddress: document.getElementById('from-oneway').value,
-        dropoffAddress: document.getElementById('to-oneway').value,
-        pickupDate: document.getElementById('date-oneway').value,
-        pickupTime: document.getElementById('time-oneway').value,
-        pickupType: document.getElementById('pickup-type').value || null,
-        pickupNotes: document.getElementById('pickup-notes').value || null,
-        dropoffType: document.getElementById('dropoff-type').value || null,
-        dropoffNotes: document.getElementById('dropoff-notes').value || null,
-        isPickupAirport: document.getElementById('isPickupAirportOneWay').value,
-        isDropoffAirport: document.getElementById('isDropoffAirportOneWay').value,
-    };
-    // Basic validation
-    if (!formData.pickupAddress || !formData.dropoffAddress || !formData.pickupDate || !formData.pickupTime) {
-        if (errorDisplay) errorDisplay.textContent = 'Please fill in all required fields.';
-        if (loadingIndicator) loadingIndicator.style.display = 'none';
-        submitButton.disabled = false; submitButton.innerText = 'Search';
-        return;
-    }
-    await submitRequest(formData); // Use generic submit function
-    submitButton.disabled = false; submitButton.innerText = 'Search'; // Restore button state
+// Helper to escape HTML characters for email safety
+function escapeHtml(str) {
+  if (typeof str !== "string") return str;
+  const htmlEntities = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  };
+  return str.replace(/[&<>"']/g, (match) => htmlEntities[match]);
 }
 
-// --- Handle Hourly Form Submission (for getting quote) ---
-async function handleHourlySubmit(event) {
-    event.preventDefault(); console.log('Handling hourly form submission...');
-    const submitButton = event.target.querySelector('button[type="submit"]'); /*...*/
-    const resultsArea = document.getElementById('quote-results-area'); /*...*/
-    const loadingIndicator = document.getElementById('loading-indicator'); /*...*/
-    const errorDisplay = document.getElementById('quote-error'); /*...*/
-    const quoteDetailsDisplay = document.getElementById('quote-details'); /*...*/
-
-     // Reset state
-    lastQuoteDetails = null; // <<<<< ADDED: Clear previous quote data on new search
-    if (resultsArea) resultsArea.style.display = 'block';
-    if (quoteDetailsDisplay) quoteDetailsDisplay.style.display = 'none';
-    if (errorDisplay) errorDisplay.textContent = '';
-    if (loadingIndicator) loadingIndicator.style.display = 'block';
-    submitButton.disabled = true; submitButton.innerText = 'Searching...';
-
-    // Gather form data
-    const formData = {
-        action: 'getQuote', // <<<<< Specify action
-        type: 'hourly',
-        pickupAddress: document.getElementById('from-hourly').value,
-        durationHours: document.getElementById('duration-hourly').value,
-        pickupDate: document.getElementById('date-hourly').value,
-        pickupTime: document.getElementById('time-hourly').value,
-        isPickupAirport: document.getElementById('isPickupAirportHourly').value,
-    };
-    // Basic validation
-    if (!formData.pickupAddress || !formData.durationHours || !formData.pickupDate || !formData.pickupTime) {
-         if (errorDisplay) errorDisplay.textContent = 'Please fill in all fields.';
-         if (loadingIndicator) loadingIndicator.style.display = 'none';
-         submitButton.disabled = false; submitButton.innerText = 'Search';
-         return;
+// Helper to check if a time falls within peak hours
+function isPeakTime(timeStr) {
+  if (!timeStr || typeof timeStr !== "string" || !/^\d{2}:\d{2}$/.test(timeStr)) {
+    console.log(`Peak check: Invalid time format: ${timeStr}`);
+    return false;
+  }
+  try {
+    const [hourStr] = timeStr.split(":");
+    const hour = parseInt(hourStr, 10);
+    if (isNaN(hour) || hour < 0 || hour > 23) {
+      console.log(`Peak check: Invalid hour value: ${hour}`);
+      return false;
     }
-    await submitRequest(formData); // Use generic submit function
-    submitButton.disabled = false; submitButton.innerText = 'Search'; // Restore button state
+    for (const range of PEAK_HOUR_RANGES) {
+      if (hour >= range.start && hour < range.end) {
+        console.log(`Peak check: Time ${timeStr} is peak`);
+        return true;
+      }
+    }
+  } catch (e) {
+    console.error("Error parsing peak time:", e);
+    return false;
+  }
+  console.log(`Peak check: Time ${timeStr} is NOT peak`);
+  return false;
 }
 
-// ---> ADDED: Handle Book Now Button Click <---
-async function handleBookingSubmit() {
-    console.log('Handling booking submission...');
-    const bookNowBtn = document.getElementById('book-now-btn');
-    const resultsArea = document.getElementById('quote-results-area');
-    const errorDisplay = document.getElementById('quote-error');
-    const quoteDetailsDisplay = document.getElementById('quote-details'); // To potentially hide later
-
-    // Check if we have stored quote details
-    if (!lastQuoteDetails) {
-        console.error("No quote details found to book.");
-        if(errorDisplay) errorDisplay.textContent = 'Cannot book. Please get a valid quote first.';
-        // Make sure results area is visible to show the error
-        if (resultsArea) resultsArea.style.display = 'block';
-        if (quoteDetailsDisplay) quoteDetailsDisplay.style.display = 'none';
-        return;
-    }
-
-    // Disable button, show loading state
-    if (bookNowBtn) {
-         bookNowBtn.disabled = true;
-         bookNowBtn.innerText = 'Booking...';
-         // Also disable clear button during booking attempt
-         document.getElementById('clear-form-btn').disabled = true;
-    }
-    if(errorDisplay) errorDisplay.textContent = ''; // Clear previous errors in the dedicated error spot
-
-    // Construct payload for backend 'book' action
-    // We pass the essential details needed by the backend for the email
-    const bookingData = {
-        action: 'book',
-        // Ride details from the stored quote/form inputs
-        type: lastQuoteDetails.type,
-        pickupAddress: lastQuoteDetails.pickupAddress,
-        dropoffAddress: lastQuoteDetails.dropoffAddress, // Will be null/undefined if hourly
-        pickupDate: lastQuoteDetails.pickupDate,
-        pickupTime: lastQuoteDetails.pickupTime,
-        durationHours: lastQuoteDetails.durationHours, // Will be null/undefined if one-way
-        isPickupAirport: lastQuoteDetails.isPickupAirport, // Pass boolean/string as stored
-        isDropoffAirport: lastQuoteDetails.isDropoffAirport, // Pass boolean/string as stored
-        pickupType: lastQuoteDetails.pickupType,
-        pickupNotes: lastQuoteDetails.pickupNotes,
-        dropoffType: lastQuoteDetails.dropoffType,
-        dropoffNotes: lastQuoteDetails.dropoffNotes,
-        // Pass back the specific quote details displayed to the user
-        quotePrice: lastQuoteDetails.quotePrice,
-        quoteDistance: lastQuoteDetails.quoteDistance,
-        quoteDuration: lastQuoteDetails.quoteDuration,
-        // Add passenger placeholders (enhance later by adding form fields)
-        passengerName: 'N/A (Web Form)',
-        passengerPhone: 'N/A',
-        passengerEmail: 'N/A'
-    };
-
-    console.log('Sending booking data:', bookingData);
-
-    // Use the generic submitRequest function
-    await submitRequest(bookingData, true); // Pass true to indicate it's a booking action
-
-    // Re-enable buttons only if booking failed (handled in submitRequest's catch)
-    // If successful, buttons remain disabled / UI shows success message
+// Cost calculation for one-way trips using original constants
+function calculateOneWayCost(distanceMeters, durationSeconds, isPickupAirport, isDropoffAirport, pickupTimeStr) {
+  if (typeof distanceMeters !== "number" || typeof durationSeconds !== "number") {
+    console.error("Invalid route details for one-way cost calculation:", { distanceMeters, durationSeconds });
+    return "N/A";
+  }
+  const distanceKm = distanceMeters / 1000;
+  const durationMinutes = durationSeconds / 60;
+  let cost = ONE_WAY_BASE_FARE_USD + ONE_WAY_RATE_PER_KM_USD * distanceKm + ONE_WAY_RATE_PER_MINUTE_USD * durationMinutes;
+  console.log(`Base calculated cost (before adjustments): $${cost.toFixed(2)}`);
+  if (isPeakTime(pickupTimeStr)) {
+    cost *= PEAK_MULTIPLIER;
+    console.log(`Applied peak multiplier. Cost now: $${cost.toFixed(2)}`);
+  }
+  if (isPickupAirport) {
+    cost += AIRPORT_PICKUP_FEE_USD;
+    console.log(`Added airport pickup fee. Cost now: $${cost.toFixed(2)}`);
+  }
+  if (isDropoffAirport) {
+    cost += AIRPORT_PICKUP_FEE_USD;
+    console.log(`Added airport dropoff fee. Cost now: $${cost.toFixed(2)}`);
+  }
+  cost = Math.max(cost, MINIMUM_ONE_WAY_FARE_USD);
+  console.log(`Final one-way cost: $${cost.toFixed(2)}`);
+  return cost.toFixed(2);
 }
 
+// ==========================================================
+// == MAIN HANDLER FUNCTION ==
+// ==========================================================
+exports.handler = async (event, context) => {
+  try {
+    // Validate HTTP method
+    if (event.httpMethod !== "POST") {
+      console.error(`Invalid HTTP method: ${event.httpMethod}, Request ID: ${context.awsRequestId}`);
+      return {
+        statusCode: 405,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: "Method Not Allowed" }),
+      };
+    }
+    console.log(`Request ID: ${context.awsRequestId}, Body:`, event.body);
 
-// --- UPDATED: Reusable Fetch Function (Handles both Quote and Book) ---
-async function submitRequest(data, isBookingAction = false) {
-    const resultsArea = document.getElementById('quote-results-area');
-    const loadingIndicator = document.getElementById('loading-indicator');
-    const errorDisplay = document.getElementById('quote-error');
-    const quoteDetailsDisplay = document.getElementById('quote-details');
-    const priceDisplay = document.getElementById('quote-price');
-    const distanceDisplay = document.getElementById('quote-distance');
-    const durationDisplay = document.getElementById('quote-duration');
-    const pickupTypeRow = document.getElementById('pickup-type-row');
-    const pickupNotesRow = document.getElementById('pickup-notes-row');
-    const dropoffTypeRow = document.getElementById('dropoff-type-row');
-    const dropoffNotesRow = document.getElementById('dropoff-notes-row');
-    const pickupTypeDisplay = document.getElementById('quote-pickup-type');
-    const pickupNotesDisplay = document.getElementById('quote-pickup-notes');
-    const dropoffTypeDisplay = document.getElementById('quote-dropoff-type');
-    const dropoffNotesDisplay = document.getElementById('quote-dropoff-notes');
-    const bookNowBtn = document.getElementById('book-now-btn');
-    const clearFormBtn = document.getElementById('clear-form-btn');
-
-
-    // Check if elements exist
-     if ( /* ... element checks ... */
-        !resultsArea || !loadingIndicator || !errorDisplay || !quoteDetailsDisplay ||
-        !priceDisplay || !distanceDisplay || !durationDisplay ||
-        !pickupTypeRow || !pickupNotesRow || !dropoffTypeRow || !dropoffNotesRow ||
-        !pickupTypeDisplay || !pickupNotesDisplay || !dropoffTypeDisplay || !dropoffNotesDisplay ||
-        !bookNowBtn || !clearFormBtn
-    ) { console.error("Critical Error: One or more UI elements not found!"); return; }
-
-
-    const endpoint = '/.netlify/functions/whatsapp-webhook';
-    console.log(`Sending data to endpoint: ${endpoint}`);
-    console.log('Data being sent:', data);
-
+    // Parse request body
+    let requestData;
     try {
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', },
-            body: JSON.stringify(data),
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            // Throw error using message from parsed JSON body if possible
-            throw new Error(result.message || `Request failed with status ${response.status}`);
-        }
-
-        console.log('Received response from server:', result);
-        errorDisplay.textContent = ''; // Clear previous errors on success
-
-        // --- Handle SUCCESS response ---
-        if (data.action === 'getQuote') {
-            // Store details for potential booking
-            lastQuoteDetails = {
-                ...data, // Original form inputs
-                quotePrice: result.price, // Results from backend
-                quoteDistance: result.distance,
-                quoteDuration: result.duration,
-                // Use results from backend for airport flags/details for consistency
-                isPickupAirport: result.isPickupAirport,
-                isDropoffAirport: result.isDropoffAirport,
-                pickupType: result.pickupType,
-                pickupNotes: result.pickupNotes,
-                dropoffType: result.dropoffType,
-                dropoffNotes: result.dropoffNotes
-            };
-            console.log('Stored lastQuoteDetails for booking:', lastQuoteDetails);
-
-            // Display quote details in HTML
-            priceDisplay.textContent = result.price || 'N/A';
-            distanceDisplay.textContent = result.distance || '---';
-            durationDisplay.textContent = result.duration || 'N/A';
-
-            // Show/Hide airport result rows
-            result.isPickupAirport ? pickupTypeRow.style.display = 'flex' : pickupTypeRow.style.display = 'none';
-            if(result.isPickupAirport) pickupTypeDisplay.textContent = result.pickupType ? result.pickupType.charAt(0).toUpperCase() + result.pickupType.slice(1) : 'N/A';
-            result.isPickupAirport ? pickupNotesRow.style.display = 'flex' : pickupNotesRow.style.display = 'none';
-             if(result.isPickupAirport) pickupNotesDisplay.textContent = result.pickupNotes || 'None';
-
-            result.isDropoffAirport ? dropoffTypeRow.style.display = 'flex' : dropoffTypeRow.style.display = 'none';
-            if(result.isDropoffAirport) dropoffTypeDisplay.textContent = result.dropoffType ? result.dropoffType.charAt(0).toUpperCase() + result.dropoffType.slice(1) : 'N/A';
-            result.isDropoffAirport ? dropoffNotesRow.style.display = 'flex' : dropoffNotesRow.style.display = 'none';
-            if(result.isDropoffAirport) dropoffNotesDisplay.textContent = result.dropoffNotes || 'None';
-
-            quoteDetailsDisplay.style.display = 'block'; // Show the quote details section
-
-        } else if (data.action === 'book') {
-            // Display booking success message
-             if (resultsArea) {
-                 resultsArea.innerHTML = `<div class="text-center p-4 bg-green-100 text-green-800 rounded-lg">
-                                            <h3 class="text-lg font-semibold mb-2">Booking Request Sent!</h3>
-                                            <p>${result.message || 'You will be contacted shortly to confirm.'}</p>
-                                         </div>`;
-                 resultsArea.style.display = 'block'; // Ensure it's visible
-            }
-            // Buttons remain disabled after successful booking
-        }
-
+      if (!event.body) throw new Error("Request body is empty");
+      requestData = JSON.parse(event.body);
+      console.log("Parsed request data:", requestData);
     } catch (error) {
-        // --- Handle ERROR response ---
-        console.error(`Error submitting ${data.action} request:`, error);
-        errorDisplay.textContent = error.message || `An unknown error occurred during ${data.action}.`;
-        quoteDetailsDisplay.style.display = 'none'; // Hide details section on error
-
-        // Re-enable buttons only if it was a booking attempt that failed
-        if (isBookingAction) {
-             if (bookNowBtn) { bookNowBtn.disabled = false; bookNowBtn.innerText = 'Book Now'; }
-             if (clearFormBtn) { clearFormBtn.disabled = false; }
-        }
-    } finally {
-        // This block runs whether the fetch succeeded or failed
-        console.log('Fetch request finished.');
-        if (loadingIndicator) loadingIndicator.style.display = 'none'; // Hide loading indicator
+      console.error(`Error parsing request body, Request ID: ${context.awsRequestId}:`, error);
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: "Bad request: Invalid JSON format" }),
+      };
     }
-}
 
-// Note: initAutocomplete is called automatically by the Google Maps script callback
+    // Validate action
+    if (!requestData.action) {
+      console.error(`Missing action in request data, Request ID: ${context.awsRequestId}`);
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: "Bad request: Missing 'action' field" }),
+      };
+    }
+
+    // --- ROUTE BASED ON ACTION ---
+
+    // --- Action: getQuote ---
+    if (requestData.action === "getQuote") {
+      console.log(`Processing 'getQuote' action, Request ID: ${context.awsRequestId}...`);
+
+      // Validate required fields
+      if (!requestData.type || !requestData.pickupAddress || !requestData.pickupDate || !requestData.pickupTime) {
+        console.error("Quote request missing required fields:", {
+          type: !!requestData.type,
+          pickupAddress: !!requestData.pickupAddress,
+          pickupDate: !!requestData.pickupDate,
+          pickupTime: !!requestData.pickupTime,
+        });
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: `Bad request: Missing required fields (${[
+              !requestData.type && "type",
+              !requestData.pickupAddress && "pickupAddress",
+              !requestData.pickupDate && "pickupDate",
+              !requestData.pickupTime && "pickupTime",
+            ]
+              .filter(Boolean)
+              .join(", ")})`,
+          }),
+        };
+      }
+
+      // --- One-Way Quote ---
+      if (requestData.type === "one-way") {
+        if (!requestData.dropoffAddress) {
+          console.error(`Missing dropoffAddress for one-way quote, Request ID: ${context.awsRequestId}`);
+          return {
+            statusCode: 400,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: "Bad request: Missing dropoffAddress for one-way trip" }),
+          };
+        }
+
+        // Validate Google Maps API key
+        if (!process.env.BACKEND_MAPS_API_KEY) {
+          console.error(`BACKEND_MAPS_API_KEY not set, Request ID: ${context.awsRequestId}`);
+          return {
+            statusCode: 500,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: "Server error: Google Maps API key not configured" }),
+          };
+        }
+
+        let distanceText, durationText, priceValue;
+        try {
+          console.log("Calling Google Maps Distance Matrix API for:", {
+            pickup: requestData.pickupAddress,
+            dropoff: requestData.dropoffAddress,
+          });
+          const response = await mapsClient.distancematrix({
+            params: {
+              origins: [requestData.pickupAddress],
+              destinations: [requestData.dropoffAddress],
+              key: process.env.BACKEND_MAPS_API_KEY,
+              units: "metric",
+              mode: "driving",
+            },
+            timeout: 5000,
+          });
+
+          console.log("Distance Matrix API Response Status:", response.data.status);
+          if (response.data.status === "OVER_QUERY_LIMIT") {
+            console.warn("Google Maps API quota exceeded, consider increasing limits");
+          }
+          if (response.data.status !== "OK" || response.data.rows[0].elements[0].status !== "OK") {
+            console.error("Distance Matrix API error:", {
+              status: response.data.status,
+              elementStatus: response.data.rows[0].elements[0].status,
+              errorMessage: response.data.error_message || "None",
+            });
+            throw new Error(`Unable to calculate route: ${response.data.rows[0].elements[0].status}`);
+          }
+
+          const element = response.data.rows[0].elements[0];
+          distanceText = element.distance.text;
+          durationText = element.duration.text;
+          const distanceMeters = element.distance.value;
+          const durationSeconds = element.duration.value;
+
+          // Calculate price
+          const isPickupAirport = requestData.isPickupAirport === "true";
+          const isDropoffAirport = requestData.isDropoffAirport === "true";
+          priceValue = calculateOneWayCost(
+            distanceMeters,
+            durationSeconds,
+            isPickupAirport,
+            isDropoffAirport,
+            requestData.pickupTime
+          );
+        } catch (error) {
+          console.error(`Error during Google Maps API call or price calculation, Request ID: ${context.awsRequestId}:`, error);
+          if (error.code === "ETIMEDOUT") {
+            return {
+              statusCode: 500,
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ message: "Failed to calculate quote: Google Maps API timed out" }),
+            };
+          }
+          return {
+            statusCode: 500,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: `Failed to calculate quote: ${error.message}` }),
+          };
+        }
+
+        // Return quote response
+        const responsePayload = {
+          message: "Quote calculated successfully",
+          price: priceValue !== "N/A" ? `$${priceValue}` : "N/A",
+          distance: distanceText,
+          duration: durationText,
+          isPickupAirport: requestData.isPickupAirport === "true",
+          isDropoffAirport: requestData.isDropoffAirport === "true",
+          pickupType: requestData.pickupType || null,
+          pickupNotes: requestData.pickupNotes || null,
+          dropoffType: requestData.dropoffType || null,
+          dropoffNotes: requestData.dropoffNotes || null,
+        };
+        console.log("Sending one-way quote response:", responsePayload);
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(responsePayload),
+        };
+      }
+
+      // --- Hourly Quote ---
+      else if (requestData.type === "hourly") {
+        if (!requestData.durationHours) {
+          console.error(`Missing durationHours for hourly quote, Request ID: ${context.awsRequestId}`);
+          return {
+            statusCode: 400,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: "Bad request: Missing durationHours for hourly trip" }),
+          };
+        }
+        const duration = parseInt(requestData.durationHours, 10);
+        const isPickupAirport = requestData.isPickupAirport === "true";
+
+        if (isNaN(duration) || duration < HOURLY_MINIMUM_HOURS) {
+          console.error(`Invalid durationHours: ${requestData.durationHours}, Request ID: ${context.awsRequestId}`);
+          return {
+            statusCode: 400,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              message: `Bad request: durationHours must be a number and at least ${HOURLY_MINIMUM_HOURS} hours`,
+            }),
+          };
+        }
+
+        // Calculate price
+        let cost = HOURLY_RATE_USD * duration;
+        console.log(`Base hourly cost (${duration} hrs): $${cost.toFixed(2)}`);
+        if (isPeakTime(requestData.pickupTime)) {
+          cost *= PEAK_MULTIPLIER;
+          console.log(`Applied peak multiplier. Cost now: $${cost.toFixed(2)}`);
+        }
+        if (isPickupAirport) {
+          cost += AIRPORT_PICKUP_FEE_USD;
+          console.log(`Added airport pickup fee. Cost now: $${cost.toFixed(2)}`);
+        }
+        const estimatedCostValue = cost.toFixed(2);
+
+        // Return quote response
+        const responsePayload = {
+          message: "Quote calculated successfully",
+          price: `$${estimatedCostValue}`,
+          distance: "N/A",
+          duration: `${duration} hour${duration > 1 ? "s" : ""}`,
+          isPickupAirport: requestData.isPickupAirport === "true",
+          isDropoffAirport: false,
+          pickupType: requestData.pickupType || null,
+          pickupNotes: requestData.pickupNotes || null,
+          dropoffType: null,
+          dropoffNotes: null,
+        };
+        console.log("Sending hourly quote response:", responsePayload);
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(responsePayload),
+        };
+      } else {
+        console.error(`Invalid ride type for quote: ${requestData.type}, Request ID: ${context.awsRequestId}`);
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: "Bad request: Invalid ride type. Must be 'one-way' or 'hourly'" }),
+        };
+      }
+    }
+
+    // --- Action: book ---
+    else if (requestData.action === "book") {
+      console.log(`Processing 'book' action, Request ID: ${context.awsRequestId}...`);
+
+      // Validate environment variables
+      const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
+      const TO_EMAIL = process.env.TO_EMAIL_ADDRESS;
+      const FROM_EMAIL = process.env.FROM_EMAIL_ADDRESS || TO_EMAIL;
+
+      if (!SENDGRID_API_KEY || !TO_EMAIL || !FROM_EMAIL) {
+        console.error("Missing SendGrid environment variables:", {
+          hasApiKey: !!SENDGRID_API_KEY,
+          hasToEmail: !!TO_EMAIL,
+          hasFromEmail: !!FROM_EMAIL,
+        });
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: "Booking failed: Email service configuration error" }),
+        };
+      }
+
+      // Initialize SendGrid API key
+      try {
+        sgMail.setApiKey(SENDGRID_API_KEY);
+      } catch (error) {
+        console.error(`Failed to set SendGrid API key, Request ID: ${context.awsRequestId}:`, error);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: "Booking failed: Email service initialization error" }),
+        };
+      }
+
+      // Extract booking details
+      const {
+        type: rideType,
+        pickupAddress,
+        dropoffAddress,
+        pickupDate,
+        pickupTime,
+        durationHours,
+        quotePrice,
+        quoteDistance,
+        quoteDuration,
+        passengerName = "N/A",
+        passengerPhone = "N/A",
+        passengerEmail = "N/A",
+        pickupType = null,
+        pickupNotes = null,
+        dropoffType = null,
+        dropoffNotes = null,
+        isPickupAirport = requestData.isPickupAirport === "true",
+        isDropoffAirport = requestData.isDropoffAirport === "true",
+      } = requestData;
+
+      // Validate essential booking data
+      if (
+        !rideType ||
+        !pickupAddress ||
+        !pickupDate ||
+        !pickupTime ||
+        !quotePrice ||
+        (rideType === "one-way" && !dropoffAddress) ||
+        (rideType === "hourly" && !durationHours)
+      ) {
+        console.error("Missing essential booking data:", {
+          rideType: !!rideType,
+          pickupAddress: !!pickupAddress,
+          pickupDate: !!pickupDate,
+          pickupTime: !!pickupTime,
+          quotePrice: !!quotePrice,
+          dropoffAddress: rideType === "one-way" ? !!dropoffAddress : true,
+          durationHours: rideType === "hourly" ? !!durationHours : true,
+        });
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: `Bad request: Missing essential fields (${[
+              !rideType && "rideType",
+              !pickupAddress && "pickupAddress",
+              !pickupDate && "pickupDate",
+              !pickupTime && "pickupTime",
+              !quotePrice && "quotePrice",
+              rideType === "one-way" && !dropoffAddress && "dropoffAddress",
+              rideType === "hourly" && !durationHours && "durationHours",
+            ]
+              .filter(Boolean)
+              .join(", ")})`,
+          }),
+        };
+      }
+
+      // Format email content
+      const rideTypeText = rideType === "one-way" ? "One Way" : `By the Hour (${durationHours} hours)`;
+      const subject = `New Ride Booking Request - ${rideTypeText} - ${pickupDate}`;
+      let emailBodyHtml = `<h2>New I ❤️ Miami Ride Booking Request</h2><p>A new booking request was submitted:</p><hr>`;
+      emailBodyHtml += `<h3>Passenger Details:</h3><p><strong>Name:</strong> ${escapeHtml(passengerName)}</p><p><strong>Phone:</strong> ${escapeHtml(
+        passengerPhone
+      )}</p><p><strong>Email:</strong> ${escapeHtml(passengerEmail)}</p><hr>`;
+      emailBodyHtml += `<h3>Ride Details:</h3><p><strong>Type:</strong> ${escapeHtml(
+        rideTypeText
+      )}</p><p><strong>Pickup Date:</strong> ${escapeHtml(pickupDate)}</p><p><strong>Pickup Time:</strong> ${escapeHtml(
+        pickupTime
+      )}</p><p><strong>From:</strong> ${escapeHtml(pickupAddress)}</p>`;
+      if (isPickupAirport) {
+        emailBodyHtml += `<p><em>Pickup is at an Airport</em></p><p><strong>Pickup Type:</strong> ${escapeHtml(
+          pickupType || "N/A"
+        )}</p><p><strong>Pickup Notes:</strong> ${escapeHtml(pickupNotes || "None")}</p>`;
+      }
+      if (rideType === "one-way") {
+        emailBodyHtml += `<p><strong>To:</strong> ${escapeHtml(dropoffAddress)}</p>`;
+        if (isDropoffAirport) {
+          emailBodyHtml += `<p><em>Dropoff is at an Airport</em></p><p><strong>Dropoff Type:</strong> ${escapeHtml(
+            dropoffType || "N/A"
+          )}</p><p><strong>Dropoff Notes:</strong> ${escapeHtml(dropoffNotes || "None")}</p>`;
+        }
+      }
+      emailBodyHtml += `<hr><h3>Quote Details (at time of quote):</h3><p><strong>Quoted Price:</strong> ${escapeHtml(
+        quotePrice
+      )}</p>`;
+      if (rideType === "one-way") {
+        emailBodyHtml += `<p><strong>Est. Distance:</strong> ${escapeHtml(
+          quoteDistance || "N/A"
+        )}</p><p><strong>Est. Duration:</strong> ${escapeHtml(quoteDuration || "N/A")}</p>`;
+      }
+      emailBodyHtml += `<hr><p>Please contact the passenger ASAP to confirm.</p>`;
+
+      // Construct SendGrid message
+      const msg = {
+        to: TO_EMAIL,
+        from: FROM_EMAIL,
+        subject: subject,
+        html: emailBodyHtml,
+        ...(passengerEmail && passengerEmail !== "N/A" && { replyTo: passengerEmail }),
+      };
+
+      // Send email
+      try {
+        console.log(`Attempting SendGrid email to ${TO_EMAIL} from ${FROM_EMAIL}, Request ID: ${context.awsRequestId}...`);
+        await sgMail.send(msg);
+        console.log("Booking email sent successfully");
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: "Booking request sent successfully! You will be contacted shortly." }),
+        };
+      } catch (emailError) {
+        console.error(`Error sending email via SendGrid, Request ID: ${context.awsRequestId}:`, emailError);
+        if (emailError.response) {
+          console.error("SendGrid Error Response:", JSON.stringify(emailError.response.body || emailError.response.data || emailError.message, null, 2));
+        }
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: "Booking failed: Could not send notification email" }),
+        };
+      }
+    }
+
+    // --- Handle Unknown Action ---
+    else {
+      console.warn(`Unknown action received: ${requestData.action}, Request ID: ${context.awsRequestId}`);
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: `Bad request: Invalid action '${requestData.action}'` }),
+      };
+    }
+  } catch (error) {
+    console.error(`Unexpected top-level error in whatsapp-webhook, Request ID: ${context.awsRequestId}:`, error);
+    return {
+      statusCode: 500,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: `Server error: ${error.message}` }),
+    };
+  }
+};
