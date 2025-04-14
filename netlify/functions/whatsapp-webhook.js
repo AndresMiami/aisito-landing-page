@@ -16,7 +16,7 @@ console.log("Environment variables configured:", {
 });
 
 // ==================================================
-// == PRICING CONFIGURATION == (Your original values)
+// Pricing Configuration
 // ==================================================
 const ONE_WAY_BASE_FARE_USD = 10.00;
 const ONE_WAY_RATE_PER_KM_USD = 1.12; // Approx $1.80 per mile
@@ -25,14 +25,18 @@ const MINIMUM_ONE_WAY_FARE_USD = 25.00;
 const HOURLY_RATE_USD = 75.00;
 const HOURLY_MINIMUM_HOURS = 3;
 const PEAK_MULTIPLIER = 1.2;
-const PEAK_HOUR_RANGES = [{ start: 7, end: 9 }, { start: 17, end: 19 }, { start: 22, end: 24 }];
+const PEAK_HOUR_RANGES = [
+  { start: 7, end: 9 },
+  { start: 17, end: 19 },
+  { start: 22, end: 24 },
+];
 const AIRPORT_PICKUP_FEE_USD = 10.00;
 
 // ==================================================
-// == HELPER FUNCTIONS ==
+// Helper Functions
 // ==================================================
 
-// Helper to escape HTML characters for email safety
+// Escape HTML characters for email safety
 function escapeHtml(str) {
   if (typeof str !== "string") return str;
   const htmlEntities = {
@@ -45,7 +49,7 @@ function escapeHtml(str) {
   return str.replace(/[&<>"']/g, (match) => htmlEntities[match]);
 }
 
-// Helper to check if a time falls within peak hours
+// Check if a time falls within peak hours
 function isPeakTime(timeStr) {
   if (!timeStr || typeof timeStr !== "string" || !/^\d{2}:\d{2}$/.test(timeStr)) {
     console.log(`Peak check: Invalid time format: ${timeStr}`);
@@ -72,7 +76,7 @@ function isPeakTime(timeStr) {
   return false;
 }
 
-// Cost calculation for one-way trips using original constants
+// Calculate cost for one-way trips
 function calculateOneWayCost(distanceMeters, durationSeconds, isPickupAirport, isDropoffAirport, pickupTimeStr) {
   if (typeof distanceMeters !== "number" || typeof durationSeconds !== "number") {
     console.error("Invalid route details for one-way cost calculation:", { distanceMeters, durationSeconds });
@@ -100,7 +104,7 @@ function calculateOneWayCost(distanceMeters, durationSeconds, isPickupAirport, i
 }
 
 // ==========================================================
-// == MAIN HANDLER FUNCTION ==
+// Main Handler Function
 // ==========================================================
 exports.handler = async (event, context) => {
   try {
@@ -139,8 +143,6 @@ exports.handler = async (event, context) => {
         body: JSON.stringify({ message: "Bad request: Missing 'action' field" }),
       };
     }
-
-    // --- ROUTE BASED ON ACTION ---
 
     // --- Action: getQuote ---
     if (requestData.action === "getQuote") {
