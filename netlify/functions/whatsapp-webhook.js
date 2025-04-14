@@ -229,7 +229,7 @@ exports.handler = async (event, context) => {
           duration: `${duration} hour${duration > 1 ? "s" : ""}`,
           isPickupAirport: isPickupAirport,
           isDropoffAirport: false,
-          pickupType: requestData.pickupType || null,
+          pickupType: requestData.pickup tearingType || null,
           pickupNotes: requestData.pickupNotes || null,
           dropoffType: null,
           dropoffNotes: null,
@@ -250,17 +250,17 @@ exports.handler = async (event, context) => {
       }
     }
     
-    // ---> Action: book (Using Brevo) <---
+    // --- Action: book (Using Brevo) ---
     else if (requestData.action === "book") {
       console.log(`Processing 'book' action with Brevo, Request ID: ${requestId}...`);
 
-      // --- Get Brevo Environment Variables ---
+      // Get Brevo Environment Variables
       const BREVO_API_KEY = process.env.BREVO_API_KEY;
       const TO_EMAIL = process.env.TO_EMAIL_ADDRESS;
       const FROM_EMAIL = process.env.FROM_EMAIL_ADDRESS;
       const SENDER_NAME = process.env.FROM_NAME || "I ❤️ Miami Booking";
 
-      // --- Validate Environment Variables ---
+      // Validate Environment Variables
       if (!BREVO_API_KEY || !TO_EMAIL || !FROM_EMAIL) {
         console.error(`Request ID: ${requestId}, Missing Brevo environment variables:`, { hasApiKey: !!BREVO_API_KEY, hasToEmail: !!TO_EMAIL, hasFromEmail: !!FROM_EMAIL });
         return { 
@@ -270,10 +270,20 @@ exports.handler = async (event, context) => {
         };
       }
 
-      // --- Initialize Brevo Client ---
+      // Validate Email Formats
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(TO_EMAIL) || !emailRegex.test(FROM_EMAIL)) {
+        console.error(`Request ID: ${requestId}, Invalid email format:`, { to: TO_EMAIL, from: FROM_EMAIL });
+        return { 
+          statusCode: 500, 
+          headers: JSON_HEADER, 
+          body: JSON.stringify({ message: "Booking failed: Invalid email configuration" }) 
+        };
+      }
+
+      // Initialize Brevo Client
       let apiInstance;
       try {
-        // Create new instance of TransactionalEmailsApi and set API key
         apiInstance = new Brevo.TransactionalEmailsApi();
         apiInstance.setApiKey(BREVO_API_KEY);
       } catch (error) {
@@ -281,11 +291,11 @@ exports.handler = async (event, context) => {
         return { 
           statusCode: 500, 
           headers: JSON_HEADER, 
-          body: JSON.stringify({ message: "Booking failed: Email service initialization error." }) 
+          body: JSON.stringify({ message: "Booking failed: Email service initialization error" }) 
         };
       }
 
-      // --- Extract Booking Details ---
+      // Extract and Validate Booking Details
       const {
         type: rideType,
         pickupAddress,
@@ -307,7 +317,6 @@ exports.handler = async (event, context) => {
         isDropoffAirport = requestData.isDropoffAirport === "true"
       } = requestData;
 
-      // --- Validate essential booking data ---
       const missingBookingFields = [
         !rideType && "rideType",
         !pickupAddress && "pickupAddress",
@@ -326,7 +335,7 @@ exports.handler = async (event, context) => {
         };
       }
 
-      // --- Format Email Content ---
+      // Format Email Content
       const rideTypeText = rideType === "one-way" ? "One Way" : `By the Hour (${durationHours} hours)`;
       const subject = `New Ride Booking Request - ${rideTypeText} - ${pickupDate}`;
       let emailBodyHtml = `<h2>New I ❤️ Miami Ride Booking Request</h2><p>Request ID: ${requestId}</p><p>A new booking request was submitted:</p><hr>`;
@@ -347,31 +356,32 @@ exports.handler = async (event, context) => {
       }
       emailBodyHtml += `<hr><p>Please contact the passenger ASAP to confirm.</p>`;
 
-      // --- Construct Brevo Message Object ---
+      // Construct Brevo Message Object
       let sendSmtpEmail = new Brevo.SendSmtpEmail();
       sendSmtpEmail.sender = { email: FROM_EMAIL, name: SENDER_NAME };
       sendSmtpEmail.to = [{ email: TO_EMAIL }];
       sendSmtpEmail.subject = subject;
       sendSmtpEmail.htmlContent = emailBodyHtml;
-      if (passengerEmail && passengerEmail !== 'N/A') {
+      if (passengerEmail && passengerEmail !== 'N/A' && emailRegex.test(passengerEmail)) {
         sendSmtpEmail.replyTo = { email: passengerEmail, name: passengerName !== 'N/A' ? passengerName : undefined };
       }
 
-      // --- Send Email ---
+      // Send Email
       try {
-        console.log(`Attempting Brevo email to ${TO_EMAIL} from ${FROM_EMAIL}, Request ID: ${requestId}...`);
+        console.log(`Request ID: ${requestId}, Sending email to ${TO_EMAIL} with subject: ${subject}`);
         const brevoResponse = await apiInstance.sendTransacEmail(sendSmtpEmail);
         console.log(`Request ID: ${requestId}, Brevo send response:`, JSON.stringify(brevoResponse, null, 2));
-        console.log("Booking email sent successfully via Brevo!");
+        const successMessage = passengerEmail !== 'N/A' && emailRegex.test(passengerEmail)
+          ? "Booking request sent successfully! Check your email for confirmation."
+          : "Booking request sent successfully! You will be contacted shortly.";
         return {
           statusCode: 200,
           headers: JSON_HEADER,
-          body: JSON.stringify({ message: "Booking request sent successfully! You will be contacted shortly." }),
+          body: JSON.stringify({ message: successMessage }),
         };
       } catch (emailError) {
         console.error(`Error sending email via Brevo, Request ID: ${requestId}:`, emailError);
-        console.error("Brevo Error Details:", JSON.stringify(emailError.response?.body || emailError.response?.data || emailError.message || emailError, null, 2));
-        console.error("Error stack:", emailError.stack);
+        console.error("Brevo Error Details:", JSON.stringify(emailError.response?.body || emailError.message, null, 2));
         return {
           statusCode: 500,
           headers: JSON_HEADER,
@@ -398,4 +408,4 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({ message: `Server error: ${error.message}` }) 
     };
   }
-}; // End of exports.handler
+}; // End of exports.handler 
