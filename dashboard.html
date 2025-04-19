@@ -1,305 +1,253 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Booking - I ❤️ Miami Concierge</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
     <style>
-        :root {
-            --color-gold: #B08D57;
-            --color-gold-dark: #9A7B4F;
-            --color-teal: #00A09A;
-            --color-teal-dark: #00807A;
-            --color-teal-light-bg: #f0fdfa;
-        }
+      :root {
+          --color-gold: #B08D57;
+          --color-gold-dark: #9A7B4F;
+          --color-teal: #00A09A; /* Original Teal */
+          --color-teal-dark: #00807A;
+          --color-teal-light-bg: #f0fdfa;
+          --color-palm-green: #3CB371; /* Palm Green */
+      }
 
-        body { font-family: 'Inter', sans-serif; color: #1f2937; }
-        h1, h2, h3 { font-family: 'Playfair Display', serif; }
-        .brand-gradient-text { background: linear-gradient(to right, #f97316, #ef4444); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700; }
-        select { appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="%2300A09A" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>'); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.25em; padding-right: 2.5rem; }
+      body { font-family: 'Inter', sans-serif; color: #1f2937; }
+      h1, h2, h3, .font-playfair { font-family: 'Playfair Display', serif; }
+      .brand-gradient-text { background: linear-gradient(to right, #f97316, #ef4444); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700; }
+      select { appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="%2300A09A" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>'); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.25em; padding-right: 2.5rem; }
 
-        /* Basic Toggle Switch CSS */
-        .toggle-checkbox:checked {
-          right: 0;
-          border-color: var(--color-teal);
-        }
-        .toggle-checkbox:checked + .toggle-label {
-          background-color: var(--color-teal);
-        }
-        .toggle-checkbox {
-          appearance: none;
-          display: inline-block;
-          width: 2em; /* Adjust size */
-          height: 1em; /* Adjust size */
-          position: relative;
-          vertical-align: middle;
-          border-radius: 1em;
-          border: 1px solid #cbd5e1; /* gray-300 */
-          background-color: #e2e8f0; /* gray-200 */
-          transition: .2s ease-in-out;
-          cursor: pointer;
-        }
-        .toggle-checkbox::before {
-          content: '';
-          position: absolute;
-          top: 0.1em;
-          left: 0.1em;
-          width: 0.8em; /* Adjust dot size */
-          height: 0.8em; /* Adjust dot size */
-          border-radius: 50%;
-          background-color: white;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-          transition: .2s ease-in-out;
-        }
-        .toggle-checkbox:checked::before {
-          transform: translateX(1em); /* Should match width - dot width - 2*padding */
-        }
-
+      /* Toggle Switch CSS (No changes needed here) */
+      .toggle-checkbox { appearance: none; display: inline-block; width: 3.5em; height: 1.75em; position: relative; vertical-align: middle; border-radius: 1.75em; border: 1px solid #cbd5e1; background-color: #e2e8f0; transition: .2s ease-in-out; cursor: pointer; flex-shrink: 0; }
+      .toggle-checkbox::before { content: '🌴'; position: absolute; top: 0; left: 0.1em; width: 1.5em; height: 1.5em; line-height: 1.5em; text-align: center; font-size: 1em; transition: .2s ease-in-out; }
+      .toggle-checkbox:checked { background-color: var(--color-palm-green); border-color: var(--color-palm-green); }
+      .toggle-checkbox:checked::before { transform: translateX(1.8em); }
     </style>
-</head>
-<body class="bg-gray-100">
-
+  </head>
+  <body class="bg-gray-100">
     <header class="bg-white shadow-sm">
-        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-            <div> <a href="index.html" class="text-3xl font-bold text-gray-900"> I ❤️ <span class="brand-gradient-text">Miami</span> </a> </div>
-            <div> <span class="text-gray-600 mr-4">Welcome, [Name]!</span>
-                <a href="#" class="text-sm font-medium text-[--color-gold] hover:text-[--color-gold-dark]">Logout</a>
-            </div>
-        </nav>
+      <nav class="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div>
+          <a href="index.html" class="text-3xl font-bold text-gray-900"> I ❤️ <span class="brand-gradient-text">Miami</span> </a>
+        </div>
+        <div>
+          <span class="mr-4 text-gray-600">Welcome, [Name]!</span>
+          <a href="#" class="text-sm font-medium text-[--color-gold] hover:text-[--color-gold-dark]">Logout</a>
+        </div>
+      </nav>
     </header>
 
-    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-         <div class="w-full max-w-lg mr-auto">
+    <main class="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      <div class="mr-auto w-full max-w-lg">
+        <div class="rounded-xl bg-white p-6 shadow-md md:p-8">
+          <h2 class="font-playfair mb-6 text-center text-2xl font-bold text-gray-900">Book Your Ride / +Experience</h2>
 
-            <div class="bg-white p-6 md:p-8 rounded-xl shadow-md">
-                 <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Book Your Ride / +Experience</h2>
+          <form action="#" method="POST" id="booking-form" class="space-y-4">
+            <div class="relative">
+              <label for="from-location" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">From</label>
+              <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg>
+              </span>
+              <input type="text" name="from-location" id="from-location" required class="block w-full rounded-md border-0 py-2.5 pr-3 pl-10 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" placeholder="Address, airport, hotel, ..." />
+            </div>
 
-                 <form action="#" method="POST" id="booking-form" class="space-y-4">
+            <div class="flex items-center justify-start py-1">
+              <label for="experience-toggle" class="font-playfair mr-3 cursor-pointer text-lg font-bold text-gray-800">+ Experience</label>
+              <input type="checkbox" id="experience-toggle" class="toggle-checkbox" />
+            </div>
 
-                    <div class="relative">
-                        <label for="from-location" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">From</label>
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg>
-                        </span>
-                        <input type="text" name="from-location" id="from-location" required
-                               class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6"
-                               placeholder="Address, airport, hotel, ...">
-                         </div>
+            <div id="hourly-toggle-container" class="flex items-center justify-start py-1">
+              <label for="hourly-toggle" class="font-playfair mr-3 cursor-pointer text-lg font-bold text-gray-800">+ Hourly Chauffeur</label>
+              <input type="checkbox" id="hourly-toggle" class="toggle-checkbox" />
+            </div>
 
-                    <div class="flex items-center justify-between py-2">
-                        <label for="experience-toggle" class="text-sm font-medium text-gray-700 cursor-pointer">+ Add a Curated Experience</label>
-                        <input type="checkbox" id="experience-toggle" class="toggle-checkbox">
-                    </div>
+            <div id="to-container" class="relative pt-2">
+              <div id="to-address-container">
+                <label for="to-address" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">To</label>
+                <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg>
+                </span>
+                <input type="text" name="to-address" id="to-address" class="block w-full rounded-md border-0 py-2.5 pr-3 pl-10 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" placeholder="Address, airport, hotel, ..." />
+              </div>
 
-                    <div id="to-container" class="relative">
-                        <div id="to-address-container">
-                            <label for="to-address" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">To</label>
-                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg>
-                            </span>
-                            <input type="text" name="to-address" id="to-address"
-                                   class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6"
-                                   placeholder="Address, airport, hotel, ...">
-                        </div>
+              <div id="experience-dropdown-container" class="relative hidden">
+                <label for="experience-dropdown" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Select Experience</label>
+                <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27Z"></path></svg>
+                </span>
+                <select name="experience-dropdown" id="experience-dropdown" required class="block w-full rounded-md border-0 py-2.5 pr-3 pl-10 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6">
+                  <option value="">-- Choose an Experience --</option>
+                  <option value="water_sky">Ultimate Miami Water & Sky</option>
+                  <option value="wynwood_night">Wynwood Art & Culinary Night</option>
+                  <option value="everglades">Everglades Adventure</option>
+                  <option value="keys_escape">Keys Escape Experience</option>
+                </select>
+              </div>
+            </div>
 
-                        <div id="experience-dropdown-container" class="relative hidden">
-                             <label for="experience-dropdown" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Select Experience</label>
-                             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27Z"></path></svg>
-                             </span>
-                             <select name="experience-dropdown" id="experience-dropdown" required
-                                class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6">
-                                <option value="">-- Choose an Experience --</option>
-                                <option value="water_sky">Ultimate Miami Water & Sky</option>
-                                <option value="wynwood_night">Wynwood Art & Culinary Night</option>
-                                <option value="everglades">Everglades Adventure</option>
-                                <option value="keys_escape">Keys Escape Experience</option>
-                             </select>
-                        </div>
-                    </div>
+            <div id="duration-container" class="relative hidden">
+              <label for="duration-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Duration</label>
+              <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg
+              ></span>
+              <select name="duration-hourly" id="duration-hourly" required class="block w-full rounded-md border-0 py-2.5 pr-3 pl-10 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6">
+                <option value="2">2 hours</option>
+                <option value="3">3 hours</option>
+                <option value="4">4 hours</option>
+                <option value="5">5 hours</option>
+                <option value="6">6 hours</option>
+                <option value="7">7 hours</option>
+                <option value="8">8 hours</option>
+                <option value="9">9 hours</option>
+                <option value="10">10 hours</option>
+                <option value="11">11 hours</option>
+                <option value="12">12 hours</option>
+              </select>
+            </div>
 
-                     <div id="hourly-toggle-container" class="flex items-center justify-between py-2">
-                        <label for="hourly-toggle" class="text-sm font-medium text-gray-700 cursor-pointer">Book Hourly Chauffeur Instead?</label>
-                        <input type="checkbox" id="hourly-toggle" class="toggle-checkbox">
-                    </div>
+            <div id="date-time-container" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div class="relative">
+                <label for="pickup-date" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Date</label>
+                <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5v-5Z"></path></svg
+                ></span>
+                <input type="date" name="pickup-date" id="pickup-date" required class="block w-full rounded-md border-0 py-2.5 pr-3 pl-10 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" />
+              </div>
+              <div class="relative">
+                <label for="pickup-time" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Time</label>
+                <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg
+                ></span>
+                <input type="time" name="pickup-time" id="pickup-time" required class="block w-full rounded-md border-0 py-2.5 pr-3 pl-10 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" />
+              </div>
+            </div>
 
-                    <div id="duration-container" class="relative hidden">
-                         <label for="duration-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Duration</label>
-                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg></span>
-                         <select name="duration-hourly" id="duration-hourly" required
-                                 class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6">
-                             <option value="2">2 hours</option>
-                             <option value="3">3 hours</option>
-                             <option value="4">4 hours</option>
-                             <option value="12">12 hours</option>
-                         </select>
-                    </div>
+            <div id="experience-options-container" class="hidden space-y-4">
+              <div id="water-sky-options" class="relative hidden border-t border-gray-200 pt-4">...</div>
+              <div id="wynwood-night-options" class="hidden">...</div>
+              <div id="everglades-options" class="hidden">...</div>
+              <div id="keys-escape-options" class="hidden border-t border-gray-200 pt-4">...</div>
+            </div>
 
-                    <div id="date-time-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="relative">
-                            <label for="pickup-date" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Date</label>
-                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5v-5Z"></path></svg></span>
-                            <input type="date" name="pickup-date" id="pickup-date" required
-                                   class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6">
-                        </div>
-                        <div class="relative">
-                            <label for="pickup-time" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Time</label>
-                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg></span>
-                            <input type="time" name="pickup-time" id="pickup-time" required
-                                   class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6">
-                        </div>
-                    </div>
+            <div id="notes-container" class="relative">
+              <label for="notes" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Notes / Preferences</label>
+              <textarea name="notes" id="notes" rows="3" class="block w-full rounded-md border-0 px-3 py-2 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" placeholder="Optional details, flight numbers, special requests..."></textarea>
+            </div>
 
-                    <div id="experience-options-container" class="space-y-4 hidden">
-                        <div id="water-sky-options" class="hidden relative border-t border-gray-200 pt-4">
-                            <p class="text-sm font-semibold mb-2 text-gray-700">Water & Sky Options:</p>
-                            <label for="water-sky-duration" class="block text-xs font-medium text-gray-500 mb-1">Preferred Duration</label>
-                            <select name="water-sky-duration" id="water-sky-duration" class="block w-full rounded-md border-0 mb-2 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6">
-                                <option value="4">4 Hours</option>
-                                <option value="6">6 Hours</option>
-                                <option value="8">8 Hours (Full Day)</option>
-                            </select>
-                             <div class="flex items-center">
-                                <input id="helicopter-option" name="helicopter-option" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-[--color-teal] focus:ring-[--color-teal]">
-                                <label for="helicopter-option" class="ml-2 block text-sm text-gray-900">Include Helicopter Tour Add-on?</label>
-                            </div>
-                        </div>
-                         <div id="wynwood-night-options" class="hidden"> Wynwood Options... </div>
-                         <div id="everglades-options" class="hidden"> Everglades Options... </div>
-                         <div id="keys-escape-options" class="hidden border-t border-gray-200 pt-4">
-                             <p class="text-sm text-gray-700">Our concierge will contact you to customize your Keys Escape. Please provide any initial preferences below.</p>
-                         </div>
-                    </div>
-
-
-                     <div id="notes-container" class="relative">
-                        <label for="notes" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Notes / Preferences</label>
-                        <textarea name="notes" id="notes" rows="3"
-                                  class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6"
-                                  placeholder="Optional details, flight numbers, special requests..."></textarea>
-                    </div>
-
-                    <div>
-                        <button type="submit" id="submit-button"
-                                class="mt-4 w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-semibold text-white
-                                     bg-[--color-gold] hover:bg-[--color-gold-dark] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--color-gold] transition duration-300">
-                            Get Quote </button>
-                    </div>
-                 </form>
-            </div></div> </main>
+            <div>
+              <button type="submit" id="submit-button" class="mt-4 flex w-full justify-center rounded-lg border border-transparent bg-[--color-gold] px-4 py-3 text-lg font-semibold text-white shadow-sm transition duration-300 hover:bg-[--color-gold-dark] focus:ring-2 focus:ring-[--color-gold] focus:ring-offset-2 focus:outline-none">Get Quote</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Get references to elements
-            const experienceToggle = document.getElementById('experience-toggle');
-            const hourlyToggle = document.getElementById('hourly-toggle');
-            const hourlyToggleContainer = document.getElementById('hourly-toggle-container');
+      document.addEventListener('DOMContentLoaded', () => {
+          // Get references to elements
+          const experienceToggle = document.getElementById('experience-toggle');
+          const hourlyToggle = document.getElementById('hourly-toggle');
+          const hourlyToggleContainer = document.getElementById('hourly-toggle-container');
 
-            const toContainer = document.getElementById('to-container');
-            const toAddressContainer = document.getElementById('to-address-container');
-            const toAddressInput = document.getElementById('to-address'); // Get the input itself
-            const experienceDropdownContainer = document.getElementById('experience-dropdown-container');
-            const experienceDropdown = document.getElementById('experience-dropdown');
+          const toContainer = document.getElementById('to-container');
+          const toAddressContainer = document.getElementById('to-address-container');
+          const toAddressInput = document.getElementById('to-address');
+          const experienceDropdownContainer = document.getElementById('experience-dropdown-container');
+          const experienceDropdown = document.getElementById('experience-dropdown');
 
-            const durationContainer = document.getElementById('duration-container');
-            const dateTimeContainer = document.getElementById('date-time-container');
-            const notesContainer = document.getElementById('notes-container'); // Assuming notes are always relevant? Adjust if needed.
-            const pickupTimeLabel = document.querySelector('label[for="pickup-time"]'); // To change "Time" vs "Start Time"
+          const durationContainer = document.getElementById('duration-container');
+          const dateTimeContainer = document.getElementById('date-time-container');
+          const notesContainer = document.getElementById('notes-container');
+          const pickupTimeLabel = document.querySelector('label[for="pickup-time"]');
 
-            const experienceOptionsContainer = document.getElementById('experience-options-container');
-            const waterSkyOptions = document.getElementById('water-sky-options');
-            const wynwoodOptions = document.getElementById('wynwood-night-options');
-            const evergladesOptions = document.getElementById('everglades-options');
-            const keysOptions = document.getElementById('keys-escape-options');
-
-            const submitButton = document.getElementById('submit-button');
-
-            function updateFormUI() {
-                const isExperienceMode = experienceToggle.checked;
-                const isHourlyMode = hourlyToggle.checked;
-                const selectedExperience = experienceDropdown.value;
-
-                // --- Toggle mutual exclusivity ---
-                if (isExperienceMode) {
-                    // If experience mode is ON, force hourly OFF and disable its toggle
-                    if (isHourlyMode) {
-                        hourlyToggle.checked = false; // Turn off hourly if experience is turned on
-                    }
-                    hourlyToggleContainer.classList.add('opacity-50', 'pointer-events-none'); // Visually disable hourly toggle
-                    hourlyToggle.disabled = true;
-                } else {
-                    // If experience mode is OFF, enable hourly toggle
-                    hourlyToggleContainer.classList.remove('opacity-50', 'pointer-events-none');
-                    hourlyToggle.disabled = false;
-                }
-
-                // --- Show/Hide "To" Address vs Experience Dropdown ---
-                toAddressContainer.classList.toggle('hidden', isExperienceMode);
-                experienceDropdownContainer.classList.toggle('hidden', !isExperienceMode);
-
-                // --- Handle Hourly Mode ---
-                if (!isExperienceMode) { // Only consider hourly if experience is OFF
-                    durationContainer.classList.toggle('hidden', !isHourlyMode);
-                    // Disable "To" address input if hourly is ON
-                    toAddressInput.disabled = isHourlyMode;
-                    toAddressContainer.classList.toggle('opacity-50', isHourlyMode);
-                    // Adjust Time label based on hourly
-                     if (pickupTimeLabel) pickupTimeLabel.textContent = isHourlyMode ? 'Start Time' : 'Time';
-                } else {
-                     durationContainer.classList.add('hidden'); // Ensure duration is hidden if experience mode is on
-                     if (pickupTimeLabel) pickupTimeLabel.textContent = 'Time'; // Reset label
-                     toAddressInput.disabled = false; // Re-enable if needed, though it's hidden
-                     toAddressContainer.classList.remove('opacity-50');
-                }
+          const experienceOptionsContainer = document.getElementById('experience-options-container');
+          const waterSkyOptions = document.getElementById('water-sky-options');
+          // Add refs for other experience option divs if needed
+          // const wynwoodOptions = document.getElementById('wynwood-night-options');
+          // const evergladesOptions = document.getElementById('everglades-options');
+           const keysOptions = document.getElementById('keys-escape-options');
 
 
-                // --- Show/Hide Experience-Specific Options ---
-                experienceOptionsContainer.classList.toggle('hidden', !isExperienceMode || !selectedExperience);
-                if (isExperienceMode && selectedExperience) {
-                    waterSkyOptions.classList.toggle('hidden', selectedExperience !== 'water_sky');
-                    wynwoodOptions.classList.toggle('hidden', selectedExperience !== 'wynwood_night');
-                    evergladesOptions.classList.toggle('hidden', selectedExperience !== 'everglades');
-                    keysOptions.classList.toggle('hidden', selectedExperience !== 'keys_escape');
-                    // Hide standard date/time if a specific experience doesn't need it or has its own
-                    dateTimeContainer.classList.toggle('hidden', selectedExperience === 'keys_escape'); // Example: Hide for Keys Escape
-                } else {
-                     // Hide all experience options if not in experience mode or no experience selected
-                     waterSkyOptions.classList.add('hidden');
-                     wynwoodOptions.classList.add('hidden');
-                     evergladesOptions.classList.add('hidden');
-                     keysOptions.classList.add('hidden');
-                     // Ensure standard date/time is visible when not in a specific experience mode that hides it
-                     dateTimeContainer.classList.remove('hidden');
-                }
+          const submitButton = document.getElementById('submit-button');
+
+          function updateFormUI() {
+              const isExperienceMode = experienceToggle.checked;
+              const isHourlyMode = hourlyToggle.checked;
+              const selectedExperience = experienceDropdown.value;
+
+              // --- Toggle mutual exclusivity ---
+              if (isExperienceMode) {
+                  if (isHourlyMode) { hourlyToggle.checked = false; }
+                  hourlyToggleContainer.classList.add('opacity-50', 'pointer-events-none');
+                  hourlyToggle.disabled = true;
+              } else {
+                  hourlyToggleContainer.classList.remove('opacity-50', 'pointer-events-none');
+                  hourlyToggle.disabled = false;
+              }
+
+              // --- Show/Hide "To" Address vs Experience Dropdown ---
+              toAddressContainer.classList.toggle('hidden', isExperienceMode);
+              experienceDropdownContainer.classList.toggle('hidden', !isExperienceMode);
+
+              // --- Handle Hourly Mode ---
+              if (!isExperienceMode) {
+                  durationContainer.classList.toggle('hidden', !isHourlyMode);
+                  toAddressInput.disabled = isHourlyMode;
+                  toAddressContainer.classList.toggle('opacity-50', isHourlyMode);
+                   if (pickupTimeLabel) pickupTimeLabel.textContent = isHourlyMode ? 'Start Time' : 'Time';
+              } else {
+                   durationContainer.classList.add('hidden');
+                   if (pickupTimeLabel) pickupTimeLabel.textContent = 'Time';
+                   toAddressInput.disabled = false;
+                   toAddressContainer.classList.remove('opacity-50');
+              }
 
 
-                // --- Update Submit Button Text ---
-                if (isExperienceMode && selectedExperience) {
-                    submitButton.textContent = 'Request Experience';
-                } else if (!isExperienceMode && isHourlyMode) {
-                    submitButton.textContent = 'Request Hourly Service';
-                } else {
-                    submitButton.textContent = 'Get Quote'; // Default for One Way
-                }
-            }
+              // --- Show/Hide Experience-Specific Options ---
+              const showExperienceOptions = isExperienceMode && selectedExperience;
+              experienceOptionsContainer.classList.toggle('hidden', !showExperienceOptions);
 
-            // --- Add Event Listeners ---
-            experienceToggle.addEventListener('change', updateFormUI);
-            hourlyToggle.addEventListener('change', updateFormUI);
-            experienceDropdown.addEventListener('change', updateFormUI);
+              if (showExperienceOptions) {
+                  // Example: Show only relevant options container
+                  waterSkyOptions.classList.toggle('hidden', selectedExperience !== 'water_sky');
+                  // wynwoodOptions.classList.toggle('hidden', selectedExperience !== 'wynwood_night');
+                  // evergladesOptions.classList.toggle('hidden', selectedExperience !== 'everglades');
+                  keysOptions.classList.toggle('hidden', selectedExperience !== 'keys_escape');
 
-            // --- Initial UI Setup on Load ---
-            updateFormUI();
-        });
+                  // Example: Hide standard date/time if needed
+                  dateTimeContainer.classList.toggle('hidden', selectedExperience === 'keys_escape');
+              } else {
+                   if(waterSkyOptions) waterSkyOptions.classList.add('hidden');
+                   // Add other experience option divs here if needed
+                   if(keysOptions) keysOptions.classList.add('hidden');
+                   dateTimeContainer.classList.remove('hidden'); // Ensure standard date/time is visible otherwise
+              }
 
-        // Placeholder for Google Maps Init (if you add it back)
-        // function initAutocomplete() { console.log("Init Autocomplete"); }
 
+              // --- Update Submit Button Text ---
+              if (isExperienceMode && selectedExperience) {
+                  submitButton.textContent = 'Request Experience';
+              } else if (!isExperienceMode && isHourlyMode) {
+                  submitButton.textContent = 'Request Hourly Service';
+              } else {
+                  submitButton.textContent = 'Get Quote'; // Default for One Way
+              }
+          }
+
+          // --- Add Event Listeners ---
+          experienceToggle.addEventListener('change', updateFormUI);
+          hourlyToggle.addEventListener('change', updateFormUI);
+          experienceDropdown.addEventListener('change', updateFormUI);
+
+          // --- Initial UI Setup on Load ---
+          updateFormUI();
+      });
     </script>
-
-</body>
+  </body>
 </html>
