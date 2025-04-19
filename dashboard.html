@@ -101,7 +101,7 @@
 
             <div class="flex border-b border-gray-200 mb-6">
                 <button class="tab-button active" id="one-way-tab" data-target="one-way-form">One way</button>
-                <button class="tab-button" id="by-the-hour-tab" data-target="by-the-hour-form">By the hour</button>
+                <button class="tab-button" id="by-the-hour-tab" data-target="by-the-hour-form">Bundle experiences</button>
             </div>
 
             <form action="#" method="POST" id="one-way-form" class="space-y-4">
@@ -122,7 +122,6 @@
                     <input type="hidden" id="isPickupAirportOneWay" name="isPickupAirport" value="false">
                 </div>
 
-                <!-- Pickup Type (Hidden by Default) -->
                 <div id="pickup-type-container" class="relative hidden">
                     <label for="pickup-type" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Pickup Type</label>
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4">
@@ -136,7 +135,6 @@
                     </select>
                 </div>
 
-                <!-- Pickup Notes (Hidden by Default) -->
                 <div id="pickup-notes-container" class="relative hidden">
                     <label for="pickup-notes" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Pickup Notes (e.g., Flight AA123 arriving at 10:00 AM)</label>
                     <textarea name="pickup-notes" id="pickup-notes" rows="2"
@@ -144,7 +142,6 @@
                               placeholder="Optional notes"></textarea>
                 </div>
 
-                <!-- Drop-off Address -->
                 <div class="relative">
                     <label for="to-oneway" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">To</label>
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4">
@@ -156,7 +153,6 @@
                     <input type="hidden" id="isDropoffAirportOneWay" name="isDropoffAirport" value="false">
                 </div>
 
-                <!-- Drop-off Type (Hidden by Default) -->
                 <div id="dropoff-type-container" class="relative hidden">
                     <label for="dropoff-type" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Drop-off Type</label>
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4">
@@ -170,7 +166,6 @@
                     </select>
                 </div>
 
-                <!-- Drop-off Notes (Hidden by Default) -->
                 <div id="dropoff-notes-container" class="relative hidden">
                     <label for="dropoff-notes" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Drop-off Notes (e.g., Flight DL456 departing at 2:00 PM)</label>
                     <textarea name="dropoff-notes" id="dropoff-notes" rows="2"
@@ -214,8 +209,7 @@
             </form>
 
             <form action="#" method="POST" id="by-the-hour-form" class="hidden space-y-4">
-                <h3 class="text-lg font-semibold text-gray-800 mb-1 sr-only">By The Hour Booking</h3>
-                <div class="relative">
+                <h3 class="text-lg font-semibold text-gray-800 mb-1 sr-only">By The Hour Booking</h3> <div class="relative">
                     <label for="from-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Pickup Location</label>
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg>
@@ -285,7 +279,6 @@
                 </div>
             </form>
 
-            <!-- Quote Results Area -->
             <div id="quote-results-area" class="mt-6 pt-6 border-t border-gray-200" style="display: none;">
                 <div id="loading-indicator" class="text-center text-gray-600 font-semibold" style="display: none;">
                     Calculating your quote...
