@@ -46,7 +46,7 @@
 
     <header class="bg-white shadow-sm">
         <nav class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-            <div> <a href="index.html" class="text-2xl font-bold text-gray-900"> I ❤️ <span class="brand-gradient-text">Miami</span> </a> </div>
+            <div> <a href="index.html" class="text-3xl font-bold text-gray-900"> I ❤️ <span class="brand-gradient-text">Miami</span> </a> </div>
             <div> <span class="text-gray-600 mr-4">Welcome, [Name]!</span>
                 <a href="#" class="text-sm font-medium text-[--color-gold] hover:text-[--color-gold-dark]">Logout</a>
             </div>
@@ -55,172 +55,171 @@
 
     <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <h2 class="text-3xl font-bold text-gray-900 mb-6">Book Your Ride</h2>
+        <div class="w-full max-w-lg mr-auto">  <h2 class="text-3xl font-bold text-gray-900 mb-6">Book Your Ride</h2>
 
-        <div class="bg-white p-6 md:p-8 rounded-xl shadow-md max-w-lg mx-auto">
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-md">
 
-            <div class="flex border-b border-gray-200 mb-6">
-                <button class="tab-button active" id="one-way-tab" data-target="one-way-form">One way</button>
-                <button class="tab-button" id="by-the-hour-tab" data-target="by-the-hour-form">Bundle experiences</button>
-            </div>
-
-            <form action="#" method="POST" id="one-way-form" class="space-y-4">
-                <h3 class="text-lg font-semibold text-gray-800 mb-1 sr-only">One Way Booking</h3>
-
-                <div class="relative">
-                    <label for="from-oneway" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">From</label>
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg>
-                    </span>
-                    <input type="text" name="from-oneway" id="from-oneway" required
-                           class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6"
-                           placeholder="Address, airport, hotel, ...">
-                    <button type="button" id="get-location-oneway-btn" title="Use Current Location" class="absolute right-3 top-1/2 -translate-y-1/2 text-[--color-teal] hover:text-[--color-teal-dark] focus:outline-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"> <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.274 1.765 11.842 11.842 0 0 0 1.038.573l.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" /> </svg>
-                    </button>
-                    <input type="hidden" id="isPickupAirportOneWay" name="isPickupAirport" value="false">
+                <div class="flex border-b border-gray-200 mb-6">
+                    <button class="tab-button active" id="one-way-tab" data-target="one-way-form">One way</button>
+                    <button class="tab-button" id="by-the-hour-tab" data-target="by-the-hour-form">+Experience</button>
                 </div>
 
-                <div id="pickup-type-container" class="relative hidden">
-                    <label for="pickup-type" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Pickup Type</label>
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg>
-                    </span>
-                    <select name="pickup-type" id="pickup-type"
-                            class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6"> <option value="">Select Type</option> <option value="arrival" selected>Arrival (Level 1)</option> <option value="departure">Departure (Level 2)</option>
-                    </select>
-                </div>
+                <form action="#" method="POST" id="one-way-form" class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-1 sr-only">One Way Booking</h3>
 
-                <div id="pickup-notes-container" class="relative hidden">
-                    <label for="pickup-notes" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Pickup Notes (e.g., Flight AA123 arriving at 10:00 AM)</label>
-                    <textarea name="pickup-notes" id="pickup-notes" rows="2"
-                              class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6" placeholder="Optional notes"></textarea>
-                </div>
-
-                <div class="relative">
-                    <label for="to-oneway" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">To</label>
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg>
-                    </span>
-                    <input type="text" name="to-oneway" id="to-oneway" required
-                           class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6" placeholder="Address, airport, hotel, ...">
-                    <input type="hidden" id="isDropoffAirportOneWay" name="isDropoffAirport" value="false">
-                </div>
-
-                <div id="dropoff-type-container" class="relative hidden">
-                    <label for="dropoff-type" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Drop-off Type</label>
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg>
-                    </span>
-                    <select name="dropoff-type" id="dropoff-type"
-                            class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6"> <option value="">Select Type</option> <option value="arrival">Arrival (Level 1)</option> <option value="departure" selected>Departure (Level 2)</option>
-                    </select>
-                </div>
-
-                <div id="dropoff-notes-container" class="relative hidden">
-                    <label for="dropoff-notes" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Drop-off Notes (e.g., Flight DL456 departing at 2:00 PM)</label>
-                    <textarea name="dropoff-notes" id="dropoff-notes" rows="2"
-                              class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6" placeholder="Optional notes"></textarea>
-                </div>
-
-                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="relative">
-                        <label for="date-oneway" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Date</label>
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5v-5Z"></path></svg>
+                        <label for="from-oneway" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">From</label>
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg>
                         </span>
-                        <input type="date" name="date-oneway" id="date-oneway" required
-                               class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6" placeholder="Select Date">
+                        <input type="text" name="from-oneway" id="from-oneway" required
+                               class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6"
+                               placeholder="Address, airport, hotel, ...">
+                        <button type="button" id="get-location-oneway-btn" title="Use Current Location" class="absolute right-3 top-1/2 -translate-y-1/2 text-[--color-teal] hover:text-[--color-teal-dark] focus:outline-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"> <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.274 1.765 11.842 11.842 0 0 0 1.038.573l.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" /> </svg>
+                        </button>
+                        <input type="hidden" id="isPickupAirportOneWay" name="isPickupAirport" value="false">
                     </div>
-                    <div class="relative">
-                        <label for="time-oneway" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Time</label>
+
+                    <div id="pickup-type-container" class="relative hidden">
+                        <label for="pickup-type" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Pickup Type</label>
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg>
                         </span>
-                        <input type="time" name="time-oneway" id="time-oneway" required
-                               class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6" placeholder="Select Time">
+                        <select name="pickup-type" id="pickup-type"
+                                class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6"> <option value="">Select Type</option> <option value="arrival" selected>Arrival (Level 1)</option> <option value="departure">Departure (Level 2)</option>
+                        </select>
                     </div>
-                </div>
 
-                 <p class="text-xs text-gray-500 text-center pt-2">Chauffeur will wait 15 minutes free of charge.</p>
+                    <div id="pickup-notes-container" class="relative hidden">
+                        <label for="pickup-notes" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Pickup Notes (e.g., Flight AA123 arriving at 10:00 AM)</label>
+                        <textarea name="pickup-notes" id="pickup-notes" rows="2"
+                                  class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6" placeholder="Optional notes"></textarea>
+                    </div>
 
-                <div>
-                    <button type="submit"
-                            class="mt-4 w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-semibold text-white
-                                   bg-[--color-gold] hover:bg-[--color-gold-dark] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--color-gold] transition duration-300">
-                        Search
-                    </button>
-                </div>
-            </form>
-
-            <form action="#" method="POST" id="by-the-hour-form" class="hidden space-y-4">
-                <h3 class="text-lg font-semibold text-gray-800 mb-1 sr-only">By The Hour Booking</h3>
-                <div class="relative">
-                    <label for="from-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Pickup Location</label>
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg>
-                    </span>
-                    <input type="text" name="from-hourly" id="from-hourly" required
-                           class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6" placeholder="Address, airport, hotel, ...">
-                    <button type="button" id="get-location-hourly-btn" title="Use Current Location" class="absolute right-3 top-1/2 -translate-y-1/2 text-[--color-teal] hover:text-[--color-teal-dark] focus:outline-none"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"> <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.274 1.765 11.842 11.842 0 0 0 1.038.573l.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" /> </svg>
-                    </button>
-                    <input type="hidden" id="isPickupAirportHourly" name="isPickupAirport" value="false">
-                </div>
-
-                <div class="relative">
-                    <label for="duration-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Duration</label>
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg>
-                    </span>
-                    <select name="duration-hourly" id="duration-hourly" required
-                            class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6"> <option value="2">2 hours</option> <option value="3">3 hours</option> <option value="4">4 hours</option> <option value="5">5 hours</option> <option value="6">6 hours</option> <option value="7">7 hours</option> <option value="8">8 hours</option> <option value="9">9 hours</option> <option value="10">10 hours</option> <option value="11">11 hours</option> <option value="12">12 hours</option>
-                    </select>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="relative">
-                        <label for="date-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Date</label>
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5v-5Z"></path></svg>
+                        <label for="to-oneway" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">To</label>
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg>
                         </span>
-                        <input type="date" name="date-hourly" id="date-hourly" required
-                               class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6" placeholder="Select Date">
+                        <input type="text" name="to-oneway" id="to-oneway" required
+                               class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6" placeholder="Address, airport, hotel, ...">
+                        <input type="hidden" id="isDropoffAirportOneWay" name="isDropoffAirport" value="false">
                     </div>
-                    <div class="relative">
-                        <label for="time-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Start Time</label>
+
+                    <div id="dropoff-type-container" class="relative hidden">
+                        <label for="dropoff-type" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Drop-off Type</label>
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg>
                         </span>
-                        <input type="time" name="time-hourly" id="time-hourly" required
-                               class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6" placeholder="Select Time">
+                        <select name="dropoff-type" id="dropoff-type"
+                                class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6"> <option value="">Select Type</option> <option value="arrival">Arrival (Level 1)</option> <option value="departure" selected>Departure (Level 2)</option>
+                        </select>
                     </div>
-                </div>
 
-                <div>
-                     <button type="submit"
-                            class="mt-4 w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-semibold text-white
-                                   bg-[--color-gold] hover:bg-[--color-gold-dark] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--color-gold] transition duration-300">
-                        Search
-                    </button>
-                </div>
-            </form>
+                    <div id="dropoff-notes-container" class="relative hidden">
+                        <label for="dropoff-notes" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Drop-off Notes (e.g., Flight DL456 departing at 2:00 PM)</label>
+                        <textarea name="dropoff-notes" id="dropoff-notes" rows="2"
+                                  class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6" placeholder="Optional notes"></textarea>
+                    </div>
 
-            <div id="quote-results-area" class="mt-6 pt-6 border-t border-gray-200" style="display: none;">
-                <div id="loading-indicator" class="text-center text-gray-600 font-semibold" style="display: none;"> Calculating your quote... </div>
-                <p id="quote-error" class="text-center text-red-600 font-semibold mb-3"></p>
-                <div id="quote-details" class="bg-gray-50 p-4 rounded-lg"> <h3 class="text-2xl font-semibold text-gray-800 mb-3 text-center">Your Quote</h3>
-                    <dl class="space-y-2"> <div class="flex justify-between items-center">
-                            <dt class="text-sm font-semibold text-gray-600">Estimated Price:</dt>
-                             <dd id="quote-price" class="text-xl font-bold text-[--color-gold]"></dd>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="relative">
+                            <label for="date-oneway" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Date</label>
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5v-5Z"></path></svg>
+                            </span>
+                            <input type="date" name="date-oneway" id="date-oneway" required
+                                   class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6" placeholder="Select Date">
                         </div>
-                        <div class="flex justify-between items-center"> <dt class="text-sm font-semibold text-gray-600">Estimated Distance:</dt> <dd id="quote-distance" class="text-sm font-medium text-gray-900"></dd> </div>
-                        <div class="flex justify-between items-center"> <dt class="text-sm font-semibold text-gray-600">Estimated Duration:</dt> <dd id="quote-duration" class="text-sm font-medium text-gray-900"></dd> </div>
-                        <div id="pickup-type-row" class="flex justify-between items-center" style="display: none;"> <dt class="text-sm font-semibold text-gray-600">Pickup Type:</dt> <dd id="quote-pickup-type" class="text-sm font-medium text-gray-900"></dd> </div>
-                        <div id="pickup-notes-row" class="flex justify-between items-center" style="display: none;"> <dt class="text-sm font-semibold text-gray-600">Pickup Notes:</dt> <dd id="quote-pickup-notes" class="text-sm font-medium text-gray-900"></dd> </div>
-                        <div id="dropoff-type-row" class="flex justify-between items-center" style="display: none;"> <dt class="text-sm font-semibold text-gray-600">Drop-off Type:</dt> <dd id="quote-dropoff-type" class="text-sm font-medium text-gray-900"></dd> </div>
-                        <div id="dropoff-notes-row" class="flex justify-between items-center" style="display: none;"> <dt class="text-sm font-semibold text-gray-600">Drop-off Notes:</dt> <dd id="quote-dropoff-notes" class="text-sm font-medium text-gray-900"></dd> </div>
-                    </dl>
-                     <div class="flex space-x-4 mt-4">
-                         <button id="book-now-btn" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-semibold text-white bg-[--color-gold] hover:bg-[--color-gold-dark] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--color-gold] transition duration-300"> Book Now </button>
-                         <button id="clear-form-btn" class="w-full flex justify-center py-3 px-4 border border-[--color-teal] rounded-lg shadow-sm text-lg font-semibold text-[--color-teal] bg-white hover:bg-[--color-teal-light-bg] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--color-teal] transition duration-300"> Clear Form </button>
+                        <div class="relative">
+                            <label for="time-oneway" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Time</label>
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg>
+                            </span>
+                            <input type="time" name="time-oneway" id="time-oneway" required
+                                   class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6" placeholder="Select Time">
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-gray-500 text-center pt-2">Chauffeur will wait 15 minutes free of charge.</p>
+
+                    <div>
+                        <button type="submit"
+                                class="mt-4 w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-semibold text-white
+                                     bg-[--color-gold] hover:bg-[--color-gold-dark] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--color-gold] transition duration-300">
+                            Search
+                        </button>
+                    </div>
+                </form>
+
+                <form action="#" method="POST" id="by-the-hour-form" class="hidden space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-1 sr-only">By The Hour Booking</h3>
+                    <div class="relative">
+                        <label for="from-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Pickup Location</label>
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg>
+                        </span>
+                        <input type="text" name="from-hourly" id="from-hourly" required
+                               class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6" placeholder="Address, airport, hotel, ...">
+                        <button type="button" id="get-location-hourly-btn" title="Use Current Location" class="absolute right-3 top-1/2 -translate-y-1/2 text-[--color-teal] hover:text-[--color-teal-dark] focus:outline-none"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"> <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.274 1.765 11.842 11.842 0 0 0 1.038.573l.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" /> </svg>
+                        </button>
+                        <input type="hidden" id="isPickupAirportHourly" name="isPickupAirport" value="false">
+                    </div>
+
+                    <div class="relative">
+                        <label for="duration-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Duration</label>
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg>
+                        </span>
+                        <select name="duration-hourly" id="duration-hourly" required
+                                class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6"> <option value="2">2 hours</option> <option value="3">3 hours</option> <option value="4">4 hours</option> <option value="5">5 hours</option> <option value="6">6 hours</option> <option value="7">7 hours</option> <option value="8">8 hours</option> <option value="9">9 hours</option> <option value="10">10 hours</option> <option value="11">11 hours</option> <option value="12">12 hours</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="relative">
+                            <label for="date-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Date</label>
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5v-5Z"></path></svg>
+                            </span>
+                            <input type="date" name="date-hourly" id="date-hourly" required
+                                   class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6" placeholder="Select Date">
+                        </div>
+                        <div class="relative">
+                            <label for="time-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Start Time</label>
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[--color-teal] w-4 h-4"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg>
+                            </span>
+                            <input type="time" name="time-hourly" id="time-hourly" required
+                                   class="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[--color-gold] sm:text-sm sm:leading-6" placeholder="Select Time">
+                        </div>
+                    </div>
+
+                    <div>
+                         <button type="submit"
+                                 class="mt-4 w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-semibold text-white
+                                      bg-[--color-gold] hover:bg-[--color-gold-dark] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--color-gold] transition duration-300">
+                             Search
+                         </button>
+                    </div>
+                </form>
+
+                <div id="quote-results-area" class="mt-6 pt-6 border-t border-gray-200" style="display: none;">
+                    <div id="loading-indicator" class="text-center text-gray-600 font-semibold" style="display: none;"> Calculating your quote... </div>
+                    <p id="quote-error" class="text-center text-red-600 font-semibold mb-3"></p>
+                    <div id="quote-details" class="bg-gray-50 p-4 rounded-lg"> <h3 class="text-2xl font-semibold text-gray-800 mb-3 text-center">Your Quote</h3>
+                        <dl class="space-y-2"> <div class="flex justify-between items-center">
+                                <dt class="text-sm font-semibold text-gray-600">Estimated Price:</dt>
+                                 <dd id="quote-price" class="text-xl font-bold text-[--color-gold]"></dd>
+                            </div>
+                            <div class="flex justify-between items-center"> <dt class="text-sm font-semibold text-gray-600">Estimated Distance:</dt> <dd id="quote-distance" class="text-sm font-medium text-gray-900"></dd> </div>
+                            <div class="flex justify-between items-center"> <dt class="text-sm font-semibold text-gray-600">Estimated Duration:</dt> <dd id="quote-duration" class="text-sm font-medium text-gray-900"></dd> </div>
+                            <div id="pickup-type-row" class="flex justify-between items-center" style="display: none;"> <dt class="text-sm font-semibold text-gray-600">Pickup Type:</dt> <dd id="quote-pickup-type" class="text-sm font-medium text-gray-900"></dd> </div>
+                            <div id="pickup-notes-row" class="flex justify-between items-center" style="display: none;"> <dt class="text-sm font-semibold text-gray-600">Pickup Notes:</dt> <dd id="quote-pickup-notes" class="text-sm font-medium text-gray-900"></dd> </div>
+                            <div id="dropoff-type-row" class="flex justify-between items-center" style="display: none;"> <dt class="text-sm font-semibold text-gray-600">Drop-off Type:</dt> <dd id="quote-dropoff-type" class="text-sm font-medium text-gray-900"></dd> </div>
+                            <div id="dropoff-notes-row" class="flex justify-between items-center" style="display: none;"> <dt class="text-sm font-semibold text-gray-600">Drop-off Notes:</dt> <dd id="quote-dropoff-notes" class="text-sm font-medium text-gray-900"></dd> </div>
+                        </dl>
+                         <div class="flex space-x-4 mt-4">
+                              <button id="book-now-btn" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-semibold text-white bg-[--color-gold] hover:bg-[--color-gold-dark] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--color-gold] transition duration-300"> Book Now </button>
+                              <button id="clear-form-btn" class="w-full flex justify-center py-3 px-4 border border-[--color-teal] rounded-lg shadow-sm text-lg font-semibold text-[--color-teal] bg-white hover:bg-[--color-teal-light-bg] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--color-teal] transition duration-300"> Clear Form </button>
+                         </div>
                     </div>
                 </div>
-            </div>
 
-        </div> </main>
+            </div> </div> </main>
 
-    <script src="dashboard.js"></script>
     <script>
         // Basic Tab Switching (Example - Adapt to your dashboard.js)
         document.addEventListener('DOMContentLoaded', () => {
@@ -234,14 +233,14 @@
                      tabs.forEach(t => t.classList.remove('active'));
                      tab.classList.add('active');
                      const targetId = tab.getAttribute('data-target');
-                     oneWayForm.classList.toggle('hidden', targetId !== 'one-way-form');
-                     byTheHourForm.classList.toggle('hidden', targetId !== 'by-the-hour-form');
+                     if(oneWayForm) oneWayForm.classList.toggle('hidden', targetId !== 'one-way-form');
+                     if(byTheHourForm) byTheHourForm.classList.toggle('hidden', targetId !== 'by-the-hour-form');
                      if (quoteArea) quoteArea.style.display = 'none'; // Hide quote on tab switch
                  });
              });
              // Activate default tab
              document.getElementById('one-way-tab')?.click();
-        });
+         });
 
         // Placeholder for Google Maps Init (Should be defined, potentially in dashboard.js)
         function initAutocomplete() {
@@ -252,14 +251,23 @@
                 const fromHourlyInput = document.getElementById('from-hourly');
 
                  const autocompleteOptions = {
-                    componentRestrictions: { country: "us" },
-                    fields: ["address_components", "geometry", "icon", "name", "place_id", "types"],
-                    types: ['address', 'establishment', 'geocode', 'airport']
-                };
+                     componentRestrictions: { country: "us" },
+                     fields: ["address_components", "geometry", "icon", "name", "place_id", "types"],
+                     types: ['address', 'establishment', 'geocode', 'airport']
+                 };
 
-                if(fromOneWayInput) new google.maps.places.Autocomplete(fromOneWayInput, autocompleteOptions);
-                if(toOneWayInput) new google.maps.places.Autocomplete(toOneWayInput, autocompleteOptions);
-                if(fromHourlyInput) new google.maps.places.Autocomplete(fromHourlyInput, autocompleteOptions);
+                if(fromOneWayInput && google && google.maps && google.maps.places) {
+                     new google.maps.places.Autocomplete(fromOneWayInput, autocompleteOptions);
+                     console.log("Autocomplete attached to from-oneway");
+                 }
+                 if(toOneWayInput && google && google.maps && google.maps.places) {
+                     new google.maps.places.Autocomplete(toOneWayInput, autocompleteOptions);
+                     console.log("Autocomplete attached to to-oneway");
+                 }
+                if(fromHourlyInput && google && google.maps && google.maps.places) {
+                    new google.maps.places.Autocomplete(fromHourlyInput, autocompleteOptions);
+                    console.log("Autocomplete attached to from-hourly");
+                }
 
                 console.log("Google Places Autocomplete Initialized (potentially).");
             } catch (error) {
@@ -267,13 +275,14 @@
             }
         }
 
-        // IMPORTANT: The logic for handling form submissions, quote display,
-        // airport detection, geolocation, and detailed Autocomplete place handling
-        // needs to be in your 'dashboard.js' file or added here.
-        // The inline script above only provides basic tab switching and Autocomplete initialization.
+        // IMPORTANT: Ensure your dashboard.js file contains the necessary logic for:
+        // - Handling Autocomplete place_changed events (to detect airports, etc.)
+        // - Handling form submissions (calling your backend for quotes)
+        // - Displaying quote results or errors
+        // - Handling geolocation button clicks
+        // - Handling the "Clear Form" button logic
 
     </script>
-
 
 </body>
 </html>
