@@ -12,10 +12,10 @@
       :root {
           --color-gold: #B08D57;
           --color-gold-dark: #9A7B4F;
-          --color-teal: #00A09A; /* Original Teal */
+          --color-teal: #00A09A;
           --color-teal-dark: #00807A;
           --color-teal-light-bg: #f0fdfa;
-          --color-palm-green: #3CB371; /* Palm Green */
+          --color-palm-green: #3CB371;
       }
 
       body { font-family: 'Inter', sans-serif; color: #1f2937; }
@@ -23,7 +23,7 @@
       .brand-gradient-text { background: linear-gradient(to right, #f97316, #ef4444); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700; }
       select { appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="%2300A09A" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>'); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.25em; padding-right: 2.5rem; }
 
-      /* Toggle Switch CSS (No changes needed here) */
+      /* Toggle Switch CSS */
       .toggle-checkbox { appearance: none; display: inline-block; width: 3.5em; height: 1.75em; position: relative; vertical-align: middle; border-radius: 1.75em; border: 1px solid #cbd5e1; background-color: #e2e8f0; transition: .2s ease-in-out; cursor: pointer; flex-shrink: 0; }
       .toggle-checkbox::before { content: '🌴'; position: absolute; top: 0; left: 0.1em; width: 1.5em; height: 1.5em; line-height: 1.5em; text-align: center; font-size: 1em; transition: .2s ease-in-out; }
       .toggle-checkbox:checked { background-color: var(--color-palm-green); border-color: var(--color-palm-green); }
@@ -55,6 +55,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg>
               </span>
               <input type="text" name="from-location" id="from-location" required class="block w-full rounded-md border-0 py-2.5 pr-3 pl-10 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" placeholder="Address, airport, hotel, ..." />
+              <span id="from-location-error" class="mt-1 block text-xs text-red-600 hidden"></span>
             </div>
 
             <div class="flex items-center justify-start py-1">
@@ -74,6 +75,7 @@
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg>
                 </span>
                 <input type="text" name="to-address" id="to-address" class="block w-full rounded-md border-0 py-2.5 pr-3 pl-10 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" placeholder="Address, airport, hotel, ..." />
+                <span id="to-address-error" class="mt-1 block text-xs text-red-600 hidden"></span>
               </div>
 
               <div id="experience-dropdown-container" class="relative hidden">
@@ -88,14 +90,15 @@
                   <option value="everglades">Everglades Adventure</option>
                   <option value="keys_escape">Keys Escape Experience</option>
                 </select>
+                <span id="experience-dropdown-error" class="mt-1 block text-xs text-red-600 hidden"></span>
               </div>
             </div>
 
             <div id="duration-container" class="relative hidden">
               <label for="duration-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Duration</label>
               <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg
-              ></span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg>
+              </span>
               <select name="duration-hourly" id="duration-hourly" required class="block w-full rounded-md border-0 py-2.5 pr-3 pl-10 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6">
                 <option value="2">2 hours</option>
                 <option value="3">3 hours</option>
@@ -111,26 +114,159 @@
               </select>
             </div>
 
-            <div id="date-time-container" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div class="relative">
-                <label for="pickup-date" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Date</label>
-                <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5v-5Z"></path></svg
-                ></span>
-                <input type="date" name="pickup-date" id="pickup-date" required class="block w-full rounded-md border-0 py-2.5 pr-3 pl-10 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" />
-              </div>
-              <div class="relative">
-                <label for="pickup-time" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Time</label>
-                <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg
-                ></span>
-                <input type="time" name="pickup-time" id="pickup-time" required class="block w-full rounded-md border-0 py-2.5 pr-3 pl-10 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" />
-              </div>
+            <div id="date-time-container" class="relative pt-2">
+              <label for="pickup-date" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Date</label>
+              <input type="date" name="pickup-date" id="pickup-date" required class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" />
+              <span id="pickup-date-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+              <label for="pickup-time" class="absolute -top-2 left-2 mt-6 inline-block bg-white px-1 text-xs font-medium text-gray-500">Time</label>
+              <input type="time" name="pickup-time" id="pickup-time" required class="block w-full rounded-md border-0 py-1.5 px-3 mt-4 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" />
+              <span id="pickup-time-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+            </div>
+
+            <div id="date-preference-container" class="relative hidden pt-2">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Preferred Timing</label>
+              <fieldset>
+                <legend class="sr-only">Select Preferred Timing</legend>
+                <div class="flex flex-wrap gap-x-4 gap-y-2">
+                  <div class="flex items-center">
+                    <input id="pref-asap" name="date_preference" type="radio" value="ASAP / Next Day" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]">
+                    <label for="pref-asap" class="ml-2 block text-sm text-gray-900">ASAP / Next Day</label>
+                  </div>
+                  <div class="flex items-center">
+                    <input id="pref-weekend" name="date_preference" type="radio" value="This Coming Weekend" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]">
+                    <label for="pref-weekend" class="ml-2 block text-sm text-gray-900">This Coming Weekend</label>
+                  </div>
+                  <div class="flex items-center">
+                    <input id="pref-weekday" name="date_preference" type="radio" value="Next Week (Mon-Fri)" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]">
+                    <label for="pref-weekday" class="ml-2 block text-sm text-gray-900">Next Week (Mon-Fri)</label>
+                  </div>
+                  <div class="flex items-center">
+                    <input id="pref-flexible" name="date_preference" type="radio" value="Flexible / Other Date" checked class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]">
+                    <label for="pref-flexible" class="ml-2 block text-sm text-gray-900">Flexible / Other Date</label>
+                  </div>
+                </div>
+              </fieldset>
+              <span id="date_preference-error" class="mt-1 block text-xs text-red-600 hidden"></span>
             </div>
 
             <div id="experience-options-container" class="hidden space-y-4">
               <div id="water-sky-options" class="relative hidden border-t border-gray-200 pt-4">...</div>
-              <div id="wynwood-night-options" class="hidden">...</div>
+              <div id="wynwood-night-options" class="space-y-4 border-t border-gray-200 pt-4">
+                <div class="space-y-4">
+                    <div>
+                      <label class="mb-2 block text-sm font-medium text-gray-900">What's the occasion for this experience?</label>
+                      <fieldset>
+                        <legend class="sr-only">Select Occasion</legend>
+                        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                          <label for="motivation-romantic" class="flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-1 has-[:checked]:ring-[--color-teal]">
+                            <input type="radio" name="motivation" value="Romantic" id="motivation-romantic" class="sr-only">
+                            <span class="flex items-center"><span class="mr-1.5 text-lg">❤️</span> Romantic</span>
+                          </label>
+                          <label for="motivation-celebration" class="flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-1 has-[:checked]:ring-[--color-teal]">
+                            <input type="radio" name="motivation" value="Birthday/Celebration" id="motivation-celebration" class="sr-only">
+                            <span class="flex items-center"><span class="mr-1.5 text-lg">🎉</span> Celebration</span>
+                          </label>
+                          <label for="motivation-business" class="flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-1 has-[:checked]:ring-[--color-teal]">
+                            <input type="radio" name="motivation" value="Business/Corporate" id="motivation-business" class="sr-only">
+                            <span class="flex items-center"><span class="mr-1.5 text-lg">💼</span> Business</span>
+                          </label>
+                          <label for="motivation-fun" class="flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-1 has-[:checked]:ring-[--color-teal]">
+                            <input type="radio" name="motivation" value="Friends Night Out / Fun" id="motivation-fun" class="sr-only">
+                            <span class="flex items-center"><span class="mr-1.5 text-lg">🥳</span> Fun / Friends</span>
+                          </label>
+                        </div>
+                      </fieldset>
+                      <span id="motivation-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div class="relative">
+                        <label for="wynwood-name" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Your Name</label>
+                        <input type="text" name="name" id="wynwood-name" required class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" />
+                        <span id="wynwood-name-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                      </div>
+                      <div class="relative">
+                        <label for="wynwood-guests" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Number of Guests</label>
+                        <input type="number" name="guests" id="wynwood-guests" required min="1" value="2" class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" />
+                        <span id="wynwood-guests-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                      </div>
+                      <div class="relative">
+                        <label for="wynwood-email" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Email</label>
+                        <input type="email" name="email" id="wynwood-email" required class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" />
+                        <span id="wynwood-email-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                      </div>
+                      <div class="relative">
+                        <label for="wynwood-phone" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Phone</label>
+                        <input type="tel" name="phone" id="wynwood-phone" required class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" />
+                        <span id="wynwood-phone-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h5 class="mt-4 border-t-2 border-[#00807A] pt-4 pb-1 text-sm font-semibold text-gray-700">Dinner Preferences</h5>
+                    <div>
+                        <fieldset class="mt-1">
+                          <legend class="sr-only">Dinner Style Preference</legend>
+                          <div class="flex flex-wrap gap-x-4 gap-y-2">
+                            <div class="flex items-center">
+                              <input id="wynwood-dinner-vibrant" name="dinner_style_preference" type="radio" value="Vibrant Scene & Global Flavors" checked class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" />
+                              <label for="wynwood-dinner-vibrant" class="ml-2 block text-sm text-gray-900">Vibrant Scene & Global Flavors</label>
+                            </div>
+                            <div class="flex items-center">
+                              <input id="wynwood-dinner-steak" name="dinner_style_preference" type="radio" value="Upscale Steakhouse" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" />
+                              <label for="wynwood-dinner-steak" class="ml-2 block text-sm text-gray-900">Upscale Steakhouse</label>
+                            </div>
+                            <div class="flex items-center">
+                              <input id="wynwood-dinner-modern" name="dinner_style_preference" type="radio" value="Modern American / European" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" />
+                              <label for="wynwood-dinner-modern" class="ml-2 block text-sm text-gray-900">Modern American / European</label>
+                            </div>
+                            <div class="flex items-center">
+                              <input id="wynwood-dinner-italian" name="dinner_style_preference" type="radio" value="Elevated Italian / Mediterranean" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" />
+                              <label for="wynwood-dinner-italian" class="ml-2 block text-sm text-gray-900">Elevated Italian / Mediterranean</label>
+                            </div>
+                            <div class="flex items-center">
+                              <input id="wynwood-dinner-seafood" name="dinner_style_preference" type="radio" value="Iconic Miami Seafood" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" />
+                              <label for="wynwood-dinner-seafood" class="ml-2 block text-sm text-gray-900">Iconic Miami Seafood</label>
+                            </div>
+                            <div class="flex items-center">
+                              <input id="wynwood-dinner-other-style" name="dinner_style_preference" type="radio" value="Other" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" />
+                              <label for="wynwood-dinner-other-style" class="ml-2 block text-sm text-gray-900">Other (Specify)</label>
+                            </div>
+                          </div>
+                        </fieldset>
+                        <span id="dinner_style_preference-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                    </div>
+                    <div id="wynwood-other-restaurant-container" class="relative hidden">
+                        <label for="wynwood-other-restaurant" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Other Cuisine / Restaurant Request</label>
+                        <input type="text" name="other_restaurant_request" id="wynwood-other-restaurant" class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="e.g., Italian, specific restaurant name" />
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <h5 class="mt-4 border-t-2 border-[#00807A] pt-4 pb-1 text-sm font-semibold text-gray-700">Post-Dinner Lounge/Bar</h5>
+                    <div>
+                        <fieldset class="mt-1">
+                          <legend class="sr-only">Post-Dinner Option</legend>
+                          <div class="flex flex-wrap gap-3">
+                            <div class="flex items-center">
+                              <input id="wynwood-lounge-yes" name="lounge_interest" type="radio" value="Yes" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" />
+                              <label for="wynwood-lounge-yes" class="ml-2 block text-sm text-gray-900">Yes</label>
+                            </div>
+                            <div class="flex items-center">
+                              <input id="wynwood-lounge-no" name="lounge_interest" type="radio" value="No" checked class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" />
+                              <label for="wynwood-lounge-no" class="ml-2 block text-sm text-gray-900">No</label>
+                            </div>
+                            <div class="flex items-center">
+                              <input id="wynwood-lounge-maybe" name="lounge_interest" type="radio" value="Maybe - Discuss" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" />
+                              <label for="wynwood-lounge-maybe" class="ml-2 block text-sm text-gray-900">Maybe (Discuss)</label>
+                            </div>
+                          </div>
+                        </fieldset>
+                        <span id="lounge_interest-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                    </div>
+                </div>
+              </div>
               <div id="everglades-options" class="hidden">...</div>
               <div id="keys-escape-options" class="hidden border-t border-gray-200 pt-4">...</div>
             </div>
@@ -138,115 +274,519 @@
             <div id="notes-container" class="relative">
               <label for="notes" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Notes / Preferences</label>
               <textarea name="notes" id="notes" rows="3" class="block w-full rounded-md border-0 px-3 py-2 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" placeholder="Optional details, flight numbers, special requests..."></textarea>
+              <span id="notes-error" class="mt-1 block text-xs text-red-600 hidden"></span>
             </div>
 
             <div>
-              <button type="submit" id="submit-button" class="mt-4 flex w-full justify-center rounded-lg border border-transparent bg-[--color-gold] px-4 py-3 text-lg font-semibold text-white shadow-sm transition duration-300 hover:bg-[--color-gold-dark] focus:ring-2 focus:ring-[--color-gold] focus:ring-offset-2 focus:outline-none">Get Quote</button>
+              <button type="submit" id="submit-button" class="mt-4 flex w-full items-center justify-center rounded-lg border border-transparent bg-[--color-gold] px-4 py-3 text-lg font-semibold text-white shadow-sm transition duration-300 hover:bg-[--color-gold-dark] focus:ring-2 focus:ring-[--color-gold] focus:ring-offset-2 focus:outline-none disabled:opacity-75">
+                <span class="spinner hidden mr-2">
+                  <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </span>
+                <span class="button-text">Get Quote</span>
+              </button>
+              <span id="submit-button-error" class="mt-1 block text-xs text-red-600 hidden"></span>
             </div>
           </form>
+          <div id="confirmation-message" class="hidden text-center">
+            <h3 class="font-playfair text-xl text-gray-900">Thank You!</h3>
+            <p class="text-gray-600">Your request has been submitted successfully. We'll get back to you soon.</p>
+          </div>
         </div>
       </div>
     </main>
-
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-          // Get references to elements
-          const experienceToggle = document.getElementById('experience-toggle');
-          const hourlyToggle = document.getElementById('hourly-toggle');
-          const hourlyToggleContainer = document.getElementById('hourly-toggle-container');
+        // --- References ---
+        const bookingForm = document.getElementById('booking-form');
+        const experienceToggle = document.getElementById('experience-toggle');
+        const hourlyToggle = document.getElementById('hourly-toggle');
+        const hourlyToggleContainer = document.getElementById('hourly-toggle-container');
+        const toAddressContainer = document.getElementById('to-address-container');
+        const experienceDropdownContainer = document.getElementById('experience-dropdown-container');
+        const durationContainer = document.getElementById('duration-container');
+        const dateTimeContainer = document.getElementById('date-time-container');
+        const datePreferenceContainer = document.getElementById('date-preference-container');
+        const experienceDropdown = document.getElementById('experience-dropdown');
+        const toAddressInput = document.getElementById('to-address');
+        const pickupTimeLabel = document.querySelector('label[for="pickup-time"]');
+        const submitButton = document.getElementById('submit-button');
+        const buttonText = submitButton?.querySelector('.button-text');
+        const spinner = submitButton?.querySelector('.spinner');
+        const confirmationMessage = document.getElementById('confirmation-message');
+        const experienceOptionsContainer = document.getElementById('experience-options-container');
+        const wynwoodNightOptions = document.getElementById('wynwood-night-options');
+        const waterSkyOptions = document.getElementById('water-sky-options');
+        const evergladesOptions = document.getElementById('everglades-options');
+        const keysEscapeOptions = document.getElementById('keys-escape-options');
+        const dinnerPreferenceRadios = document.querySelectorAll('input[name="dinner_style_preference"]');
+        const otherRestaurantContainer = document.getElementById('wynwood-other-restaurant-container');
+        const otherDinnerStyleRadio = document.getElementById('wynwood-dinner-other-style');
+        const notesContainer = document.getElementById('notes-container');
 
-          const toContainer = document.getElementById('to-container');
-          const toAddressContainer = document.getElementById('to-address-container');
-          const toAddressInput = document.getElementById('to-address');
-          const experienceDropdownContainer = document.getElementById('experience-dropdown-container');
-          const experienceDropdown = document.getElementById('experience-dropdown');
+        // --- Helper Functions ---
 
-          const durationContainer = document.getElementById('duration-container');
-          const dateTimeContainer = document.getElementById('date-time-container');
-          const notesContainer = document.getElementById('notes-container');
-          const pickupTimeLabel = document.querySelector('label[for="pickup-time"]');
+        // Shows an error message for a specific field
+        function showError(fieldId, message) {
+          const errorSpan = document.getElementById(`${fieldId}-error`);
+          const inputElement = document.getElementById(fieldId) || document.querySelector(`input[name="${fieldId}"]`);
+          if (errorSpan) {
+            errorSpan.textContent = message;
+            errorSpan.classList.remove('hidden');
+          }
+          if (inputElement && !inputElement.type.startsWith('radio')) {
+            inputElement.classList.add('ring-red-500', 'ring-1');
+          }
+        }
 
-          const experienceOptionsContainer = document.getElementById('experience-options-container');
-          const waterSkyOptions = document.getElementById('water-sky-options');
-          // Add refs for other experience option divs if needed
-          // const wynwoodOptions = document.getElementById('wynwood-night-options');
-          // const evergladesOptions = document.getElementById('everglades-options');
-           const keysOptions = document.getElementById('keys-escape-options');
+        // Hides an error message for a specific field
+        function clearError(fieldId) {
+          const errorSpan = document.getElementById(`${fieldId}-error`);
+          const inputElement = document.getElementById(fieldId) || document.querySelector(`input[name="${fieldId}"]`);
+          if (errorSpan) {
+            errorSpan.textContent = '';
+            errorSpan.classList.add('hidden');
+          }
+          if (inputElement && !inputElement.type.startsWith('radio')) {
+            inputElement.classList.remove('ring-red-500', 'ring-1');
+          }
+        }
 
+        // Clears all error messages
+        function clearAllErrors() {
+          const errorSpans = bookingForm.querySelectorAll('[id$="-error"]');
+          errorSpans.forEach(span => {
+            span.textContent = '';
+            span.classList.add('hidden');
+          });
+          const errorInputs = bookingForm.querySelectorAll('.ring-red-500');
+          errorInputs.forEach(input => input.classList.remove('ring-red-500', 'ring-1'));
+        }
 
-          const submitButton = document.getElementById('submit-button');
+        // Gets the appropriate default text for the submit button
+        function getDefaultButtonText() {
+          const isExperienceMode = experienceToggle.checked;
+          const isHourlyMode = hourlyToggle.checked;
+          const selectedExperience = experienceDropdown.value;
 
-          function updateFormUI() {
-              const isExperienceMode = experienceToggle.checked;
-              const isHourlyMode = hourlyToggle.checked;
-              const selectedExperience = experienceDropdown.value;
+          if (isExperienceMode && selectedExperience) {
+            return 'Request Experience';
+          } else if (!isExperienceMode && isHourlyMode) {
+            return 'Request Hourly Service';
+          } else {
+            return 'Get Quote';
+          }
+        }
 
-              // --- Toggle mutual exclusivity ---
-              if (isExperienceMode) {
-                  if (isHourlyMode) { hourlyToggle.checked = false; }
-                  hourlyToggleContainer.classList.add('opacity-50', 'pointer-events-none');
-                  hourlyToggle.disabled = true;
-              } else {
-                  hourlyToggleContainer.classList.remove('opacity-50', 'pointer-events-none');
-                  hourlyToggle.disabled = false;
-              }
+        // Resets the submit button to its default state
+        function resetSubmitButton() {
+          if (!submitButton) return;
+          submitButton.disabled = false;
+          if (spinner) spinner.classList.add('hidden');
+          if (buttonText) {
+            buttonText.textContent = getDefaultButtonText();
+            buttonText.classList.remove('hidden');
+          }
+        }
 
-              // --- Show/Hide "To" Address vs Experience Dropdown ---
-              toAddressContainer.classList.toggle('hidden', isExperienceMode);
-              experienceDropdownContainer.classList.toggle('hidden', !isExperienceMode);
+        // Sets the submit button to its loading state
+        function setLoadingButton() {
+          if (!submitButton) return;
+          submitButton.disabled = true;
+          if (buttonText) buttonText.classList.add('hidden');
+          if (spinner) spinner.classList.remove('hidden');
+        }
 
-              // --- Handle Hourly Mode ---
-              if (!isExperienceMode) {
-                  durationContainer.classList.toggle('hidden', !isHourlyMode);
-                  toAddressInput.disabled = isHourlyMode;
-                  toAddressContainer.classList.toggle('opacity-50', isHourlyMode);
-                   if (pickupTimeLabel) pickupTimeLabel.textContent = isHourlyMode ? 'Start Time' : 'Time';
-              } else {
-                   durationContainer.classList.add('hidden');
-                   if (pickupTimeLabel) pickupTimeLabel.textContent = 'Time';
-                   toAddressInput.disabled = false;
-                   toAddressContainer.classList.remove('opacity-50');
-              }
+        // --- Main UI Update Function ---
+        function updateFormUI() {
+          // Use let instead of const for variables that may be reassigned
+          let isExperienceMode = experienceToggle.checked;
+          let isHourlyMode = hourlyToggle.checked;
 
-
-              // --- Show/Hide Experience-Specific Options ---
-              const showExperienceOptions = isExperienceMode && selectedExperience;
-              experienceOptionsContainer.classList.toggle('hidden', !showExperienceOptions);
-
-              if (showExperienceOptions) {
-                  // Example: Show only relevant options container
-                  waterSkyOptions.classList.toggle('hidden', selectedExperience !== 'water_sky');
-                  // wynwoodOptions.classList.toggle('hidden', selectedExperience !== 'wynwood_night');
-                  // evergladesOptions.classList.toggle('hidden', selectedExperience !== 'everglades');
-                  keysOptions.classList.toggle('hidden', selectedExperience !== 'keys_escape');
-
-                  // Example: Hide standard date/time if needed
-                  dateTimeContainer.classList.toggle('hidden', selectedExperience === 'keys_escape');
-              } else {
-                   if(waterSkyOptions) waterSkyOptions.classList.add('hidden');
-                   // Add other experience option divs here if needed
-                   if(keysOptions) keysOptions.classList.add('hidden');
-                   dateTimeContainer.classList.remove('hidden'); // Ensure standard date/time is visible otherwise
-              }
-
-
-              // --- Update Submit Button Text ---
-              if (isExperienceMode && selectedExperience) {
-                  submitButton.textContent = 'Request Experience';
-              } else if (!isExperienceMode && isHourlyMode) {
-                  submitButton.textContent = 'Request Hourly Service';
-              } else {
-                  submitButton.textContent = 'Get Quote'; // Default for One Way
-              }
+          // 1. Handle Toggle Exclusivity & Dropdown Reset
+          if (isExperienceMode) { // If Experience is ON...
+            if (isHourlyMode) {   // ...and Hourly was also ON...
+              hourlyToggle.checked = false; // ...turn Hourly toggle OFF.
+              isHourlyMode = false;         // Update local variable
+              // Reset the experience dropdown to its default value
+              experienceDropdown.value = "";
+              console.log('Experience dropdown reset to default.');
+            }
+            // Disable the Hourly toggle since Experience is active
+            hourlyToggleContainer.classList.add('opacity-50', 'pointer-events-none');
+            hourlyToggle.disabled = true;
+          } else { // If Experience is OFF...
+            // Enable the Hourly toggle
+            hourlyToggleContainer.classList.remove('opacity-50', 'pointer-events-none');
+            hourlyToggle.disabled = false;
+            // Optional: Reset dropdown when Experience mode is turned OFF
+            // experienceDropdown.value = "";
           }
 
-          // --- Add Event Listeners ---
-          experienceToggle.addEventListener('change', updateFormUI);
-          hourlyToggle.addEventListener('change', updateFormUI);
-          experienceDropdown.addEventListener('change', updateFormUI);
+          // NOW read the potentially updated dropdown value
+          const selectedExperience = experienceDropdown.value;
 
-          // --- Initial UI Setup on Load ---
-          updateFormUI();
+          // Log the state for debugging
+          console.log('Updating UI (State after toggle logic):', {
+            isExperienceMode,
+            isHourlyMode,
+            selectedExperience,
+            experienceToggleChecked: experienceToggle.checked,
+            experienceDropdownValue: experienceDropdown.value
+          });
+
+          // 2. Show/Hide "To" Address vs Experience Dropdown
+          toAddressContainer.classList.toggle('hidden', isExperienceMode);
+          experienceDropdownContainer.classList.toggle('hidden', !isExperienceMode);
+
+          // 3. Handle Hourly Mode UI (Only when Experience is OFF)
+          if (!isExperienceMode) {
+            durationContainer.classList.toggle('hidden', !isHourlyMode);
+            toAddressInput.disabled = isHourlyMode;
+            toAddressContainer.classList.toggle('opacity-50', isHourlyMode);
+            if (pickupTimeLabel) pickupTimeLabel.textContent = isHourlyMode ? 'Start Time' : 'Time';
+          } else {
+            durationContainer.classList.add('hidden');
+            if (pickupTimeLabel) pickupTimeLabel.textContent = 'Time';
+            toAddressInput.disabled = false;
+            toAddressContainer.classList.remove('opacity-50');
+          }
+
+          // 4. Show/Hide MAIN Experience Options Container
+          const showExperienceOptions = isExperienceMode && selectedExperience !== "";
+          if (experienceOptionsContainer) {
+            experienceOptionsContainer.classList.toggle('hidden', !showExperienceOptions);
+            console.log('Experience Options Container Visibility:', !experienceOptionsContainer.classList.contains('hidden'));
+          }
+
+          // 5. Show/Hide Date/Time Picker vs Date Preference Radios
+          dateTimeContainer.classList.toggle('hidden', isExperienceMode && selectedExperience !== "");
+          datePreferenceContainer.classList.toggle('hidden', !(isExperienceMode && selectedExperience !== ""));
+
+          // 6. Show/Hide SPECIFIC Experience Options DIVs
+          if (showExperienceOptions) {
+            // Explicitly manage visibility for each experience option
+            if (wynwoodNightOptions) {
+              const shouldShowWynwood = selectedExperience === 'wynwood_night';
+              wynwoodNightOptions.classList.toggle('hidden', !shouldShowWynwood);
+              console.log('Wynwood Night Options Visibility:', !wynwoodNightOptions.classList.contains('hidden'), 'Expected:', shouldShowWynwood);
+            }
+            if (waterSkyOptions) {
+              waterSkyOptions.classList.toggle('hidden', selectedExperience !== 'water_sky');
+            }
+            if (evergladesOptions) {
+              evergladesOptions.classList.toggle('hidden', selectedExperience !== 'everglades');
+            }
+            if (keysEscapeOptions) {
+              keysEscapeOptions.classList.toggle('hidden', selectedExperience !== 'keys_escape');
+            }
+
+            // Handle conditional fields *within* the visible experience section
+            if (selectedExperience === 'wynwood_night') {
+              handleWynwoodDinnerChoice();
+            } else {
+              if (otherRestaurantContainer) otherRestaurantContainer.classList.add('hidden');
+            }
+          } else {
+            // Hide ALL specific options if main container is hidden
+            if (wynwoodNightOptions) wynwoodNightOptions.classList.add('hidden');
+            if (waterSkyOptions) waterSkyOptions.classList.add('hidden');
+            if (evergladesOptions) evergladesOptions.classList.add('hidden');
+            if (keysEscapeOptions) keysEscapeOptions.classList.add('hidden');
+            if (otherRestaurantContainer) otherRestaurantContainer.classList.add('hidden');
+          }
+
+          // 7. Ensure Notes Container is Always Visible (unless submission is successful)
+          if (notesContainer) {
+            notesContainer.classList.remove('hidden');
+          }
+
+          // 8. Update Submit Button Text
+          if (buttonText && !submitButton.disabled) {
+            buttonText.textContent = getDefaultButtonText();
+          }
+
+          // --- Ensure form/confirmation are reset initially ---
+          if (bookingForm.classList.contains('hidden')) {
+            bookingForm.classList.remove('hidden');
+          }
+          if (document.querySelector('.font-playfair.text-2xl')?.classList.contains('hidden')) {
+            document.querySelector('.font-playfair.text-2xl').classList.remove('hidden');
+          }
+          if (confirmationMessage && !confirmationMessage.classList.contains('hidden')) {
+            confirmationMessage.classList.add('hidden');
+          }
+        }
+
+        // --- Event Listeners ---
+        // Add listeners to clear errors on input/change for better UX
+        bookingForm.querySelectorAll('input, select, textarea').forEach(input => {
+          input.addEventListener('input', () => clearError(input.id || input.name));
+          input.addEventListener('change', () => clearError(input.id || input.name));
+        });
+
+        // Add listener for Wynwood Dinner radio change to clear the group error
+        document.querySelectorAll('input[name="dinner_style_preference"]').forEach(radio => {
+          radio.addEventListener('change', () => clearError('dinner_style_preference'));
+        });
+
+        // Add similar listeners for other validated radio groups
+        document.querySelectorAll('input[name="motivation"]').forEach(radio => {
+          radio.addEventListener('change', () => clearError('motivation'));
+        });
+        document.querySelectorAll('input[name="lounge_interest"]').forEach(radio => {
+          radio.addEventListener('change', () => clearError('lounge_interest'));
+        });
+        document.querySelectorAll('input[name="date_preference"]').forEach(radio => {
+          radio.addEventListener('change', () => clearError('date_preference'));
+        });
+
+        // Existing listeners
+        if (experienceToggle) experienceToggle.addEventListener('change', updateFormUI);
+        if (hourlyToggle) hourlyToggle.addEventListener('change', updateFormUI);
+        if (experienceDropdown) experienceDropdown.addEventListener('change', updateFormUI);
+        if (dinnerPreferenceRadios.length > 0) {
+          dinnerPreferenceRadios.forEach(radio => {
+            radio.addEventListener('change', handleWynwoodDinnerChoice);
+          });
+        }
+
+        // --- Initial UI Setup ---
+        updateFormUI();
+
+        // --- Form Submission Logic ---
+        if (bookingForm) {
+          bookingForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            clearAllErrors();
+            let isValid = true;
+
+            // --- Start: Enhanced Client-Side Validation ---
+            const isExperienceMode = experienceToggle.checked;
+            const isHourlyMode = hourlyToggle.checked;
+            const selectedExperience = experienceDropdown.value;
+
+            // Get potentially relevant values
+            const fromLocationInput = bookingForm.querySelector('#from-location');
+            const toAddressInput = bookingForm.querySelector('#to-address');
+            const pickupDateInput = bookingForm.querySelector('#pickup-date');
+            const pickupTimeInput = bookingForm.querySelector('#pickup-time');
+            const notesInput = bookingForm.querySelector('#notes');
+
+            // Specific Wynwood Fields
+            const wynwoodNameInput = bookingForm.querySelector('#wynwood-name');
+            const wynwoodGuestsInput = bookingForm.querySelector('#wynwood-guests');
+            const wynwoodEmailInput = bookingForm.querySelector('#wynwood-email');
+            const wynwoodPhoneInput = bookingForm.querySelector('#wynwood-phone');
+
+            // 1. Always required: From Location
+            if (!fromLocationInput.value.trim()) {
+              showError('from-location', 'Please enter a "From" location.');
+              isValid = false;
+            }
+
+            // 2. Validation for Standard Ride Mode (One Way / Hourly)
+            if (!isExperienceMode) {
+              // To Address (required only for One Way)
+              if (!isHourlyMode && !toAddressInput.value.trim()) {
+                showError('to-address', 'Please enter a "To" address for a one-way trip.');
+                isValid = false;
+              }
+              // Date & Time
+              if (!pickupDateInput.value) {
+                showError('pickup-date', 'Please select a pickup date.');
+                isValid = false;
+              }
+              if (!pickupTimeInput.value) {
+                showError('pickup-time', 'Please select a pickup time.');
+                isValid = false;
+              }
+            }
+            // 3. Validation for Experience Mode
+            else {
+              // Experience Dropdown Selection
+              if (!selectedExperience) {
+                showError('experience-dropdown', 'Please select an Experience.');
+                isValid = false;
+              }
+
+              // Date Preference (Check if one is selected)
+              const datePrefSelected = document.querySelector('input[name="date_preference"]:checked');
+              if (!datePrefSelected) {
+                showError('date_preference', 'Please select your preferred timing.');
+                isValid = false;
+              }
+
+              // Specific validation for "Wynwood Art & Culinary Night"
+              if (selectedExperience === 'wynwood_night') {
+                const motivationSelected = document.querySelector('input[name="motivation"]:checked');
+                const dinnerPrefSelected = document.querySelector('input[name="dinner_style_preference"]:checked');
+                const loungeSelected = document.querySelector('input[name="lounge_interest"]:checked');
+
+                if (!wynwoodNameInput || !wynwoodNameInput.value.trim()) {
+                  showError('wynwood-name', 'Please enter your name.');
+                  isValid = false;
+                }
+                if (!wynwoodGuestsInput || !wynwoodGuestsInput.value || parseInt(wynwoodGuestsInput.value, 10) < 1) {
+                  showError('wynwood-guests', 'Min 1 guest.');
+                  isValid = false;
+                }
+                if (!wynwoodEmailInput || !wynwoodEmailInput.value.trim()) {
+                  showError('wynwood-email', 'Please enter your email.');
+                  isValid = false;
+                } else {
+                  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                  if (!emailRegex.test(wynwoodEmailInput.value.trim())) {
+                    showError('wynwood-email', 'Invalid email format.');
+                    isValid = false;
+                  }
+                }
+                if (!wynwoodPhoneInput || !wynwoodPhoneInput.value.trim()) {
+                  showError('wynwood-phone', 'Please enter your phone.');
+                  isValid = false;
+                } else {
+                  const phoneRegex = /^\+?\d{10,15}$/;
+                  if (!phoneRegex.test(wynwoodPhoneInput.value.replace(/\s+/g, ''))) {
+                    showError('wynwood-phone', 'Invalid phone format (10-15 digits).');
+                    isValid = false;
+                  }
+                }
+                // Radio button checks for Wynwood
+                if (!motivationSelected) { showError('motivation', 'Please select an occasion.'); isValid = false; }
+                if (!dinnerPrefSelected) { showError('dinner_style_preference', 'Please select dinner preference.'); isValid = false; }
+                if (!loungeSelected) { showError('lounge_interest', 'Please select lounge interest.'); isValid = false; }
+              }
+              // Add similar 'if (selectedExperience === '...')' blocks for other experiences
+            }
+
+            // 4. Notes Validation (Example: Max Length)
+            const MAX_NOTES_LENGTH = 500;
+            if (notesInput && notesInput.value.length > MAX_NOTES_LENGTH) {
+              showError('notes', `Notes cannot exceed ${MAX_NOTES_LENGTH} characters.`);
+              isValid = false;
+            }
+
+            // --- End: Enhanced Client-Side Validation ---
+
+            if (!isValid) {
+              console.log("Validation failed. Submission aborted.");
+              const firstError = bookingForm.querySelector('.ring-red-500');
+              if (firstError) firstError.focus();
+              return;
+            }
+
+            // Validation passed, set button to loading state
+            setLoadingButton();
+            console.log("Client-side validation passed. Submitting...");
+
+            // --- Existing Data Processing and Fetch Logic ---
+            const formData = new FormData(bookingForm);
+            const dataObject = {};
+
+            // Convert FormData to plain object
+            formData.forEach((value, key) => {
+              const element = bookingForm.elements[key];
+              let isRadio = (NodeList.prototype.isPrototypeOf(element) && element[0]?.type === 'radio') || element?.type === 'radio';
+              if (isRadio) {
+                const checkedRadio = document.querySelector(`input[name="${key}"]:checked`);
+                if (checkedRadio && !dataObject.hasOwnProperty(key)) { dataObject[key] = checkedRadio.value; }
+              } else if (element) {
+                if (element.type === 'checkbox') { dataObject[key] = element.checked; } else { dataObject[key] = value; }
+              }
+            });
+
+            // Add/Remove fields based on mode
+            if (isExperienceMode && selectedExperience) {
+              dataObject.service_type = 'Experience';
+              if(experienceDropdown) dataObject.experience_name = experienceDropdown.options[experienceDropdown.selectedIndex].text;
+              delete dataObject['to-address'];
+              delete dataObject['duration-hourly'];
+              delete dataObject['pickup-date'];
+              delete dataObject['pickup-time'];
+              const datePrefRadio = document.querySelector('input[name="date_preference"]:checked');
+              if (datePrefRadio && !dataObject.hasOwnProperty('date_preference')) { dataObject['date_preference'] = datePrefRadio.value; }
+              const motivationRadio = document.querySelector('input[name="motivation"]:checked');
+              if (motivationRadio && !dataObject.hasOwnProperty('motivation') && selectedExperience === 'wynwood_night') { dataObject['motivation'] = motivationRadio.value; }
+              if (selectedExperience !== 'wynwood_night') {
+                delete dataObject['motivation'];
+                delete dataObject['dinner_style_preference'];
+                delete dataObject['other_restaurant_request'];
+                delete dataObject['lounge_interest'];
+                delete dataObject['name'];
+                delete dataObject['guests'];
+                delete dataObject['email'];
+                delete dataObject['phone'];
+              }
+            } else {
+              dataObject.service_type = isHourlyMode ? 'Hourly' : 'One Way';
+              delete dataObject['experience-dropdown'];
+              delete dataObject['date_preference'];
+              delete dataObject['motivation'];
+              delete dataObject['dinner_style_preference'];
+              delete dataObject['other_restaurant_request'];
+              delete dataObject['lounge_interest'];
+              delete dataObject['name'];
+              delete dataObject['guests'];
+              delete dataObject['email'];
+              delete dataObject['phone'];
+              if(dataObject.service_type === 'Hourly') delete dataObject['to-address'];
+              else delete dataObject['duration-hourly'];
+            }
+
+            // Log data (for testing)
+            console.log("Submitting:", dataObject.service_type);
+            console.log("Form Data Object:", dataObject);
+
+            // --- Send Data to Endpoint ---
+            const formEndpoint = "YOUR_FORMSPREE_ENDPOINT"; // <--- !!! SET YOUR ENDPOINT HERE !!!
+            if (formEndpoint === "YOUR_FORMSPREE_ENDPOINT") {
+              setTimeout(() => {
+                console.warn("Form data logged to console. Please set your Formspree endpoint URL.");
+                alert("DEV MODE: Form data logged to console. Submission not sent.");
+                resetSubmitButton();
+              }, 1500);
+              return;
+            }
+
+            fetch(formEndpoint, {
+              method: 'POST',
+              body: JSON.stringify(dataObject),
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              }
+            }).then(response => {
+              if (response.ok) {
+                console.log('Form submitted successfully!');
+                bookingForm.classList.add('hidden');
+                document.querySelector('.font-playfair.text-2xl')?.classList.add('hidden');
+                if (confirmationMessage) confirmationMessage.classList.remove('hidden');
+              } else {
+                response.json().then(data => {
+                  console.error('Form submission error:', data);
+                  showError('submit-button', `Error: ${data.error || 'Could not submit request.'}`);
+                  resetSubmitButton();
+                }).catch(() => {
+                  console.error('Form submission error: Could not parse response.');
+                  showError('submit-button', 'Error: Could not submit request. Please try again.');
+                  resetSubmitButton();
+                });
+              }
+            }).catch(error => {
+              console.error('Network error submitting form:', error);
+              showError('submit-button', 'Network error. Check connection.');
+              resetSubmitButton();
+            });
+          });
+        }
+
+        // --- Helper Function for Wynwood Dinner "Other" field ---
+        function handleWynwoodDinnerChoice() {
+          if (!otherDinnerStyleRadio || !otherRestaurantContainer) return;
+          otherRestaurantContainer.classList.toggle('hidden', !otherDinnerStyleRadio.checked);
+        }
       });
     </script>
   </body>
