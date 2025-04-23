@@ -11,55 +11,59 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
     <style>
-      :root { /* CSS Variables */
-          --color-gold: #B08D57;
-          --color-gold-dark: #9A7B4F;
-          --color-teal: #00A09A;
-          --color-teal-dark: #00807A;
-          --color-teal-light-bg: #f0fdfa;
-          --color-palm-green: #3CB371;
+      :root {
+        --color-gold: #B08D57;
+        --color-gold-dark: #9A7B4F;
+        --color-teal: #00A09A;
+        --color-teal-dark: #00807A;
+        --color-teal-light-bg: #f0fdfa;
+        --color-palm-green: #3CB371;
       }
       body { font-family: 'Inter', sans-serif; color: #1f2937; }
       h1, h2, h3, .font-playfair { font-family: 'Playfair Display', serif; }
       .brand-gradient-text { background: linear-gradient(to right, #f97316, #ef4444); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700; }
       select { appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="%2300A09A" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>'); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.25em; padding-right: 2.5rem; }
-      /* Tab Styling */
       .tab-button.active-tab {
-          background-color: white;
-          border-left-color: #e5e7eb;
-          border-right-color: #e5e7eb;
-          border-top-color: #e5e7eb;
-          border-bottom-color: transparent;
-          color: var(--color-teal);
-          font-weight: 600;
+        background-color: white;
+        border-left-color: #e5e7eb;
+        border-right-color: #e5e7eb;
+        border-top-color: #e5e7eb;
+        border-bottom-color: transparent;
+        color: var(--color-teal);
+        font-weight: 600;
       }
       .tab-button:not(.active-tab) {
-          background-color: #f9fafb;
-          border-color: transparent;
-          color: #6b7280;
+        background-color: #f9fafb;
+        border-color: transparent;
+        color: #6b7280;
       }
       .tab-button:not(.active-tab):hover {
-          background-color: #f3f4f6;
-          color: #4b5563;
+        background-color: #f3f4f6;
+        color: #4b5563;
       }
-      /* Flatpickr Custom Styles */
       .flatpickr-calendar {
         background: white;
         border-radius: 0.5rem;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
       }
-       /* Screen Reader Only utility */
-       .sr-only {
-         position: absolute;
-         width: 1px;
-         height: 1px;
-         padding: 0;
-         margin: -1px;
-         overflow: hidden;
-         clip: rect(0, 0, 0, 0);
-         white-space: nowrap;
-         border-width: 0;
-       }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+      }
+      label:has(input[name="vehicle_type_oneway"]:checked) .checked-indicator {
+          opacity: 1;
+      }
+      .checked-indicator {
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
     </style>
   </head>
   <body class="bg-gray-100">
@@ -82,7 +86,6 @@
 
           <div class="p-6 md:p-8">
             <form action="#" method="POST" id="booking-form" class="space-y-3">
-
               <div class="relative">
                 <label for="from-location" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">From</label>
                 <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg></span>
@@ -91,7 +94,6 @@
               </div>
 
               <div class="tab-panels space-y-3 pt-2">
-
                 <div id="panel-oneway" class="tab-panel space-y-3" role="tabpanel" tabindex="0" aria-labelledby="tab-button-oneway">
                   <div id="to-address-container" class="relative">
                     <label for="to-address" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">To</label>
@@ -99,106 +101,149 @@
                     <input type="text" name="to-address" id="to-address" aria-describedby="to-address-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" placeholder="Address, airport, hotel, ..." />
                     <span id="to-address-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                   </div>
-                  <div id="date-time-container-oneway" class="relative space-y-1">
-                    <div>
-                      <label for="pickup-date-oneway" class="block text-xs font-medium text-gray-500 mb-0.5">Date</label>
-                      <input type="text" name="pickup-date-oneway" id="pickup-date-oneway" required aria-describedby="pickup-date-oneway-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Date..." />
-                      <span id="pickup-date-oneway-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                  <div id="date-time-container-oneway" class="relative">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
+                      <div>
+                        <label for="pickup-date-oneway" class="block text-xs font-medium text-gray-500 mb-0.5">Date</label>
+                        <input type="text" name="pickup-date-oneway" id="pickup-date-oneway" required aria-describedby="pickup-date-oneway-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Date..." />
+                        <span id="pickup-date-oneway-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                      </div>
+                      <div>
+                        <label for="pickup-time-oneway" class="block text-xs font-medium text-gray-500 mb-0.5">Time</label>
+                        <input type="text" name="pickup-time-oneway" id="pickup-time-oneway" required aria-describedby="pickup-time-oneway-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Time..." />
+                        <span id="pickup-time-oneway-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                      </div>
                     </div>
-                    <div>
-                      <label for="pickup-time-oneway" class="block text-xs font-medium text-gray-500 mb-0.5">Time</label>
-                      <input type="text" name="pickup-time-oneway" id="pickup-time-oneway" required aria-describedby="pickup-time-oneway-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Time..." />
-                      <span id="pickup-time-oneway-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                    </div>
+                  </div>
+                  <div id="vehicle-selection-oneway" class="pt-4">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-3 font-playfair" id="vehicle-selection-oneway-label">Choose Your Luxury Ride</h4>
+                    <fieldset aria-labelledby="vehicle-selection-oneway-label" aria-describedby="vehicle-type-oneway-error">
+                      <legend class="sr-only">Vehicle Selection</legend>
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <label for="vehicle-sedan-oneway" class="relative flex cursor-pointer flex-col rounded-lg border border-gray-200 bg-white p-3 shadow-sm focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-[--color-gold] hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-2 has-[:checked]:ring-[--color-teal] transition-all">
+                          <input type="radio" name="vehicle_type_oneway" value="Luxury Sedan" id="vehicle-sedan-oneway" class="sr-only" required aria-describedby="sedan-details-oneway">
+                          <div class="flex-shrink-0 w-full mb-2 flex items-center justify-center">
+                            <img src="images/luxury-sedan.jpg" alt="Luxury Sedan Illustration" class="w-full rounded-md">
+                            </div>
+                          <div class="flex-1 text-center" id="sedan-details-oneway">
+                            <span class="block text-sm font-medium text-gray-900">Luxury Sedan</span>
+                            <span class="mt-1 block text-xs text-gray-600">(1-3 Pax | EV Available)</span>
+                          </div>
+                          <span class="checked-indicator absolute top-2 right-2 h-5 w-5 text-[--color-teal] opacity-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm3.707-9.293a1 1 0 0 0-1.414-1.414L9 10.586 7.707 9.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4z" clip-rule="evenodd" /></svg>
+                          </span>
+                        </label>
+                        <label for="vehicle-suv-oneway" class="relative flex cursor-pointer flex-col rounded-lg border border-gray-200 bg-white p-3 shadow-sm focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-[--color-gold] hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-2 has-[:checked]:ring-[--color-teal] transition-all">
+                          <input type="radio" name="vehicle_type_oneway" value="Premium SUV" id="vehicle-suv-oneway" class="sr-only" required aria-describedby="suv-details-oneway">
+                          <div class="flex-shrink-0 w-full mb-2 flex items-center justify-center">
+                             <img src="images/premium-suv-escalade.jpg" alt="Premium SUV Illustration" class="w-full rounded-md">
+                             </div>
+                          <div class="flex-1 text-center" id="suv-details-oneway">
+                            <span class="block text-sm font-medium text-gray-900">Premium SUV</span>
+                            <span class="mt-1 block text-xs text-gray-600">(Up to 6 Pax | EV Available)</span>
+                          </div>
+                          <span class="checked-indicator absolute top-2 right-2 h-5 w-5 text-[--color-teal] opacity-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm3.707-9.293a1 1 0 0 0-1.414-1.414L9 10.586 7.707 9.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4z" clip-rule="evenodd" /></svg>
+                          </span>
+                        </label>
+                        <label for="vehicle-sprinter-oneway" class="relative flex cursor-pointer flex-col rounded-lg border border-gray-200 bg-white p-3 shadow-sm focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-[--color-gold] hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-2 has-[:checked]:ring-[--color-teal] transition-all">
+                          <input type="radio" name="vehicle_type_oneway" value="VIP Group Sprinter" id="vehicle-sprinter-oneway" class="sr-only" required aria-describedby="sprinter-details-oneway">
+                          <div class="flex-shrink-0 w-full mb-2 flex items-center justify-center">
+                             <img src="images/vip-sprinter.jpg" alt="VIP Sprinter Illustration" class="w-full rounded-md">
+                             </div>
+                          <div class="flex-1 text-center" id="sprinter-details-oneway">
+                            <span class="block text-sm font-medium text-gray-900">VIP Group Sprinter</span>
+                            <span class="mt-1 block text-xs text-gray-600">(Up to 14 Pax | Mobile Lounge)</span>
+                          </div>
+                          <span class="checked-indicator absolute top-2 right-2 h-5 w-5 text-[--color-teal] opacity-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm3.707-9.293a1 1 0 0 0-1.414-1.414L9 10.586 7.707 9.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4z" clip-rule="evenodd" /></svg>
+                          </span>
+                        </label>
+                        <span id="vehicle-type-oneway-error" class="mt-1 block text-xs text-red-600 hidden sm:col-span-2">Please select a vehicle type.</span>
+                      </div>
+                    </fieldset>
                   </div>
                 </div>
                 <div id="panel-experience-plus" class="tab-panel space-y-3 hidden" role="tabpanel" tabindex="0" aria-labelledby="tab-button-experience-plus">
                   <div id="experience-dropdown-container" class="relative">
-                    <label for="experience-dropdown" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Select Service</label>
-                    <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27Z"></path></svg></span>
-                    <select name="experience-dropdown" id="experience-dropdown" required aria-describedby="experience-dropdown-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6">
-                      <option value="">-- Choose Service --</option>
-                      <option value="hourly_chauffeur">Hourly Chauffeur</option>
-                      <option value="water_sky">Ultimate Miami Water & Sky</option>
-                      <option value="wynwood_night">Wynwood Art & Culinary Night</option>
-                      <option value="everglades">Everglades Adventure</option>
-                      <option value="keys_escape">Keys Escape Experience</option>
-                    </select>
-                    <span id="experience-dropdown-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                  </div>
-
-                  <div id="hourly-description" class="hidden text-sm text-gray-600 bg-gray-50 p-3 rounded-md border border-gray-200">
+                     <label for="experience-dropdown" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Select Service</label>
+                     <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27Z"></path></svg></span>
+                     <select name="experience-dropdown" id="experience-dropdown" required aria-describedby="experience-dropdown-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6">
+                       <option value="">-- Choose Service --</option>
+                       <option value="hourly_chauffeur">Hourly Chauffeur</option>
+                       <option value="water_sky">Ultimate Miami Water & Sky</option>
+                       <option value="wynwood_night">Wynwood Art & Culinary Night</option>
+                       <option value="everglades">Everglades Adventure</option>
+                       <option value="keys_escape">Keys Escape Experience</option>
+                     </select>
+                     <span id="experience-dropdown-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                   </div>
+                   <div id="hourly-description" class="hidden text-sm text-gray-600 bg-gray-50 p-3 rounded-md border border-gray-200">
                      Ideal for business meetings, tourist visits, and multiple stop trips. Gives you flexibility and control over your schedule.
                    </div>
-
-                  <div id="duration-container" class="relative hidden">
-                    <label for="duration-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Duration</label>
-                    <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg></span>
-                    <select name="duration-hourly" id="duration-hourly" required aria-describedby="duration-hourly-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6">
-                      <option value="2">2 hours</option><option value="3">3 hours</option><option value="4">4 hours</option><option value="5">5 hours</option><option value="6">6 hours</option><option value="7">7 hours</option><option value="8">8 hours</option><option value="9">9 hours</option><option value="10">10 hours</option><option value="11">11 hours</option><option value="12">12 hours</option>
-                    </select>
-                    <span id="duration-hourly-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                  </div>
-
-                  <div id="date-time-container-hourly" class="relative hidden space-y-1">
-                    <div>
-                      <label for="pickup-date-hourly" class="block text-xs font-medium text-gray-500 mb-0.5">Date</label>
-                      <input type="text" name="pickup-date-hourly" id="pickup-date-hourly" required aria-describedby="pickup-date-hourly-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Date..." />
-                      <span id="pickup-date-hourly-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                    </div>
-                    <div>
-                      <label for="pickup-time-hourly" id="pickup-time-label-hourly" class="block text-xs font-medium text-gray-500 mb-0.5">Start Time</label>
-                      <input type="text" name="pickup-time-hourly" id="pickup-time-hourly" required aria-describedby="pickup-time-hourly-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Start Time..." />
-                      <span id="pickup-time-hourly-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                    </div>
-                  </div>
-
-                  <div id="date-preference-container" class="relative hidden pt-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1" id="date-preference-label">Preferred Timing</label>
-                    <fieldset aria-labelledby="date-preference-label" aria-describedby="date-preference-error">
-                      <legend class="sr-only">Select Preferred Timing</legend>
-                      <div class="flex flex-wrap gap-x-4 gap-y-2">
-                        <div class="flex items-center"><input id="pref-asap" name="date_preference" type="radio" value="ASAP / Next Day" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-asap" class="ml-2 block text-sm text-gray-900">ASAP / Next Day</label></div>
-                        <div class="flex items-center"><input id="pref-weekend" name="date_preference" type="radio" value="This Coming Weekend" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-weekend" class="ml-2 block text-sm text-gray-900">This Coming Weekend</label></div>
-                        <div class="flex items-center"><input id="pref-weekday" name="date_preference" type="radio" value="Next Week (Mon-Fri)" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-weekday" class="ml-2 block text-sm text-gray-900">Next Week (Mon-Fri)</label></div>
-                        <div class="flex items-center"><input id="pref-flexible" name="date_preference" type="radio" value="Flexible / Other Date" checked class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-flexible" class="ml-2 block text-sm text-gray-900">Flexible / Other Date</label></div>
-                      </div>
-                    </fieldset>
-                    <span id="date_preference-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                  </div>
-
-                  <div id="common-experience-fields" class="hidden space-y-4 border-t border-gray-200 pt-4">
-                    <h5 class="text-sm font-semibold text-gray-700">Your Contact Details & Guests</h5>
-                    <div class="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2">
-                      <div class="relative">
-                        <label for="experience-name" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Your Name</label>
-                        <input type="text" name="name" id="experience-name" required aria-describedby="experience-name-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" />
-                        <span id="experience-name-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                      </div>
-                      <div class="relative">
-                        <label for="experience-guests" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Number of Guests</label>
-                        <input type="number" name="guests" id="experience-guests" required min="1" value="2" aria-describedby="experience-guests-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" />
-                        <span id="experience-guests-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                      </div>
-                      <div class="relative">
-                        <label for="experience-email" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Email</label>
-                        <input type="email" name="email" id="experience-email" required aria-describedby="experience-email-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" />
-                        <span id="experience-email-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                      </div>
-                      <div class="relative">
-                        <label for="experience-phone" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Phone</label>
-                        <input type="tel" name="phone" id="experience-phone" required aria-describedby="experience-phone-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" />
-                        <span id="experience-phone-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div id="experience-options-container" class="hidden space-y-4">
-                    <!-- Water Sky Options -->
-                    <div id="water-sky-options" class="hidden relative border-t border-gray-200 pt-4">
-                    </div>
-                    <!-- Wynwood (Specific Fields Only) -->
-                    <div id="wynwood-night-options" class="hidden space-y-4 border-t border-gray-200 pt-4">
+                   <div id="duration-container" class="relative hidden">
+                     <label for="duration-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Duration</label>
+                     <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg></span>
+                     <select name="duration-hourly" id="duration-hourly" required aria-describedby="duration-hourly-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6">
+                       <option value="2">2 hours</option><option value="3">3 hours</option><option value="4">4 hours</option><option value="5">5 hours</option><option value="6">6 hours</option><option value="7">7 hours</option><option value="8">8 hours</option><option value="9">9 hours</option><option value="10">10 hours</option><option value="11">11 hours</option><option value="12">12 hours</option>
+                     </select>
+                     <span id="duration-hourly-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                   </div>
+                   <div id="date-time-container-hourly" class="relative hidden">
+                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
+                       <div>
+                         <label for="pickup-date-hourly" class="block text-xs font-medium text-gray-500 mb-0.5">Date</label>
+                         <input type="text" name="pickup-date-hourly" id="pickup-date-hourly" required aria-describedby="pickup-date-hourly-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Date..." />
+                         <span id="pickup-date-hourly-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                       </div>
+                       <div>
+                         <label for="pickup-time-hourly" id="pickup-time-label-hourly" class="block text-xs font-medium text-gray-500 mb-0.5">Start Time</label>
+                         <input type="text" name="pickup-time-hourly" id="pickup-time-hourly" required aria-describedby="pickup-time-hourly-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Start Time..." />
+                         <span id="pickup-time-hourly-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                       </div>
+                     </div>
+                   </div>
+                   <div id="date-preference-container" class="relative hidden pt-2">
+                     <label class="block text-sm font-medium text-gray-700 mb-1" id="date-preference-label">Preferred Timing</label>
+                     <fieldset aria-labelledby="date-preference-label" aria-describedby="date_preference-error">
+                       <legend class="sr-only">Select Preferred Timing</legend>
+                       <div class="flex flex-wrap gap-x-4 gap-y-2">
+                         <div class="flex items-center"><input id="pref-asap" name="date_preference" type="radio" value="ASAP / Next Day" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-asap" class="ml-2 block text-sm text-gray-900">ASAP / Next Day</label></div>
+                         <div class="flex items-center"><input id="pref-weekend" name="date_preference" type="radio" value="This Coming Weekend" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-weekend" class="ml-2 block text-sm text-gray-900">This Coming Weekend</label></div>
+                         <div class="flex items-center"><input id="pref-weekday" name="date_preference" type="radio" value="Next Week (Mon-Fri)" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-weekday" class="ml-2 block text-sm text-gray-900">Next Week (Mon-Fri)</label></div>
+                         <div class="flex items-center"><input id="pref-flexible" name="date_preference" type="radio" value="Flexible / Other Date" checked class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-flexible" class="ml-2 block text-sm text-gray-900">Flexible / Other Date</label></div>
+                       </div>
+                     </fieldset>
+                     <span id="date_preference-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                   </div>
+                   <div id="common-experience-fields" class="hidden space-y-4 border-t border-gray-200 pt-4">
+                     <h5 class="text-sm font-semibold text-gray-700">Your Contact Details & Guests</h5>
+                     <div class="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2">
+                       <div class="relative">
+                         <label for="experience-name" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Your Name</label>
+                         <input type="text" name="name" id="experience-name" required aria-describedby="experience-name-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" />
+                         <span id="experience-name-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                       </div>
+                       <div class="relative">
+                         <label for="experience-guests" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Number of Guests</label>
+                         <input type="number" name="guests" id="experience-guests" required min="1" value="2" aria-describedby="experience-guests-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" />
+                         <span id="experience-guests-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                       </div>
+                       <div class="relative">
+                         <label for="experience-email" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Email</label>
+                         <input type="email" name="email" id="experience-email" required aria-describedby="experience-email-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" />
+                         <span id="experience-email-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                       </div>
+                       <div class="relative">
+                         <label for="experience-phone" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Phone</label>
+                         <input type="tel" name="phone" id="experience-phone" required aria-describedby="experience-phone-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" />
+                         <span id="experience-phone-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                       </div>
+                     </div>
+                   </div>
+                   <div id="experience-options-container" class="hidden space-y-4">
+                     <div id="water-sky-options" class="hidden relative border-t border-gray-200 pt-4"></div>
+                     <div id="wynwood-night-options" class="hidden space-y-4 border-t border-gray-200 pt-4">
                       <div class="space-y-4">
                         <div>
                           <label class="mb-2 block text-sm font-medium text-gray-900" id="motivation-label">What's the occasion for this experience?</label>
@@ -243,8 +288,9 @@
                           <span id="dinner_style_preference-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                         </div>
                         <div id="wynwood-other-restaurant-container" class="relative hidden">
-                          <label for="wynwood-other-restaurant" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Other Cuisine / Restaurant Request</label>
-                          <input type="text" name="other_restaurant_request" id="wynwood-other-restaurant" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="e.g., Italian, specific restaurant name" />
+                           <label for="wynwood-other-restaurant" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Other Cuisine / Restaurant Request</label>
+                           <input type="text" name="other_restaurant_request" id="wynwood-other-restaurant" aria-describedby="wynwood-other-restaurant-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="e.g., Italian, specific restaurant name" />
+                           <span id="wynwood-other-restaurant-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                         </div>
                       </div>
                       <div class="space-y-1 pt-4 border-t border-gray-200">
@@ -262,16 +308,11 @@
                         </div>
                       </div>
                     </div>
-                    <!-- Everglades Options -->
-                    <div id="everglades-options" class="hidden relative border-t border-gray-200 pt-4">
-                    </div>
-                    <!-- Keys Escape Options -->
-                    <div id="keys-escape-options" class="hidden relative border-t border-gray-200 pt-4">
-                    </div>
-                  </div>
+                     <div id="everglades-options" class="hidden relative border-t border-gray-200 pt-4"></div>
+                     <div id="keys-escape-options" class="hidden relative border-t border-gray-200 pt-4"></div>
+                   </div>
                 </div>
               </div>
-
               <div id="notes-container" class="relative">
                 <label for="notes" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Notes / Preferences</label>
                 <textarea name="notes" id="notes" rows="3" aria-describedby="notes-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" placeholder="Optional notes or preferences..."></textarea>
@@ -297,10 +338,11 @@
     </main>
 
     <script>
+      // Javascript remains the same as before
       document.addEventListener('DOMContentLoaded', () => {
         // --- Configuration ---
         const config = {
-          FORM_ENDPOINT: "YOUR_FORMSPREE_ENDPOINT", // Replace with your endpoint
+          FORM_ENDPOINT: "https://formspree.io/your-endpoint",
           MAX_NOTES_LENGTH: 500,
           placeholders: {
             oneWay: "Optional: Add flight number, luggage details, or specific instructions...",
@@ -311,6 +353,7 @@
         };
 
         // --- Element References ---
+        // ... (getElementRefs remains unchanged) ...
         function getElementRefs() {
           const refs = {};
           refs.bookingForm = document.getElementById('booking-form');
@@ -323,6 +366,7 @@
           refs.toAddressInput = document.getElementById('to-address');
           refs.oneWayPickupDateInput = document.getElementById('pickup-date-oneway');
           refs.oneWayPickupTimeInput = document.getElementById('pickup-time-oneway');
+          refs.vehicleSelectionOneway = document.getElementById('vehicle-selection-oneway');
           refs.experiencePlusPanel = document.getElementById('panel-experience-plus');
           refs.serviceDropdown = document.getElementById('experience-dropdown');
           refs.hourlyDescription = document.getElementById('hourly-description');
@@ -347,33 +391,42 @@
           refs.submitButtonText = refs.submitButton?.querySelector('.button-text');
           refs.submitButtonSpinner = refs.submitButton?.querySelector('.spinner');
           refs.confirmationMessage = document.getElementById('confirmation-message');
-          // Refs for other experience option divs
           refs.waterSkyOptions = document.getElementById('water-sky-options');
           refs.evergladesOptions = document.getElementById('everglades-options');
           refs.keysEscapeOptions = document.getElementById('keys-escape-options');
           return refs;
         }
 
+
         // --- Initialize Flatpickr ---
-        function initializeFlatpickr(elements) {
+        // ... (initializeFlatpickr remains unchanged) ...
+         function initializeFlatpickr(elements) {
           if (!flatpickr) { console.error("Flatpickr library not loaded."); return; }
-          const commonDateConfig = { altInput: true, altFormat: "D, M j, Y", dateFormat: "Y-m-d", enableTime: false };
+          const commonDateConfig = { altInput: true, altFormat: "D, M j, Y", dateFormat: "Y-m-d", enableTime: false, minDate: "today" };
           const commonTimeConfig = { enableTime: true, noCalendar: true, dateFormat: "H:i", altInput: true, altFormat: "h : i K", time_24hr: false, minuteIncrement: 10 };
           if (elements.oneWayPickupDateInput) flatpickr(elements.oneWayPickupDateInput, commonDateConfig);
           if (elements.oneWayPickupTimeInput) flatpickr(elements.oneWayPickupTimeInput, commonTimeConfig);
           if (elements.hourlyPickupDateInput) flatpickr(elements.hourlyPickupDateInput, commonDateConfig);
           if (elements.hourlyPickupTimeInput) flatpickr(elements.hourlyPickupTimeInput, commonTimeConfig);
-          console.log("Flatpickr initialized.");
+          console.log("Flatpickr initialized for specific inputs.");
         }
 
         // --- Helper Functions ---
+        // ... (showError, clearError, etc. remain unchanged) ...
         function showError(elements, fieldId, message) {
           const errorSpanId = `${fieldId}-error`;
           const errorSpan = document.getElementById(errorSpanId);
           const inputElement = document.getElementById(fieldId);
           let labelText = fieldId;
-          const labelElement = document.querySelector(`label[for="${fieldId}"]`);
+          const labelElement = document.querySelector(`label[for="${fieldId}"]`) || document.getElementById(`${fieldId}-label`);
           if (labelElement) { labelText = labelElement.textContent.replace('*', '').trim(); }
+          if (fieldId === 'vehicle_type_oneway') labelText = 'Vehicle Type';
+          else if (fieldId === 'date_preference') labelText = 'Preferred Timing';
+          else if (fieldId === 'motivation') labelText = 'Occasion';
+          else if (fieldId === 'dinner_style_preference') labelText = 'Dinner Preference';
+          else if (fieldId === 'lounge_interest') labelText = 'Lounge Interest';
+          else if (fieldId === 'wynwood-other-restaurant') labelText = 'Other Cuisine / Restaurant Request';
+
           const fullMessage = `${labelText}: ${message}`;
 
           if (errorSpan) {
@@ -384,13 +437,16 @@
           if (inputElement && ['INPUT', 'SELECT', 'TEXTAREA'].includes(inputElement.tagName)) {
             inputElement.classList.add('ring-red-500', 'ring-1');
             inputElement.setAttribute('aria-invalid', 'true');
-            if (!inputElement.getAttribute('aria-describedby')) { inputElement.setAttribute('aria-describedby', errorSpanId); }
+            let describedBy = inputElement.getAttribute('aria-describedby') || '';
+            if (!describedBy.includes(errorSpanId)) {
+                 inputElement.setAttribute('aria-describedby', describedBy ? `${describedBy} ${errorSpanId}` : errorSpanId);
+            }
           } else {
             const radioGroup = document.querySelector(`input[name="${fieldId}"]`);
             if (radioGroup) {
               const fieldset = radioGroup.closest('fieldset');
               if (fieldset) {
-                fieldset.classList.add('ring-red-500', 'ring-1', 'rounded');
+                fieldset.classList.add('ring-red-500', 'ring-1', 'rounded', 'p-1');
                 fieldset.setAttribute('aria-describedby', `${fieldId.replace(/-/g, '_')}-error`);
               }
             } else { console.warn(`Could not find input/radio group for fieldId: ${fieldId} to apply error state.`); }
@@ -407,12 +463,21 @@
           if (inputElement && ['INPUT', 'SELECT', 'TEXTAREA'].includes(inputElement.tagName)) {
             inputElement.classList.remove('ring-red-500', 'ring-1');
             inputElement.removeAttribute('aria-invalid');
+            let describedBy = inputElement.getAttribute('aria-describedby');
+            if (describedBy) {
+                describedBy = describedBy.replace(errorSpanId, '').trim();
+                if (describedBy) {
+                    inputElement.setAttribute('aria-describedby', describedBy);
+                } else {
+                    inputElement.removeAttribute('aria-describedby');
+                }
+            }
           } else {
             const radioGroup = document.querySelector(`input[name="${fieldId}"]`);
             if (radioGroup) {
               const fieldset = radioGroup.closest('fieldset');
               if (fieldset) {
-                fieldset.classList.remove('ring-red-500', 'ring-1', 'rounded');
+                fieldset.classList.remove('ring-red-500', 'ring-1', 'rounded', 'p-1');
                 fieldset.removeAttribute('aria-describedby');
               }
             }
@@ -423,14 +488,16 @@
           const errorSpans = elements.bookingForm?.querySelectorAll('[id$="-error"]');
           errorSpans?.forEach(span => { span.textContent = ''; span.classList.add('hidden'); });
           const errorInputs = elements.bookingForm?.querySelectorAll('.ring-red-500');
-          errorInputs?.forEach(el => el.classList.remove('ring-red-500', 'ring-1', 'rounded'));
+          errorInputs?.forEach(el => el.classList.remove('ring-red-500', 'ring-1', 'rounded', 'p-1'));
           elements.bookingForm?.querySelectorAll('[aria-invalid="true"]').forEach(el => el.removeAttribute('aria-invalid'));
           elements.bookingForm?.querySelectorAll('fieldset[aria-describedby]').forEach(el => el.removeAttribute('aria-describedby'));
+          clearError('submit-button');
         }
 
         function determineButtonText(elements) {
           let activePanelId = '';
-          elements.formTabPanels?.forEach(panel => { if (!panel.classList.contains('hidden')) activePanelId = `#${panel.id}`; });
+          const activeTabButton = elements.tabNavigationContainer?.querySelector('.active-tab');
+          activePanelId = activeTabButton ? activeTabButton.getAttribute('data-tab-target') : null;
           const selectedService = elements.serviceDropdown?.value || '';
           if (activePanelId === '#panel-oneway') return 'Get Quote';
           else if (activePanelId === '#panel-experience-plus') {
@@ -460,22 +527,32 @@
 
         function handleWynwoodDinnerChoice(elements) {
           if (!elements.wynwoodOtherDinnerRadio || !elements.wynwoodOtherRestaurantContainer) return;
-          elements.wynwoodOtherRestaurantContainer.classList.toggle('hidden', !elements.wynwoodOtherDinnerRadio.checked);
+          const showOtherInput = elements.wynwoodOtherDinnerRadio.checked;
+          elements.wynwoodOtherRestaurantContainer.classList.toggle('hidden', !showOtherInput);
+          const otherInput = elements.wynwoodOtherRestaurantContainer.querySelector('input');
+            if (otherInput) {
+                otherInput.required = showOtherInput;
+                if (!showOtherInput) {
+                    otherInput.value = '';
+                    clearError('wynwood-other-restaurant');
+                }
+            }
         }
-
         // --- UI Update Functions ---
+        // ... (updateExperiencePlusPanelUI, switchTab remain unchanged) ...
         function updateExperiencePlusPanelUI(elements, placeholders) {
-          if (!elements.experiencePlusPanel || elements.experiencePlusPanel.classList.contains('hidden')) return;
+          if (!elements.experiencePlusPanel || !elements.serviceDropdown) return;
+
           const selectedValue = elements.serviceDropdown.value;
           const showHourly = selectedValue === 'hourly_chauffeur';
           const showCuratedExperience = selectedValue !== '' && !showHourly;
 
+          elements.hourlyDescription?.classList.toggle('hidden', !showHourly);
           elements.durationContainer?.classList.toggle('hidden', !showHourly);
           elements.hourlyDateTimeContainer?.classList.toggle('hidden', !showHourly);
           elements.datePreferenceContainer?.classList.toggle('hidden', !showCuratedExperience);
-          elements.experienceOptionsContainer?.classList.toggle('hidden', !showCuratedExperience);
-          elements.hourlyDescription?.classList.toggle('hidden', !showHourly);
           elements.commonExperienceFieldsContainer?.classList.toggle('hidden', !showCuratedExperience);
+          elements.experienceOptionsContainer?.classList.toggle('hidden', !showCuratedExperience);
 
           if (elements.notesInput) {
             if (showHourly) elements.notesInput.placeholder = placeholders.hourly;
@@ -486,17 +563,27 @@
           if (elements.hourlyPickupTimeLabel) elements.hourlyPickupTimeLabel.textContent = "Start Time";
 
           const allExperienceOptionDivs = [elements.wynwoodNightOptions, elements.waterSkyOptions, elements.evergladesOptions, elements.keysEscapeOptions];
+          allExperienceOptionDivs.forEach(el => el?.classList.add('hidden'));
+
           if (showCuratedExperience && elements.experienceOptionsContainer) {
-            allExperienceOptionDivs.forEach(el => el?.classList.add('hidden'));
-            if (selectedValue === 'wynwood_night' && elements.wynwoodNightOptions) { elements.wynwoodNightOptions.classList.remove('hidden'); handleWynwoodDinnerChoice(elements); }
-            else if (selectedValue === 'water_sky' && elements.waterSkyOptions) elements.waterSkyOptions.classList.remove('hidden');
-            else if (selectedValue === 'everglades' && elements.evergladesOptions) elements.evergladesOptions.classList.remove('hidden');
-            else if (selectedValue === 'keys_escape' && elements.keysEscapeOptions) elements.keysEscapeOptions.classList.remove('hidden');
-          } else {
-            allExperienceOptionDivs.forEach(el => el?.classList.add('hidden'));
-            if (elements.wynwoodOtherRestaurantContainer) elements.wynwoodOtherRestaurantContainer.classList.add('hidden');
-          }
+               if (selectedValue === 'wynwood_night' && elements.wynwoodNightOptions) {
+                 elements.wynwoodNightOptions.classList.remove('hidden');
+                 handleWynwoodDinnerChoice(elements);
+               }
+               else if (selectedValue === 'water_sky' && elements.waterSkyOptions) elements.waterSkyOptions.classList.remove('hidden');
+               else if (selectedValue === 'everglades' && elements.evergladesOptions) elements.evergladesOptions.classList.remove('hidden');
+               else if (selectedValue === 'keys_escape' && elements.keysEscapeOptions) elements.keysEscapeOptions.classList.remove('hidden');
+             } else {
+                 if (elements.wynwoodOtherRestaurantContainer) {
+                     elements.wynwoodOtherRestaurantContainer.classList.add('hidden');
+                     const otherInput = elements.wynwoodOtherRestaurantContainer.querySelector('input');
+                     if (otherInput) otherInput.value = '';
+                     clearError('wynwood-other-restaurant');
+                 }
+             }
+
           resetSubmitButton(elements);
+          clearAllErrors(elements);
         }
 
         function switchTab(targetPanelId, elements, placeholders) {
@@ -513,7 +600,7 @@
 
           if (targetPanel) {
             targetPanel.classList.remove('hidden');
-            firstFocusableElement = targetPanel.querySelector('input:not([type="hidden"]), select, textarea, button:not([disabled])');
+            firstFocusableElement = targetPanel.querySelector('input:not([type="hidden"]):not(.sr-only):not(:disabled), select:not(:disabled), textarea:not(:disabled), button:not([disabled])');
           }
           if (targetButton) {
             targetButton.classList.add('active-tab');
@@ -522,131 +609,194 @@
           }
 
           if (elements.notesInput) {
-            if (targetPanelId === '#panel-oneway') {
-              elements.notesInput.placeholder = placeholders.oneWay;
-              elements.commonExperienceFieldsContainer?.classList.add('hidden');
-              elements.durationContainer?.classList.add('hidden');
-              elements.hourlyDateTimeContainer?.classList.add('hidden');
-              elements.datePreferenceContainer?.classList.add('hidden');
-              elements.experienceOptionsContainer?.classList.add('hidden');
-              elements.hourlyDescription?.classList.add('hidden');
-            } else if (targetPanelId === '#panel-experience-plus') {
-              updateExperiencePlusPanelUI(elements, placeholders);
-              firstFocusableElement = elements.serviceDropdown || firstFocusableElement;
-            }
+            elements.notesInput.placeholder = (targetPanelId === '#panel-oneway') ? placeholders.oneWay : placeholders.defaultExp;
           }
 
-          setTimeout(() => { if (firstFocusableElement) firstFocusableElement.focus(); }, 0);
+          const oneWayElements = [elements.toAddressInput?.closest('.relative'), elements.oneWayPickupDateInput?.closest('.grid'), elements.vehicleSelectionOneway];
+          const expPlusElements = [elements.serviceDropdown?.closest('.relative'), elements.hourlyDescription, elements.durationContainer, elements.hourlyDateTimeContainer, elements.datePreferenceContainer, elements.commonExperienceFieldsContainer, elements.experienceOptionsContainer];
+
+          if (targetPanelId === '#panel-oneway') {
+            oneWayElements.forEach(el => el?.classList.remove('hidden'));
+            expPlusElements.forEach(el => el?.classList.add('hidden'));
+               if(elements.serviceDropdown) elements.serviceDropdown.value = '';
+               updateExperiencePlusPanelUI(elements, placeholders);
+          } else if (targetPanelId === '#panel-experience-plus') {
+            oneWayElements.forEach(el => el?.classList.add('hidden'));
+            expPlusElements.forEach(el => el?.classList.remove('hidden'));
+            updateExperiencePlusPanelUI(elements, placeholders);
+             elements.vehicleSelectionOneway?.querySelectorAll('.checked-indicator').forEach(indicator => {
+                 indicator.classList.remove('opacity-100');
+                 indicator.classList.add('opacity-0');
+              });
+             elements.vehicleSelectionOneway?.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+             firstFocusableElement = elements.serviceDropdown || firstFocusableElement;
+          }
+
+          setTimeout(() => {
+             if (firstFocusableElement) {
+                 firstFocusableElement.focus();
+             }
+          }, 50);
           resetSubmitButton(elements);
           clearAllErrors(elements);
         }
 
         // --- Form Validation ---
-        function validateForm(elements) {
+        // ... (validateForm remains unchanged) ...
+         function validateForm(elements) {
           let isValid = true;
-          let serviceType = '';
-          let activePanelId = '';
-          elements.formTabPanels.forEach(panel => { if (!panel.classList.contains('hidden')) activePanelId = `#${panel.id}`; });
-          const selectedService = elements.serviceDropdown.value;
+          const activeTabButton = elements.tabNavigationContainer?.querySelector('.active-tab');
+          const activePanelId = activeTabButton ? activeTabButton.getAttribute('data-tab-target') : null;
 
-          // Rule 1: From Location
-          if (!elements.fromLocationInput?.value.trim()) { showError(elements, 'from-location', 'Please enter a "From" location.'); isValid = false; }
+          if (!elements.fromLocationInput?.value.trim()) {
+            showError(elements, 'from-location', 'Please enter a "From" location.');
+            isValid = false;
+          }
 
-          // Rule 2: Tab-Specific
           if (activePanelId === '#panel-oneway') {
-            serviceType = 'One Way';
             if (!elements.toAddressInput?.value.trim()) { showError(elements, 'to-address', 'Please enter a "To" address.'); isValid = false; }
             if (!elements.oneWayPickupDateInput?.value) { showError(elements, 'pickup-date-oneway', 'Please select a date.'); isValid = false; }
             if (!elements.oneWayPickupTimeInput?.value) { showError(elements, 'pickup-time-oneway', 'Please select a time.'); isValid = false; }
+            const vehicleSelectedOneway = document.querySelector('input[name="vehicle_type_oneway"]:checked');
+            if (!vehicleSelectedOneway) { showError(elements, 'vehicle_type_oneway', 'Please select a vehicle type.'); isValid = false; }
+
           } else if (activePanelId === '#panel-experience-plus') {
-            if (!selectedService) { showError(elements, 'experience-dropdown', 'Please select a Service.'); isValid = false; }
-            else if (selectedService === 'hourly_chauffeur') {
-              serviceType = 'Hourly';
+            const selectedService = elements.serviceDropdown.value;
+            if (!selectedService) {
+              showError(elements, 'experience-dropdown', 'Please select a Service.');
+              isValid = false;
+            } else if (selectedService === 'hourly_chauffeur') {
               if (!elements.durationSelect?.value) { showError(elements, 'duration-hourly', 'Please select duration.'); isValid = false; }
               if (!elements.hourlyPickupDateInput?.value) { showError(elements, 'pickup-date-hourly', 'Please select a date.'); isValid = false; }
               if (!elements.hourlyPickupTimeInput?.value) { showError(elements, 'pickup-time-hourly', 'Please select a start time.'); isValid = false; }
             } else {
-              serviceType = 'Experience';
               if (!elements.experienceNameInput?.value.trim()) { showError(elements, 'experience-name', 'Name required.'); isValid = false; }
               if (!elements.experienceGuestsInput?.value || parseInt(elements.experienceGuestsInput.value, 10) < 1) { showError(elements, 'experience-guests', 'Min 1 guest.'); isValid = false; }
-              if (!elements.experienceEmailInput?.value.trim()) { showError(elements, 'experience-email', 'Email required.'); isValid = false; }
-              else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(elements.experienceEmailInput.value.trim())) { showError(elements, 'experience-email', 'Invalid email.'); isValid = false; }
-              if (!elements.experiencePhoneInput?.value.trim()) { showError(elements, 'experience-phone', 'Phone required.'); isValid = false; }
-              else if (!/^\+?\d{10,15}$/.test(elements.experiencePhoneInput.value.replace(/\s+/g, ''))) { showError(elements, 'experience-phone', 'Invalid phone.'); isValid = false; }
+              if (!elements.experienceEmailInput?.value.trim()) {
+                 showError(elements, 'experience-email', 'Email required.'); isValid = false;
+              } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(elements.experienceEmailInput.value.trim())) {
+                 showError(elements, 'experience-email', 'Invalid email format.'); isValid = false;
+              }
+              if (!elements.experiencePhoneInput?.value.trim()) {
+                  showError(elements, 'experience-phone', 'Phone required.');
+                  isValid = false;
+              } else if (!/^\+?[\d\s()-]{10,20}$/.test(elements.experiencePhoneInput.value) || !/[\d]{10}/.test(elements.experiencePhoneInput.value.replace(/\D/g, ''))) {
+                showError(elements, 'experience-phone', 'Invalid phone format (minimum 10 digits).');
+                isValid = false;
+              }
+
               const datePrefSelected = document.querySelector('input[name="date_preference"]:checked');
-              if (!datePrefSelected) { showError(elements, 'date_preference', 'Please select timing.'); isValid = false; }
+              if (!datePrefSelected) { showError(elements, 'date_preference', 'Please select timing preference.'); isValid = false; }
+
               if (selectedService === 'wynwood_night') {
                 const motivationSelected = document.querySelector('#wynwood-night-options input[name="motivation"]:checked');
                 const dinnerPrefSelected = document.querySelector('#wynwood-night-options input[name="dinner_style_preference"]:checked');
                 const loungeSelected = document.querySelector('#wynwood-night-options input[name="lounge_interest"]:checked');
                 if (!motivationSelected) { showError(elements, 'motivation', 'Occasion required.'); isValid = false; }
-                if (!dinnerPrefSelected) { showError(elements, 'dinner_style_preference', 'Dinner pref required.'); isValid = false; }
+                if (!dinnerPrefSelected) { showError(elements, 'dinner_style_preference', 'Dinner preference required.'); isValid = false; }
+                  if (elements.wynwoodOtherDinnerRadio?.checked) {
+                      const otherRestaurantInput = document.getElementById('wynwood-other-restaurant');
+                      if (!otherRestaurantInput?.value.trim()) {
+                          showError(elements, 'wynwood-other-restaurant', 'Please specify other preference.');
+                          isValid = false;
+                      } else {
+                          clearError('wynwood-other-restaurant');
+                      }
+                  } else {
+                         clearError('wynwood-other-restaurant');
+                  }
                 if (!loungeSelected) { showError(elements, 'lounge_interest', 'Lounge interest required.'); isValid = false; }
               }
             }
-          } else { isValid = false; console.error("No active tab panel."); }
+          } else {
+            isValid = false;
+            console.error("No active tab panel identified for validation.");
+          }
 
-          // Rule 3: Notes Validation
           if (elements.notesInput && elements.notesInput.value.length > config.MAX_NOTES_LENGTH) {
             showError(elements, 'notes', `Notes cannot exceed ${config.MAX_NOTES_LENGTH} characters.`);
             isValid = false;
           }
+
           return isValid;
         }
-
         // --- Form Data Processing ---
-        function processFormData(elements) {
+        // ... (processFormData remains unchanged) ...
+         function processFormData(elements) {
           const formData = new FormData(elements.bookingForm);
           let serviceType = '';
-          let activePanelId = '';
-          elements.formTabPanels.forEach(panel => { if (!panel.classList.contains('hidden')) activePanelId = `#${panel.id}`; });
-          const selectedServiceValue = elements.serviceDropdown.value;
-
-          if (activePanelId === '#panel-oneway') serviceType = 'One Way';
-          else if (activePanelId === '#panel-experience-plus') serviceType = (selectedServiceValue === 'hourly_chauffeur') ? 'Hourly' : 'Experience';
+          const activeTabButton = elements.tabNavigationContainer?.querySelector('.active-tab');
+          const activePanelId = activeTabButton ? activeTabButton.getAttribute('data-tab-target') : null;
 
           const dataObject = {
-            service_type: serviceType,
-            'from-location': formData.get('from-location'),
-            notes: formData.get('notes') || ''
+            'from-location': formData.get('from-location')?.trim(),
+            notes: formData.get('notes')?.trim() || ''
           };
 
-          if (serviceType === 'One Way') {
-            dataObject['to-address'] = formData.get('to-address');
+          if (activePanelId === '#panel-oneway') {
+            serviceType = 'One Way';
+            dataObject.service_type = serviceType;
+            dataObject['to-address'] = formData.get('to-address')?.trim();
             dataObject['pickup-date'] = formData.get('pickup-date-oneway');
             dataObject['pickup-time'] = formData.get('pickup-time-oneway');
-          } else if (serviceType === 'Hourly') {
-            dataObject['duration-hourly'] = formData.get('duration-hourly');
-            dataObject['pickup-date'] = formData.get('pickup-date-hourly');
-            dataObject['pickup-time'] = formData.get('pickup-time-hourly');
-            dataObject.experience_name = "Hourly Chauffeur";
-          } else if (serviceType === 'Experience') {
-            dataObject.experience_name = elements.serviceDropdown.options[elements.serviceDropdown.selectedIndex].text;
-            dataObject.date_preference = formData.get('date_preference');
-            dataObject.name = formData.get('name');
-            dataObject.guests = formData.get('guests');
-            dataObject.email = formData.get('email');
-            dataObject.phone = formData.get('phone');
-            if (selectedServiceValue === 'wynwood_night') {
-              dataObject.motivation = formData.get('motivation');
-              dataObject.dinner_style_preference = formData.get('dinner_style_preference');
-              if (formData.get('dinner_style_preference') === 'Other') {
-                dataObject.other_restaurant_request = formData.get('other_restaurant_request');
+            dataObject.vehicle_type = formData.get('vehicle_type_oneway');
+          } else if (activePanelId === '#panel-experience-plus') {
+            const selectedServiceValue = elements.serviceDropdown.value;
+            if (selectedServiceValue === 'hourly_chauffeur') {
+              serviceType = 'Hourly';
+              dataObject.service_type = serviceType;
+              dataObject.experience_name = "Hourly Chauffeur";
+              dataObject['duration-hourly'] = formData.get('duration-hourly');
+              dataObject['pickup-date'] = formData.get('pickup-date-hourly');
+              dataObject['pickup-time'] = formData.get('pickup-time-hourly');
+            } else if (selectedServiceValue) {
+              serviceType = 'Experience';
+              dataObject.service_type = serviceType;
+              dataObject.experience_name = elements.serviceDropdown.options[elements.serviceDropdown.selectedIndex].text;
+              dataObject.date_preference = formData.get('date_preference');
+              dataObject.name = formData.get('name')?.trim();
+              dataObject.guests = formData.get('guests');
+              dataObject.email = formData.get('email')?.trim();
+              dataObject.phone = formData.get('phone')?.trim();
+
+              if (selectedServiceValue === 'wynwood_night') {
+                dataObject.motivation = formData.get('motivation');
+                dataObject.dinner_style_preference = formData.get('dinner_style_preference');
+                if (formData.get('dinner_style_preference') === 'Other') {
+                  dataObject.other_restaurant_request = formData.get('other_restaurant_request')?.trim();
+                }
+                dataObject.lounge_interest = formData.get('lounge_interest');
               }
-              dataObject.lounge_interest = formData.get('lounge_interest');
             }
           }
-          console.log("Final Data Object:", dataObject);
+
+          Object.keys(dataObject).forEach(key => {
+               if (dataObject[key] === null || dataObject[key] === undefined || dataObject[key] === '') {
+                 if (key === 'other_restaurant_request' && dataObject.dinner_style_preference !== 'Other') {
+                     delete dataObject[key];
+                  }
+                 if (key === 'notes' && dataObject[key] === '') delete dataObject[key];
+               }
+          });
+
+          console.log("Final Data Object for Submission:", dataObject);
           return dataObject;
         }
-
         // --- Form Submission ---
-        function sendFormData(dataObject, elements, config) {
+        // ... (sendFormData remains unchanged) ...
+         function sendFormData(dataObject, elements, config) {
           setLoadingButton(elements);
-          if (config.FORM_ENDPOINT === "YOUR_FORMSPREE_ENDPOINT") {
-            setTimeout(() => { console.warn("Data logged to console. Set Formspree endpoint."); alert("DEV MODE: Data logged to console. Submission not sent."); resetSubmitButton(elements); }, 1500);
-            return;
-          }
+          clearError('submit-button');
+
+           if (!config.FORM_ENDPOINT || config.FORM_ENDPOINT === "https://formspree.io/your-endpoint" || config.FORM_ENDPOINT === "YOUR_FORMSPREE_ENDPOINT") {
+             setTimeout(() => {
+               console.warn("Formspree endpoint not configured. Data logged to console.");
+               alert("DEV MODE: Form endpoint not set. Data logged to console.\n\n" + JSON.stringify(dataObject, null, 2));
+               resetSubmitButton(elements);
+             }, 1000);
+             return;
+           }
+
           fetch(config.FORM_ENDPOINT, {
             method: 'POST',
             body: JSON.stringify(dataObject),
@@ -658,49 +808,92 @@
               if (formContentContainer) formContentContainer.classList.add('hidden');
               if (tabNav) tabNav.classList.add('hidden');
               if (elements.confirmationMessage) elements.confirmationMessage.classList.remove('hidden');
+                 elements.confirmationMessage.scrollIntoView({ behavior: 'smooth' });
             } else {
-              response.json().then(data => { showError(elements, 'submit-button', `Error: ${data.error || 'Could not submit request.'}`); resetSubmitButton(elements); })
-                           .catch(() => { showError(elements, 'submit-button', 'Error: Could not submit request. Please try again.'); resetSubmitButton(elements); });
+              response.json().then(data => {
+                 const errorMessage = data?.errors?.map(err => err.message).join(', ') || data?.error || 'Could not submit request. Please check details and try again.';
+                 showError(elements, 'submit-button', `Submission Error: ${errorMessage}`);
+                 resetSubmitButton(elements);
+               }).catch(() => {
+                 showError(elements, 'submit-button', `Submission Error: Server returned status ${response.status}. Please try again.`);
+                 resetSubmitButton(elements);
+               });
             }
-          }).catch(error => { showError(elements, 'submit-button', 'Network error. Check connection.'); resetSubmitButton(elements); });
+          }).catch(error => {
+            console.error('Network error:', error);
+            showError(elements, 'submit-button', 'Network Error: Could not connect. Please check your internet connection and try again.');
+            resetSubmitButton(elements);
+          });
         }
-
         // --- Event Listener Setup ---
+        // ... (initializeEventListeners remains unchanged) ...
         function initializeEventListeners(elements, placeholders, config) {
-          elements.tabNavigationContainer?.addEventListener('click', (event) => {
-            const button = event.target.closest('.tab-button');
-            if (button && button.dataset.tabTarget && !button.classList.contains('active-tab')) {
-              switchTab(button.dataset.tabTarget, elements, placeholders);
-            }
-          });
-          elements.serviceDropdown?.addEventListener('change', () => updateExperiencePlusPanelUI(elements, placeholders));
-          elements.bookingForm?.querySelectorAll('input, select, textarea').forEach(input => {
-            let targetId = input.id || input.name;
-            input.addEventListener('input', () => clearError(targetId));
-            input.addEventListener('change', () => clearError(targetId));
-          });
-          ['dinner_style_preference', 'motivation', 'lounge_interest', 'date_preference'].forEach(name => {
-            document.querySelectorAll(`input[name="${name}"]`).forEach(radio => { radio.addEventListener('change', () => clearError(name)); });
-          });
-          elements.wynwoodDinnerPrefRadios?.forEach(radio => {
-            radio.addEventListener('change', () => handleWynwoodDinnerChoice(elements));
-          });
-          elements.bookingForm?.addEventListener('submit', (event) => {
-            event.preventDefault();
-            clearAllErrors(elements);
-            if (validateForm(elements)) {
-              const data = processFormData(elements);
-              sendFormData(data, elements, config);
-            } else {
-              const firstError = elements.bookingForm.querySelector('.ring-red-500');
-              if (firstError) {
-                const inputToFocus = document.getElementById(firstError.id.replace('-error','')) || firstError;
-                inputToFocus.focus();
-                inputToFocus.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              }
-            }
-          });
-          console.log("Event listeners initialized.");
+           elements.tabNavigationContainer?.addEventListener('click', (event) => {
+               const button = event.target.closest('.tab-button');
+               if (button && button.dataset.tabTarget && !button.classList.contains('active-tab')) {
+                   switchTab(button.dataset.tabTarget, elements, placeholders);
+               }
+           });
+
+           elements.serviceDropdown?.addEventListener('change', () => updateExperiencePlusPanelUI(elements, placeholders));
+
+           elements.bookingForm?.querySelectorAll('input:not([type="radio"]), select, textarea').forEach(input => {
+               let targetId = input.id || input.name;
+               if (!targetId) return;
+               const eventType = (input.tagName === 'INPUT' && input.type !== 'number' && input.type !== 'email' && input.type !== 'tel') ? 'input' : 'change';
+                input.addEventListener(eventType, () => clearError(targetId));
+                input.addEventListener('blur', () => clearError(targetId));
+           });
+
+           ['dinner_style_preference', 'motivation', 'lounge_interest', 'date_preference', 'vehicle_type_oneway'].forEach(name => {
+               document.querySelectorAll(`input[name="${name}"]`).forEach(radio => {
+                   radio.addEventListener('change', () => {
+                       clearError(name);
+                       if (name === 'vehicle_type_oneway') {
+                           const fieldset = radio.closest('fieldset');
+                           if (fieldset) {
+                               fieldset.querySelectorAll('.checked-indicator').forEach(ind => {
+                                   ind.classList.remove('opacity-100');
+                                   ind.classList.add('opacity-0');
+                               });
+                               const label = radio.closest('label');
+                               const indicator = label?.querySelector('.checked-indicator');
+                               if (indicator) {
+                                   indicator.classList.remove('opacity-0');
+                                   indicator.classList.add('opacity-100');
+                               }
+                           }
+                       } else if (name === 'dinner_style_preference' && elements.wynwoodNightOptions && !elements.wynwoodNightOptions.classList.contains('hidden')) {
+                           handleWynwoodDinnerChoice(elements);
+                       }
+                   });
+               });
+           });
+
+           elements.bookingForm?.addEventListener('submit', (event) => {
+               event.preventDefault();
+               clearAllErrors(elements);
+               if (validateForm(elements)) {
+                   const data = processFormData(elements);
+                   sendFormData(data, elements, config);
+               } else {
+                   const firstErrorFieldset = elements.bookingForm.querySelector('fieldset.ring-red-500');
+                   const firstErrorInput = elements.bookingForm.querySelector('.ring-red-500:not(fieldset)');
+                   const firstErrorElement = firstErrorFieldset || firstErrorInput;
+
+                   if (firstErrorElement) {
+                       let elementToFocus = firstErrorElement;
+                       if (firstErrorElement.tagName === 'FIELDSET') {
+                           elementToFocus = firstErrorElement.querySelector('input[type="radio"], input[type="checkbox"]') || firstErrorElement;
+                       }
+                        elementToFocus.focus({ preventScroll: true });
+                        elementToFocus.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                   }
+                    showError(elements, 'submit-button', 'Please review the errors above.');
+               }
+           });
+
+           console.log("Event listeners initialized.");
         }
 
         // --- Main Execution ---
@@ -714,7 +907,6 @@
         } else {
           console.error("Booking form not found. Script initialization incomplete.");
         }
-
       });
     </script>
   </body>
