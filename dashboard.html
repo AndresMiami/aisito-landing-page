@@ -124,7 +124,7 @@
                           <input type="radio" name="vehicle_type_oneway" value="Luxury Sedan" id="vehicle-sedan-oneway" class="sr-only" required aria-describedby="sedan-details-oneway">
                           <div class="flex-shrink-0 w-full mb-2 flex items-center justify-center">
                             <img src="images/luxury-sedan.jpg" alt="Luxury Sedan Illustration" class="w-full rounded-md">
-                            </div>
+                          </div>
                           <div class="flex-1 text-center" id="sedan-details-oneway">
                             <span class="block text-sm font-medium text-gray-900">Luxury Sedan</span>
                             <span class="mt-1 block text-xs text-gray-600">(1-3 Pax | EV Available)</span>
@@ -136,8 +136,8 @@
                         <label for="vehicle-suv-oneway" class="relative flex cursor-pointer flex-col rounded-lg border border-gray-200 bg-white p-3 shadow-sm focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-[--color-gold] hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-2 has-[:checked]:ring-[--color-teal] transition-all">
                           <input type="radio" name="vehicle_type_oneway" value="Premium SUV" id="vehicle-suv-oneway" class="sr-only" required aria-describedby="suv-details-oneway">
                           <div class="flex-shrink-0 w-full mb-2 flex items-center justify-center">
-                             <img src="images/premium-suv-escalade.jpg" alt="Premium SUV Illustration" class="w-full rounded-md">
-                             </div>
+                            <img src="images/premium-suv-escalade.jpg" alt="Premium SUV Illustration" class="w-full rounded-md">
+                          </div>
                           <div class="flex-1 text-center" id="suv-details-oneway">
                             <span class="block text-sm font-medium text-gray-900">Premium SUV</span>
                             <span class="mt-1 block text-xs text-gray-600">(Up to 6 Pax | EV Available)</span>
@@ -149,8 +149,8 @@
                         <label for="vehicle-sprinter-oneway" class="relative flex cursor-pointer flex-col rounded-lg border border-gray-200 bg-white p-3 shadow-sm focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-[--color-gold] hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-2 has-[:checked]:ring-[--color-teal] transition-all">
                           <input type="radio" name="vehicle_type_oneway" value="VIP Group Sprinter" id="vehicle-sprinter-oneway" class="sr-only" required aria-describedby="sprinter-details-oneway">
                           <div class="flex-shrink-0 w-full mb-2 flex items-center justify-center">
-                             <img src="images/vip-sprinter.jpg" alt="VIP Sprinter Illustration" class="w-full rounded-md">
-                             </div>
+                            <img src="images/vip-sprinter.jpg" alt="VIP Sprinter Illustration" class="w-full rounded-md">
+                          </div>
                           <div class="flex-1 text-center" id="sprinter-details-oneway">
                             <span class="block text-sm font-medium text-gray-900">VIP Group Sprinter</span>
                             <span class="mt-1 block text-xs text-gray-600">(Up to 14 Pax | Mobile Lounge)</span>
@@ -243,80 +243,75 @@
                    </div>
                    <div id="experience-options-container" class="hidden space-y-4">
                      <div id="water-sky-options" class="hidden relative border-t border-gray-200 pt-4"></div>
-                     <div id="wynwood-night-options" class="hidden space-y-4 border-t border-gray-200 pt-4">
-                      <div class="space-y-4">
-                        <div>
-                          <label class="mb-2 block text-sm font-medium text-gray-900" id="motivation-label">What's the occasion for this experience?</label>
-                          <fieldset aria-labelledby="motivation-label" aria-describedby="motivation-error">
-                            <legend class="sr-only">Select Occasion</legend>
-                            <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                              <label for="motivation-romantic" class="flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-1 has-[:checked]:ring-[--color-teal]">
-                                <input type="radio" name="motivation" value="Romantic" id="motivation-romantic" class="sr-only">
-                                <span class="flex items-center"><span class="mr-1.5 text-lg">❤️</span> Romantic</span>
-                              </label>
-                              <label for="motivation-celebration" class="flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-1 has-[:checked]:ring-[--color-teal]">
-                                <input type="radio" name="motivation" value="Birthday/Celebration" id="motivation-celebration" class="sr-only">
-                                <span class="flex items-center"><span class="mr-1.5 text-lg">🎉</span> Celebration</span>
-                              </label>
-                              <label for="motivation-business" class="flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-1 has-[:checked]:ring-[--color-teal]">
-                                <input type="radio" name="motivation" value="Business/Corporate" id="motivation-business" class="sr-only">
-                                <span class="flex items-center"><span class="mr-1.5 text-lg">💼</span> Business</span>
-                              </label>
-                              <label for="motivation-fun" class="flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-1 has-[:checked]:ring-[--color-teal]">
-                                <input type="radio" name="motivation" value="Friends Night Out / Fun" id="motivation-fun" class="sr-only">
-                                <span class="flex items-center"><span class="mr-1.5 text-lg">🥳</span> Fun / Friends</span>
-                              </label>
-                            </div>
-                          </fieldset>
-                          <span id="motivation-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                        </div>
+                      <div id="wynwood-night-options" class="hidden space-y-4 border-t border-gray-200 pt-4">
+                       <div class="space-y-4">
+                         <div>
+                           <label class="mb-2 block text-sm font-medium text-gray-900" id="motivation-label">What's the occasion for this experience?</label>
+                           <fieldset aria-labelledby="motivation-label" aria-describedby="motivation-error">
+                             <legend class="sr-only">Select Occasion</legend>
+                             <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                               <label for="motivation-romantic" class="flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-1 has-[:checked]:ring-[--color-teal]">
+                                 <input type="radio" name="motivation" value="Romantic" id="motivation-romantic" class="sr-only">
+                                 <span class="flex items-center"><span class="mr-1.5 text-lg">❤️</span> Romantic</span>
+                               </label>
+                               <label for="motivation-celebration" class="flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-1 has-[:checked]:ring-[--color-teal]">
+                                 <input type="radio" name="motivation" value="Birthday/Celebration" id="motivation-celebration" class="sr-only">
+                                 <span class="flex items-center"><span class="mr-1.5 text-lg">🎉</span> Celebration</span>
+                               </label>
+                               <label for="motivation-business" class="flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-1 has-[:checked]:ring-[--color-teal]">
+                                 <input type="radio" name="motivation" value="Business/Corporate" id="motivation-business" class="sr-only">
+                                 <span class="flex items-center"><span class="mr-1.5 text-lg">💼</span> Business</span>
+                               </label>
+                               <label for="motivation-fun" class="flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-1 has-[:checked]:ring-[--color-teal]">
+                                 <input type="radio" name="motivation" value="Friends Night Out / Fun" id="motivation-fun" class="sr-only">
+                                 <span class="flex items-center"><span class="mr-1.5 text-lg">🥳</span> Fun / Friends</span>
+                               </label>
+                             </div>
+                           </fieldset>
+                           <span id="motivation-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                         </div>
+                       </div>
+                       <div class="space-y-4 pt-4 border-t border-gray-200">
+                         <h5 class="text-sm font-semibold text-gray-700" id="dinner-preference-label">Dinner Preferences</h5>
+                         <div>
+                           <fieldset class="mt-1" aria-labelledby="dinner-preference-label" aria-describedby="dinner_style_preference-error">
+                             <legend class="sr-only">Dinner Style Preference</legend>
+                             <div class="flex flex-wrap gap-x-4 gap-y-2">
+                               <div class="flex items-center"><input id="wynwood-dinner-vibrant" name="dinner_style_preference" type="radio" value="Vibrant Scene & Global Flavors" checked class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-dinner-vibrant" class="ml-2 block text-sm text-gray-900">Vibrant Scene & Global Flavors</label></div>
+                               <div class="flex items-center"><input id="wynwood-dinner-steak" name="dinner_style_preference" type="radio" value="Upscale Steakhouse" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-dinner-steak" class="ml-2 block text-sm text-gray-900">Upscale Steakhouse</label></div>
+                               <div class="flex items-center"><input id="wynwood-dinner-modern" name="dinner_style_preference" type="radio" value="Modern American / European" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-dinner-modern" class="ml-2 block text-sm text-gray-900">Modern American / European</label></div>
+                               <div class="flex items-center"><input id="wynwood-dinner-italian" name="dinner_style_preference" type="radio" value="Elevated Italian / Mediterranean" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-dinner-italian" class="ml-2 block text-sm text-gray-900">Elevated Italian / Mediterranean</label></div>
+                               <div class="flex items-center"><input id="wynwood-dinner-seafood" name="dinner_style_preference" type="radio" value="Iconic Miami Seafood" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-dinner-seafood" class="ml-2 block text-sm text-gray-900">Iconic Miami Seafood</label></div>
+                               <div class="flex items-center"><input id="wynwood-dinner-other-style" name="dinner_style_preference" type="radio" value="Other" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-dinner-other-style" class="ml-2 block text-sm text-gray-900">Other (Specify)</label></div>
+                             </div>
+                           </fieldset>
+                           <span id="dinner_style_preference-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                         </div>
+                         <div id="wynwood-other-restaurant-container" class="relative hidden">
+                            <label for="wynwood-other-restaurant" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Other Cuisine / Restaurant Request</label>
+                            <input type="text" name="other_restaurant_request" id="wynwood-other-restaurant" aria-describedby="wynwood-other-restaurant-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="e.g., Italian, specific restaurant name" />
+                            <span id="wynwood-other-restaurant-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                         </div>
+                       </div>
+                       <div class="space-y-1 pt-4 border-t border-gray-200">
+                         <h5 class="text-sm font-semibold text-gray-700" id="lounge-interest-label">Post-Dinner Lounge/Bar</h5>
+                         <div>
+                           <fieldset class="mt-1" aria-labelledby="lounge-interest-label" aria-describedby="lounge_interest-error">
+                             <legend class="sr-only">Post-Dinner Option</legend>
+                             <div class="flex flex-wrap gap-3">
+                               <div class="flex items-center"><input id="wynwood-lounge-yes" name="lounge_interest" type="radio" value="Yes" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-lounge-yes" class="ml-2 block text-sm text-gray-900">Yes</label></div>
+                               <div class="flex items-center"><input id="wynwood-lounge-no" name="lounge_interest" type="radio" value="No" checked class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-lounge-no" class="ml-2 block text-sm text-gray-900">No</label></div>
+                               <div class="flex items-center"><input id="wynwood-lounge-maybe" name="lounge_interest" type="radio" value="Maybe - Discuss" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-lounge-maybe" class="ml-2 block text-sm text-gray-900">Maybe (Discuss)</label></div>
+                             </div>
+                           </fieldset>
+                           <span id="lounge_interest-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                         </div>
+                       </div>
                       </div>
-                      <div class="space-y-4 pt-4 border-t border-gray-200">
-                        <h5 class="text-sm font-semibold text-gray-700" id="dinner-preference-label">Dinner Preferences</h5>
-                        <div>
-                          <fieldset class="mt-1" aria-labelledby="dinner-preference-label" aria-describedby="dinner_style_preference-error">
-                            <legend class="sr-only">Dinner Style Preference</legend>
-                            <div class="flex flex-wrap gap-x-4 gap-y-2">
-                              <div class="flex items-center"><input id="wynwood-dinner-vibrant" name="dinner_style_preference" type="radio" value="Vibrant Scene & Global Flavors" checked class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-dinner-vibrant" class="ml-2 block text-sm text-gray-900">Vibrant Scene & Global Flavors</label></div>
-                              <div class="flex items-center"><input id="wynwood-dinner-steak" name="dinner_style_preference" type="radio" value="Upscale Steakhouse" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-dinner-steak" class="ml-2 block text-sm text-gray-900">Upscale Steakhouse</label></div>
-                              <div class="flex items-center"><input id="wynwood-dinner-modern" name="dinner_style_preference" type="radio" value="Modern American / European" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-dinner-modern" class="ml-2 block text-sm text-gray-900">Modern American / European</label></div>
-                              <div class="flex items-center"><input id="wynwood-dinner-italian" name="dinner_style_preference" type="radio" value="Elevated Italian / Mediterranean" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-dinner-italian" class="ml-2 block text-sm text-gray-900">Elevated Italian / Mediterranean</label></div>
-                              <div class="flex items-center"><input id="wynwood-dinner-seafood" name="dinner_style_preference" type="radio" value="Iconic Miami Seafood" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-dinner-seafood" class="ml-2 block text-sm text-gray-900">Iconic Miami Seafood</label></div>
-                              <div class="flex items-center"><input id="wynwood-dinner-other-style" name="dinner_style_preference" type="radio" value="Other" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-dinner-other-style" class="ml-2 block text-sm text-gray-900">Other (Specify)</label></div>
-                            </div>
-                          </fieldset>
-                          <span id="dinner_style_preference-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                        </div>
-                        <div id="wynwood-other-restaurant-container" class="relative hidden">
-                           <label for="wynwood-other-restaurant" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Other Cuisine / Restaurant Request</label>
-                           <input type="text" name="other_restaurant_request" id="wynwood-other-restaurant" aria-describedby="wynwood-other-restaurant-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="e.g., Italian, specific restaurant name" />
-                           <span id="wynwood-other-restaurant-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                        </div>
-                      </div>
-                      <div class="space-y-1 pt-4 border-t border-gray-200">
-                        <h5 class="text-sm font-semibold text-gray-700" id="lounge-interest-label">Post-Dinner Lounge/Bar</h5>
-                        <div>
-                          <fieldset class="mt-1" aria-labelledby="lounge-interest-label" aria-describedby="lounge_interest-error">
-                            <legend class="sr-only">Post-Dinner Option</legend>
-                            <div class="flex flex-wrap gap-3">
-                              <div class="flex items-center"><input id="wynwood-lounge-yes" name="lounge_interest" type="radio" value="Yes" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-lounge-yes" class="ml-2 block text-sm text-gray-900">Yes</label></div>
-                              <div class="flex items-center"><input id="wynwood-lounge-no" name="lounge_interest" type="radio" value="No" checked class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-lounge-no" class="ml-2 block text-sm text-gray-900">No</label></div>
-                              <div class="flex items-center"><input id="wynwood-lounge-maybe" name="lounge_interest" type="radio" value="Maybe - Discuss" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-lounge-maybe" class="ml-2 block text-sm text-gray-900">Maybe (Discuss)</label></div>
-                            </div>
-                          </fieldset>
-                          <span id="lounge_interest-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                        </div>
-                      </div>
+                      <div id="everglades-options" class="hidden relative border-t border-gray-200 pt-4"></div>
+                      <div id="keys-escape-options" class="hidden relative border-t border-gray-200 pt-4"></div>
                     </div>
-                     <div id="everglades-options" class="hidden relative border-t border-gray-200 pt-4"></div>
-                     <div id="keys-escape-options" class="hidden relative border-t border-gray-200 pt-4"></div>
-                   </div>
                 </div>
-              </div>
-              <div id="notes-container" class="relative">
-                <label for="notes" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Notes / Preferences</label>
-                <textarea name="notes" id="notes" rows="3" aria-describedby="notes-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" placeholder="Optional notes or preferences..."></textarea>
-                <span id="notes-error" class="mt-1 block text-xs text-red-600 hidden"></span>
               </div>
 
               <div>
@@ -348,20 +343,23 @@
             oneWay: "Optional: Add flight number, luggage details, or specific instructions...",
             hourly: "Optional: Describe your ideal route, planned stops, music/AC preferences...",
             experience: "Optional: Any special interests or requests for this experience?",
-            defaultExp: "Optional notes or preferences..."
+            defaultExp: "Optional notes or preferences..." // Default might need updating if notes removed? Keep for now.
           }
         };
 
         // --- Element References ---
-        // ... (getElementRefs remains unchanged) ...
-        function getElementRefs() {
+        // Need to potentially remove refs.notesInput if code relies on it? Check JS.
+        // JS Analysis: refs.notesInput is checked in updateExperiencePlusPanelUI & validateForm
+        // It should be safe to remove the reference, but handle potential null checks.
+        // Let's remove the ref and ensure checks handle its absence.
+         function getElementRefs() {
           const refs = {};
           refs.bookingForm = document.getElementById('booking-form');
           refs.tabNavigationContainer = document.getElementById('tab-navigation');
           refs.tabNavigationButtons = refs.tabNavigationContainer?.querySelectorAll('.tab-button');
           refs.formTabPanels = refs.bookingForm?.querySelectorAll('.tab-panel');
           refs.fromLocationInput = document.getElementById('from-location');
-          refs.notesInput = document.getElementById('notes');
+          // refs.notesInput = document.getElementById('notes'); // Removed reference
           refs.oneWayPanel = document.getElementById('panel-oneway');
           refs.toAddressInput = document.getElementById('to-address');
           refs.oneWayPickupDateInput = document.getElementById('pickup-date-oneway');
@@ -413,7 +411,7 @@
 
         // --- Helper Functions ---
         // ... (showError, clearError, etc. remain unchanged) ...
-        function showError(elements, fieldId, message) {
+         function showError(elements, fieldId, message) {
           const errorSpanId = `${fieldId}-error`;
           const errorSpan = document.getElementById(errorSpanId);
           const inputElement = document.getElementById(fieldId);
@@ -453,7 +451,7 @@
           }
         }
 
-        function clearError(fieldId) {
+         function clearError(fieldId) {
           const errorSpanId = `${fieldId}-error`;
           const errorSpan = document.getElementById(errorSpanId) || document.getElementById(`${fieldId.replace(/-/g, '_')}-error`);
           const inputElement = document.getElementById(fieldId);
@@ -484,7 +482,7 @@
           }
         }
 
-        function clearAllErrors(elements) {
+         function clearAllErrors(elements) {
           const errorSpans = elements.bookingForm?.querySelectorAll('[id$="-error"]');
           errorSpans?.forEach(span => { span.textContent = ''; span.classList.add('hidden'); });
           const errorInputs = elements.bookingForm?.querySelectorAll('.ring-red-500');
@@ -494,7 +492,7 @@
           clearError('submit-button');
         }
 
-        function determineButtonText(elements) {
+         function determineButtonText(elements) {
           let activePanelId = '';
           const activeTabButton = elements.tabNavigationContainer?.querySelector('.active-tab');
           activePanelId = activeTabButton ? activeTabButton.getAttribute('data-tab-target') : null;
@@ -508,7 +506,7 @@
           return 'Submit';
         }
 
-        function resetSubmitButton(elements) {
+         function resetSubmitButton(elements) {
           if (!elements.submitButton) return;
           elements.submitButton.disabled = false;
           if (elements.submitButtonSpinner) elements.submitButtonSpinner.classList.add('hidden');
@@ -518,14 +516,14 @@
           }
         }
 
-        function setLoadingButton(elements) {
+         function setLoadingButton(elements) {
           if (!elements.submitButton) return;
           elements.submitButton.disabled = true;
           if (elements.submitButtonText) elements.submitButtonText.classList.add('hidden');
           if (elements.submitButtonSpinner) elements.submitButtonSpinner.classList.remove('hidden');
         }
 
-        function handleWynwoodDinnerChoice(elements) {
+         function handleWynwoodDinnerChoice(elements) {
           if (!elements.wynwoodOtherDinnerRadio || !elements.wynwoodOtherRestaurantContainer) return;
           const showOtherInput = elements.wynwoodOtherDinnerRadio.checked;
           elements.wynwoodOtherRestaurantContainer.classList.toggle('hidden', !showOtherInput);
@@ -538,9 +536,10 @@
                 }
             }
         }
+
         // --- UI Update Functions ---
-        // ... (updateExperiencePlusPanelUI, switchTab remain unchanged) ...
-        function updateExperiencePlusPanelUI(elements, placeholders) {
+        // Update to handle missing notesInput reference
+         function updateExperiencePlusPanelUI(elements, placeholders) {
           if (!elements.experiencePlusPanel || !elements.serviceDropdown) return;
 
           const selectedValue = elements.serviceDropdown.value;
@@ -554,11 +553,8 @@
           elements.commonExperienceFieldsContainer?.classList.toggle('hidden', !showCuratedExperience);
           elements.experienceOptionsContainer?.classList.toggle('hidden', !showCuratedExperience);
 
-          if (elements.notesInput) {
-            if (showHourly) elements.notesInput.placeholder = placeholders.hourly;
-            else if (showCuratedExperience) elements.notesInput.placeholder = placeholders.experience;
-            else elements.notesInput.placeholder = placeholders.defaultExp;
-          }
+          // Removed notesInput handling - placeholder no longer needed dynamically here
+          // if (elements.notesInput) { ... }
 
           if (elements.hourlyPickupTimeLabel) elements.hourlyPickupTimeLabel.textContent = "Start Time";
 
@@ -586,7 +582,8 @@
           clearAllErrors(elements);
         }
 
-        function switchTab(targetPanelId, elements, placeholders) {
+        // Update to handle missing notesInput reference
+         function switchTab(targetPanelId, elements, placeholders) {
           elements.formTabPanels?.forEach(panel => panel.classList.add('hidden'));
           elements.tabNavigationButtons?.forEach(button => {
             button.classList.remove('active-tab');
@@ -608,9 +605,8 @@
             targetButton.setAttribute('tabindex', '0');
           }
 
-          if (elements.notesInput) {
-            elements.notesInput.placeholder = (targetPanelId === '#panel-oneway') ? placeholders.oneWay : placeholders.defaultExp;
-          }
+          // Removed notesInput handling
+          // if (elements.notesInput) { ... }
 
           const oneWayElements = [elements.toAddressInput?.closest('.relative'), elements.oneWayPickupDateInput?.closest('.grid'), elements.vehicleSelectionOneway];
           const expPlusElements = [elements.serviceDropdown?.closest('.relative'), elements.hourlyDescription, elements.durationContainer, elements.hourlyDateTimeContainer, elements.datePreferenceContainer, elements.commonExperienceFieldsContainer, elements.experienceOptionsContainer];
@@ -641,8 +637,9 @@
           clearAllErrors(elements);
         }
 
+
         // --- Form Validation ---
-        // ... (validateForm remains unchanged) ...
+        // Update to handle missing notesInput
          function validateForm(elements) {
           let isValid = true;
           const activeTabButton = elements.tabNavigationContainer?.querySelector('.active-tab');
@@ -713,25 +710,31 @@
             console.error("No active tab panel identified for validation.");
           }
 
-          if (elements.notesInput && elements.notesInput.value.length > config.MAX_NOTES_LENGTH) {
-            showError(elements, 'notes', `Notes cannot exceed ${config.MAX_NOTES_LENGTH} characters.`);
-            isValid = false;
-          }
+          // Removed notesInput length validation
+          // if (elements.notesInput && elements.notesInput.value.length > config.MAX_NOTES_LENGTH) { ... }
 
           return isValid;
         }
+
+
         // --- Form Data Processing ---
-        // ... (processFormData remains unchanged) ...
+        // Update to handle missing notesInput
          function processFormData(elements) {
           const formData = new FormData(elements.bookingForm);
           let serviceType = '';
           const activeTabButton = elements.tabNavigationContainer?.querySelector('.active-tab');
           const activePanelId = activeTabButton ? activeTabButton.getAttribute('data-tab-target') : null;
 
+          // Get notes value only if the element exists, otherwise default to empty string
+          const notesElement = document.getElementById('notes');
+          const notesValue = notesElement ? notesElement.value?.trim() : '';
+
           const dataObject = {
             'from-location': formData.get('from-location')?.trim(),
-            notes: formData.get('notes')?.trim() || ''
+            // Only include notes if it's not empty
+            ...(notesValue && { notes: notesValue })
           };
+
 
           if (activePanelId === '#panel-oneway') {
             serviceType = 'One Way';
@@ -767,21 +770,31 @@
                 }
                 dataObject.lounge_interest = formData.get('lounge_interest');
               }
+              // Add logic here for other specific experiences if they add unique form data
             }
           }
 
+          // Clean up potential undefined/null/empty string values AFTER assigning based on logic
           Object.keys(dataObject).forEach(key => {
-               if (dataObject[key] === null || dataObject[key] === undefined || dataObject[key] === '') {
+               // We already handled notes, just check others
+               if (key !== 'notes' && (dataObject[key] === null || dataObject[key] === undefined || dataObject[key] === '')) {
+                 // Special case for other_restaurant_request which is conditional
                  if (key === 'other_restaurant_request' && dataObject.dinner_style_preference !== 'Other') {
                      delete dataObject[key];
-                  }
-                 if (key === 'notes' && dataObject[key] === '') delete dataObject[key];
+                 } else if (key !== 'other_restaurant_request') {
+                    // Remove other empty/null/undefined keys generally (safer than deleting maybe)
+                    // Or decide if they should default to empty string if required by backend
+                    // For now, let's remove if truly empty/null/undefined after trim
+                    delete dataObject[key];
+                 }
                }
           });
+
 
           console.log("Final Data Object for Submission:", dataObject);
           return dataObject;
         }
+
         // --- Form Submission ---
         // ... (sendFormData remains unchanged) ...
          function sendFormData(dataObject, elements, config) {
@@ -825,9 +838,10 @@
             resetSubmitButton(elements);
           });
         }
+
         // --- Event Listener Setup ---
         // ... (initializeEventListeners remains unchanged) ...
-        function initializeEventListeners(elements, placeholders, config) {
+         function initializeEventListeners(elements, placeholders, config) {
            elements.tabNavigationContainer?.addEventListener('click', (event) => {
                const button = event.target.closest('.tab-button');
                if (button && button.dataset.tabTarget && !button.classList.contains('active-tab')) {
@@ -840,6 +854,8 @@
            elements.bookingForm?.querySelectorAll('input:not([type="radio"]), select, textarea').forEach(input => {
                let targetId = input.id || input.name;
                if (!targetId) return;
+               // Make sure not to add listeners to the removed notes textarea
+               if (targetId === 'notes') return;
                const eventType = (input.tagName === 'INPUT' && input.type !== 'number' && input.type !== 'email' && input.type !== 'tel') ? 'input' : 'change';
                 input.addEventListener(eventType, () => clearError(targetId));
                 input.addEventListener('blur', () => clearError(targetId));
@@ -895,6 +911,7 @@
 
            console.log("Event listeners initialized.");
         }
+
 
         // --- Main Execution ---
         const elementRefs = getElementRefs();
