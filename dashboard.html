@@ -17,7 +17,7 @@
         --color-gold-dark: #9A7B4F;
         --color-teal: #00A09A;
         --color-teal-dark: #00807A;
-        --color-teal-50: #E6F5F4;      /* Light teal for selected card background */
+        --color-teal-50: #E6F5F4;      /* Light teal for selected card/button background */
         --color-teal-light-bg: #f0fdfa;
         --color-palm-green: #3CB371;
         --color-green-100: #D1FAE5;    /* Tailwind green-100 */
@@ -31,115 +31,64 @@
       select { appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="%2300A09A" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>'); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.25em; padding-right: 2.5rem; }
 
       /* Tab styles */
-  .tab-button.active-tab#tab-button-oneway {
-    background-color: white;
-    color: var(--color-teal);
-    border-left-color: #e5e7eb;
-    border-right-color: #e5e7eb;
-    border-top-color: #e5e7eb;
-    border-bottom-color: transparent;
-    font-weight: 600;
-  }
-
-  .tab-button:not(.active-tab)#tab-button-oneway {
-    background-color: #f9fafb; /* light gray */
-    color: #6b7280;             /* gray text */
-    border-color: transparent;
-  }
-
-  .tab-button:not(.active-tab)#tab-button-oneway:hover {
-    background-color: #f3f4f6;
-    color: #4b5563;
-  }
-
-  /* Experience + tab styles */
-  .tab-button.active-tab#tab-button-experience-plus {
-    background-color: #FFC107; /* vibrant yellow */
-    color: #1A237E;             /* dark blue text */
-    border-left-color: #FFC107;
-    border-right-color: #FFC107;
-    border-top-color: #FFC107;
-    border-bottom-color: transparent;
-    font-weight: 600;
-  }
-
-  .tab-button:not(.active-tab)#tab-button-experience-plus {
-    background-color: #FFF8E1; /* light yellow */
-    color: #FFB300;             /* darker yellow-orange */
-    border-color: transparent;
-  }
-
-  .tab-button:not(.active-tab)#tab-button-experience-plus:hover {
-    background-color: #FFECB3; /* slightly deeper yellow on hover */
-    color: #FFA000;
-  }
+      .tab-button.active-tab#tab-button-oneway { background-color: white; color: var(--color-teal); border-left-color: #e5e7eb; border-right-color: #e5e7eb; border-top-color: #e5e7eb; border-bottom-color: transparent; font-weight: 600; }
+      .tab-button:not(.active-tab)#tab-button-oneway { background-color: #f9fafb; color: #6b7280; border-color: transparent; }
+      .tab-button:not(.active-tab)#tab-button-oneway:hover { background-color: #f3f4f6; color: #4b5563; }
+      .tab-button.active-tab#tab-button-experience-plus { background-color: #FFC107; color: #1A237E; border-left-color: #FFC107; border-right-color: #FFC107; border-top-color: #FFC107; border-bottom-color: transparent; font-weight: 600; }
+      .tab-button:not(.active-tab)#tab-button-experience-plus { background-color: #FFF8E1; color: #FFB300; border-color: transparent; }
+      .tab-button:not(.active-tab)#tab-button-experience-plus:hover { background-color: #FFECB3; color: #FFA000; }
 
       /* Flatpickr styles */
-      .flatpickr-calendar {
-        background: white;
-        border-radius: 0.5rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      }
+      .flatpickr-calendar { background: white; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
 
       /* Screen reader only */
-      .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border-width: 0;
-      }
+      .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
 
       /* Vehicle Card Styles */
-      .vehicle-card:has(input:checked) {
-        border-color: var(--color-teal);
-        box-shadow: 0 0 0 2px var(--color-teal);
-        background-color: var(--color-teal-50);
+      .vehicle-card:has(input:checked) { border-color: var(--color-teal); box-shadow: 0 0 0 2px var(--color-teal); background-color: var(--color-teal-50); }
+      .vehicle-card:hover { border-color: #9ca3af; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1); }
+
+      /* NEW: Booking Time Button Styles */
+      .booking-time-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1rem; /* p-3 p-4 */
+        border: 1px solid #d1d5db; /* border-gray-300 */
+        border-radius: 0.375rem; /* rounded-md */
+        background-color: white;
+        cursor: pointer;
+        transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+        font-size: 0.875rem; /* text-sm */
+        font-weight: 500; /* font-medium */
+        color: #374151; /* text-gray-700 */
       }
-      .vehicle-card:hover {
-        border-color: #9ca3af; /* gray-400 */
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+      .booking-time-button:hover {
+        border-color: #9ca3af; /* hover:border-gray-400 */
+      }
+      .booking-time-button svg {
+        margin-right: 0.5rem; /* mr-2 */
+        width: 1.1rem; /* ~h-4/w-4 */
+        height: 1.1rem;
+        fill: currentColor; /* Icon color matches text */
+      }
+      .booking-time-button.active {
+         border-color: var(--color-teal);
+         background-color: var(--color-teal-50);
+         color: var(--color-teal-dark);
+         font-weight: 600; /* font-semibold */
+         box-shadow: 0 0 0 1px var(--color-teal); /* Ring effect */
       }
 
       /* Mobile Responsiveness for Cards */
       @media (max-width: 400px) {
-        .vehicle-card {
-          flex-direction: column;
-          align-items: center;
-        }
-        .vehicle-card-content {
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            width: 100%;
-        }
-        .vehicle-card-details {
-            margin-left: 0;
-            margin-top: 0.75rem;
-            width: 100%;
-            align-items: center;
-        }
-         .vehicle-card-details .flex { /* Target icon container */
-            justify-content: center;
-         }
-         .badge-container { /* Ensure badges center on mobile */
-             justify-content: center;
-             margin-top: 0.25rem;
-         }
-        .vehicle-card-price {
-          text-align: center;
-          margin-left: 0;
-          margin-top: 0.75rem;
-          width: 100%;
-        }
-        .vehicle-image-container {
-            width: 100%;      /* Take available width */
-            max-width: 10rem; /* But cap it at 160px */
-        }
+        .vehicle-card { flex-direction: column; align-items: center; }
+        .vehicle-card-content { flex-direction: column; align-items: center; text-align: center; width: 100%; }
+        .vehicle-card-details { margin-left: 0; margin-top: 0.75rem; width: 100%; align-items: center; }
+        .vehicle-card-details .flex { justify-content: center; }
+        .badge-container { justify-content: center; margin-top: 0.25rem; }
+        .vehicle-card-price { text-align: center; margin-left: 0; margin-top: 0.75rem; width: 100%; }
+        .vehicle-image-container { width: 100%; max-width: 10rem; }
       }
     </style>
   </head>
@@ -178,21 +127,40 @@
                     <input type="text" name="to-address" id="to-address" aria-describedby="to-address-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" placeholder="Address, airport, hotel, ..." />
                     <span id="to-address-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                   </div>
+
                   <div id="date-time-container-oneway" class="relative">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
-                      <div>
-                        <label for="pickup-date-oneway" class="block text-xs font-medium text-gray-500 mb-0.5">Date</label>
-                        <input type="text" name="pickup-date-oneway" id="pickup-date-oneway" required aria-describedby="pickup-date-oneway-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Date..." />
-                        <span id="pickup-date-oneway-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                      </div>
-                      <div>
-                        <label for="pickup-time-oneway" class="block text-xs font-medium text-gray-500 mb-0.5">Time</label>
-                        <input type="text" name="pickup-time-oneway" id="pickup-time-oneway" required aria-describedby="pickup-time-oneway-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Time..." />
-                        <span id="pickup-time-oneway-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                      </div>
-                    </div>
+                    <input type="hidden" name="booking_preference" id="booking-preference" value=""> <label class="block text-xs font-medium text-gray-500 mb-1">Pickup Time</label>
+                     <div class="grid grid-cols-2 gap-x-3" aria-labelledby="booking-time-error">
+                         <button type="button" id="request-now-button" class="booking-time-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                               <path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A9.978 9.978 0 0 0 10 12c-2.31 0-4.438.784-6.131 2.1-.194.51-.02.979.406 1.393Z" />
+                            </svg>
+                             Request now
+                         </button>
+                         <button type="button" id="book-later-button" class="booking-time-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd" />
+                            </svg>
+                            Book for later
+                         </button>
+                     </div>
+                     <span id="booking-time-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                   </div>
 
+                  <div id="scheduled-booking-inputs" class="hidden mt-4 space-y-4">
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
+                        <div>
+                           <label for="pickup-date-oneway" class="block text-xs font-medium text-gray-500 mb-0.5">Date</label>
+                           <input type="text" name="pickup-date-oneway" id="pickup-date-oneway" aria-describedby="pickup-date-oneway-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Date..." />
+                           <span id="pickup-date-oneway-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                        </div>
+                        <div>
+                           <label for="pickup-time-oneway" class="block text-xs font-medium text-gray-500 mb-0.5">Time</label>
+                           <input type="text" name="pickup-time-oneway" id="pickup-time-oneway" aria-describedby="pickup-time-oneway-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Time..." />
+                           <span id="pickup-time-oneway-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                        </div>
+                     </div>
+                  </div>
                   <div id="vehicle-selection-oneway" class="pt-4">
                     <h4 class="text-sm font-semibold text-gray-700 mb-3 font-playfair" id="vehicle-selection-oneway-label">Choose Your Luxury Ride</h4>
                     <fieldset aria-labelledby="vehicle-selection-oneway-label" aria-describedby="vehicle-type-oneway-error">
@@ -293,7 +261,7 @@
                   </div>
                   </div>
                 <div id="panel-experience-plus" class="tab-panel space-y-3 hidden" role="tabpanel" tabindex="0" aria-labelledby="tab-button-experience-plus">
-                  <div id="experience-dropdown-container" class="relative">
+                   <div id="experience-dropdown-container" class="relative">
                      <label for="experience-dropdown" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Select Service</label>
                      <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27Z"></path></svg></span>
                      <select name="experience-dropdown" id="experience-dropdown" required aria-describedby="experience-dropdown-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6">
@@ -464,13 +432,10 @@
       document.addEventListener('DOMContentLoaded', () => {
         // --- Configuration ---
         const config = {
-          FORM_ENDPOINT: "https://formspree.io/your-endpoint",
-          MAX_NOTES_LENGTH: 500, // Keep for now, might be used elsewhere or later
+          FORM_ENDPOINT: "https://formspree.io/your-endpoint", // Replace with your actual endpoint
+          MAX_NOTES_LENGTH: 500,
           placeholders: {
-            oneWay: "Optional: Add flight number, luggage details, or specific instructions...",
-            hourly: "Optional: Describe your ideal route, planned stops, music/AC preferences...",
-            experience: "Optional: Any special interests or requests for this experience?",
-            defaultExp: "Optional notes or preferences..."
+            // Optional notes placeholders if you add a notes field back
           }
         };
 
@@ -482,11 +447,19 @@
           refs.tabNavigationButtons = refs.tabNavigationContainer?.querySelectorAll('.tab-button');
           refs.formTabPanels = refs.bookingForm?.querySelectorAll('.tab-panel');
           refs.fromLocationInput = document.getElementById('from-location');
+
+          // One Way Panel specific
           refs.oneWayPanel = document.getElementById('panel-oneway');
           refs.toAddressInput = document.getElementById('to-address');
-          refs.oneWayPickupDateInput = document.getElementById('pickup-date-oneway');
-          refs.oneWayPickupTimeInput = document.getElementById('pickup-time-oneway');
-          refs.vehicleSelectionOneway = document.getElementById('vehicle-selection-oneway'); // Keep ref to parent container
+          refs.requestNowButton = document.getElementById('request-now-button'); // NEW
+          refs.bookLaterButton = document.getElementById('book-later-button'); // NEW
+          refs.scheduledBookingInputsContainer = document.getElementById('scheduled-booking-inputs'); // NEW
+          refs.bookingPreferenceInput = document.getElementById('booking-preference'); // NEW
+          refs.oneWayPickupDateInput = document.getElementById('pickup-date-oneway'); // Still needed, now inside hidden container
+          refs.oneWayPickupTimeInput = document.getElementById('pickup-time-oneway'); // Still needed, now inside hidden container
+          refs.vehicleSelectionOneway = document.getElementById('vehicle-selection-oneway');
+
+          // Experience+ Panel specific
           refs.experiencePlusPanel = document.getElementById('panel-experience-plus');
           refs.serviceDropdown = document.getElementById('experience-dropdown');
           refs.hourlyDescription = document.getElementById('hourly-description');
@@ -507,13 +480,19 @@
           refs.wynwoodDinnerPrefRadios = document.querySelectorAll('#wynwood-night-options input[name="dinner_style_preference"]');
           refs.wynwoodOtherRestaurantContainer = document.getElementById('wynwood-other-restaurant-container');
           refs.wynwoodOtherDinnerRadio = document.getElementById('wynwood-dinner-other-style');
+          refs.waterSkyOptions = document.getElementById('water-sky-options');
+          refs.evergladesOptions = document.getElementById('everglades-options');
+          refs.keysEscapeOptions = document.getElementById('keys-escape-options');
+
+          // Common Form Elements
           refs.submitButton = document.getElementById('submit-button');
           refs.submitButtonText = refs.submitButton?.querySelector('.button-text');
           refs.submitButtonSpinner = refs.submitButton?.querySelector('.spinner');
           refs.confirmationMessage = document.getElementById('confirmation-message');
-          refs.waterSkyOptions = document.getElementById('water-sky-options');
-          refs.evergladesOptions = document.getElementById('everglades-options');
-          refs.keysEscapeOptions = document.getElementById('keys-escape-options');
+
+          // Store Flatpickr instances (NEW)
+          refs.flatpickrInstances = {};
+
           return refs;
         }
 
@@ -523,46 +502,67 @@
           if (!flatpickr) { console.error("Flatpickr library not loaded."); return; }
           const commonDateConfig = { altInput: true, altFormat: "D, M j, Y", dateFormat: "Y-m-d", enableTime: false, minDate: "today" };
           const commonTimeConfig = { enableTime: true, noCalendar: true, dateFormat: "H:i", altInput: true, altFormat: "h : i K", time_24hr: false, minuteIncrement: 10 };
-          if (elements.oneWayPickupDateInput) flatpickr(elements.oneWayPickupDateInput, commonDateConfig);
-          if (elements.oneWayPickupTimeInput) flatpickr(elements.oneWayPickupTimeInput, commonTimeConfig);
-          if (elements.hourlyPickupDateInput) flatpickr(elements.hourlyPickupDateInput, commonDateConfig);
-          if (elements.hourlyPickupTimeInput) flatpickr(elements.hourlyPickupTimeInput, commonTimeConfig);
-          console.log("Flatpickr initialized for specific inputs.");
+
+          // Initialize Hourly Pickers immediately
+          if (elements.hourlyPickupDateInput) {
+              elements.flatpickrInstances.hourlyDate = flatpickr(elements.hourlyPickupDateInput, commonDateConfig);
+          }
+          if (elements.hourlyPickupTimeInput) {
+              elements.flatpickrInstances.hourlyTime = flatpickr(elements.hourlyPickupTimeInput, commonTimeConfig);
+          }
+
+          // One-Way pickers will be initialized on demand when 'Book for later' is clicked
+          console.log("Flatpickr initialized for hourly inputs. One-way deferred.");
         }
 
         // --- Helper Functions ---
          function showError(elements, fieldId, message) {
           const errorSpanId = `${fieldId}-error`;
           const errorSpan = document.getElementById(errorSpanId);
-          const inputElement = document.getElementById(fieldId); // Might be null for radio group
+          const inputElement = document.getElementById(fieldId); // Might be null for radio/button groups
           let labelText = fieldId;
+
+          // Specific handling for button group validation message
+          if (fieldId === 'booking-time') {
+               labelText = 'Pickup Time Choice';
+               const bookingTimeErrorSpan = document.getElementById('booking-time-error');
+               if (bookingTimeErrorSpan) {
+                   bookingTimeErrorSpan.textContent = message; // Use the direct message here
+                   bookingTimeErrorSpan.classList.remove('hidden');
+               }
+               // Optionally add error styling to buttons or container
+               elements.requestNowButton?.classList.add('border-red-500');
+               elements.bookLaterButton?.classList.add('border-red-500');
+               return; // Exit
+           }
 
           // Special handling for radio button group validation message
           if (fieldId === 'vehicle_type_oneway') {
              labelText = 'Vehicle Type';
-             // Find the error span specifically for the fieldset
              const fieldset = document.querySelector('#vehicle-selection-oneway fieldset');
              const fieldsetErrorSpan = fieldset ? fieldset.querySelector('#vehicle-type-oneway-error') : null;
              if (fieldsetErrorSpan) {
                  fieldsetErrorSpan.textContent = message; // Use the direct message here
                  fieldsetErrorSpan.classList.remove('hidden');
              }
-             // Add error styling to the fieldset itself
              if (fieldset) {
                  fieldset.classList.add('ring-red-500', 'ring-1', 'rounded-md', 'p-1'); // Add styling to fieldset
              }
-             return; // Exit function for this specific case
+             return; // Exit
           }
 
-          // Existing logic for other fields
+          // Existing label logic
           const labelElement = document.querySelector(`label[for="${fieldId}"]`) || document.getElementById(`${fieldId}-label`);
           if (labelElement) { labelText = labelElement.textContent.replace('*', '').trim(); }
-          // ... (rest of the label text mapping if needed) ...
           else if (fieldId === 'date_preference') labelText = 'Preferred Timing';
           else if (fieldId === 'motivation') labelText = 'Occasion';
           else if (fieldId === 'dinner_style_preference') labelText = 'Dinner Preference';
           else if (fieldId === 'lounge_interest') labelText = 'Lounge Interest';
           else if (fieldId === 'wynwood-other-restaurant') labelText = 'Other Cuisine / Restaurant Request';
+          // Add labels for new/moved one-way inputs if needed
+          else if (fieldId === 'pickup-date-oneway') labelText = 'Date';
+          else if (fieldId === 'pickup-time-oneway') labelText = 'Time';
+
 
           const fullMessage = `${labelText}: ${message}`;
 
@@ -580,13 +580,24 @@
                  inputElement.setAttribute('aria-describedby', describedBy ? `${describedBy} ${errorSpanId}` : errorSpanId);
             }
           }
-          // Note: Radio group styling is handled above
         }
 
          function clearError(fieldId) {
           const errorSpanId = `${fieldId}-error`;
           const errorSpan = document.getElementById(errorSpanId);
           const inputElement = document.getElementById(fieldId); // Might be null
+
+           // Specific handling for button group error
+           if (fieldId === 'booking-time') {
+               const bookingTimeErrorSpan = document.getElementById('booking-time-error');
+               if (bookingTimeErrorSpan) {
+                   bookingTimeErrorSpan.textContent = '';
+                   bookingTimeErrorSpan.classList.add('hidden');
+               }
+               elementRefs.requestNowButton?.classList.remove('border-red-500');
+               elementRefs.bookLaterButton?.classList.remove('border-red-500');
+               return; // Exit
+           }
 
           // Special handling for radio button group error
           if (fieldId === 'vehicle_type_oneway') {
@@ -602,7 +613,7 @@
               return; // Exit
           }
 
-          // Existing logic for other fields
+          // Existing logic
           if (errorSpan) { errorSpan.textContent = ''; errorSpan.classList.add('hidden'); }
 
           if (inputElement && ['INPUT', 'SELECT', 'TEXTAREA'].includes(inputElement.tagName)) {
@@ -618,67 +629,70 @@
                 }
             }
           }
-          // Note: Radio group styling cleared above
         }
 
          function clearAllErrors(elements) {
           const errorSpans = elements.bookingForm?.querySelectorAll('[id$="-error"]');
           errorSpans?.forEach(span => { span.textContent = ''; span.classList.add('hidden'); });
-          const errorInputs = elements.bookingForm?.querySelectorAll('.ring-red-500');
-          errorInputs?.forEach(el => el.classList.remove('ring-red-500', 'ring-1', 'rounded-md', 'p-1')); // Include fieldset removal
+          const errorInputs = elements.bookingForm?.querySelectorAll('.ring-red-500, .border-red-500');
+          errorInputs?.forEach(el => el.classList.remove('ring-red-500', 'ring-1', 'rounded-md', 'p-1', 'border-red-500')); // Include button/fieldset removal
           elements.bookingForm?.querySelectorAll('[aria-invalid="true"]').forEach(el => el.removeAttribute('aria-invalid'));
           elements.bookingForm?.querySelectorAll('fieldset[aria-describedby]').forEach(el => el.removeAttribute('aria-describedby'));
           clearError('submit-button');
-          clearError('vehicle_type_oneway'); // Explicitly clear vehicle error styling
+          clearError('vehicle_type_oneway');
+          clearError('booking-time'); // NEW: Clear booking time button error
         }
 
-         function determineButtonText(elements) {
-          let activePanelId = '';
-          const activeTabButton = elements.tabNavigationContainer?.querySelector('.active-tab');
-          activePanelId = activeTabButton ? activeTabButton.getAttribute('data-tab-target') : null;
-          const selectedService = elements.serviceDropdown?.value || '';
-          if (activePanelId === '#panel-oneway') return 'Get Quote';
-          else if (activePanelId === '#panel-experience-plus') {
-            if (selectedService === 'hourly_chauffeur') return 'Request Hourly Service';
-            else if (selectedService !== '') return 'Request Experience';
-            else return 'Select Service';
-          }
-          return 'Submit';
+        // (determineButtonText, resetSubmitButton, setLoadingButton, handleWynwoodDinnerChoice remain the same as before)
+        function determineButtonText(elements) {
+            let activePanelId = '';
+            const activeTabButton = elements.tabNavigationContainer?.querySelector('.active-tab');
+            activePanelId = activeTabButton ? activeTabButton.getAttribute('data-tab-target') : null;
+            const selectedService = elements.serviceDropdown?.value || '';
+            if (activePanelId === '#panel-oneway') return 'Get Quote';
+            else if (activePanelId === '#panel-experience-plus') {
+              if (selectedService === 'hourly_chauffeur') return 'Request Hourly Service';
+              else if (selectedService !== '') return 'Request Experience';
+              else return 'Select Service';
+            }
+            return 'Submit';
         }
 
-         function resetSubmitButton(elements) {
-          if (!elements.submitButton) return;
-          elements.submitButton.disabled = false;
-          if (elements.submitButtonSpinner) elements.submitButtonSpinner.classList.add('hidden');
-          if (elements.submitButtonText) {
-            elements.submitButtonText.textContent = determineButtonText(elements);
-            elements.submitButtonText.classList.remove('hidden');
-          }
-        }
-
-         function setLoadingButton(elements) {
-          if (!elements.submitButton) return;
-          elements.submitButton.disabled = true;
-          if (elements.submitButtonText) elements.submitButtonText.classList.add('hidden');
-          if (elements.submitButtonSpinner) elements.submitButtonSpinner.classList.remove('hidden');
-        }
-
-         function handleWynwoodDinnerChoice(elements) {
-          if (!elements.wynwoodOtherDinnerRadio || !elements.wynwoodOtherRestaurantContainer) return;
-          const showOtherInput = elements.wynwoodOtherDinnerRadio.checked;
-          elements.wynwoodOtherRestaurantContainer.classList.toggle('hidden', !showOtherInput);
-          const otherInput = elements.wynwoodOtherRestaurantContainer.querySelector('input');
-            if (otherInput) {
-                otherInput.required = showOtherInput;
-                if (!showOtherInput) {
-                    otherInput.value = '';
-                    clearError('wynwood-other-restaurant');
-                }
+        function resetSubmitButton(elements) {
+            if (!elements.submitButton) return;
+            elements.submitButton.disabled = false;
+            if (elements.submitButtonSpinner) elements.submitButtonSpinner.classList.add('hidden');
+            if (elements.submitButtonText) {
+              elements.submitButtonText.textContent = determineButtonText(elements);
+              elements.submitButtonText.classList.remove('hidden');
             }
         }
 
+        function setLoadingButton(elements) {
+            if (!elements.submitButton) return;
+            elements.submitButton.disabled = true;
+            if (elements.submitButtonText) elements.submitButtonText.classList.add('hidden');
+            if (elements.submitButtonSpinner) elements.submitButtonSpinner.classList.remove('hidden');
+        }
+
+        function handleWynwoodDinnerChoice(elements) {
+            if (!elements.wynwoodOtherDinnerRadio || !elements.wynwoodOtherRestaurantContainer) return;
+            const showOtherInput = elements.wynwoodOtherDinnerRadio.checked;
+            elements.wynwoodOtherRestaurantContainer.classList.toggle('hidden', !showOtherInput);
+            const otherInput = elements.wynwoodOtherRestaurantContainer.querySelector('input');
+              if (otherInput) {
+                  otherInput.required = showOtherInput;
+                  if (!showOtherInput) {
+                      otherInput.value = '';
+                      clearError('wynwood-other-restaurant');
+                  }
+              }
+        }
+
+
         // --- UI Update Functions ---
          function updateExperiencePlusPanelUI(elements, placeholders) {
+          // This function remains largely the same, controlling visibility of Experience+ fields
           if (!elements.experiencePlusPanel || !elements.serviceDropdown) return;
           const selectedValue = elements.serviceDropdown.value;
           const showHourly = selectedValue === 'hourly_chauffeur';
@@ -709,62 +723,79 @@
                  }
              }
           resetSubmitButton(elements);
-          clearAllErrors(elements);
+          clearAllErrors(elements); // Clear errors when service changes
         }
 
          function switchTab(targetPanelId, elements, placeholders) {
-          elements.formTabPanels?.forEach(panel => panel.classList.add('hidden'));
-          elements.tabNavigationButtons?.forEach(button => {
-            button.classList.remove('active-tab');
-            button.setAttribute('aria-selected', 'false');
-            button.removeAttribute('tabindex');
-          });
-          const targetPanel = document.querySelector(targetPanelId);
-          const targetButton = elements.tabNavigationContainer?.querySelector(`[data-tab-target="${targetPanelId}"]`);
-          let firstFocusableElement = null;
-          if (targetPanel) {
-            targetPanel.classList.remove('hidden');
-            firstFocusableElement = targetPanel.querySelector('input:not([type="hidden"]):not(.sr-only):not(:disabled), select:not(:disabled), textarea:not(:disabled), button:not([disabled])');
-          }
-          if (targetButton) {
-            targetButton.classList.add('active-tab');
-            targetButton.setAttribute('aria-selected', 'true');
-            targetButton.setAttribute('tabindex', '0');
-          }
-          const oneWayElements = [elements.toAddressInput?.closest('.relative'), elements.oneWayPickupDateInput?.closest('.grid'), elements.vehicleSelectionOneway];
-          const expPlusElements = [elements.serviceDropdown?.closest('.relative'), elements.hourlyDescription, elements.durationContainer, elements.hourlyDateTimeContainer, elements.datePreferenceContainer, elements.commonExperienceFieldsContainer, elements.experienceOptionsContainer];
-          if (targetPanelId === '#panel-oneway') {
-            oneWayElements.forEach(el => el?.classList.remove('hidden'));
-            expPlusElements.forEach(el => el?.classList.add('hidden'));
-               if(elements.serviceDropdown) elements.serviceDropdown.value = '';
-               updateExperiencePlusPanelUI(elements, placeholders);
-          } else if (targetPanelId === '#panel-experience-plus') {
-            oneWayElements.forEach(el => el?.classList.add('hidden'));
-            expPlusElements.forEach(el => el?.classList.remove('hidden'));
-            updateExperiencePlusPanelUI(elements, placeholders);
-             // Clear one-way vehicle selection when switching away
-             const oneWayRadios = document.querySelectorAll('input[name="vehicle_type_oneway"]');
-             oneWayRadios.forEach(radio => radio.checked = false);
-             // Also update aria-checked for the radios being cleared
-             const vehicleCardRadios = document.querySelectorAll('.vehicle-card input[type="radio"][name="vehicle_type_oneway"]');
-             vehicleCardRadios.forEach(r => r.setAttribute('aria-checked', 'false'));
-             // Reset selected card styles
-             document.querySelectorAll('.vehicle-card').forEach(card => {
-                card.style.borderColor = ''; // Reset potential border color
-                card.style.boxShadow = ''; // Reset potential box shadow
-                card.style.backgroundColor = ''; // Reset potential background color
-             });
+            elements.formTabPanels?.forEach(panel => panel.classList.add('hidden'));
+            elements.tabNavigationButtons?.forEach(button => {
+              button.classList.remove('active-tab');
+              button.setAttribute('aria-selected', 'false');
+              button.removeAttribute('tabindex');
+            });
 
-             firstFocusableElement = elements.serviceDropdown || firstFocusableElement;
-          }
-          setTimeout(() => {
-             if (firstFocusableElement) {
-                 firstFocusableElement.focus();
+            const targetPanel = document.querySelector(targetPanelId);
+            const targetButton = elements.tabNavigationContainer?.querySelector(`[data-tab-target="${targetPanelId}"]`);
+            let firstFocusableElement = null;
+
+            if (targetPanel) {
+              targetPanel.classList.remove('hidden');
+              // Find first focusable element within the *active* panel
+              firstFocusableElement = targetPanel.querySelector('input:not([type="hidden"]):not(.sr-only):not(:disabled), select:not(:disabled), textarea:not(:disabled), button:not(.booking-time-button):not([disabled]), .booking-time-button.active'); // Adjusted selector
+            }
+            if (targetButton) {
+              targetButton.classList.add('active-tab');
+              targetButton.setAttribute('aria-selected', 'true');
+              targetButton.setAttribute('tabindex', '0');
+            }
+
+            // Show/Hide logic based on active tab
+             if (targetPanelId === '#panel-oneway') {
+                 // Ensure Experience+ specific fields are hidden
+                 if(elements.serviceDropdown) elements.serviceDropdown.value = '';
+                 updateExperiencePlusPanelUI(elements, placeholders); // This hides Exp+ fields
+
+                 // Reset One Way time selection state
+                 elements.requestNowButton?.classList.remove('active');
+                 elements.bookLaterButton?.classList.remove('active');
+                 elements.scheduledBookingInputsContainer?.classList.add('hidden');
+                 elements.bookingPreferenceInput.value = '';
+                 // Destroy Flatpickr instances if they exist, to be re-created on demand
+                 if (elements.flatpickrInstances.oneWayDate) { elements.flatpickrInstances.oneWayDate.destroy(); delete elements.flatpickrInstances.oneWayDate; }
+                 if (elements.flatpickrInstances.oneWayTime) { elements.flatpickrInstances.oneWayTime.destroy(); delete elements.flatpickrInstances.oneWayTime; }
+
+             } else if (targetPanelId === '#panel-experience-plus') {
+                 // Clear One Way specific fields/selections when switching away
+                 elements.requestNowButton?.classList.remove('active');
+                 elements.bookLaterButton?.classList.remove('active');
+                 elements.scheduledBookingInputsContainer?.classList.add('hidden');
+                 elements.bookingPreferenceInput.value = '';
+                 if (elements.oneWayPickupDateInput) elements.oneWayPickupDateInput.value = '';
+                 if (elements.oneWayPickupTimeInput) elements.oneWayPickupTimeInput.value = '';
+                 const oneWayRadios = document.querySelectorAll('input[name="vehicle_type_oneway"]');
+                 oneWayRadios.forEach(radio => radio.checked = false);
+                 const vehicleCardRadios = document.querySelectorAll('.vehicle-card input[type="radio"][name="vehicle_type_oneway"]');
+                 vehicleCardRadios.forEach(r => r.setAttribute('aria-checked', 'false'));
+                 document.querySelectorAll('.vehicle-card').forEach(card => {
+                     card.style.borderColor = ''; card.style.boxShadow = ''; card.style.backgroundColor = '';
+                 });
+                 // Destroy Flatpickr if switching away from One Way while open
+                 if (elements.flatpickrInstances.oneWayDate) { elements.flatpickrInstances.oneWayDate.destroy(); delete elements.flatpickrInstances.oneWayDate; }
+                 if (elements.flatpickrInstances.oneWayTime) { elements.flatpickrInstances.oneWayTime.destroy(); delete elements.flatpickrInstances.oneWayTime; }
+
+                 // Ensure Experience+ UI is correctly displayed
+                 updateExperiencePlusPanelUI(elements, placeholders);
+                 firstFocusableElement = elements.serviceDropdown || firstFocusableElement;
              }
-          }, 50);
-          resetSubmitButton(elements);
-          clearAllErrors(elements);
-        }
+
+             // Focus management
+             setTimeout(() => {
+                 if (firstFocusableElement) { firstFocusableElement.focus(); }
+             }, 50);
+
+             resetSubmitButton(elements); // Reset button text/state
+             clearAllErrors(elements); // Clear errors on tab switch
+         }
 
 
         // --- Form Validation ---
@@ -773,49 +804,56 @@
           const activeTabButton = elements.tabNavigationContainer?.querySelector('.active-tab');
           const activePanelId = activeTabButton ? activeTabButton.getAttribute('data-tab-target') : null;
 
-          clearError('from-location'); // Clear previous errors before re-validating
+          clearAllErrors(elements); // Start fresh
+
+          // Always validate 'From' location
           if (!elements.fromLocationInput?.value.trim()) {
             showError(elements, 'from-location', 'Please enter a "From" location.');
             isValid = false;
           }
 
           if (activePanelId === '#panel-oneway') {
-            clearError('to-address');
-            clearError('pickup-date-oneway');
-            clearError('pickup-time-oneway');
-            clearError('vehicle_type_oneway'); // Clear previous vehicle error
+            // Validate 'To' address
+            if (!elements.toAddressInput?.value.trim()) {
+                showError(elements, 'to-address', 'Please enter a "To" address.');
+                isValid = false;
+            }
 
-            if (!elements.toAddressInput?.value.trim()) { showError(elements, 'to-address', 'Please enter a "To" address.'); isValid = false; }
-            if (!elements.oneWayPickupDateInput?.value) { showError(elements, 'pickup-date-oneway', 'Please select a date.'); isValid = false; }
-            if (!elements.oneWayPickupTimeInput?.value) { showError(elements, 'pickup-time-oneway', 'Please select a time.'); isValid = false; }
+            // Validate Time Preference (NEW)
+            const bookingPref = elements.bookingPreferenceInput?.value;
+            if (!bookingPref) {
+                showError(elements, 'booking-time', 'Please select "Request now" or "Book for later".');
+                isValid = false;
+            } else if (bookingPref === 'Scheduled') {
+                // Validate Date/Time only if 'Book for later' is chosen
+                if (!elements.oneWayPickupDateInput?.value) {
+                    showError(elements, 'pickup-date-oneway', 'Please select a date.');
+                    isValid = false;
+                }
+                if (!elements.oneWayPickupTimeInput?.value) {
+                    showError(elements, 'pickup-time-oneway', 'Please select a time.');
+                    isValid = false;
+                }
+            } // No date/time validation needed if 'ASAP'
 
-            // Updated validation check for card layout
+            // Validate Vehicle Selection
             const vehicleSelectedOneway = document.querySelector('input[name="vehicle_type_oneway"]:checked');
             if (!vehicleSelectedOneway) {
-                showError(elements, 'vehicle_type_oneway', 'Please select a vehicle type.'); // Use the specific ID for error display
+                showError(elements, 'vehicle_type_oneway', 'Please select a vehicle type.');
                 isValid = false;
             }
 
           } else if (activePanelId === '#panel-experience-plus') {
-            // ... (validation for experience+ panel remains the same) ...
+            // Experience+ validation remains the same as before
              const selectedService = elements.serviceDropdown.value;
-             clearError('experience-dropdown'); // Clear previous errors
              if (!selectedService) {
                showError(elements, 'experience-dropdown', 'Please select a Service.');
                isValid = false;
              } else if (selectedService === 'hourly_chauffeur') {
-                clearError('duration-hourly');
-                clearError('pickup-date-hourly');
-                clearError('pickup-time-hourly');
                if (!elements.durationSelect?.value) { showError(elements, 'duration-hourly', 'Please select duration.'); isValid = false; }
                if (!elements.hourlyPickupDateInput?.value) { showError(elements, 'pickup-date-hourly', 'Please select a date.'); isValid = false; }
                if (!elements.hourlyPickupTimeInput?.value) { showError(elements, 'pickup-time-hourly', 'Please select a start time.'); isValid = false; }
-             } else {
-                clearError('experience-name');
-                clearError('experience-guests');
-                clearError('experience-email');
-                clearError('experience-phone');
-                clearError('date_preference');
+             } else { // Curated Experience selected
                if (!elements.experienceNameInput?.value.trim()) { showError(elements, 'experience-name', 'Name required.'); isValid = false; }
                if (!elements.experienceGuestsInput?.value || parseInt(elements.experienceGuestsInput.value, 10) < 1) { showError(elements, 'experience-guests', 'Min 1 guest.'); isValid = false; }
                if (!elements.experienceEmailInput?.value.trim()) {
@@ -835,10 +873,6 @@
 
                // Wynwood specific validation
                if (selectedService === 'wynwood_night') {
-                 clearError('motivation');
-                 clearError('dinner_style_preference');
-                 clearError('lounge_interest');
-                 clearError('wynwood-other-restaurant');
                  const motivationSelected = document.querySelector('#wynwood-night-options input[name="motivation"]:checked');
                  const dinnerPrefSelected = document.querySelector('#wynwood-night-options input[name="dinner_style_preference"]:checked');
                  const loungeSelected = document.querySelector('#wynwood-night-options input[name="lounge_interest"]:checked');
@@ -853,6 +887,7 @@
                    }
                  if (!loungeSelected) { showError(elements, 'lounge_interest', 'Lounge interest required.'); isValid = false; }
                }
+               // Add validation for other experiences if options are added
              }
           } else {
             isValid = false;
@@ -872,25 +907,28 @@
 
           const dataObject = {
             'from-location': formData.get('from-location')?.trim(),
-            // Notes removed
           };
-
 
           if (activePanelId === '#panel-oneway') {
             serviceType = 'One Way';
             dataObject.service_type = serviceType;
             dataObject['to-address'] = formData.get('to-address')?.trim();
-            dataObject['pickup-date'] = formData.get('pickup-date-oneway');
-            dataObject['pickup-time'] = formData.get('pickup-time-oneway');
-            // Get value from the selected radio button using the name
-            dataObject.vehicle_type = formData.get('vehicle_type_oneway');
+            dataObject.vehicle_type = formData.get('vehicle_type_oneway'); // Get selected vehicle card
+
+            // Add booking preference and conditional date/time (NEW)
+            dataObject.booking_preference = formData.get('booking_preference'); // 'ASAP' or 'Scheduled'
+            if (dataObject.booking_preference === 'Scheduled') {
+                 dataObject['pickup-date'] = formData.get('pickup-date-oneway');
+                 dataObject['pickup-time'] = formData.get('pickup-time-oneway');
+            }
+
           } else if (activePanelId === '#panel-experience-plus') {
-            // ... (Experience+ processing remains the same) ...
+            // Experience+ processing remains the same
              const selectedServiceValue = elements.serviceDropdown.value;
              if (selectedServiceValue === 'hourly_chauffeur') {
                serviceType = 'Hourly';
                dataObject.service_type = serviceType;
-               dataObject.experience_name = "Hourly Chauffeur";
+               dataObject.experience_name = "Hourly Chauffeur"; // Keep consistent naming
                dataObject['duration-hourly'] = formData.get('duration-hourly');
                dataObject['pickup-date'] = formData.get('pickup-date-hourly');
                dataObject['pickup-time'] = formData.get('pickup-time-hourly');
@@ -912,17 +950,19 @@
                  }
                  dataObject.lounge_interest = formData.get('lounge_interest');
                }
+               // Add data processing for other experiences if options are added
              }
           }
 
           // Clean up potential undefined/null/empty string values
           Object.keys(dataObject).forEach(key => {
                if (dataObject[key] === null || dataObject[key] === undefined || dataObject[key] === '') {
-                 if (key === 'other_restaurant_request' && dataObject.dinner_style_preference !== 'Other') {
-                     delete dataObject[key];
-                 } else if (key !== 'other_restaurant_request') {
-                    delete dataObject[key];
-                 }
+                   // Special case: keep other_restaurant_request only if dinner style is 'Other'
+                   if (key === 'other_restaurant_request' && dataObject.dinner_style_preference !== 'Other') {
+                       delete dataObject[key];
+                   } else if (key !== 'other_restaurant_request') { // Delete other empty fields
+                       delete dataObject[key];
+                   }
                }
           });
 
@@ -933,6 +973,7 @@
 
         // --- Form Submission ---
          function sendFormData(dataObject, elements, config) {
+          // This function remains the same - handles sending data to Formspree
           setLoadingButton(elements);
           clearError('submit-button');
 
@@ -976,6 +1017,7 @@
 
         // --- Event Listener Setup ---
          function initializeEventListeners(elements, placeholders, config) {
+           // Tab switching
            elements.tabNavigationContainer?.addEventListener('click', (event) => {
                const button = event.target.closest('.tab-button');
                if (button && button.dataset.tabTarget && !button.classList.contains('active-tab')) {
@@ -983,18 +1025,61 @@
                }
            });
 
+           // Experience+ dropdown change
            elements.serviceDropdown?.addEventListener('change', () => updateExperiencePlusPanelUI(elements, placeholders));
 
-           // Add listeners to regular inputs/selects (excluding radio buttons handled below)
-           elements.bookingForm?.querySelectorAll('input:not([type="radio"]), select, textarea').forEach(input => {
-               let targetId = input.id || input.name;
-               if (!targetId) return;
-               const eventType = (input.tagName === 'INPUT' && input.type !== 'number' && input.type !== 'email' && input.type !== 'tel') ? 'input' : 'change';
-                input.addEventListener(eventType, () => clearError(targetId));
-                input.addEventListener('blur', () => clearError(targetId));
+           // NEW: One Way Time Preference Button Clicks
+           elements.requestNowButton?.addEventListener('click', () => {
+               clearError('booking-time');
+               elements.requestNowButton.classList.add('active');
+               elements.bookLaterButton?.classList.remove('active');
+               elements.scheduledBookingInputsContainer?.classList.add('hidden');
+               elements.bookingPreferenceInput.value = 'ASAP';
+               // Clear scheduled inputs and destroy flatpickr instances if they exist
+               if (elements.oneWayPickupDateInput) elements.oneWayPickupDateInput.value = '';
+               if (elements.oneWayPickupTimeInput) elements.oneWayPickupTimeInput.value = '';
+               if (elements.flatpickrInstances.oneWayDate) { elements.flatpickrInstances.oneWayDate.destroy(); delete elements.flatpickrInstances.oneWayDate; }
+               if (elements.flatpickrInstances.oneWayTime) { elements.flatpickrInstances.oneWayTime.destroy(); delete elements.flatpickrInstances.oneWayTime; }
+               clearError('pickup-date-oneway');
+               clearError('pickup-time-oneway');
            });
 
-           // Add listeners to specific radio groups (excluding vehicle_type_oneway handled by cards)
+           elements.bookLaterButton?.addEventListener('click', () => {
+               clearError('booking-time');
+               elements.bookLaterButton.classList.add('active');
+               elements.requestNowButton?.classList.remove('active');
+               elements.scheduledBookingInputsContainer?.classList.remove('hidden');
+               elements.bookingPreferenceInput.value = 'Scheduled';
+
+               // Initialize Flatpickr for one-way inputs if not already done
+               if (!elements.flatpickrInstances.oneWayDate && elements.oneWayPickupDateInput) {
+                   const commonDateConfig = { altInput: true, altFormat: "D, M j, Y", dateFormat: "Y-m-d", enableTime: false, minDate: "today" };
+                   elements.flatpickrInstances.oneWayDate = flatpickr(elements.oneWayPickupDateInput, commonDateConfig);
+               }
+               if (!elements.flatpickrInstances.oneWayTime && elements.oneWayPickupTimeInput) {
+                    const commonTimeConfig = { enableTime: true, noCalendar: true, dateFormat: "H:i", altInput: true, altFormat: "h : i K", time_24hr: false, minuteIncrement: 10 };
+                   elements.flatpickrInstances.oneWayTime = flatpickr(elements.oneWayPickupTimeInput, commonTimeConfig);
+               }
+               // Focus the date input after revealing
+               setTimeout(() => elements.oneWayPickupDateInput?.focus(), 50);
+           });
+
+
+           // Add listeners to regular inputs/selects to clear errors on input/change
+           elements.bookingForm?.querySelectorAll('input:not([type="radio"]):not([type="button"]), select, textarea').forEach(input => {
+               let targetId = input.id || input.name;
+               if (!targetId) return;
+               // Clear specific errors (date/time) when they get input
+               if (targetId === 'pickup-date-oneway' || targetId === 'pickup-time-oneway') {
+                   input.addEventListener('change', () => clearError(targetId)); // Use change for flatpickr
+               } else {
+                   const eventType = (input.tagName === 'INPUT' && !['number', 'email', 'tel', 'date', 'time'].includes(input.type)) ? 'input' : 'change';
+                   input.addEventListener(eventType, () => clearError(targetId));
+                   input.addEventListener('blur', () => clearError(targetId)); // Clear on blur too
+               }
+           });
+
+           // Add listeners to specific radio groups (excluding vehicle_type_oneway)
            ['dinner_style_preference', 'motivation', 'lounge_interest', 'date_preference'].forEach(name => {
                document.querySelectorAll(`input[name="${name}"]`).forEach(radio => {
                    radio.addEventListener('change', () => {
@@ -1015,20 +1100,21 @@
             });
 
 
+           // Form Submission
            elements.bookingForm?.addEventListener('submit', (event) => {
                event.preventDefault();
-               clearAllErrors(elements);
+               // clearAllErrors(elements); // Moved inside validateForm
                if (validateForm(elements)) {
                    const data = processFormData(elements);
                    sendFormData(data, elements, config);
                } else {
-                   // Focus first error field (improved logic)
-                   const firstErrorField = elements.bookingForm.querySelector('[aria-invalid="true"], fieldset.ring-red-500 input[type="radio"], fieldset.ring-red-500 input[type="checkbox"]');
+                   // Focus first error field
+                   const firstErrorField = elements.bookingForm.querySelector('[aria-invalid="true"], .border-red-500, fieldset.ring-red-500 input[type="radio"], fieldset.ring-red-500 input[type="checkbox"]');
                    const firstFieldsetError = elements.bookingForm.querySelector('fieldset.ring-red-500');
+                   const firstButtonError = elements.bookingForm.querySelector('.booking-time-button.border-red-500');
 
-                   let elementToFocus = firstErrorField;
+                   let elementToFocus = firstErrorField || firstButtonError; // Prioritize inputs/buttons
                    if (!elementToFocus && firstFieldsetError) {
-                       // If no specific invalid input, focus the first input in the invalid fieldset
                        elementToFocus = firstFieldsetError.querySelector('input[type="radio"], input[type="checkbox"]');
                    }
 
@@ -1060,9 +1146,9 @@
         const appConfig = config;
 
         if (elementRefs.bookingForm) {
-          initializeFlatpickr(elementRefs);
+          initializeFlatpickr(elementRefs); // Initializes Hourly pickers
           initializeEventListeners(elementRefs, appConfig.placeholders, appConfig);
-          switchTab('#panel-oneway', elementRefs, appConfig.placeholders);
+          switchTab('#panel-oneway', elementRefs, appConfig.placeholders); // Set initial state
         } else {
           console.error("Booking form not found. Script initialization incomplete.");
         }
