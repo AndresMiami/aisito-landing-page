@@ -31,24 +31,48 @@
       select { appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="%2300A09A" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>'); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.25em; padding-right: 2.5rem; }
 
       /* Tab styles */
-      .tab-button.active-tab {
-        background-color: white;
-        border-left-color: #e5e7eb;
-        border-right-color: #e5e7eb;
-        border-top-color: #e5e7eb;
-        border-bottom-color: transparent;
-        color: var(--color-teal);
-        font-weight: 600;
-      }
-      .tab-button:not(.active-tab) {
-        background-color: #f9fafb;
-        border-color: transparent;
-        color: #6b7280;
-      }
-      .tab-button:not(.active-tab):hover {
-        background-color: #f3f4f6;
-        color: #4b5563;
-      }
+  .tab-button.active-tab#tab-button-oneway {
+    background-color: white;
+    color: var(--color-teal);
+    border-left-color: #e5e7eb;
+    border-right-color: #e5e7eb;
+    border-top-color: #e5e7eb;
+    border-bottom-color: transparent;
+    font-weight: 600;
+  }
+
+  .tab-button:not(.active-tab)#tab-button-oneway {
+    background-color: #f9fafb; /* light gray */
+    color: #6b7280;             /* gray text */
+    border-color: transparent;
+  }
+
+  .tab-button:not(.active-tab)#tab-button-oneway:hover {
+    background-color: #f3f4f6;
+    color: #4b5563;
+  }
+
+  /* Experience + tab styles */
+  .tab-button.active-tab#tab-button-experience-plus {
+    background-color: #FFC107; /* vibrant yellow */
+    color: #1A237E;             /* dark blue text */
+    border-left-color: #FFC107;
+    border-right-color: #FFC107;
+    border-top-color: #FFC107;
+    border-bottom-color: transparent;
+    font-weight: 600;
+  }
+
+  .tab-button:not(.active-tab)#tab-button-experience-plus {
+    background-color: #FFF8E1; /* light yellow */
+    color: #FFB300;             /* darker yellow-orange */
+    border-color: transparent;
+  }
+
+  .tab-button:not(.active-tab)#tab-button-experience-plus:hover {
+    background-color: #FFECB3; /* slightly deeper yellow on hover */
+    color: #FFA000;
+  }
 
       /* Flatpickr styles */
       .flatpickr-calendar {
