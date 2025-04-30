@@ -1144,5 +1144,16 @@
         }
       });
     </script>
-  </body>
-</html>
+    <script src="dashboard.js" defer></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', async () => {
+        try {
+          const response = await fetch('/.netlify/functions/get-maps-key');
+          if (!response.ok) {
+            throw new Error('Failed to fetch API key');
+          }
+          const data = await response.json();
+          const apiKey = data.apiKey;
+
+          // Display the API key for testing purposes
+     
