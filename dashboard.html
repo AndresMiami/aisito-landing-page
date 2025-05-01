@@ -480,7 +480,7 @@
           refs.keysEscapeOptions = document.getElementById('keys-escape-options');
 
           // Common Form Elements
-          refs.submitButton = document.getElementById('submit-button');
+          document.getElementById('submit-button').querySelector('.button-text').textContent = 'Continue';
           refs.submitButtonText = refs.submitButton?.querySelector('.button-text');
           refs.submitButtonSpinner = refs.submitButton?.querySelector('.spinner');
           refs.confirmationMessage = document.getElementById('confirmation-message');

@@ -407,35 +407,66 @@ const config = {
   
   // --- UI Update Functions (from generated code, adapted) ---
   function updateExperiencePlusPanelUI(elements, placeholders) {
-      if (!elements.experiencePlusPanel || !elements.serviceDropdown) return;
+      if (!elements.experiencePlusPanel || !elements.serviceDropdown) {
+          console.warn("Experience Plus Panel or Service Dropdown is missing.");
+          return;
+      }
+  
       const selectedValue = elements.serviceDropdown.value;
+      console.log("Selected Service Value:", selectedValue);
+  
       const showHourly = selectedValue === "hourly_chauffeur";
       const showCuratedExperience = selectedValue !== "" && !showHourly;
+  
+      console.log("Show Hourly:", showHourly);
+      console.log("Show Curated Experience:", showCuratedExperience);
+  
       elements.hourlyDescription?.classList.toggle("hidden", !showHourly);
       elements.durationContainer?.classList.toggle("hidden", !showHourly);
       elements.hourlyDateTimeContainer?.classList.toggle("hidden", !showHourly);
       elements.datePreferenceContainer?.classList.toggle("hidden", !showCuratedExperience);
       elements.commonExperienceFieldsContainer?.classList.toggle("hidden", !showCuratedExperience);
       elements.experienceOptionsContainer?.classList.toggle("hidden", !showCuratedExperience);
-      if (elements.hourlyPickupTimeLabel) elements.hourlyPickupTimeLabel.textContent = "Start Time";
-      const allExperienceOptionDivs = [elements.wynwoodNightOptions, elements.waterSkyOptions, elements.evergladesOptions, elements.keysEscapeOptions];
+  
+      if (elements.hourlyPickupTimeLabel) {
+          elements.hourlyPickupTimeLabel.textContent = "Start Time";
+      }
+  
+      const allExperienceOptionDivs = [
+          elements.wynwoodNightOptions,
+          elements.waterSkyOptions,
+          elements.evergladesOptions,
+          elements.keysEscapeOptions
+      ];
+  
       allExperienceOptionDivs.forEach(el => el?.classList.add("hidden"));
+  
       if (showCuratedExperience && elements.experienceOptionsContainer) {
-           if (selectedValue === "wynwood_night" && elements.wynwoodNightOptions) {
-             elements.wynwoodNightOptions.classList.remove("hidden");
-             handleWynwoodDinnerChoice(elements);
-           }
-           else if (selectedValue === "water_sky" && elements.waterSkyOptions) elements.waterSkyOptions.classList.remove("hidden");
-           else if (selectedValue === "everglades" && elements.evergladesOptions) elements.evergladesOptions.classList.remove("hidden");
-           else if (selectedValue === "keys_escape" && elements.keysEscapeOptions) elements.keysEscapeOptions.classList.remove("hidden");
-         } else {
-             if (elements.wynwoodOtherRestaurantContainer) {
-                 elements.wynwoodOtherRestaurantContainer.classList.add("hidden");
-                 const otherInput = elements.wynwoodOtherRestaurantContainer.querySelector("input");
-                 if (otherInput) otherInput.value = "";
-                 clearError("wynwood-other-restaurant");
-             }
-         }
+          if (selectedValue === "wynwood_night" && elements.wynwoodNightOptions) {
+              console.log("Displaying Wynwood Night Options");
+              elements.wynwoodNightOptions.classList.remove("hidden");
+              handleWynwoodDinnerChoice(elements);
+          } else if (selectedValue === "water_sky" && elements.waterSkyOptions) {
+              console.log("Displaying Water Sky Options");
+              elements.waterSkyOptions.classList.remove("hidden");
+          } else if (selectedValue === "everglades" && elements.evergladesOptions) {
+              console.log("Displaying Everglades Options");
+              elements.evergladesOptions.classList.remove("hidden");
+          } else if (selectedValue === "keys_escape" && elements.keysEscapeOptions) {
+              console.log("Displaying Keys Escape Options");
+              elements.keysEscapeOptions.classList.remove("hidden");
+          }
+      } else {
+          if (elements.wynwoodOtherRestaurantContainer) {
+              elements.wynwoodOtherRestaurantContainer.classList.add("hidden");
+              const otherInput = elements.wynwoodOtherRestaurantContainer.querySelector("input");
+              if (otherInput) {
+                  otherInput.value = "";
+                  clearError("wynwood-other-restaurant");
+              }
+          }
+      }
+  
       resetSubmitButton(elements);
       clearAllErrors(elements);
   }
