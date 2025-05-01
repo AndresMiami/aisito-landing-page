@@ -35,6 +35,7 @@ const config = {
       refs.oneWayPickupDateInput = document.getElementById("pickup-date-oneway");
       refs.oneWayPickupTimeInput = document.getElementById("pickup-time-oneway");
       refs.vehicleSelectionOneway = document.getElementById("vehicle-selection-oneway"); // Container for cards
+      refs.bookingPreferenceInput = document.getElementById("booking-preference"); // Added for validation logic
   
       // Experience+ Elements (Add these)
       refs.experiencePlusPanel = document.getElementById("panel-experience-plus");
@@ -333,6 +334,7 @@ const config = {
       const elementRefs = getElementRefs();
       initializeFlatpickr(elementRefs);
       initializeEventListeners(elementRefs, config.placeholders, config);
+      initializeValidationListeners(elementRefs); // Added for validation logic
       switchTab("#panel-oneway", elementRefs, config.placeholders); // Set initial tab
   }
   
@@ -900,6 +902,61 @@ const config = {
     }
   }
   
+  // --- Validation and Redirection Logic ---
+  function validateAndEnableButton(elements) {
+    const fromLocation = elements.fromLocationInput?.value.trim();
+    const toAddress = elements.toAddressInput?.value.trim();
+    const vehicleSelected = document.querySelector('input[name="vehicle_type_oneway"]:checked');
+    const bookingPreference = elements.bookingPreferenceInput?.value;
+  
+    const isValid = fromLocation && toAddress && vehicleSelected && bookingPreference;
+  
+    const submitButton = elements.submitButton;
+    if (isValid) {
+      submitButton.disabled = false;
+      submitButton.classList.remove('bg-gray-300');
+      submitButton.classList.add('bg-[--color-gold]', 'hover:bg-[--color-gold-dark]');
+    } else {
+      submitButton.disabled = true;
+      submitButton.classList.add('bg-gray-300');
+      submitButton.classList.remove('bg-[--color-gold]', 'hover:bg-[--color-gold-dark]');
+    }
+  }
+  
+  function initializeValidationListeners(elements) {
+    const fieldsToValidate = [
+      elements.fromLocationInput,
+      elements.toAddressInput,
+      elements.bookingPreferenceInput,
+      ...document.querySelectorAll('input[name="vehicle_type_oneway"]'),
+    ];
+  
+    fieldsToValidate.forEach(field => {
+      field?.addEventListener('input', () => validateAndEnableButton(elements));
+      field?.addEventListener('change', () => validateAndEnableButton(elements));
+    });
+  }
+  
+  function redirectToSummaryPage(elements) {
+    const fromLocation = elements.fromLocationInput?.value.trim();
+    const toAddress = elements.toAddressInput?.value.trim();
+    const vehicleSelected = document.querySelector('input[name="vehicle_type_oneway"]:checked')?.value;
+    const bookingPreference = elements.bookingPreferenceInput?.value;
+    const pickupDate = elements.oneWayPickupDateInput?.value || '';
+    const pickupTime = elements.oneWayPickupTimeInput?.value || '';
+  
+    const queryParams = new URLSearchParams({
+      from: fromLocation,
+      to: toAddress,
+      vehicle: vehicleSelected,
+      preference: bookingPreference,
+      date: pickupDate,
+      time: pickupTime,
+    });
+  
+    window.location.href = `/summary.html?${queryParams.toString()}`;
+  }
+  
   // --- Main Execution ---
   document.addEventListener("DOMContentLoaded", () => {
       console.log("DOM fully loaded and parsed.");
@@ -915,6 +972,15 @@ const config = {
   
       // NOTE: initializeFlatpickr and initializeEventListeners are now called *inside* initAutocomplete
       // because they depend on elements that might be manipulated or need Maps API features.
+  
+      // Add validation listeners
+      initializeValidationListeners(elementRefs);
+  
+      // Add redirection logic on form submission
+      elementRefs.bookingForm?.addEventListener('submit', (event) => {
+        event.preventDefault();
+        redirectToSummaryPage(elementRefs);
+      });
   });
   
   // Make initAutocomplete globally accessible for the Maps API callback

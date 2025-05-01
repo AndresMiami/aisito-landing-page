@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trip Summary</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="bg-gray-100">
+    <main class="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+        <h1 class="text-2xl font-bold text-gray-900 mb-4">Trip Summary</h1>
+        <div id="summary-details" class="space-y-4">
+          <!-- Trip details will be dynamically populated here -->
+        </div>
+        <button onclick="window.history.back()" class="mt-6 w-full bg-[--color-gold] text-white py-3 rounded-lg font-semibold hover:bg-[--color-gold-dark]">
+          Back to Booking
+        </button>
+      </div>
+    </main>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const params = new URLSearchParams(window.location.search);
+        const summaryDetails = document.getElementById('summary-details');
+
+        const tripDetails = {
+          'From': params.get('from'),
+          'To': params.get('to'),
+          'Vehicle': params.get('vehicle'),
+          'Booking Preference': params.get('preference'),
+          'Pickup Date': params.get('date') || 'N/A',
+          'Pickup Time': params.get('time') || 'N/A',
+        };
+
+        for (const [key, value] of Object.entries(tripDetails)) {
+          const detail = document.createElement('p');
+          detail.innerHTML = `<strong>${key}:</strong> ${value}`;
+          summaryDetails.appendChild(detail);
+        }
+      });
+    </script>
+  </body>
+</html>
