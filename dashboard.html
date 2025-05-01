@@ -133,13 +133,13 @@
                      <div class="grid grid-cols-2 gap-x-3" aria-labelledby="booking-time-error">
                          <button type="button" id="request-now-button" class="booking-time-button">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                               <path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0-6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A9.978 9.978 0 0 0 10 12c-2.31 0-4.438.784-6.131 2.1-.194.51-.02.979.406 1.393Z" />
+                               <path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A9.978 9.978 0 0 0 10 12c-2.31 0-4.438.784-6.131 2.1-.194.51-.02.979.406 1.393Z" />
                             </svg>
                              Request now
                          </button>
                          <button type="button" id="book-later-button" class="booking-time-button">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0-16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd" />
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd" />
                             </svg>
                             Book for later
                          </button>
@@ -589,19 +589,18 @@
           clearError('booking-time'); // NEW: Clear booking time button error
         }
 
-        // (determineButtonText, resetSubmitButton, setLoadingButton, handleWynwoodDinnerChoice remain the same as before)
         function determineButtonText(elements) {
             let activePanelId = '';
             const activeTabButton = elements.tabNavigationContainer?.querySelector('.active-tab');
             activePanelId = activeTabButton ? activeTabButton.getAttribute('data-tab-target') : null;
             const selectedService = elements.serviceDropdown?.value || '';
-            if (activePanelId === '#panel-oneway') return 'Get Quote';
+            if (activePanelId === '#panel-oneway') return 'Continue'; // Updated from 'Get Quote' to 'Continue'
             else if (activePanelId === '#panel-experience-plus') {
-              if (selectedService === 'hourly_chauffeur') return 'Request Hourly Service';
-              else if (selectedService !== '') return 'Request Experience';
-              else return 'Select Service';
+                if (selectedService === 'hourly_chauffeur') return 'Request Hourly Service';
+                else if (selectedService !== '') return 'Request Experience';
+                else return 'Select Service';
             }
-            return 'Submit';
+            return 'Submit'; // Add semicolon here
         }
 
         function resetSubmitButton(elements) {
