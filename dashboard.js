@@ -464,28 +464,31 @@ const config = {
   }
   
   function switchTab(targetPanelId, elements, placeholders) {
+      // Hide all tab panels and reset tab buttons
       elements.formTabPanels?.forEach(panel => panel.classList.add("hidden"));
       elements.tabNavigationButtons?.forEach(button => {
           button.classList.remove("active-tab");
           button.setAttribute("aria-selected", "false");
           button.removeAttribute("tabindex");
       });
-
+  
+      // Show the target panel and set the active tab button
       const targetPanel = document.querySelector(targetPanelId);
       const targetButton = elements.tabNavigationContainer?.querySelector(`[data-tab-target="${targetPanelId}"]`);
       let firstFocusableElement = null;
-
+  
       if (targetPanel) {
           targetPanel.classList.remove("hidden");
           firstFocusableElement = targetPanel.querySelector("input:not([type=\"hidden\"]):not(.sr-only):not(:disabled), select:not(:disabled), textarea:not(:disabled), button:not([disabled])");
       }
-
+  
       if (targetButton) {
           targetButton.classList.add("active-tab");
           targetButton.setAttribute("aria-selected", "true");
           targetButton.setAttribute("tabindex", "0");
       }
-
+  
+      // Update the button text based on the active tab
       if (targetPanelId === "#panel-oneway") {
           // Explicitly set the button text to "Continue" for the "One Way" tab
           if (elements.submitButtonText) {
@@ -495,14 +498,15 @@ const config = {
           // Dynamically update the button text for the "Experience" tab
           resetSubmitButton(elements);
       }
-
+  
+      // Focus the first focusable element in the target panel
       setTimeout(() => {
           if (firstFocusableElement) {
               firstFocusableElement.focus();
           }
       }, 50);
-
-      resetSubmitButton(elements);
+  
+      // Clear all errors and reset the button state
       clearAllErrors(elements);
   }
   
