@@ -427,6 +427,12 @@ const config = {
       elements.datePreferenceContainer?.classList.toggle("hidden", !showCuratedExperience);
       elements.commonExperienceFieldsContainer?.classList.toggle("hidden", !showCuratedExperience);
       elements.experienceOptionsContainer?.classList.toggle("hidden", !showCuratedExperience);
+
+      console.log("Experience Plus Panel:", elements.experiencePlusPanel);
+      console.log("Service Dropdown:", elements.serviceDropdown);
+      console.log("Selected Value:", selectedValue);
+      console.log("Hourly Description Element:", elements.hourlyDescription);
+      console.log("Experience Options Container:", elements.experienceOptionsContainer);
   
       if (elements.hourlyPickupTimeLabel) {
           elements.hourlyPickupTimeLabel.textContent = "Start Time";
@@ -492,6 +498,9 @@ const config = {
       }
       const oneWayElements = [elements.toAddressInput?.closest(".relative"), elements.oneWayPickupDateInput?.closest(".grid"), elements.vehicleSelectionOneway];
       const expPlusElements = [elements.serviceDropdown?.closest(".relative"), elements.hourlyDescription, elements.durationContainer, elements.hourlyDateTimeContainer, elements.datePreferenceContainer, elements.commonExperienceFieldsContainer, elements.experienceOptionsContainer];
+      console.log("Switching to tab:", targetPanelId);
+      console.log("One Way Elements:", oneWayElements);
+      console.log("Experience Plus Elements:", expPlusElements);
       if (targetPanelId === "#panel-oneway") {
         oneWayElements.forEach(el => el?.classList.remove("hidden"));
         expPlusElements.forEach(el => el?.classList.add("hidden"));

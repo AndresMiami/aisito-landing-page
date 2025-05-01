@@ -687,46 +687,82 @@
 
         // --- UI Update Functions ---
          function updateExperiencePlusPanelUI(elements, placeholders) {
-          // This function remains largely the same, controlling visibility of Experience+ fields
-          if (!elements.experiencePlusPanel || !elements.serviceDropdown) return;
-          const selectedValue = elements.serviceDropdown.value;
-          const showHourly = selectedValue === 'hourly_chauffeur';
-          const showCuratedExperience = selectedValue !== '' && !showHourly;
-          elements.hourlyDescription?.classList.toggle('hidden', !showHourly);
-          elements.durationContainer?.classList.toggle('hidden', !showHourly);
-          elements.hourlyDateTimeContainer?.classList.toggle('hidden', !showHourly);
-          elements.datePreferenceContainer?.classList.toggle('hidden', !showCuratedExperience);
-          elements.commonExperienceFieldsContainer?.classList.toggle('hidden', !showCuratedExperience);
-          elements.experienceOptionsContainer?.classList.toggle('hidden', !showCuratedExperience);
-          if (elements.hourlyPickupTimeLabel) elements.hourlyPickupTimeLabel.textContent = "Start Time";
-          const allExperienceOptionDivs = [elements.wynwoodNightOptions, elements.waterSkyOptions, elements.evergladesOptions, elements.keysEscapeOptions];
-          allExperienceOptionDivs.forEach(el => el?.classList.add('hidden'));
-          if (showCuratedExperience && elements.experienceOptionsContainer) {
-               if (selectedValue === 'wynwood_night' && elements.wynwoodNightOptions) {
-                 elements.wynwoodNightOptions.classList.remove('hidden');
-                 handleWynwoodDinnerChoice(elements);
-               }
-               else if (selectedValue === 'water_sky' && elements.waterSkyOptions) elements.waterSkyOptions.classList.remove('hidden');
-               else if (selectedValue === 'everglades' && elements.evergladesOptions) elements.evergladesOptions.classList.remove('hidden');
-               else if (selectedValue === 'keys_escape' && elements.keysEscapeOptions) elements.keysEscapeOptions.classList.remove('hidden');
-             } else {
-                 if (elements.wynwoodOtherRestaurantContainer) {
-                     elements.wynwoodOtherRestaurantContainer.classList.add('hidden');
-                     const otherInput = elements.wynwoodOtherRestaurantContainer.querySelector('input');
-                     if (otherInput) otherInput.value = '';
-                     clearError('wynwood-other-restaurant');
-                 }
-             }
-          resetSubmitButton(elements);
-          clearAllErrors(elements); // Clear errors when service changes
+            console.log("updateExperiencePlusPanelUI called");
+            console.log("Experience Plus Panel:", elements.experiencePlusPanel);
+            console.log("Service Dropdown:", elements.serviceDropdown);
+
+            if (!elements.experiencePlusPanel || !elements.serviceDropdown) {
+                console.warn("Experience Plus Panel or Service Dropdown is missing.");
+                return;
+            }
+
+            const selectedValue = elements.serviceDropdown.value;
+            console.log("Selected Service Value:", selectedValue);
+
+            const showHourly = selectedValue === "hourly_chauffeur";
+            const showCuratedExperience = selectedValue !== "" && !showHourly;
+
+            console.log("Show Hourly:", showHourly);
+            console.log("Show Curated Experience:", showCuratedExperience);
+
+            elements.hourlyDescription?.classList.toggle("hidden", !showHourly);
+            elements.durationContainer?.classList.toggle("hidden", !showHourly);
+            elements.hourlyDateTimeContainer?.classList.toggle("hidden", !showHourly);
+            elements.datePreferenceContainer?.classList.toggle("hidden", !showCuratedExperience);
+            elements.commonExperienceFieldsContainer?.classList.toggle("hidden", !showCuratedExperience);
+            elements.experienceOptionsContainer?.classList.toggle("hidden", !showCuratedExperience);
+
+            if (elements.hourlyPickupTimeLabel) {
+                elements.hourlyPickupTimeLabel.textContent = "Start Time";
+            }
+
+            const allExperienceOptionDivs = [
+                elements.wynwoodNightOptions,
+                elements.waterSkyOptions,
+                elements.evergladesOptions,
+                elements.keysEscapeOptions
+            ];
+
+            allExperienceOptionDivs.forEach(el => el?.classList.add("hidden"));
+
+            if (showCuratedExperience && elements.experienceOptionsContainer) {
+                if (selectedValue === "wynwood_night" && elements.wynwoodNightOptions) {
+                    console.log("Displaying Wynwood Night Options");
+                    elements.wynwoodNightOptions.classList.remove("hidden");
+                    handleWynwoodDinnerChoice(elements);
+                } else if (selectedValue === "water_sky" && elements.waterSkyOptions) {
+                    console.log("Displaying Water Sky Options");
+                    elements.waterSkyOptions.classList.remove("hidden");
+                } else if (selectedValue === "everglades" && elements.evergladesOptions) {
+                    console.log("Displaying Everglades Options");
+                    elements.evergladesOptions.classList.remove("hidden");
+                } else if (selectedValue === "keys_escape" && elements.keysEscapeOptions) {
+                    console.log("Displaying Keys Escape Options");
+                    elements.keysEscapeOptions.classList.remove("hidden");
+                }
+            } else {
+                if (elements.wynwoodOtherRestaurantContainer) {
+                    elements.wynwoodOtherRestaurantContainer.classList.add("hidden");
+                    const otherInput = elements.wynwoodOtherRestaurantContainer.querySelector("input");
+                    if (otherInput) {
+                        otherInput.value = "";
+                        clearError("wynwood-other-restaurant");
+                    }
+                }
+            }
+
+            resetSubmitButton(elements);
+            clearAllErrors(elements);
         }
 
          function switchTab(targetPanelId, elements, placeholders) {
-            elements.formTabPanels?.forEach(panel => panel.classList.add('hidden'));
+            console.log("Switching to tab:", targetPanelId);
+
+            elements.formTabPanels?.forEach(panel => panel.classList.add("hidden"));
             elements.tabNavigationButtons?.forEach(button => {
-              button.classList.remove('active-tab');
-              button.setAttribute('aria-selected', 'false');
-              button.removeAttribute('tabindex');
+                button.classList.remove("active-tab");
+                button.setAttribute("aria-selected", "false");
+                button.removeAttribute("tabindex");
             });
 
             const targetPanel = document.querySelector(targetPanelId);
@@ -734,63 +770,50 @@
             let firstFocusableElement = null;
 
             if (targetPanel) {
-              targetPanel.classList.remove('hidden');
-              // Find first focusable element within the *active* panel
-              firstFocusableElement = targetPanel.querySelector('input:not([type="hidden"]):not(.sr-only):not(:disabled), select:not(:disabled), textarea:not(:disabled), button:not(.booking-time-button):not([disabled]), .booking-time-button.active'); // Adjusted selector
+                targetPanel.classList.remove("hidden");
+                firstFocusableElement = targetPanel.querySelector("input:not([type=\"hidden\"]):not(.sr-only):not(:disabled), select:not(:disabled), textarea:not(:disabled), button:not([disabled])");
             }
             if (targetButton) {
-              targetButton.classList.add('active-tab');
-              targetButton.setAttribute('aria-selected', 'true');
-              targetButton.setAttribute('tabindex', '0');
+                targetButton.classList.add("active-tab");
+                targetButton.setAttribute("aria-selected", "true");
+                targetButton.setAttribute("tabindex", "0");
             }
 
-            // Show/Hide logic based on active tab
-             if (targetPanelId === '#panel-oneway') {
-                 // Ensure Experience+ specific fields are hidden
-                 if(elements.serviceDropdown) elements.serviceDropdown.value = '';
-                 updateExperiencePlusPanelUI(elements, placeholders); // This hides Exp+ fields
+            const oneWayElements = [elements.toAddressInput?.closest(".relative"), elements.oneWayPickupDateInput?.closest(".grid"), elements.vehicleSelectionOneway];
+            const expPlusElements = [elements.serviceDropdown?.closest(".relative"), elements.hourlyDescription, elements.durationContainer, elements.hourlyDateTimeContainer, elements.datePreferenceContainer, elements.commonExperienceFieldsContainer, elements.experienceOptionsContainer];
 
-                 // Reset One Way time selection state
-                 elements.requestNowButton?.classList.remove('active');
-                 elements.bookLaterButton?.classList.remove('active');
-                 elements.scheduledBookingInputsContainer?.classList.add('hidden');
-                 elements.bookingPreferenceInput.value = '';
-                 // Destroy Flatpickr instances if they exist, to be re-created on demand
-                 if (elements.flatpickrInstances.oneWayDate) { elements.flatpickrInstances.oneWayDate.destroy(); delete elements.flatpickrInstances.oneWayDate; }
-                 if (elements.flatpickrInstances.oneWayTime) { elements.flatpickrInstances.oneWayTime.destroy(); delete elements.flatpickrInstances.oneWayTime; }
+            console.log("One Way Elements:", oneWayElements);
+            console.log("Experience Plus Elements:", expPlusElements);
 
-             } else if (targetPanelId === '#panel-experience-plus') {
-                 // Clear One Way specific fields/selections when switching away
-                 elements.requestNowButton?.classList.remove('active');
-                 elements.bookLaterButton?.classList.remove('active');
-                 elements.scheduledBookingInputsContainer?.classList.add('hidden');
-                 elements.bookingPreferenceInput.value = '';
-                 if (elements.oneWayPickupDateInput) elements.oneWayPickupDateInput.value = '';
-                 if (elements.oneWayPickupTimeInput) elements.oneWayPickupTimeInput.value = '';
-                 const oneWayRadios = document.querySelectorAll('input[name="vehicle_type_oneway"]');
-                 oneWayRadios.forEach(radio => radio.checked = false);
-                 const vehicleCardRadios = document.querySelectorAll('.vehicle-card input[type="radio"][name="vehicle_type_oneway"]');
-                 vehicleCardRadios.forEach(r => r.setAttribute('aria-checked', 'false'));
-                 document.querySelectorAll('.vehicle-card').forEach(card => {
-                     card.style.borderColor = ''; card.style.boxShadow = ''; card.style.backgroundColor = '';
-                 });
-                 // Destroy Flatpickr if switching away from One Way while open
-                 if (elements.flatpickrInstances.oneWayDate) { elements.flatpickrInstances.oneWayDate.destroy(); delete elements.flatpickrInstances.oneWayDate; }
-                 if (elements.flatpickrInstances.oneWayTime) { elements.flatpickrInstances.oneWayTime.destroy(); delete elements.flatpickrInstances.oneWayTime; }
+            if (targetPanelId === "#panel-oneway") {
+                oneWayElements.forEach(el => el?.classList.remove("hidden"));
+                expPlusElements.forEach(el => el?.classList.add("hidden"));
+                if (elements.serviceDropdown) elements.serviceDropdown.value = "";
+                updateExperiencePlusPanelUI(elements, placeholders);
+            } else if (targetPanelId === "#panel-experience-plus") {
+                oneWayElements.forEach(el => el?.classList.add("hidden"));
+                expPlusElements.forEach(el => el?.classList.remove("hidden"));
+                updateExperiencePlusPanelUI(elements, placeholders);
+                const oneWayRadios = document.querySelectorAll("input[name=\"vehicle_type_oneway\"]");
+                oneWayRadios.forEach(radio => radio.checked = false);
+                const vehicleCardRadios = document.querySelectorAll(".vehicle-card input[type=\"radio\"][name=\"vehicle_type_oneway\"]");
+                vehicleCardRadios.forEach(r => r.setAttribute("aria-checked", "false"));
+                document.querySelectorAll(".vehicle-card").forEach(card => {
+                    // Reset styles - relies on CSS :has(:checked) or requires adding/removing a JS class
+                    // card.classList.remove("selected-card-style"); // Example if using JS class
+                });
+                firstFocusableElement = elements.serviceDropdown || firstFocusableElement;
+            }
 
-                 // Ensure Experience+ UI is correctly displayed
-                 updateExperiencePlusPanelUI(elements, placeholders);
-                 firstFocusableElement = elements.serviceDropdown || firstFocusableElement;
-             }
+            setTimeout(() => {
+                if (firstFocusableElement) {
+                    firstFocusableElement.focus();
+                }
+            }, 50);
 
-             // Focus management
-             setTimeout(() => {
-                 if (firstFocusableElement) { firstFocusableElement.focus(); }
-             }, 50);
-
-             resetSubmitButton(elements); // Reset button text/state
-             clearAllErrors(elements); // Clear errors on tab switch
-         }
+            resetSubmitButton(elements);
+            clearAllErrors(elements);
+        }
 
 
         // --- Form Validation ---
