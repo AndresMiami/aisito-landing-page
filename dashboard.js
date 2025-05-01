@@ -189,18 +189,18 @@ const config = {
   }
   
   function determineButtonText(elements) {
-      let activePanelId = "";
       const activeTabButton = elements.tabNavigationContainer?.querySelector(".active-tab");
-      activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
+      const activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
+      console.log("Active panel ID:", activePanelId);
       const selectedService = elements.serviceDropdown?.value || "";
   
-      if (activePanelId === "#panel-oneway") return "Continue"; // Updated from 'Get Quote' to 'Continue'
+      if (activePanelId === "#panel-oneway") return "Continue";
       else if (activePanelId === "#panel-experience-plus") {
-        if (selectedService === "hourly_chauffeur") return "Request Hourly Service";
-        else if (selectedService !== "") return "Request Experience";
-        else return "Select Service";
+          if (selectedService === "hourly_chauffeur") return "Request Hourly Service";
+          else if (selectedService !== "") return "Request Experience";
+          else return "Select Service";
       }
-      return "Submit"; // Fallback
+      return "Submit";
   }
   
   function resetSubmitButton(elements) {
@@ -208,16 +208,11 @@ const config = {
       elements.submitButton.disabled = false;
       if (elements.submitButtonSpinner) elements.submitButtonSpinner.classList.add("hidden");
       if (elements.submitButtonText) {
-        elements.submitButtonText.textContent = determineButtonText(elements);
-        elements.submitButtonText.classList.remove("hidden");
+          const text = determineButtonText(elements);
+          console.log("resetSubmitButton setting button text to:", text);
+          elements.submitButtonText.textContent = text;
+          elements.submitButtonText.classList.remove("hidden");
       }
-  }
-  
-  function setLoadingButton(elements) {
-      if (!elements.submitButton) return;
-      elements.submitButton.disabled = true;
-      if (elements.submitButtonText) elements.submitButtonText.classList.add("hidden");
-      if (elements.submitButtonSpinner) elements.submitButtonSpinner.classList.remove("hidden");
   }
   
   // --- Airport Field Visibility (Keep from your original, ensure IDs match HTML) ---
@@ -490,12 +485,12 @@ const config = {
   
       // Update the button text based on the active tab
       if (targetPanelId === "#panel-oneway") {
-          // Explicitly set the button text to "Continue" for the "One Way" tab
+          console.log("Switching to One Way tab, setting button text to 'Continue'");
           if (elements.submitButtonText) {
               elements.submitButtonText.textContent = "Continue";
           }
       } else if (targetPanelId === "#panel-experience-plus") {
-          // Dynamically update the button text for the "Experience" tab
+          console.log("Switching to Experience tab, calling resetSubmitButton");
           resetSubmitButton(elements);
       }
   
@@ -980,4 +975,3 @@ const config = {
   
   // Make initAutocomplete globally accessible for the Maps API callback
   window.initAutocomplete = initAutocomplete;
-
