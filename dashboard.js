@@ -194,7 +194,7 @@ const config = {
       activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
       const selectedService = elements.serviceDropdown?.value || "";
   
-      if (activePanelId === "#panel-oneway") return "Get Quote"; // Keep as Get Quote for now
+      if (activePanelId === "#panel-oneway") return "Continue"; // Updated from 'Get Quote' to 'Continue'
       else if (activePanelId === "#panel-experience-plus") {
         if (selectedService === "hourly_chauffeur") return "Request Hourly Service";
         else if (selectedService !== "") return "Request Experience";
