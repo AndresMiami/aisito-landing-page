@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:css": "tailwindcss build ./src/styles/tailwind.css -o ./dist/tailwind.css"
+    "build:css": "tailwindcss build ./src/styles/tailwind.css -o ./dist/tailwind.css",
+    "build": "npm run build:css"
   },
   "repository": {
     "type": "git",

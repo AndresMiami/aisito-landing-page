@@ -1,11 +1,8 @@
 # Basic Netlify configuration file
 
 [build]
-  # Specifies the directory Netlify builds from and deploys.
   command = "npm run build"
   publish = "./"
-  # Specifies where your Netlify Functions live.
-  functions = "netlify/functions"
 
 [dev]
   # Optional but good practice: Explicitly tell the dev server the same info.
