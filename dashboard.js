@@ -466,51 +466,42 @@ const config = {
   function switchTab(targetPanelId, elements, placeholders) {
       elements.formTabPanels?.forEach(panel => panel.classList.add("hidden"));
       elements.tabNavigationButtons?.forEach(button => {
-        button.classList.remove("active-tab");
-        button.setAttribute("aria-selected", "false");
-        button.removeAttribute("tabindex");
+          button.classList.remove("active-tab");
+          button.setAttribute("aria-selected", "false");
+          button.removeAttribute("tabindex");
       });
+
       const targetPanel = document.querySelector(targetPanelId);
       const targetButton = elements.tabNavigationContainer?.querySelector(`[data-tab-target="${targetPanelId}"]`);
       let firstFocusableElement = null;
+
       if (targetPanel) {
-        targetPanel.classList.remove("hidden");
-        firstFocusableElement = targetPanel.querySelector("input:not([type=\"hidden\"]):not(.sr-only):not(:disabled), select:not(:disabled), textarea:not(:disabled), button:not([disabled])");
+          targetPanel.classList.remove("hidden");
+          firstFocusableElement = targetPanel.querySelector("input:not([type=\"hidden\"]):not(.sr-only):not(:disabled), select:not(:disabled), textarea:not(:disabled), button:not([disabled])");
       }
+
       if (targetButton) {
-        targetButton.classList.add("active-tab");
-        targetButton.setAttribute("aria-selected", "true");
-        targetButton.setAttribute("tabindex", "0");
+          targetButton.classList.add("active-tab");
+          targetButton.setAttribute("aria-selected", "true");
+          targetButton.setAttribute("tabindex", "0");
       }
-      const oneWayElements = [elements.toAddressInput?.closest(".relative"), elements.oneWayPickupDateInput?.closest(".grid"), elements.vehicleSelectionOneway];
-      const expPlusElements = [elements.serviceDropdown?.closest(".relative"), elements.hourlyDescription, elements.durationContainer, elements.hourlyDateTimeContainer, elements.datePreferenceContainer, elements.commonExperienceFieldsContainer, elements.experienceOptionsContainer];
-      console.log("Switching to tab:", targetPanelId);
-      console.log("One Way Elements:", oneWayElements);
-      console.log("Experience Plus Elements:", expPlusElements);
+
       if (targetPanelId === "#panel-oneway") {
-        oneWayElements.forEach(el => el?.classList.remove("hidden"));
-        expPlusElements.forEach(el => el?.classList.add("hidden"));
-           if(elements.serviceDropdown) elements.serviceDropdown.value = "";
-           updateExperiencePlusPanelUI(elements, placeholders);
+          // Explicitly set the button text to "Continue" for the "One Way" tab
+          if (elements.submitButtonText) {
+              elements.submitButtonText.textContent = "Continue";
+          }
       } else if (targetPanelId === "#panel-experience-plus") {
-        oneWayElements.forEach(el => el?.classList.add("hidden"));
-        expPlusElements.forEach(el => el?.classList.remove("hidden"));
-        updateExperiencePlusPanelUI(elements, placeholders);
-         const oneWayRadios = document.querySelectorAll("input[name=\"vehicle_type_oneway\"]");
-         oneWayRadios.forEach(radio => radio.checked = false);
-         const vehicleCardRadios = document.querySelectorAll(".vehicle-card input[type=\"radio\"][name=\"vehicle_type_oneway\"]");
-         vehicleCardRadios.forEach(r => r.setAttribute("aria-checked", "false"));
-         document.querySelectorAll(".vehicle-card").forEach(card => {
-            // Reset styles - relies on CSS :has(:checked) or requires adding/removing a JS class
-            // card.classList.remove("selected-card-style"); // Example if using JS class
-         });
-         firstFocusableElement = elements.serviceDropdown || firstFocusableElement;
+          // Dynamically update the button text for the "Experience" tab
+          resetSubmitButton(elements);
       }
+
       setTimeout(() => {
-         if (firstFocusableElement) {
-             firstFocusableElement.focus();
-         }
+          if (firstFocusableElement) {
+              firstFocusableElement.focus();
+          }
       }, 50);
+
       resetSubmitButton(elements);
       clearAllErrors(elements);
   }
