@@ -204,16 +204,26 @@ const config = {
   }
   
   function resetSubmitButton(elements) {
-      if (!elements.submitButton) return;
-      elements.submitButton.disabled = false;
-      if (elements.submitButtonSpinner) elements.submitButtonSpinner.classList.add("hidden");
-      if (elements.submitButtonText) {
-          const text = determineButtonText(elements);
-          console.log("resetSubmitButton setting button text to:", text);
-          elements.submitButtonText.textContent = text;
-          elements.submitButtonText.classList.remove("hidden");
-      }
-  }
+    if (!elements.submitButton) return;
+    elements.submitButton.disabled = false;
+    if (elements.submitButtonSpinner) elements.submitButtonSpinner.classList.add("hidden");
+
+    const activeTabButton = elements.tabNavigationContainer?.querySelector(".active-tab");
+    const activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
+
+    // Prevent overriding the "Continue" text for the "One Way" tab
+    if (activePanelId === "#panel-oneway") {
+        console.log("resetSubmitButton skipped for 'One Way' tab.");
+        return;
+    }
+
+    if (elements.submitButtonText) {
+        const text = determineButtonText(elements);
+        console.log("resetSubmitButton setting button text to:", text);
+        elements.submitButtonText.textContent = text;
+        elements.submitButtonText.classList.remove("hidden");
+    }
+}
   
   // --- Airport Field Visibility (Keep from your original, ensure IDs match HTML) ---
   function updateAirportFieldVisibility(addressInputId, isAirport) {
