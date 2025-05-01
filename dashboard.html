@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
     <style>
       /* Root variables including new ones for cards */
       :root {
@@ -257,10 +258,8 @@
                      <select name="experience-dropdown" id="experience-dropdown" required aria-describedby="experience-dropdown-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6">
                        <option value="">-- Choose Service --</option>
                        <option value="hourly_chauffeur">Hourly Chauffeur</option>
-                       <option value="water_sky">Ultimate Miami Water & Sky</option>
-                       <option value="wynwood_night">Wynwood Art & Culinary Night</option>
-                       <option value="everglades">Everglades Adventure</option>
-                       <option value="keys_escape">Keys Escape Experience</option>
+                       <option value="water_sky">Premier SUV & Yacht Day</option>
+                       <option value="wynwood_night">Wynwood Night Art & Club</option>
                      </select>
                      <span id="experience-dropdown-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                    </div>
@@ -326,73 +325,31 @@
                          <span id="experience-phone-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                        </div>
                      </div>
+                     <div class="mt-4">
+                       <label class="block text-sm font-medium text-gray-700">Post-Dinner Lounge/Bar</label>
+                       <div class="mt-2 space-y-2">
+                         <label class="flex items-center">
+                           <input type="radio" name="post_dinner_lounge" value="yes" class="mr-2">
+                           Yes
+                         </label>
+                         <label class="flex items-center">
+                           <input type="radio" name="post_dinner_lounge" value="no" class="mr-2">
+                           No
+                         </label>
+                         <label class="flex items-center">
+                           <input type="radio" name="post_dinner_lounge" value="maybe" class="mr-2">
+                           Maybe (Discuss)
+                         </label>
+                       </div>
+                     </div>
                    </div>
                    <div id="experience-options-container" class="hidden space-y-4">
                      <div id="water-sky-options" class="hidden relative border-t border-gray-200 pt-4"></div>
                       <div id="wynwood-night-options" class="hidden space-y-4 border-t border-gray-200 pt-4">
-                       <div class="space-y-4">
-                         <div>
-                           <label class="mb-2 block text-sm font-medium text-gray-900" id="motivation-label">What's the occasion for this experience?</label>
-                           <fieldset aria-labelledby="motivation-label" aria-describedby="motivation-error">
-                             <legend class="sr-only">Select Occasion</legend>
-                             <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                               <label for="motivation-romantic" class="flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-1 has-[:checked]:ring-[--color-teal]">
-                                 <input type="radio" name="motivation" value="Romantic" id="motivation-romantic" class="sr-only">
-                                 <span class="flex items-center"><span class="mr-1.5 text-lg">❤️</span> Romantic</span>
-                               </label>
-                               <label for="motivation-celebration" class="flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-1 has-[:checked]:ring-[--color-teal]">
-                                 <input type="radio" name="motivation" value="Birthday/Celebration" id="motivation-celebration" class="sr-only">
-                                 <span class="flex items-center"><span class="mr-1.5 text-lg">🎉</span> Celebration</span>
-                               </label>
-                               <label for="motivation-business" class="flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-1 has-[:checked]:ring-[--color-teal]">
-                                 <input type="radio" name="motivation" value="Business/Corporate" id="motivation-business" class="sr-only">
-                                 <span class="flex items-center"><span class="mr-1.5 text-lg">💼</span> Business</span>
-                               </label>
-                               <label for="motivation-fun" class="flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 has-[:checked]:border-[--color-teal] has-[:checked]:ring-1 has-[:checked]:ring-[--color-teal]">
-                                 <input type="radio" name="motivation" value="Friends Night Out / Fun" id="motivation-fun" class="sr-only">
-                                 <span class="flex items-center"><span class="mr-1.5 text-lg">🥳</span> Fun / Friends</span>
-                               </label>
-                             </div>
-                           </fieldset>
-                           <span id="motivation-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                         </div>
-                       </div>
-                       <div class="space-y-4 pt-4 border-t border-gray-200">
-                         <h5 class="text-sm font-semibold text-gray-700" id="dinner-preference-label">Dinner Preferences</h5>
-                         <div>
-                           <fieldset class="mt-1" aria-labelledby="dinner-preference-label" aria-describedby="dinner_style_preference-error">
-                             <legend class="sr-only">Dinner Style Preference</legend>
-                             <div class="flex flex-wrap gap-x-4 gap-y-2">
-                               <div class="flex items-center"><input id="wynwood-dinner-vibrant" name="dinner_style_preference" type="radio" value="Vibrant Scene & Global Flavors" checked class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-dinner-vibrant" class="ml-2 block text-sm text-gray-900">Vibrant Scene & Global Flavors</label></div>
-                               <div class="flex items-center"><input id="wynwood-dinner-steak" name="dinner_style_preference" type="radio" value="Upscale Steakhouse" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-dinner-steak" class="ml-2 block text-sm text-gray-900">Upscale Steakhouse</label></div>
-                               <div class="flex items-center"><input id="wynwood-dinner-modern" name="dinner_style_preference" type="radio" value="Modern American / European" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-dinner-modern" class="ml-2 block text-sm text-gray-900">Modern American / European</label></div>
-                               <div class="flex items-center"><input id="wynwood-dinner-italian" name="dinner_style_preference" type="radio" value="Elevated Italian / Mediterranean" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-dinner-italian" class="ml-2 block text-sm text-gray-900">Elevated Italian / Mediterranean</label></div>
-                               <div class="flex items-center"><input id="wynwood-dinner-seafood" name="dinner_style_preference" type="radio" value="Iconic Miami Seafood" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-dinner-seafood" class="ml-2 block text-sm text-gray-900">Iconic Miami Seafood</label></div>
-                               <div class="flex items-center"><input id="wynwood-dinner-other-style" name="dinner_style_preference" type="radio" value="Other" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-dinner-other-style" class="ml-2 block text-sm text-gray-900">Other (Specify)</label></div>
-                             </div>
-                           </fieldset>
-                           <span id="dinner_style_preference-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                         </div>
-                         <div id="wynwood-other-restaurant-container" class="relative hidden">
-                            <label for="wynwood-other-restaurant" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Other Cuisine / Restaurant Request</label>
-                            <input type="text" name="other_restaurant_request" id="wynwood-other-restaurant" aria-describedby="wynwood-other-restaurant-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="e.g., Italian, specific restaurant name" />
-                            <span id="wynwood-other-restaurant-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                         </div>
-                       </div>
-                       <div class="space-y-1 pt-4 border-t border-gray-200">
-                         <h5 class="text-sm font-semibold text-gray-700" id="lounge-interest-label">Post-Dinner Lounge/Bar</h5>
-                         <div>
-                           <fieldset class="mt-1" aria-labelledby="lounge-interest-label" aria-describedby="lounge_interest-error">
-                             <legend class="sr-only">Post-Dinner Option</legend>
-                             <div class="flex flex-wrap gap-3">
-                               <div class="flex items-center"><input id="wynwood-lounge-yes" name="lounge_interest" type="radio" value="Yes" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-lounge-yes" class="ml-2 block text-sm text-gray-900">Yes</label></div>
-                               <div class="flex items-center"><input id="wynwood-lounge-no" name="lounge_interest" type="radio" value="No" checked class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-lounge-no" class="ml-2 block text-sm text-gray-900">No</label></div>
-                               <div class="flex items-center"><input id="wynwood-lounge-maybe" name="lounge_interest" type="radio" value="Maybe - Discuss" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]" /><label for="wynwood-lounge-maybe" class="ml-2 block text-sm text-gray-900">Maybe (Discuss)</label></div>
-                             </div>
-                           </fieldset>
-                           <span id="lounge_interest-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                         </div>
-                       </div>
+                        <!-- Wynwood Art Tour Heading -->
+                        <h2 class="text-2xl font-bold text-center" style="font-family: 'Permanent Marker', cursive; color: #ff4d4d;">
+                          Wynwood Art Tour
+                        </h2>
                       </div>
                       <div id="everglades-options" class="hidden relative border-t border-gray-200 pt-4"></div>
                       <div id="keys-escape-options" class="hidden relative border-t border-gray-200 pt-4"></div>
@@ -903,7 +860,8 @@
                            isValid = false;
                        }
                    }
-                 if (!loungeSelected) { showError(elements, 'lounge_interest', 'Lounge interest required.'); isValid = false; }
+                 if (!loungeSelected) { showError(elements, 'lounge_interest', 'Lounge interest required.'); isValid = false;
+                 }
                }
                // Add validation for other experiences if options are added
              }

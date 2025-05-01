@@ -57,6 +57,7 @@ const config = {
       refs.wynwoodDinnerPrefRadios = document.querySelectorAll("#wynwood-night-options input[name=\"dinner_style_preference\"]");
       refs.wynwoodOtherRestaurantContainer = document.getElementById("wynwood-other-restaurant-container");
       refs.wynwoodOtherDinnerRadio = document.getElementById("wynwood-dinner-other-style");
+      refs.waterSkyOptions = document.getElementById("water-sky-options");
       // ... (add refs for other experience options if needed) ...
   
       // Common Elements
@@ -392,17 +393,8 @@ const config = {
   
   // --- Experience+ Specific Logic (from generated code) ---
   function handleWynwoodDinnerChoice(elements) {
-      if (!elements.wynwoodOtherDinnerRadio || !elements.wynwoodOtherRestaurantContainer) return;
-      const showOtherInput = elements.wynwoodOtherDinnerRadio.checked;
-      elements.wynwoodOtherRestaurantContainer.classList.toggle("hidden", !showOtherInput);
-      const otherInput = elements.wynwoodOtherRestaurantContainer.querySelector("input");
-        if (otherInput) {
-            otherInput.required = showOtherInput;
-            if (!showOtherInput) {
-                otherInput.value = "";
-                clearError("wynwood-other-restaurant");
-            }
-        }
+    // Removed dinner preference logic for Wynwood Art Tour
+    console.log("Dinner preferences removed for Wynwood Art Tour.");
   }
   
   // --- UI Update Functions (from generated code, adapted) ---
@@ -440,27 +432,19 @@ const config = {
   
       const allExperienceOptionDivs = [
           elements.wynwoodNightOptions,
-          elements.waterSkyOptions,
-          elements.evergladesOptions,
-          elements.keysEscapeOptions
+          elements.waterSkyOptions
       ];
   
       allExperienceOptionDivs.forEach(el => el?.classList.add("hidden"));
   
       if (showCuratedExperience && elements.experienceOptionsContainer) {
           if (selectedValue === "wynwood_night" && elements.wynwoodNightOptions) {
-              console.log("Displaying Wynwood Night Options");
+              console.log("Displaying Wynwood Night Art & Club Options");
               elements.wynwoodNightOptions.classList.remove("hidden");
               handleWynwoodDinnerChoice(elements);
           } else if (selectedValue === "water_sky" && elements.waterSkyOptions) {
-              console.log("Displaying Water Sky Options");
+              console.log("Displaying Premier SUV & Yacht Day Options");
               elements.waterSkyOptions.classList.remove("hidden");
-          } else if (selectedValue === "everglades" && elements.evergladesOptions) {
-              console.log("Displaying Everglades Options");
-              elements.evergladesOptions.classList.remove("hidden");
-          } else if (selectedValue === "keys_escape" && elements.keysEscapeOptions) {
-              console.log("Displaying Keys Escape Options");
-              elements.keysEscapeOptions.classList.remove("hidden");
           }
       } else {
           if (elements.wynwoodOtherRestaurantContainer) {
