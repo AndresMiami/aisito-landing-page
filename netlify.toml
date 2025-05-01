@@ -2,9 +2,8 @@
 
 [build]
   # Specifies the directory Netlify builds from and deploys.
-  # "./node_modules/.bin/tailwindcss" ensures the local installation is used.
-  command = "./node_modules/.bin/tailwindcss build -o ./dist/tailwind.css"
-  publish = "./dist"
+  command = "npm run build"
+  publish = "./"
   # Specifies where your Netlify Functions live.
   functions = "netlify/functions"
 
