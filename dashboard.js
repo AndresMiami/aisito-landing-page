@@ -203,28 +203,6 @@ const config = {
       return "Submit";
   }
   
-  function resetSubmitButton(elements) {
-    if (!elements.submitButton) return;
-    elements.submitButton.disabled = false;
-    if (elements.submitButtonSpinner) elements.submitButtonSpinner.classList.add("hidden");
-
-    const activeTabButton = elements.tabNavigationContainer?.querySelector(".active-tab");
-    const activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
-
-    // Prevent overriding the "Continue" text for the "One Way" tab
-    if (activePanelId === "#panel-oneway") {
-        console.log("resetSubmitButton skipped for 'One Way' tab.");
-        return;
-    }
-
-    if (elements.submitButtonText) {
-        const text = determineButtonText(elements);
-        console.log("resetSubmitButton setting button text to:", text);
-        elements.submitButtonText.textContent = text;
-        elements.submitButtonText.classList.remove("hidden");
-    }
-}
-  
   // --- Airport Field Visibility (Keep from your original, ensure IDs match HTML) ---
   function updateAirportFieldVisibility(addressInputId, isAirport) {
       let typeContainerId, notesContainerId, hiddenInputId;
@@ -1031,20 +1009,25 @@ document.addEventListener("DOMContentLoaded", () => {
     /**
      * Dynamically updates the submit button text based on the active tab and selected values.
      */
-    function resetSubmitButton() {
-        if (!elements.submitButton || !elements.submitButtonText) return;
+    function resetSubmitButton(elements) {
+        if (!elements.submitButton || !elements.submitButtonText) {
+            console.error("Submit button or button text element is not defined.");
+            return;
+        }
 
-        const activeTabButton = elements.tabNavigationContainer.querySelector(".active-tab");
+        const activeTabButton = elements.tabNavigationContainer?.querySelector(".active-tab");
         const activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
 
-        // Prevent overriding the "Continue" text for the "One Way" tab
+        console.log("Active Panel ID:", activePanelId);
+
         if (activePanelId === "#panel-oneway") {
+            console.log("Setting button text to 'Continue' for 'One Way' tab.");
             elements.submitButtonText.textContent = "Continue";
             return;
         }
 
-        // Update button text for the "Experience Plus" tab
-        const text = determineButtonText(activePanelId);
+        const text = determineButtonText(elements);
+        console.log("Setting button text to:", text);
         elements.submitButtonText.textContent = text;
     }
 
