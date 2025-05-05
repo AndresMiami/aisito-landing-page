@@ -188,6 +188,32 @@ const config = {
       clearError("vehicle_type_oneway");
   }
   
+  function resetSubmitButton(elements) {
+      const submitButton = elements.submitButton || document.querySelector("#submit-button");
+      if (!submitButton || !elements.submitButtonText) {
+          console.error("Submit button or button text element is not defined.");
+          return;
+      }
+  
+      console.log("Enabling the submit button...");
+      submitButton.disabled = false;
+  
+      const activeTabButton = elements.tabNavigationContainer?.querySelector(".active-tab");
+      const activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
+  
+      console.log("Active Panel ID:", activePanelId);
+  
+      if (activePanelId === "#panel-oneway") {
+          console.log("Setting button text to 'Continue' for 'One Way' tab.");
+          elements.submitButtonText.textContent = "Continue";
+          return;
+      }
+  
+      const text = determineButtonText(elements);
+      console.log("Setting button text to:", text);
+      elements.submitButtonText.textContent = text;
+  }
+  
   function determineButtonText(elements) {
       const activeTabButton = elements.tabNavigationContainer?.querySelector(".active-tab");
       const activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
@@ -447,7 +473,6 @@ const config = {
   }
   
   function switchTab(targetPanelId, elements, placeholders) {
-      // Hide all tab panels and reset tab buttons
       elements.formTabPanels?.forEach(panel => panel.classList.add("hidden"));
       elements.tabNavigationButtons?.forEach(button => {
           button.classList.remove("active-tab");
@@ -455,7 +480,6 @@ const config = {
           button.removeAttribute("tabindex");
       });
   
-      // Show the target panel and set the active tab button
       const targetPanel = document.querySelector(targetPanelId);
       const targetButton = elements.tabNavigationContainer?.querySelector(`[data-tab-target="${targetPanelId}"]`);
       let firstFocusableElement = null;
@@ -471,25 +495,16 @@ const config = {
           targetButton.setAttribute("tabindex", "0");
       }
   
-      // Update the button text based on the active tab
-      if (targetPanelId === "#panel-oneway") {
-          console.log("Switching to One Way tab, setting button text to 'Continue'");
-          if (elements.submitButtonText) {
-              elements.submitButtonText.textContent = "Continue";
-          }
-      } else if (targetPanelId === "#panel-experience-plus") {
-          console.log("Switching to Experience tab, calling resetSubmitButton");
+      setTimeout(() => {
           resetSubmitButton(elements);
-      }
+      }, 100);
   
-      // Focus the first focusable element in the target panel
       setTimeout(() => {
           if (firstFocusableElement) {
               firstFocusableElement.focus();
           }
       }, 50);
   
-      // Clear all errors and reset the button state
       clearAllErrors(elements);
   }
   
@@ -1026,7 +1041,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const text = determineButtonText(elements);
+        const text = determineButtonText(activePanelId);
         console.log("Setting button text to:", text);
         elements.submitButtonText.textContent = text;
     }
