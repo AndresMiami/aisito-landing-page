@@ -517,7 +517,11 @@ const config = {
           }
       } else if (targetPanelId === "#panel-experience-plus") {
           oneWayElements.forEach(el => el?.classList.add("hidden"));
-          expPlusElements.forEach(el => el?.classList.remove("hidden"));
+          // IMPORTANT FIX: Make sure the dropdown container is visible first
+          if (elements.serviceDropdown?.closest(".relative")) {
+              elements.serviceDropdown.closest(".relative").classList.remove("hidden");
+          }
+          // Then update the UI based on the dropdown value
           updateExperiencePlusPanelUI(elements, placeholders);
           const oneWayRadios = document.querySelectorAll("input[name=\"vehicle_type_oneway\"]");
           oneWayRadios.forEach(radio => radio.checked = false);
@@ -525,7 +529,6 @@ const config = {
           vehicleCardRadios.forEach(r => r.setAttribute("aria-checked", "false"));
           document.querySelectorAll(".vehicle-card").forEach(card => {
               // Reset styles - relies on CSS :has(:checked) or requires adding/removing a JS class
-              // card.classList.remove("selected-card-style"); // Example if using JS class
           });
           firstFocusableElement = elements.serviceDropdown || firstFocusableElement;
       }
