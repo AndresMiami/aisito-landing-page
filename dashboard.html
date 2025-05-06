@@ -190,7 +190,7 @@
                                </div>
                              </div>
                            </div>
-                           
+
                             <input type="radio" name="vehicle_type_oneway" value="Luxury Sedan" id="vehicle-sedan-card" class="sr-only" required aria-checked="false">
                          </label>
 
@@ -217,7 +217,7 @@
                                </div>
                              </div>
                            </div>
-                           
+
                             <input type="radio" name="vehicle_type_oneway" value="Premium SUV" id="vehicle-suv-card" class="sr-only" required aria-checked="false">
                          </label>
 
@@ -244,7 +244,7 @@
                                </div>
                              </div>
                            </div>
-                           
+
                             <input type="radio" name="vehicle_type_oneway" value="VIP Group Sprinter" id="vehicle-sprinter-card" class="sr-only" required aria-checked="false">
                          </label>
 
@@ -1124,25 +1124,7 @@
       });
     </script>
     <script src="dashboard.js" defer></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', async () => {
-        try {
-          const response = await fetch('/.netlify/functions/get-maps-key');
-          if (!response.ok) {
-            throw new Error('Failed to fetch API key');
-          }
-          const data = await response.json();
-          const apiKey = data.apiKey;
-          if (apiKey) {
-            const script = document.createElement('script');
-            // Add additional logic here if needed
-          }
-        } catch (error) {
-          console.error('Error fetching API key:', error);
-        }
-      });
-    </script>
-  </body>
+   </body>
 </html>
 
 

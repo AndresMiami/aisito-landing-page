@@ -18,7 +18,7 @@ const config = {
       defaultExp: "Optional notes or preferences..."
     }
   };
-  
+
   // --- Element References (Combined & Updated) ---
   function getElementRefs() {
       const refs = {};
@@ -27,7 +27,7 @@ const config = {
       refs.tabNavigationContainer = document.getElementById("tab-navigation");
       refs.tabNavigationButtons = refs.tabNavigationContainer?.querySelectorAll(".tab-button");
       refs.formTabPanels = refs.bookingForm?.querySelectorAll(".tab-panel");
-  
+
       // One-Way Elements
       refs.oneWayPanel = document.getElementById("panel-oneway");
       refs.fromLocationInput = document.getElementById("from-location"); // Use the main one
@@ -36,7 +36,7 @@ const config = {
       refs.oneWayPickupTimeInput = document.getElementById("pickup-time-oneway");
       refs.vehicleSelectionOneway = document.getElementById("vehicle-selection-oneway"); // Container for cards
       refs.bookingPreferenceInput = document.getElementById("booking-preference"); // Added for validation logic
-  
+
       // Experience+ Elements (Add these)
       refs.experiencePlusPanel = document.getElementById("panel-experience-plus");
       refs.serviceDropdown = document.getElementById("experience-dropdown");
@@ -60,23 +60,23 @@ const config = {
       refs.wynwoodOtherDinnerRadio = document.getElementById("wynwood-dinner-other-style");
       refs.waterSkyOptions = document.getElementById("water-sky-options");
       // ... (add refs for other experience options if needed) ...
-  
+
       // Common Elements
       refs.submitButton = document.getElementById("submit-button");
       refs.submitButtonText = refs.submitButton?.querySelector(".button-text");
       refs.submitButtonSpinner = refs.submitButton?.querySelector(".spinner");
       refs.confirmationMessage = document.getElementById("confirmation-message");
-  
+
       // Quote Result Elements (Keep from your original if needed for quote display)
       refs.resultsArea = document.getElementById("quote-results-area");
       refs.loadingIndicator = document.getElementById("loading-indicator");
       refs.errorDisplay = document.getElementById("quote-error");
       refs.quoteDetailsDisplay = document.getElementById("quote-details");
       // ... (add other quote display refs if they exist) ...
-  
+
       return refs;
   }
-  
+
   // --- Initialize Flatpickr (from generated code) ---
   function initializeFlatpickr(elements) {
     // Use window.flatpickr to check if the library is globally available
@@ -86,22 +86,22 @@ const config = {
     }
     const commonDateConfig = { altInput: true, altFormat: "D, M j, Y", dateFormat: "Y-m-d", minDate: "today" };
     const commonTimeConfig = { enableTime: true, noCalendar: true, dateFormat: "H:i", altInput: true, altFormat: "h : i K", time_24hr: false, minuteIncrement: 10 };
-  
+
     if (elements.oneWayPickupDateInput) flatpickr(elements.oneWayPickupDateInput, commonDateConfig);
     if (elements.oneWayPickupTimeInput) flatpickr(elements.oneWayPickupTimeInput, commonTimeConfig);
     if (elements.hourlyPickupDateInput) flatpickr(elements.hourlyPickupDateInput, commonDateConfig);
     if (elements.hourlyPickupTimeInput) flatpickr(elements.hourlyPickupTimeInput, commonTimeConfig);
     console.log("Flatpickr initialized.");
   }
-  
+
   // --- Helper Functions (Error Handling, Button State - from generated code) ---
-  
+
   function showError(elements, fieldId, message) {
       const errorSpanId = `${fieldId}-error`;
       const errorSpan = document.getElementById(errorSpanId);
       const inputElement = document.getElementById(fieldId);
       let labelText = fieldId;
-  
+
       // Special handling for the vehicle radio button group validation message
       if (fieldId === "vehicle_type_oneway") {
          labelText = "Vehicle Type";
@@ -116,7 +116,7 @@ const config = {
          }
          return;
       }
-  
+
       const labelElement = document.querySelector(`label[for="${fieldId}"]`) || document.getElementById(`${fieldId}-label`);
       if (labelElement) { labelText = labelElement.textContent.replace("*", "").trim(); }
       else if (fieldId === "date_preference") labelText = "Preferred Timing";
@@ -124,14 +124,14 @@ const config = {
       else if (fieldId === "dinner_style_preference") labelText = "Dinner Preference";
       else if (fieldId === "lounge_interest") labelText = "Lounge Interest";
       else if (fieldId === "wynwood-other-restaurant") labelText = "Other Cuisine / Restaurant Request";
-  
+
       const fullMessage = `${labelText}: ${message}`;
-  
+
       if (errorSpan) {
         errorSpan.textContent = fullMessage;
         errorSpan.classList.remove("hidden");
       } else { console.warn(`Error span not found for ID: ${errorSpanId}`); }
-  
+
       if (inputElement && ["INPUT", "SELECT", "TEXTAREA"].includes(inputElement.tagName)) {
         inputElement.classList.add("ring-red-500", "ring-1");
         inputElement.setAttribute("aria-invalid", "true");
@@ -141,12 +141,12 @@ const config = {
         }
       }
   }
-  
+
   function clearError(fieldId) {
       const errorSpanId = `${fieldId}-error`;
       const errorSpan = document.getElementById(errorSpanId);
       const inputElement = document.getElementById(fieldId);
-  
+
       if (fieldId === "vehicle_type_oneway") {
           const fieldset = document.querySelector("#vehicle-selection-oneway fieldset");
           const fieldsetErrorSpan = fieldset ? fieldset.querySelector("#vehicle-type-oneway-error") : null;
@@ -159,9 +159,9 @@ const config = {
           }
           return;
       }
-  
+
       if (errorSpan) { errorSpan.textContent = ""; errorSpan.classList.add("hidden"); }
-  
+
       if (inputElement && ["INPUT", "SELECT", "TEXTAREA"].includes(inputElement.tagName)) {
         inputElement.classList.remove("ring-red-500", "ring-1");
         inputElement.removeAttribute("aria-invalid");
@@ -176,7 +176,7 @@ const config = {
         }
       }
   }
-  
+
   function clearAllErrors(elements) {
       const errorSpans = elements.bookingForm?.querySelectorAll("[id$=\"-error\"]");
       errorSpans?.forEach(span => { span.textContent = ""; span.classList.add("hidden"); });
@@ -187,41 +187,41 @@ const config = {
       clearError("submit-button");
       clearError("vehicle_type_oneway");
   }
-  
+
   function resetSubmitButton(elements) {
       const submitButton = elements?.submitButton || document.getElementById("submit-button");
       const submitButtonText = elements?.submitButtonText || submitButton?.querySelector(".button-text");
-  
+
       if (!submitButton || !submitButtonText) {
           console.error("Submit button or button text element is not defined.");
           return;
       }
-  
+
       console.log("Enabling the submit button...");
       submitButton.disabled = false;
-  
+
       const activeTabButton = elements.tabNavigationContainer?.querySelector(".active-tab");
       const activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
-  
+
       console.log("Active Panel ID:", activePanelId);
-  
+
       if (activePanelId === "#panel-oneway") {
           console.log("Setting button text to 'Continue' for 'One Way' tab.");
           submitButtonText.textContent = "Continue";
           return;
       }
-  
+
       const text = determineButtonText(elements);
       console.log("Setting button text to:", text);
       submitButtonText.textContent = text;
   }
-  
+
   function determineButtonText(elements) {
       const activeTabButton = elements.tabNavigationContainer?.querySelector(".active-tab");
       const activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
       console.log("Active panel ID:", activePanelId);
       const selectedService = elements.serviceDropdown?.value || "";
-  
+
       if (activePanelId === "#panel-oneway") return "Continue";
       else if (activePanelId === "#panel-experience-plus") {
           if (selectedService === "hourly_chauffeur") return "Request Hourly Service";
@@ -230,13 +230,13 @@ const config = {
       }
       return "Submit";
   }
-  
+
   // --- Airport Field Visibility (Keep from your original, ensure IDs match HTML) ---
   function updateAirportFieldVisibility(addressInputId, isAirport) {
       let typeContainerId, notesContainerId, hiddenInputId;
       let typeInput, notesInput;
       console.log(`Updating airport fields for ${addressInputId}. Is Airport: ${isAirport}`);
-  
+
       // Determine IDs based on which input triggered the change
       if (addressInputId === "from-location") {
           const activePanelId = document.querySelector(".tab-panel:not(.hidden)")?.id;
@@ -262,18 +262,18 @@ const config = {
           typeInput = document.getElementById("dropoff-type"); // Example ID, adjust if needed
           notesInput = document.getElementById("dropoff-notes"); // Example ID, adjust if needed
       } else { console.warn(`Unknown address input ID for airport fields: ${addressInputId}`); return; }
-  
+
       const typeContainer = document.getElementById(typeContainerId);
       const notesContainer = document.getElementById(notesContainerId);
       const hiddenInput = document.getElementById(hiddenInputId);
-  
+
       // IMPORTANT: Check if these airport-related elements actually EXIST in your current HTML.
       // If you haven"t added them back, this function will error or do nothing.
       if (!typeContainer || !notesContainer /*|| !hiddenInput*/ ) {
           console.warn(`Airport-related elements (e.g., #${typeContainerId}) not found for ${addressInputId}. Skipping visibility update.`);
           return;
       }
-  
+
       // Toggle visibility
       if (isAirport) {
           typeContainer.classList.remove("hidden");
@@ -287,8 +287,8 @@ const config = {
           if (notesInput) notesInput.value = "";
       }
   }
-  
-  
+
+
   // --- Google Maps Autocomplete (Modified to be called by callback) ---
   function initAutocomplete() {
       // Check if google.maps is loaded (redundant if callback works, but good safeguard)
@@ -299,18 +299,18 @@ const config = {
           showError(getElementRefs(), "to-address", "Address lookup service failed to load. Please refresh.");
           return;
       }
-  
+
       console.log("Google Maps API loaded via callback, initializing Autocomplete.");
       const fromLocationInput = document.getElementById("from-location");
       const toAddressInput = document.getElementById("to-address"); // ID from the integrated HTML
-  
+
       const options = {
           // bounds: defaultBounds, // Optional: Bias results to Miami area
           componentRestrictions: { country: "us" }, // Optional: Restrict to US
           fields: ["address_components", "geometry", "icon", "name", "formatted_address", "types"],
           strictBounds: false, // Optional: Set true if using bounds
       };
-  
+
       if (fromLocationInput) {
           try {
               const acFrom = new google.maps.places.Autocomplete(fromLocationInput, options);
@@ -325,7 +325,7 @@ const config = {
               });
           } catch (e) { console.error("Autocomplete failed (from-location)", e); }
         } else { console.error("Input 'from-location' not found"); }
-  
+
      if (toAddressInput) {
           try {
               const acTo = new google.maps.places.Autocomplete(toAddressInput, options);
@@ -340,7 +340,7 @@ const config = {
               });
           } catch (e) { console.error("Autocomplete failed (to-address)", e); }
         } else { console.error("Input 'to-address' not found"); }
-  
+
       // Call other initial setup functions AFTER maps API is ready
       const elementRefs = getElementRefs();
       initializeFlatpickr(elementRefs);
@@ -348,19 +348,19 @@ const config = {
       initializeValidationListeners(elementRefs); // Added for validation logic
       switchTab("#panel-oneway", elementRefs, config.placeholders); // Set initial tab
   }
-  
+
   // --- Geolocation (Keep from your original, ensure IDs match HTML) ---
   async function getCurrentLocation(inputId) {
       console.log(`getCurrentLocation called for input: ${inputId} at ${new Date().toISOString()}`);
       if (!navigator.geolocation) { alert("Geolocation is not supported by your browser."); return; }
-  
+
       // Check if google.maps is loaded before using geocoder
       if (typeof google === "undefined" || typeof google.maps === "undefined") {
           console.error("Google Maps API not loaded, cannot geocode.");
           alert("Mapping service is not available to find address.");
           return;
       }
-  
+
       navigator.geolocation.getCurrentPosition( async (position) => {
           const { latitude, longitude } = position.coords;
           console.log(`Geolocation retrieved: Lat ${latitude}, Lng ${longitude}`);
@@ -402,30 +402,30 @@ const config = {
            alert(errorMessage);
       }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
   }
-  
-  
+
+
   // --- Experience+ Specific Logic (from generated code) ---
   function handleWynwoodDinnerChoice(elements) {
     // Removed dinner preference logic for Wynwood Art Tour
     console.log("Dinner preferences removed for Wynwood Art Tour.");
   }
-  
+
   // --- UI Update Functions (from generated code, adapted) ---
   function updateExperiencePlusPanelUI(elements, placeholders) {
       if (!elements.experiencePlusPanel || !elements.serviceDropdown) {
           console.warn("Experience Plus Panel or Service Dropdown is missing.");
           return;
       }
-  
+
       const selectedValue = elements.serviceDropdown.value;
       console.log("Selected Service Value:", selectedValue);
-  
+
       const showHourly = selectedValue === "hourly_chauffeur";
       const showCuratedExperience = selectedValue !== "" && !showHourly;
-  
+
       console.log("Show Hourly:", showHourly);
       console.log("Show Curated Experience:", showCuratedExperience);
-  
+
       elements.hourlyDescription?.classList.toggle("hidden", !showHourly);
       elements.durationContainer?.classList.toggle("hidden", !showHourly);
       elements.hourlyDateTimeContainer?.classList.toggle("hidden", !showHourly);
@@ -438,18 +438,18 @@ const config = {
       console.log("Selected Value:", selectedValue);
       console.log("Hourly Description Element:", elements.hourlyDescription);
       console.log("Experience Options Container:", elements.experienceOptionsContainer);
-  
+
       if (elements.hourlyPickupTimeLabel) {
           elements.hourlyPickupTimeLabel.textContent = "Start Time";
       }
-  
+
       const allExperienceOptionDivs = [
           elements.wynwoodNightOptions,
           elements.waterSkyOptions
       ];
-  
+
       allExperienceOptionDivs.forEach(el => el?.classList.add("hidden"));
-  
+
       if (showCuratedExperience && elements.experienceOptionsContainer) {
           if (selectedValue === "wynwood_night" && elements.wynwoodNightOptions) {
               console.log("Displaying Wynwood Night Art & Club Options");
@@ -469,11 +469,11 @@ const config = {
               }
           }
       }
-  
+
       resetSubmitButton(elements);
       clearAllErrors(elements);
   }
-  
+
   function switchTab(targetPanelId, elements, placeholders) {
       elements.formTabPanels?.forEach(panel => panel.classList.add("hidden"));
       elements.tabNavigationButtons?.forEach(button => {
@@ -481,63 +481,63 @@ const config = {
           button.setAttribute("aria-selected", "false");
           button.removeAttribute("tabindex");
       });
-  
+
       const targetPanel = document.querySelector(targetPanelId);
       const targetButton = elements.tabNavigationContainer?.querySelector(`[data-tab-target="${targetPanelId}"]`);
       let firstFocusableElement = null;
-  
+
       if (targetPanel) {
           targetPanel.classList.remove("hidden");
           firstFocusableElement = targetPanel.querySelector("input:not([type=\"hidden\"]):not(.sr-only):not(:disabled), select:not(:disabled), textarea:not(:disabled), button:not([disabled])");
       }
-  
+
       if (targetButton) {
           targetButton.classList.add("active-tab");
           targetButton.setAttribute("aria-selected", "true");
           targetButton.setAttribute("tabindex", "0");
       }
-  
+
       setTimeout(() => {
           resetSubmitButton(elements);
       }, 100);
-  
+
       setTimeout(() => {
           if (firstFocusableElement) {
               firstFocusableElement.focus();
           }
       }, 50);
-  
+
       clearAllErrors(elements);
   }
-  
+
   // --- Form Validation (Adapted from generated code) ---
   function validateForm(elements) {
       let isValid = true;
       const activeTabButton = elements.tabNavigationContainer?.querySelector(".active-tab");
       const activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
-  
+
       clearError("from-location");
       if (!elements.fromLocationInput?.value.trim()) {
         showError(elements, "from-location", "Please enter a \"From\" location.");
         isValid = false;
       }
-  
+
       if (activePanelId === "#panel-oneway") {
         clearError("to-address");
         clearError("pickup-date-oneway");
         clearError("pickup-time-oneway");
         clearError("vehicle_type_oneway");
-  
+
         if (!elements.toAddressInput?.value.trim()) { showError(elements, "to-address", "Please enter a \"To\" address."); isValid = false; }
         if (!elements.oneWayPickupDateInput?.value) { showError(elements, "pickup-date-oneway", "Please select a date."); isValid = false; }
         if (!elements.oneWayPickupTimeInput?.value) { showError(elements, "pickup-time-oneway", "Please select a time."); isValid = false; }
-  
+
         const vehicleSelectedOneway = document.querySelector("input[name=\"vehicle_type_oneway\"]:checked");
         if (!vehicleSelectedOneway) {
             showError(elements, "vehicle_type_oneway", "Please select a vehicle type.");
             isValid = false;
         }
-  
+
       } else if (activePanelId === "#panel-experience-plus") {
          const selectedService = elements.serviceDropdown.value;
          clearError("experience-dropdown");
@@ -573,7 +573,7 @@ const config = {
            }
            const datePrefSelected = document.querySelector("input[name=\"date_preference\"]:checked");
            if (!datePrefSelected) { showError(elements, "date_preference", "Please select timing preference."); isValid = false; }
-  
+
            if (selectedService === "wynwood_night") {
              clearError("motivation");
              clearError("dinner_style_preference");
@@ -598,10 +598,10 @@ const config = {
         isValid = false;
         console.error("No active tab panel identified for validation.");
       }
-  
+
       return isValid;
   }
-  
+
   // --- Form Data Processing (Adapted from generated code) ---
   function processFormData(elements) {
       const formData = new FormData(elements.bookingForm);
@@ -609,9 +609,9 @@ const config = {
       const activeTabButton = elements.tabNavigationContainer?.querySelector(".active-tab");
       const activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
       const dataObject = {};
-  
+
       dataObject.from_location = formData.get("from-location")?.trim();
-  
+
       if (activePanelId === "#panel-oneway") {
         serviceType = "One-Way";
         dataObject.type = "one-way";
@@ -626,12 +626,12 @@ const config = {
         if (formData.has("isDropoffAirportOneWay")) dataObject.isDropoffAirport = formData.get("isDropoffAirportOneWay") === "true";
         if (formData.has("dropoff-type")) dataObject.dropoff_type = formData.get("dropoff-type");
         if (formData.has("dropoff-notes")) dataObject.dropoff_notes = formData.get("dropoff-notes")?.trim();
-  
+
       } else if (activePanelId === "#panel-experience-plus") {
         const selectedServiceValue = formData.get("experience-dropdown");
         const selectedServiceText = elements.serviceDropdown.options[elements.serviceDropdown.selectedIndex]?.text || selectedServiceValue;
         dataObject.service_name = selectedServiceText;
-  
+
         if (selectedServiceValue === "hourly_chauffeur") {
           serviceType = "Hourly";
           dataObject.type = "hourly";
@@ -642,7 +642,7 @@ const config = {
           if (formData.has("isPickupAirportHourly")) dataObject.isPickupAirport = formData.get("isPickupAirportHourly") === "true";
           if (formData.has("pickup-type-hourly")) dataObject.pickup_type = formData.get("pickup-type-hourly");
           if (formData.has("pickup-notes-hourly")) dataObject.pickup_notes = formData.get("pickup-notes-hourly")?.trim();
-  
+
         } else { // Curated Experience
           serviceType = "Experience";
           dataObject.type = "experience";
@@ -651,7 +651,7 @@ const config = {
           dataObject.name = formData.get("name")?.trim();
           dataObject.email = formData.get("email")?.trim();
           dataObject.phone = formData.get("phone")?.trim();
-  
+
           if (selectedServiceValue === "wynwood_night") {
             dataObject.motivation = formData.get("motivation");
             dataObject.dinner_style_preference = formData.get("dinner_style_preference");
@@ -662,7 +662,7 @@ const config = {
           }
         }
       }
-  
+
       // Clean up empty/null values
       Object.keys(dataObject).forEach(key => {
            if (dataObject[key] === null || dataObject[key] === undefined || dataObject[key] === "") {
@@ -673,12 +673,12 @@ const config = {
              }
            }
       });
-  
+
       console.log("Final Data Object for Submission:", dataObject);
       return dataObject;
   }
-  
-  
+
+
   // --- Form Submission (KEEP YOUR ORIGINAL QUOTE LOGIC) ---
   async function submitQuoteRequest(data) {
       const resultsArea = document.getElementById("quote-results-area");
@@ -691,47 +691,47 @@ const config = {
       // Add back any other quote-specific elements you need to update
       // const pickupTypeRow = document.getElementById("pickup-type-row");
       // ... etc ...
-  
+
       // Determine the correct submit button based on the data type passed
       const activeSubmitButton = data.type === "one-way"
           ? document.querySelector("#panel-oneway button[type=\"submit\"]") // More specific selector if needed
           : (data.type === "hourly" ? document.querySelector("#panel-experience-plus button[type=\"submit\"]") : null); // Adjust if experience has own button
-  
+
        // Check if elements exist
        if ( !resultsArea || !loadingIndicator || !errorDisplay || !quoteDetailsDisplay || !priceDisplay || !distanceDisplay || !durationDisplay /* || !pickupTypeRow etc... */ ) {
            console.error("Quote UI elements missing!");
            if (activeSubmitButton) { resetSubmitButton(getElementRefs()); } // Reset button if UI fails
            return;
        }
-  
+
        // Show loading state
        resultsArea.style.display = "block";
        quoteDetailsDisplay.style.display = "none";
        loadingIndicator.style.display = "block";
        errorDisplay.textContent = "";
-  
+
        const endpoint = "/.netlify/functions/whatsapp-webhook"; // Your endpoint
        console.log(`Sending QUOTE data to endpoint: ${endpoint}`);
        console.log("QUOTE Data being sent:", data);
-  
+
        try {
            const response = await fetch(endpoint, {
                method: "POST", headers: { "Content-Type": "application/json", }, body: JSON.stringify(data),
            });
            const result = await response.json();
            if (!response.ok) { throw new Error(result.message || `Request failed with status ${response.status}`); }
-  
+
            console.log("Received QUOTE response from server:", result);
-  
+
            // --- Display SUCCESS results in HTML ---
            priceDisplay.textContent = result.price || "N/A";
            distanceDisplay.textContent = result.distance || "---";
            durationDisplay.textContent = result.duration || "N/A";
            // Update any other quote-specific fields based on "result"
            // e.g., if (result.isPickupAirport) { ... }
-  
+
            quoteDetailsDisplay.style.display = "block"; // Show the quote details
-  
+
        } catch (error) {
            console.error(`Error submitting quote request:`, error);
            errorDisplay.textContent = error.message || `An unknown error occurred getting the quote.`;
@@ -742,7 +742,7 @@ const config = {
            resetSubmitButton(getElementRefs()); // Use the general reset function
        }
   }
-  
+
   // --- Event Listener Setup (Combined & Updated) ---
   function initializeEventListeners(elements, placeholders, config) {
        // Listener for tab clicks
@@ -752,10 +752,10 @@ const config = {
                switchTab(button.dataset.tabTarget, elements, placeholders);
            }
        });
-  
+
        // Listener for experience dropdown changes
        elements.serviceDropdown?.addEventListener("change", () => updateExperiencePlusPanelUI(elements, placeholders));
-  
+
        // Add listeners to clear errors on input/change for standard fields
        elements.bookingForm?.querySelectorAll("input:not([type=\"radio\"]), select, textarea").forEach(input => {
            let targetId = input.id || input.name;
@@ -764,7 +764,7 @@ const config = {
             input.addEventListener(eventType, () => clearError(targetId));
             input.addEventListener("blur", () => clearError(targetId));
        });
-  
+
        // Add listeners to clear errors for specific radio groups (excluding vehicle cards)
        ["dinner_style_preference", "motivation", "lounge_interest", "date_preference"].forEach(name => {
            document.querySelectorAll(`input[name="${name}"]`).forEach(radio => {
@@ -776,7 +776,7 @@ const config = {
                });
            });
        });
-  
+
         // Add listener for vehicle card selection (clears the group error on change)
         const vehicleCardRadios = document.querySelectorAll(".vehicle-card input[type=\"radio\"][name=\"vehicle_type_oneway\"]");
         vehicleCardRadios.forEach(radio => {
@@ -784,18 +784,18 @@ const config = {
                 clearError("vehicle_type_oneway");
             });
         });
-  
+
        // Listener for the MAIN form submission
        elements.bookingForm?.addEventListener("submit", (event) => {
            event.preventDefault();
            clearAllErrors(elements);
-  
+
            const activeTabButton = elements.tabNavigationContainer?.querySelector(".active-tab");
            const activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
-  
+
            if (validateForm(elements)) {
                const data = processFormData(elements);
-  
+
                // Decide action based on tab/service
                if (activePanelId === "#panel-oneway") {
                    // One-Way always gets a quote first
@@ -830,7 +830,7 @@ const config = {
                showError(elements, "submit-button", "Please review the errors above.");
            }
        });
-  
+
         // Accessibility Boost: Set aria-checked dynamically for vehicle cards
         vehicleCardRadios.forEach(radio => {
             radio.setAttribute("aria-checked", radio.checked ? "true" : "false");
@@ -840,72 +840,75 @@ const config = {
                 });
             });
         });
-  
+
        console.log("Event listeners initialized.");
     }
-  
-  // --- NEW: Load Google Maps API Script Dynamically ---
-  async function loadGoogleMapsScript() {
-    console.log("Attempting to load Google Maps script...");
-    try {
-      const response = await fetch("/.netlify/functions/get-maps-key");
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to fetch API key (Status: ${response.status})`);
-      }
-      const data = await response.json();
-      const apiKey = data.apiKey;
-  
-      if (!apiKey) {
-        throw new Error("API key not received from Netlify function.");
-      }
-  
-      // Check if script already exists (e.g., due to fast refresh/HMR)
-      if (document.getElementById("google-maps-script")) {
-          console.log("Google Maps script tag already exists.");
-          // If it exists but google.maps isn"t loaded, might need to re-trigger init
-          if (typeof google === "undefined" || typeof google.maps === "undefined") {
-              console.warn("Script tag exists but google.maps not loaded. Re-attempting callback trigger might be needed or check script URL.");
-          } else {
-               // If script exists AND google.maps is loaded, maybe initAutocomplete wasn"t called?
-               // Or maybe it"s fine. Let"s assume the callback worked.
-               console.log("google.maps seems loaded.");
-          }
-          return; // Don"t load again
-      }
-  
-  
-      const script = document.createElement("script");
-      script.id = "google-maps-script"; // Add an ID to prevent duplicates
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initAutocomplete`;
-      script.async = true;
-      script.defer = true;
-      script.onerror = () => {
-          console.error("Error loading the Google Maps script.");
-          // Display error to user
-          showError(getElementRefs(), "from-location", "Address lookup service failed to load. Check console.");
-          showError(getElementRefs(), "to-address", "Address lookup service failed to load. Check console.");
-      };
-      document.head.appendChild(script);
-      console.log("Google Maps script tag added to head.");
-  
-    } catch (error) {
-      console.error("Error loading Google Maps script:", error);
-      // Display a user-friendly error message on the page
-       showError(getElementRefs(), "from-location", `Map service error: ${error.message}`);
-       showError(getElementRefs(), "to-address", `Map service error: ${error.message}`);
+
+  // --- Dynamic Google Maps API Script Loading ---
+async function loadGoogleMapsScript() {
+  console.log("Attempting to load Google Maps script...");
+  try {
+    // Securely fetch the API key from the server-side function
+    const response = await fetch("/.netlify/functions/get-maps-key");
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `Failed to fetch API key (Status: ${response.status})`);
     }
+    const data = await response.json();
+    const apiKey = data.apiKey;
+
+    if (!apiKey) {
+      throw new Error("API key not received from Netlify function.");
+    }
+
+    // Check if script already exists to prevent duplicate loading
+    if (document.getElementById("google-maps-script")) {
+      console.log("Google Maps script tag already exists.");
+      // If script exists but Google Maps isn't loaded, log a warning
+      if (typeof google === "undefined" || typeof google.maps === "undefined") {
+        console.warn("Script tag exists but Google Maps not loaded. Check script URL or wait for loading to complete.");
+      } else {
+        console.log("Google Maps API is already loaded.");
+      }
+      return; // Don't load again
+    }
+
+    // Create and configure the script element
+    const script = document.createElement("script");
+    script.id = "google-maps-script";
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initAutocomplete&libraries=places`;
+    script.async = true;
+    script.defer = true;
+
+    // Add error handling for script loading failures
+    script.onerror = () => {
+      console.error("Error loading the Google Maps script.");
+      // Display user-friendly error messages
+      showError(getElementRefs(), "from-location", "Address lookup service failed to load. Please refresh the page.");
+      showError(getElementRefs(), "to-address", "Address lookup service failed to load. Please refresh the page.");
+    };
+
+    // Inject the script into the document head
+    document.head.appendChild(script);
+    console.log("Google Maps script tag added to head with secure API key.");
+
+  } catch (error) {
+    console.error("Error loading Google Maps script:", error);
+    // Display user-friendly error messages
+    showError(getElementRefs(), "from-location", `Map service error: ${error.message}`);
+    showError(getElementRefs(), "to-address", `Map service error: ${error.message}`);
   }
-  
+}
+
   // --- Validation and Redirection Logic ---
   function validateAndEnableButton(elements) {
     const fromLocation = elements.fromLocationInput?.value.trim();
     const toAddress = elements.toAddressInput?.value.trim();
     const vehicleSelected = document.querySelector('input[name="vehicle_type_oneway"]:checked');
     const bookingPreference = elements.bookingPreferenceInput?.value;
-  
+
     const isValid = fromLocation && toAddress && vehicleSelected && bookingPreference;
-  
+
     const submitButton = elements.submitButton;
     if (isValid) {
       submitButton.disabled = false;
@@ -917,7 +920,7 @@ const config = {
       submitButton.classList.remove('bg-[--color-gold]', 'hover:bg-[--color-gold-dark]');
     }
   }
-  
+
   function initializeValidationListeners(elements) {
     const fieldsToValidate = [
       elements.fromLocationInput,
@@ -925,13 +928,13 @@ const config = {
       elements.bookingPreferenceInput,
       ...document.querySelectorAll('input[name="vehicle_type_oneway"]'),
     ];
-  
+
     fieldsToValidate.forEach(field => {
       field?.addEventListener('input', () => validateAndEnableButton(elements));
       field?.addEventListener('change', () => validateAndEnableButton(elements));
     });
   }
-  
+
   function redirectToSummaryPage(elements) {
     const fromLocation = elements.fromLocationInput?.value.trim();
     const toAddress = elements.toAddressInput?.value.trim();
@@ -939,7 +942,7 @@ const config = {
     const bookingPreference = elements.bookingPreferenceInput?.value;
     const pickupDate = elements.oneWayPickupDateInput?.value || '';
     const pickupTime = elements.oneWayPickupTimeInput?.value || '';
-  
+
     const queryParams = new URLSearchParams({
       from: fromLocation,
       to: toAddress,
@@ -948,183 +951,35 @@ const config = {
       date: pickupDate,
       time: pickupTime,
     });
-  
+
     window.location.href = `/summary.html?${queryParams.toString()}`;
   }
-  
+
   // --- Main Execution ---
   document.addEventListener("DOMContentLoaded", () => {
       console.log("DOM fully loaded and parsed.");
       const elementRefs = getElementRefs(); // Get refs early for potential error display
-  
+
       if (!elementRefs.bookingForm) {
           console.error("Booking form (#booking-form) not found. Script initialization incomplete.");
           return; // Stop if form isn"t found
       }
-  
+
       // Load the Google Maps script. The callback "initAutocomplete" will handle the rest.
       loadGoogleMapsScript();
-  
+
       // NOTE: initializeFlatpickr and initializeEventListeners are now called *inside* initAutocomplete
       // because they depend on elements that might be manipulated or need Maps API features.
-  
+
       // Add validation listeners
       initializeValidationListeners(elementRefs);
-  
+
       // Add redirection logic on form submission
       elementRefs.bookingForm?.addEventListener('submit', (event) => {
         event.preventDefault();
         redirectToSummaryPage(elementRefs);
       });
   });
-  
+
   // Make initAutocomplete globally accessible for the Maps API callback
   window.initAutocomplete = initAutocomplete;
-
-document.addEventListener("DOMContentLoaded", () => {
-    // References to UI elements
-    const elements = {
-        tabNavigationContainer: document.getElementById("tab-navigation"),
-        tabButtons: document.querySelectorAll(".tab-button"),
-        tabPanels: document.querySelectorAll(".tab-panel"),
-        submitButton: document.getElementById("submit-button"),
-        submitButtonText: document.getElementById("submit-button-text"),
-        serviceDropdown: document.getElementById("service-dropdown"),
-        bookingForm: document.getElementById("booking-form"),
-    };
-
-    /**
-     * Switches to the specified tab and updates the UI accordingly.
-     * @param {string} targetPanelId - The ID of the target tab panel.
-     */
-    function switchTab(targetPanelId) {
-        // Hide all tab panels and reset tab buttons
-        elements.tabPanels.forEach(panel => panel.classList.add("hidden"));
-        elements.tabButtons.forEach(button => {
-            button.classList.remove("active-tab");
-            button.setAttribute("aria-selected", "false");
-        });
-
-        // Show the target panel and set the active tab button
-        const targetPanel = document.querySelector(targetPanelId);
-        const targetButton = elements.tabNavigationContainer.querySelector(`[data-tab-target="${targetPanelId}"]`);
-
-        if (targetPanel) {
-            targetPanel.classList.remove("hidden");
-        }
-
-        if (targetButton) {
-            targetButton.classList.add("active-tab");
-            targetButton.setAttribute("aria-selected", "true");
-        }
-
-        // Manage required fields and update the submit button text
-        manageRequiredFields(targetPanelId);
-        resetSubmitButton();
-    }
-
-    /**
-     * Dynamically updates the submit button text based on the active tab and selected values.
-     */
-    function resetSubmitButton(elements) {
-        if (!elements.submitButton || !elements.submitButtonText) {
-            console.error("Submit button or button text element is not defined.");
-            return;
-        }
-
-        const activeTabButton = elements.tabNavigationContainer?.querySelector(".active-tab");
-        const activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
-
-        console.log("Active Panel ID:", activePanelId);
-
-        if (activePanelId === "#panel-oneway") {
-            console.log("Setting button text to 'Continue' for 'One Way' tab.");
-            elements.submitButtonText.textContent = "Continue";
-            return;
-        }
-
-        const text = determineButtonText(activePanelId);
-        console.log("Setting button text to:", text);
-        elements.submitButtonText.textContent = text;
-    }
-
-    /**
-     * Determines the appropriate button text based on the active tab and selected values.
-     * @param {string} activePanelId - The ID of the active tab panel.
-     * @returns {string} - The button text.
-     */
-    function determineButtonText(activePanelId) {
-        if (activePanelId === "#panel-experience-plus") {
-            const selectedService = elements.serviceDropdown?.value || "";
-            if (selectedService === "hourly_chauffeur") return "Request Hourly Service";
-            if (selectedService) return "Request Experience";
-            return "Select Service";
-        }
-        return "Submit";
-    }
-
-    /**
-     * Manages the `required` attributes of form fields based on the active tab.
-     * @param {string} activePanelId - The ID of the active tab panel.
-     */
-    function manageRequiredFields(activePanelId) {
-        elements.tabPanels.forEach(panel => {
-            const inputs = panel.querySelectorAll("input, select, textarea");
-            inputs.forEach(input => {
-                if (panel.id === activePanelId.replace("#", "")) {
-                    input.removeAttribute("disabled");
-                    input.setAttribute("required", true);
-                } else {
-                    input.setAttribute("disabled", true);
-                    input.removeAttribute("required");
-                }
-            });
-        });
-    }
-
-    /**
-     * Validates the form inputs based on the active tab.
-     * @returns {boolean} - Whether the form is valid.
-     */
-    function validateForm() {
-        const activeTabButton = elements.tabNavigationContainer.querySelector(".active-tab");
-        const activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
-
-        let isValid = true;
-        const activePanel = document.querySelector(activePanelId);
-        const inputs = activePanel.querySelectorAll("input, select, textarea");
-
-        inputs.forEach(input => {
-            if (!input.checkValidity()) {
-                isValid = false;
-                input.classList.add("ring-red-500");
-            } else {
-                input.classList.remove("ring-red-500");
-            }
-        });
-
-        return isValid;
-    }
-
-    // Event listeners
-    elements.tabNavigationContainer.addEventListener("click", event => {
-        const button = event.target.closest(".tab-button");
-        if (button && button.dataset.tabTarget) {
-            switchTab(button.dataset.tabTarget);
-        }
-    });
-
-    elements.serviceDropdown?.addEventListener("change", resetSubmitButton);
-
-    elements.bookingForm?.addEventListener("submit", event => {
-        event.preventDefault();
-        if (validateForm()) {
-            alert("Form submitted successfully!");
-        } else {
-            alert("Please correct the errors in the form.");
-        }
-    });
-
-    // Initialize the first tab
-    switchTab("#panel-oneway");
-});
