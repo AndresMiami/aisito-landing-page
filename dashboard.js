@@ -189,8 +189,10 @@ const config = {
   }
   
   function resetSubmitButton(elements) {
-      const submitButton = elements.submitButton || document.querySelector("#submit-button");
-      if (!submitButton || !elements.submitButtonText) {
+      const submitButton = elements?.submitButton || document.getElementById("submit-button");
+      const submitButtonText = elements?.submitButtonText || submitButton?.querySelector(".button-text");
+  
+      if (!submitButton || !submitButtonText) {
           console.error("Submit button or button text element is not defined.");
           return;
       }
@@ -205,13 +207,13 @@ const config = {
   
       if (activePanelId === "#panel-oneway") {
           console.log("Setting button text to 'Continue' for 'One Way' tab.");
-          elements.submitButtonText.textContent = "Continue";
+          submitButtonText.textContent = "Continue";
           return;
       }
   
       const text = determineButtonText(elements);
       console.log("Setting button text to:", text);
-      elements.submitButtonText.textContent = text;
+      submitButtonText.textContent = text;
   }
   
   function determineButtonText(elements) {
