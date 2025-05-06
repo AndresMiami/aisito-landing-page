@@ -5,7 +5,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:css": "tailwindcss -i ./src/styles/tailwind.css -o ./dist/tailwind.css",
-    "build": "npm run build:css"
+    "watch:css": "tailwindcss -i ./src/styles/tailwind.css -o ./dist/tailwind.css --watch",
+    "build": "npm run build:css",
+    "dev": "npm run watch:css"
   },
   "repository": {
     "type": "git",
@@ -29,3 +31,4 @@
   },
   "description": ""
 }
+
