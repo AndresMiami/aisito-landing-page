@@ -101,86 +101,31 @@ const config = {
   // --- Helper Functions (Error Handling, Button State - from generated code) ---
   
   function showError(elements, fieldId, message) {
-      const errorSpanId = `${fieldId}-error`;
-      const errorSpan = document.getElementById(errorSpanId);
-      const inputElement = document.getElementById(fieldId);
-      let labelText = fieldId;
-  
-      // Special handling for the vehicle radio button group validation message
-      if (fieldId === "vehicle_type_oneway") {
-         labelText = "Vehicle Type";
-         const fieldset = document.querySelector("#vehicle-selection-oneway fieldset");
-         const fieldsetErrorSpan = fieldset ? fieldset.querySelector("#vehicle-type-oneway-error") : null;
-         if (fieldsetErrorSpan) {
-             fieldsetErrorSpan.textContent = message;
-             fieldsetErrorSpan.classList.remove("hidden");
-         }
-         if (fieldset) {
-             fieldset.classList.add("ring-red-500", "ring-1", "rounded-md", "p-1"); // Add styling to fieldset
-         }
-         return;
-      }
-  
-      const labelElement = document.querySelector(`label[for="${fieldId}"]`) || document.getElementById(`${fieldId}-label`);
-      if (labelElement) { labelText = labelElement.textContent.replace("*", "").trim(); }
-      else if (fieldId === "date_preference") labelText = "Preferred Timing";
-      else if (fieldId === "motivation") labelText = "Occasion";
-      else if (fieldId === "dinner_style_preference") labelText = "Dinner Preference";
-      else if (fieldId === "lounge_interest") labelText = "Lounge Interest";
-      else if (fieldId === "wynwood-other-restaurant") labelText = "Other Cuisine / Restaurant Request";
-  
-      const fullMessage = `${labelText}: ${message}`;
-  
-      if (errorSpan) {
-        errorSpan.textContent = fullMessage;
+    const errorSpan = document.getElementById(`${fieldId}-error`);
+    const inputElement = document.getElementById(fieldId);
+
+    if (errorSpan) {
+        errorSpan.textContent = message;
         errorSpan.classList.remove("hidden");
-      } else { console.warn(`Error span not found for ID: ${errorSpanId}`); }
-  
-      if (inputElement && ["INPUT", "SELECT", "TEXTAREA"].includes(inputElement.tagName)) {
+    }
+    if (inputElement) {
         inputElement.classList.add("ring-red-500", "ring-1");
-        inputElement.setAttribute("aria-invalid", "true");
-        let describedBy = inputElement.getAttribute("aria-describedby") || "";
-        if (!describedBy.includes(errorSpanId)) {
-             inputElement.setAttribute("aria-describedby", describedBy ? `${describedBy} ${errorSpanId}` : errorSpanId);
-        }
-      }
+    }
   }
-  
+
   function clearError(fieldId) {
-      const errorSpanId = `${fieldId}-error`;
-      const errorSpan = document.getElementById(errorSpanId);
-      const inputElement = document.getElementById(fieldId);
-  
-      if (fieldId === "vehicle_type_oneway") {
-          const fieldset = document.querySelector("#vehicle-selection-oneway fieldset");
-          const fieldsetErrorSpan = fieldset ? fieldset.querySelector("#vehicle-type-oneway-error") : null;
-          if (fieldsetErrorSpan) {
-              fieldsetErrorSpan.textContent = "";
-              fieldsetErrorSpan.classList.add("hidden");
-          }
-          if (fieldset) {
-              fieldset.classList.remove("ring-red-500", "ring-1", "rounded-md", "p-1");
-          }
-          return;
-      }
-  
-      if (errorSpan) { errorSpan.textContent = ""; errorSpan.classList.add("hidden"); }
-  
-      if (inputElement && ["INPUT", "SELECT", "TEXTAREA"].includes(inputElement.tagName)) {
+    const errorSpan = document.getElementById(`${fieldId}-error`);
+    const inputElement = document.getElementById(fieldId);
+
+    if (errorSpan) {
+        errorSpan.textContent = "";
+        errorSpan.classList.add("hidden");
+    }
+    if (inputElement) {
         inputElement.classList.remove("ring-red-500", "ring-1");
-        inputElement.removeAttribute("aria-invalid");
-        let describedBy = inputElement.getAttribute("aria-describedby");
-        if (describedBy) {
-            describedBy = describedBy.replace(errorSpanId, "").trim();
-            if (describedBy) {
-                inputElement.setAttribute("aria-describedby", describedBy);
-            } else {
-                inputElement.removeAttribute("aria-describedby");
-            }
-        }
-      }
+    }
   }
-  
+
   function clearAllErrors(elements) {
       const errorSpans = elements.bookingForm?.querySelectorAll("[id$=\"-error\"]");
       errorSpans?.forEach(span => { span.textContent = ""; span.classList.add("hidden"); });
@@ -193,18 +138,49 @@ const config = {
   }
   
   function determineButtonText(elements) {
-      const activeTabButton = elements.tabNavigationContainer?.querySelector(".active-tab");
-      const activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
-      console.log("Active panel ID:", activePanelId);
-      const selectedService = elements.serviceDropdown?.value || "";
+    const activeTabButton = elements.tabNavigationContainer?.querySelector(".active-tab");
+    const activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
+    const selectedService = elements.serviceDropdown?.value || "";
+
+    if (activePanelId === "#panel-oneway") return "Continue"; // Set "Continue" for the one-way tab
+    else if (activePanelId === "#panel-experience-plus") {
+        if (selectedService === "hourly_chauffeur") return "Request Hourly Service"; // For hourly chauffeur
+        else if (selectedService !== "") return "Request Experience"; // For other curated experiences
+        else return "Select Service"; // Default text if no service is selected
+    }
+    return "Submit"; // Fallback text
+  }
+
+  function resetSubmitButton(elements) {
+    if (!elements || !elements.submitButton) {
+        console.warn("Submit button is not initialized yet or elements object is undefined.");
+        return; // Exit early if the button is not ready
+    }
+    elements.submitButton.disabled = false;
+    if (elements.submitButtonSpinner) elements.submitButtonSpinner.classList.add("hidden");
+    if (elements.submitButtonText) {
+        elements.submitButtonText.textContent = determineButtonText(elements);
+        elements.submitButtonText.classList.remove("hidden");
+    }
+  }
   
-      if (activePanelId === "#panel-oneway") return "Continue";
-      else if (activePanelId === "#panel-experience-plus") {
-          if (selectedService === "hourly_chauffeur") return "Request Hourly Service";
-          else if (selectedService !== "") return "Request Experience";
-          else return "Select Service";
-      }
-      return "Submit";
+  function switchTab(targetPanelId, elements) {
+    elements.formTabPanels?.forEach(panel => panel.classList.add("hidden"));
+    elements.tabNavigationButtons?.forEach(button => {
+        button.classList.remove("active-tab");
+        button.setAttribute("aria-selected", "false");
+    });
+
+    const targetPanel = document.querySelector(targetPanelId);
+    const targetButton = elements.tabNavigationContainer?.querySelector(`[data-tab-target="${targetPanelId}"]`);
+
+    if (targetPanel) targetPanel.classList.remove("hidden");
+    if (targetButton) {
+        targetButton.classList.add("active-tab");
+        targetButton.setAttribute("aria-selected", "true");
+    }
+
+    resetSubmitButton(elements); // Update button text after switching tabs
   }
   
   // --- Airport Field Visibility (Keep from your original, ensure IDs match HTML) ---
@@ -450,373 +426,22 @@ const config = {
       clearAllErrors(elements);
   }
 
-  function resetSubmitButton(elements) {
-      if (!elements || !elements.submitButton) {
-          console.error("Submit button or elements object is undefined.");
-          return; // Exit early if the button is not initialized
-      }
-      // Proceed with enabling the button
-      elements.submitButton.disabled = false;
-      if (elements.submitButtonSpinner) elements.submitButtonSpinner.classList.add("hidden");
-      if (elements.submitButtonText) {
-          elements.submitButtonText.textContent = determineButtonText(elements);
-          elements.submitButtonText.classList.remove("hidden");
-      }
-  }
-  
-  function switchTab(targetPanelId, elements) {
-      console.log("Switching to tab:", targetPanelId);
-  
-      // Hide all panels and reset tab buttons
-      elements.formTabPanels?.forEach(panel => panel.classList.add("hidden"));
-      elements.tabNavigationButtons?.forEach(button => {
-          button.classList.remove("active-tab");
-          button.setAttribute("aria-selected", "false");
-      });
-  
-      // Show the target panel
-      const targetPanel = document.querySelector(targetPanelId);
-      if (targetPanel) {
-          targetPanel.classList.remove("hidden");
-      }
-  
-      // Reinitialize the submit button after switching tabs
-      resetSubmitButton(elements);
-  }
-  
-  // --- Form Validation (Adapted from generated code) ---
   function validateForm(elements) {
-      let isValid = true;
-      const activeTabButton = elements.tabNavigationContainer?.querySelector(".active-tab");
-      const activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
-  
-      clearError("from-location");
-      if (!elements.fromLocationInput?.value.trim()) {
-        showError(elements, "from-location", "Please enter a \"From\" location.");
+    let isValid = true;
+    clearError("from-location");
+    clearError("to-address");
+
+    if (!elements.fromLocationInput?.value.trim()) {
+        showError(elements, "from-location", "Please enter a 'From' location.");
         isValid = false;
-      }
-  
-      if (activePanelId === "#panel-oneway") {
-        clearError("to-address");
-        clearError("pickup-date-oneway");
-        clearError("pickup-time-oneway");
-        clearError("vehicle_type_oneway");
-  
-        if (!elements.toAddressInput?.value.trim()) { showError(elements, "to-address", "Please enter a \"To\" address."); isValid = false; }
-        if (!elements.oneWayPickupDateInput?.value) { showError(elements, "pickup-date-oneway", "Please select a date."); isValid = false; }
-        if (!elements.oneWayPickupTimeInput?.value) { showError(elements, "pickup-time-oneway", "Please select a time."); isValid = false; }
-  
-        const vehicleSelectedOneway = document.querySelector("input[name=\"vehicle_type_oneway\"]:checked");
-        if (!vehicleSelectedOneway) {
-            showError(elements, "vehicle_type_oneway", "Please select a vehicle type.");
-            isValid = false;
-        }
-  
-      } else if (activePanelId === "#panel-experience-plus") {
-         const selectedService = elements.serviceDropdown.value;
-         clearError("experience-dropdown");
-         if (!selectedService) {
-           showError(elements, "experience-dropdown", "Please select a Service.");
-           isValid = false;
-         } else if (selectedService === "hourly_chauffeur") {
-            clearError("duration-hourly");
-            clearError("pickup-date-hourly");
-            clearError("pickup-time-hourly");
-           if (!elements.durationSelect?.value) { showError(elements, "duration-hourly", "Please select duration."); isValid = false; }
-           if (!elements.hourlyPickupDateInput?.value) { showError(elements, "pickup-date-hourly", "Please select a date."); isValid = false; }
-           if (!elements.hourlyPickupTimeInput?.value) { showError(elements, "pickup-time-hourly", "Please select a start time."); isValid = false; }
-         } else {
-            clearError("experience-name");
-            clearError("experience-guests");
-            clearError("experience-email");
-            clearError("experience-phone");
-            clearError("date_preference");
-           if (!elements.experienceNameInput?.value.trim()) { showError(elements, "experience-name", "Name required."); isValid = false; }
-           if (!elements.experienceGuestsInput?.value || parseInt(elements.experienceGuestsInput.value, 10) < 1) { showError(elements, "experience-guests", "Min 1 guest."); isValid = false; }
-           if (!elements.experienceEmailInput?.value.trim()) {
-              showError(elements, "experience-email", "Email required."); isValid = false;
-           } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(elements.experienceEmailInput.value.trim())) {
-              showError(elements, "experience-email", "Invalid email format."); isValid = false;
-           }
-           if (!elements.experiencePhoneInput?.value.trim()) {
-               showError(elements, "experience-phone", "Phone required.");
-               isValid = false;
-           } else if (!/^\+?[\d\s()-]{10,20}$/.test(elements.experiencePhoneInput.value) || !/[\d]{10}/.test(elements.experiencePhoneInput.value.replace(/\D/g, ""))) {
-             showError(elements, "experience-phone", "Invalid phone format (minimum 10 digits).");
-             isValid = false;
-           }
-           const datePrefSelected = document.querySelector("input[name=\"date_preference\"]:checked");
-           if (!datePrefSelected) { showError(elements, "date_preference", "Please select timing preference."); isValid = false; }
-  
-           if (selectedService === "wynwood_night") {
-             clearError("motivation");
-             clearError("dinner_style_preference");
-             clearError("lounge_interest");
-             clearError("wynwood-other-restaurant");
-             const motivationSelected = document.querySelector("#wynwood-night-options input[name=\"motivation\"]:checked");
-             const dinnerPrefSelected = document.querySelector("#wynwood-night-options input[name=\"dinner_style_preference\"]:checked");
-             const loungeSelected = document.querySelector("#wynwood-night-options input[name=\"lounge_interest\"]:checked");
-             if (!motivationSelected) { showError(elements, "motivation", "Occasion required."); isValid = false; }
-             if (!dinnerPrefSelected) { showError(elements, "dinner_style_preference", "Dinner preference required."); isValid = false; }
-               if (elements.wynwoodOtherDinnerRadio?.checked) {
-                   const otherRestaurantInput = document.getElementById("wynwood-other-restaurant");
-                   if (!otherRestaurantInput?.value.trim()) {
-                       showError(elements, "wynwood-other-restaurant", "Please specify other preference.");
-                       isValid = false;
-                   }
-               }
-             if (!loungeSelected) { showError(elements, "lounge_interest", "Lounge interest required."); isValid = false; }
-           }
-         }
-      } else {
-        isValid = false;
-        console.error("No active tab panel identified for validation.");
-      }
-  
-      return isValid;
-  }
-  
-  // --- Form Data Processing (Adapted from generated code) ---
-  function processFormData(elements) {
-      const formData = new FormData(elements.bookingForm);
-      let serviceType = "";
-      const activeTabButton = elements.tabNavigationContainer?.querySelector(".active-tab");
-      const activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
-      const dataObject = {};
-  
-      dataObject.from_location = formData.get("from-location")?.trim();
-  
-      if (activePanelId === "#panel-oneway") {
-        serviceType = "One-Way";
-        dataObject.type = "one-way";
-        dataObject.to_location = formData.get("to-address")?.trim();
-        dataObject.pickup_date = formData.get("pickup-date-oneway");
-        dataObject.pickup_time = formData.get("pickup-time-oneway");
-        dataObject.vehicle_type = formData.get("vehicle_type_oneway");
-        // Add airport details if they exist
-        if (formData.has("isPickupAirportOneWay")) dataObject.isPickupAirport = formData.get("isPickupAirportOneWay") === "true";
-        if (formData.has("pickup-type")) dataObject.pickup_type = formData.get("pickup-type");
-        if (formData.has("pickup-notes")) dataObject.pickup_notes = formData.get("pickup-notes")?.trim();
-        if (formData.has("isDropoffAirportOneWay")) dataObject.isDropoffAirport = formData.get("isDropoffAirportOneWay") === "true";
-        if (formData.has("dropoff-type")) dataObject.dropoff_type = formData.get("dropoff-type");
-        if (formData.has("dropoff-notes")) dataObject.dropoff_notes = formData.get("dropoff-notes")?.trim();
-  
-      } else if (activePanelId === "#panel-experience-plus") {
-        const selectedServiceValue = formData.get("experience-dropdown");
-        const selectedServiceText = elements.serviceDropdown.options[elements.serviceDropdown.selectedIndex]?.text || selectedServiceValue;
-        dataObject.service_name = selectedServiceText;
-  
-        if (selectedServiceValue === "hourly_chauffeur") {
-          serviceType = "Hourly";
-          dataObject.type = "hourly";
-          dataObject.duration_hours = formData.get("duration-hourly");
-          dataObject.pickup_date = formData.get("pickup-date-hourly");
-          dataObject.pickup_time = formData.get("pickup-time-hourly");
-          // Add airport details if they exist
-          if (formData.has("isPickupAirportHourly")) dataObject.isPickupAirport = formData.get("isPickupAirportHourly") === "true";
-          if (formData.has("pickup-type-hourly")) dataObject.pickup_type = formData.get("pickup-type-hourly");
-          if (formData.has("pickup-notes-hourly")) dataObject.pickup_notes = formData.get("pickup-notes-hourly")?.trim();
-  
-        } else { // Curated Experience
-          serviceType = "Experience";
-          dataObject.type = "experience";
-          dataObject.date_preference = formData.get("date_preference");
-          dataObject.guests = formData.get("guests");
-          dataObject.name = formData.get("name")?.trim();
-          dataObject.email = formData.get("email")?.trim();
-          dataObject.phone = formData.get("phone")?.trim();
-  
-          if (selectedServiceValue === "wynwood_night") {
-            dataObject.motivation = formData.get("motivation");
-            dataObject.dinner_style_preference = formData.get("dinner_style_preference");
-            if (formData.get("dinner_style_preference") === "Other") {
-              dataObject.other_restaurant_request = formData.get("other_restaurant_request")?.trim();
-            }
-            dataObject.lounge_interest = formData.get("lounge_interest");
-          }
-        }
-      }
-  
-      // Clean up empty/null values
-      Object.keys(dataObject).forEach(key => {
-           if (dataObject[key] === null || dataObject[key] === undefined || dataObject[key] === "") {
-             if (key === "other_restaurant_request" && dataObject.dinner_style_preference !== "Other") {
-                 delete dataObject[key];
-             } else if (key !== "other_restaurant_request") {
-                delete dataObject[key];
-             }
-           }
-      });
-  
-      console.log("Final Data Object for Submission:", dataObject);
-      return dataObject;
-  }
-  
-  
-  // --- Form Submission (KEEP YOUR ORIGINAL QUOTE LOGIC) ---
-  async function submitQuoteRequest(data) {
-      const resultsArea = document.getElementById("quote-results-area");
-      const loadingIndicator = document.getElementById("loading-indicator");
-      const errorDisplay = document.getElementById("quote-error");
-      const quoteDetailsDisplay = document.getElementById("quote-details");
-      const priceDisplay = document.getElementById("quote-price");
-      const distanceDisplay = document.getElementById("quote-distance");
-      const durationDisplay = document.getElementById("quote-duration");
-      // Add back any other quote-specific elements you need to update
-      // const pickupTypeRow = document.getElementById("pickup-type-row");
-      // ... etc ...
-  
-      // Determine the correct submit button based on the data type passed
-      const activeSubmitButton = data.type === "one-way"
-          ? document.querySelector("#panel-oneway button[type=\"submit\"]") // More specific selector if needed
-          : (data.type === "hourly" ? document.querySelector("#panel-experience-plus button[type=\"submit\"]") : null); // Adjust if experience has own button
-  
-       // Check if elements exist
-       if ( !resultsArea || !loadingIndicator || !errorDisplay || !quoteDetailsDisplay || !priceDisplay || !distanceDisplay || !durationDisplay /* || !pickupTypeRow etc... */ ) {
-           console.error("Quote UI elements missing!");
-           if (activeSubmitButton) { resetSubmitButton(getElementRefs()); } // Reset button if UI fails
-           return;
-       }
-  
-       // Show loading state
-       resultsArea.style.display = "block";
-       quoteDetailsDisplay.style.display = "none";
-       loadingIndicator.style.display = "block";
-       errorDisplay.textContent = "";
-  
-       const endpoint = "/.netlify/functions/whatsapp-webhook"; // Your endpoint
-       console.log(`Sending QUOTE data to endpoint: ${endpoint}`);
-       console.log("QUOTE Data being sent:", data);
-  
-       try {
-           const response = await fetch(endpoint, {
-               method: "POST", headers: { "Content-Type": "application/json", }, body: JSON.stringify(data),
-           });
-           const result = await response.json();
-           if (!response.ok) { throw new Error(result.message || `Request failed with status ${response.status}`); }
-  
-           console.log("Received QUOTE response from server:", result);
-  
-           // --- Display SUCCESS results in HTML ---
-           priceDisplay.textContent = result.price || "N/A";
-           distanceDisplay.textContent = result.distance || "---";
-           durationDisplay.textContent = result.duration || "N/A";
-           // Update any other quote-specific fields based on "result"
-           // e.g., if (result.isPickupAirport) { ... }
-  
-           quoteDetailsDisplay.style.display = "block"; // Show the quote details
-  
-       } catch (error) {
-           console.error(`Error submitting quote request:`, error);
-           errorDisplay.textContent = error.message || `An unknown error occurred getting the quote.`;
-           quoteDetailsDisplay.style.display = "none";
-       } finally {
-           console.log("Quote Fetch request finished.");
-           if (loadingIndicator) loadingIndicator.style.display = "none";
-           resetSubmitButton(getElementRefs()); // Use the general reset function
-       }
-  }
-  
-  // --- Event Listener Setup (Combined & Updated) ---
-  function initializeEventListeners(elements, placeholders, config) {
-       // Listener for tab clicks
-       elements.tabNavigationContainer?.addEventListener("click", (event) => {
-           const button = event.target.closest(".tab-button");
-           if (button && button.dataset.tabTarget && !button.classList.contains("active-tab")) {
-               switchTab(button.dataset.tabTarget, elements, placeholders);
-           }
-       });
-  
-       // Listener for experience dropdown changes
-       elements.serviceDropdown?.addEventListener("change", () => updateExperiencePlusPanelUI(elements, placeholders));
-  
-       // Add listeners to clear errors on input/change for standard fields
-       elements.bookingForm?.querySelectorAll("input:not([type=\"radio\"]), select, textarea").forEach(input => {
-           let targetId = input.id || input.name;
-           if (!targetId) return;
-           const eventType = (input.tagName === "INPUT" && input.type !== "number" && input.type !== "email" && input.type !== "tel") ? "input" : "change";
-            input.addEventListener(eventType, () => clearError(targetId));
-            input.addEventListener("blur", () => clearError(targetId));
-       });
-  
-       // Add listeners to clear errors for specific radio groups (excluding vehicle cards)
-       ["dinner_style_preference", "motivation", "lounge_interest", "date_preference"].forEach(name => {
-           document.querySelectorAll(`input[name="${name}"]`).forEach(radio => {
-               radio.addEventListener("change", () => {
-                   clearError(name);
-                   if (name === "dinner_style_preference" && elements.wynwoodNightOptions && !elements.wynwoodNightOptions.classList.contains("hidden")) {
-                       handleWynwoodDinnerChoice(elements);
-                   }
-               });
-           });
-       });
-  
-        // Add listener for vehicle card selection (clears the group error on change)
-        const vehicleCardRadios = document.querySelectorAll(".vehicle-card input[type=\"radio\"][name=\"vehicle_type_oneway\"]");
-        vehicleCardRadios.forEach(radio => {
-            radio.addEventListener("change", () => {
-                clearError("vehicle_type_oneway");
-            });
-        });
-  
-       // Listener for the MAIN form submission
-       elements.bookingForm?.addEventListener("submit", (event) => {
-           event.preventDefault();
-           clearAllErrors(elements);
-  
-           const activeTabButton = elements.tabNavigationContainer?.querySelector(".active-tab");
-           const activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
-  
-           if (validateForm(elements)) {
-               const data = processFormData(elements);
-  
-               // Decide action based on tab/service
-               if (activePanelId === "#panel-oneway") {
-                   // One-Way always gets a quote first
-                   setLoadingButton(elements); // Set loading state before async call
-                   submitQuoteRequest(data);
-               } else if (activePanelId === "#panel-experience-plus") {
-                   if (data.type === "hourly") { // Check type from processed data
-                       // Hourly also gets a quote first
-                       setLoadingButton(elements);
-                       submitQuoteRequest(data);
-                   } else { // Curated Experience
-                       // Submit directly (or add quote step later)
-                       console.log("Submitting Experience Request (placeholder)...");
-                       // Replace alert with actual submission logic if desired, e.g., sendFormData(data, elements, config);
-                       alert("Experience request submitted (placeholder).\nData:\n" + JSON.stringify(data, null, 2));
-                       // Potentially show confirmation message here after submission
-                       // resetSubmitButton(elements); // Reset button if no async action
-                   }
-               }
-           } else {
-               // Handle validation failure - focus first error
-               const firstErrorField = elements.bookingForm.querySelector("[aria-invalid=\"true\"], fieldset.ring-red-500 input[type=\"radio\"], fieldset.ring-red-500 input[type=\"checkbox\"]");
-               const firstFieldsetError = elements.bookingForm.querySelector("fieldset.ring-red-500");
-               let elementToFocus = firstErrorField;
-               if (!elementToFocus && firstFieldsetError) {
-                   elementToFocus = firstFieldsetError.querySelector("input[type=\"radio\"], input[type=\"checkbox\"]");
-               }
-               if (elementToFocus) {
-                   elementToFocus.focus({ preventScroll: true });
-                   elementToFocus.scrollIntoView({ behavior: "smooth", block: "center" });
-               }
-               showError(elements, "submit-button", "Please review the errors above.");
-           }
-       });
-  
-        // Accessibility Boost: Set aria-checked dynamically for vehicle cards
-        vehicleCardRadios.forEach(radio => {
-            radio.setAttribute("aria-checked", radio.checked ? "true" : "false");
-            radio.addEventListener("change", () => {
-                vehicleCardRadios.forEach(r => {
-                    r.setAttribute("aria-checked", r.checked ? "true" : "false");
-                });
-            });
-        });
-  
-       console.log("Event listeners initialized.");
     }
+    if (!elements.toAddressInput?.value.trim()) {
+        showError(elements, "to-address", "Please enter a 'To' address.");
+        isValid = false;
+    }
+
+    return isValid;
+  }
   
   // --- NEW: Load Google Maps API Script Dynamically ---
   async function loadGoogleMapsScript() {
