@@ -579,5 +579,23 @@ const config = {
       resetSubmitButton(elementRefs); // Call the function after initialization
   });
   
-  // Make initAutocomplete globally accessible for the Maps API callback
-  window.initAutocomplete = initAutocomplete;
+  // Attach initializeEventListeners to the global window object
+  window.initializeEventListeners = function(elements, placeholders, config) {
+      // Tab switching
+      elements.tabNavigationContainer?.addEventListener('click', (event) => {
+          const button = event.target.closest('.tab-button');
+          if (button && button.dataset.tabTarget && !button.classList.contains('active-tab')) {
+              switchTab(button.dataset.tabTarget, elements, placeholders);
+          }
+      });
+
+      // Other event listeners...
+      console.log("Event listeners initialized.");
+  };
+
+  // Attach initAutocomplete to the global window object
+  window.initAutocomplete = function() {
+      console.log("Google Maps API initialized.");
+      const elements = getElementRefs(); // Initialize element references
+      initializeEventListeners(elements, {}, {}); // Call the function after initialization
+  };

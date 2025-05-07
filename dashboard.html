@@ -988,6 +988,19 @@
         }
 
         // --- Event Listener Setup ---
+        window.initializeEventListeners = function(elements, placeholders, config) {
+            // Tab switching
+            elements.tabNavigationContainer?.addEventListener('click', (event) => {
+                const button = event.target.closest('.tab-button');
+                if (button && button.dataset.tabTarget && !button.classList.contains('active-tab')) {
+                    switchTab(button.dataset.tabTarget, elements, placeholders);
+                }
+            });
+
+            // Other event listeners...
+            console.log("Event listeners initialized.");
+        };
+
          function initializeEventListeners(elements, placeholders, config) {
            // Tab switching
            elements.tabNavigationContainer?.addEventListener('click', (event) => {
@@ -1138,7 +1151,10 @@
           const apiKey = data.apiKey;
           if (apiKey) {
             const script = document.createElement('script');
-            // Add additional logic here if needed
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initAutocomplete`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
           }
         } catch (error) {
           console.error('Error fetching API key:', error);
