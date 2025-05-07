@@ -19,7 +19,7 @@ import { loadGoogleMapsScript, initAutocomplete, getCurrentLocation } from './ma
 // let directionsService;
 // let directionsRenderer;
 
-// --- Configuration ---
+ // --- Configuration ---
 // Application-wide configuration settings.
 const config = {
     // FORM_ENDPOINT: "https://formspree.io/your-endpoint", // Endpoint for form submissions (currently commented out - REPLACE THIS IN PRODUCTION)

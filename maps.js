@@ -181,7 +181,7 @@ export function initAutocomplete() {
         });
     }
 
-    if (toAddressInput) {
+     if (toAddressInput) {
         const acTo = new google.maps.places.Autocomplete(toAddressInput, options);
         acTo.addListener("place_changed", () => {
             const place = acTo.getPlace();
