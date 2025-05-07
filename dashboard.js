@@ -74,6 +74,10 @@ const config = {
       refs.quoteDetailsDisplay = document.getElementById("quote-details");
       // ... (add other quote display refs if they exist) ...
   
+      if (!refs.submitButton) {
+          console.warn("Submit button (#submit-button) not found in the DOM.");
+      }
+
       return refs;
   }
   
@@ -445,52 +449,39 @@ const config = {
       resetSubmitButton(elements);
       clearAllErrors(elements);
   }
+
+  function resetSubmitButton(elements) {
+      if (!elements || !elements.submitButton) {
+          console.error("Submit button or elements object is undefined.");
+          return; // Exit early if the button is not initialized
+      }
+      // Proceed with enabling the button
+      elements.submitButton.disabled = false;
+      if (elements.submitButtonSpinner) elements.submitButtonSpinner.classList.add("hidden");
+      if (elements.submitButtonText) {
+          elements.submitButtonText.textContent = determineButtonText(elements);
+          elements.submitButtonText.classList.remove("hidden");
+      }
+  }
   
-  function switchTab(targetPanelId, elements, placeholders) {
-      // Hide all tab panels and reset tab buttons
+  function switchTab(targetPanelId, elements) {
+      console.log("Switching to tab:", targetPanelId);
+  
+      // Hide all panels and reset tab buttons
       elements.formTabPanels?.forEach(panel => panel.classList.add("hidden"));
       elements.tabNavigationButtons?.forEach(button => {
           button.classList.remove("active-tab");
           button.setAttribute("aria-selected", "false");
-          button.removeAttribute("tabindex");
       });
   
-      // Show the target panel and set the active tab button
+      // Show the target panel
       const targetPanel = document.querySelector(targetPanelId);
-      const targetButton = elements.tabNavigationContainer?.querySelector(`[data-tab-target="${targetPanelId}"]`);
-      let firstFocusableElement = null;
-  
       if (targetPanel) {
           targetPanel.classList.remove("hidden");
-          firstFocusableElement = targetPanel.querySelector("input:not([type=\"hidden\"]):not(.sr-only):not(:disabled), select:not(:disabled), textarea:not(:disabled), button:not([disabled])");
       }
   
-      if (targetButton) {
-          targetButton.classList.add("active-tab");
-          targetButton.setAttribute("aria-selected", "true");
-          targetButton.setAttribute("tabindex", "0");
-      }
-  
-      // Update the button text based on the active tab
-      if (targetPanelId === "#panel-oneway") {
-          console.log("Switching to One Way tab, setting button text to 'Continue'");
-          if (elements.submitButtonText) {
-              elements.submitButtonText.textContent = "Continue";
-          }
-      } else if (targetPanelId === "#panel-experience-plus") {
-          console.log("Switching to Experience tab, calling resetSubmitButton");
-          resetSubmitButton(elements);
-      }
-  
-      // Focus the first focusable element in the target panel
-      setTimeout(() => {
-          if (firstFocusableElement) {
-              firstFocusableElement.focus();
-          }
-      }, 50);
-  
-      // Clear all errors and reset the button state
-      clearAllErrors(elements);
+      // Reinitialize the submit button after switching tabs
+      resetSubmitButton(elements);
   }
   
   // --- Form Validation (Adapted from generated code) ---
@@ -959,6 +950,8 @@ const config = {
         event.preventDefault();
         redirectToSummaryPage(elementRefs);
       });
+
+      resetSubmitButton(elementRefs); // Call the function after initialization
   });
   
   // Make initAutocomplete globally accessible for the Maps API callback
