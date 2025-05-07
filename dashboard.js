@@ -1010,25 +1010,17 @@ document.addEventListener("DOMContentLoaded", () => {
      * Dynamically updates the submit button text based on the active tab and selected values.
      */
     function resetSubmitButton(elements) {
-        if (!elements.submitButton || !elements.submitButtonText) {
-            console.error("Submit button or button text element is not defined.");
-            return;
+        if (!elements || !elements.submitButton) {
+            console.warn("Submit button is not initialized yet or elements object is undefined.");
+            return; // Exit the function early if the button is not ready
         }
-
-        const activeTabButton = elements.tabNavigationContainer?.querySelector(".active-tab");
-        const activePanelId = activeTabButton ? activeTabButton.getAttribute("data-tab-target") : null;
-
-        console.log("Active Panel ID:", activePanelId);
-
-        if (activePanelId === "#panel-oneway") {
-            console.log("Setting button text to 'Continue' for 'One Way' tab.");
-            elements.submitButtonText.textContent = "Continue";
-            return;
+        // Continue with the rest of the logic here
+        elements.submitButton.disabled = false;
+        if (elements.submitButtonSpinner) elements.submitButtonSpinner.classList.add('hidden');
+        if (elements.submitButtonText) {
+            elements.submitButtonText.textContent = determineButtonText(elements);
+            elements.submitButtonText.classList.remove('hidden');
         }
-
-        const text = determineButtonText(elements);
-        console.log("Setting button text to:", text);
-        elements.submitButtonText.textContent = text;
     }
 
     /**

@@ -358,7 +358,8 @@
               </div>
 
               <div>
-                <button type="submit" id="submit-button" disabled class="mt-4 flex w-full items-center justify-center rounded-lg border border-transparent bg-gray-300 px-4 py-3 text-lg font-semibold text-white shadow-sm transition duration-300 focus:ring-2 focus:ring-[--color-gold] focus:ring-offset-2 focus:outline-none disabled:opacity-75">
+                <button type="submit" id="submit-button" disabled class="mt-4 flex w-full items-center justify-center rounded-lg border border-transparent bg-gray-300 px-4 py-3 text-lg font-semibold text-gray-600 hover:bg-gray-400" title="Complete all required fields to enable submission" aria-disabled="true" aria-busy="false">
+                  <span class="spinner hidden" aria-hidden="true"></span>
                   <span class="button-text">Continue</span>
                 </button>
                 <span id="submit-button-error" class="mt-1 block text-xs text-red-600 hidden"></span>
