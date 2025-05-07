@@ -3,9 +3,6 @@
 // initialization of the Places Autocomplete service,
 // and related location-based functionalities like Geolocation.
 
-// We need to get some things from the main dashboard.js file,
-// like the function to get elements and the function to show errors.
-// We will add 'export' to those functions in dashboard.js in the next step.
 import { getElementRefs, showError } from './dashboard.js';
 
 // --- Helper Functions (related to Maps/Location) ---
@@ -196,5 +193,3 @@ export function initAutocomplete() {
     }
 }
 
-// Grouped Export
-export { loadGoogleMapsScript };
