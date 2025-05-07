@@ -243,57 +243,51 @@ const config = {
   
   // --- Google Maps Autocomplete (Modified to be called by callback) ---
   function initAutocomplete() {
-      // Check if google.maps is loaded (redundant if callback works, but good safeguard)
       if (typeof google === "undefined" || typeof google.maps === "undefined" || typeof google.maps.places === "undefined") {
           console.error("Google Maps API not loaded correctly. Autocomplete cannot initialize.");
-          // Display error to user
-          showError(getElementRefs(), "from-location", "Address lookup service failed to load. Please refresh.");
-          showError(getElementRefs(), "to-address", "Address lookup service failed to load. Please refresh.");
+          const elements = getElementRefs();
+          showError(elements, "from-location", "Address lookup service failed to load. Please refresh.");
+          showError(elements, "to-address", "Address lookup service failed to load. Please refresh.");
           return;
       }
-  
-      console.log("Google Maps API loaded via callback, initializing Autocomplete.");
+
+      console.log("Google Maps API loaded successfully. Initializing Autocomplete...");
       const fromLocationInput = document.getElementById("from-location");
-      const toAddressInput = document.getElementById("to-address"); // ID from the integrated HTML
-  
+      const toAddressInput = document.getElementById("to-address");
+
       const options = {
-          // bounds: defaultBounds, // Optional: Bias results to Miami area
-          componentRestrictions: { country: "us" }, // Optional: Restrict to US
-          fields: ["address_components", "geometry", "icon", "name", "formatted_address", "types"],
-          strictBounds: false, // Optional: Set true if using bounds
+          componentRestrictions: { country: "us" }, // Restrict to US
+          fields: ["address_components", "geometry", "name", "formatted_address", "types"],
       };
-  
+
       if (fromLocationInput) {
           try {
               const acFrom = new google.maps.places.Autocomplete(fromLocationInput, options);
               acFrom.addListener("place_changed", () => {
                   const place = acFrom.getPlace();
-                  // Check if airport-related elements exist before calling update
-                  if (document.getElementById("pickup-type-container")) { // Check if airport fields are present
-                    updateAirportFieldVisibility("from-location", !!(place && place.types && place.types.includes("airport")));
-                  } else {
-                    console.log("Airport fields not found for \"from-location\", skipping visibility update.");
-                  }
+                  console.log("Autocomplete 'From Location' updated:", place);
               });
-          } catch (e) { console.error("Autocomplete failed (from-location)", e); }
-        } else { console.error("Input 'from-location' not found"); }
-  
-     if (toAddressInput) {
+          } catch (error) {
+              console.error("Autocomplete Initialization Error (from-location):", error);
+          }
+      } else {
+          console.error("Input 'from-location' not found in the DOM.");
+      }
+
+      if (toAddressInput) {
           try {
               const acTo = new google.maps.places.Autocomplete(toAddressInput, options);
               acTo.addListener("place_changed", () => {
                   const place = acTo.getPlace();
-                   // Check if airport-related elements exist before calling update
-                  if (document.getElementById("dropoff-type-container")) { // Check if airport fields are present
-                    updateAirportFieldVisibility("to-address", !!(place && place.types && place.types.includes("airport")));
-                  } else {
-                    console.log("Airport fields not found for \"to-address\", skipping visibility update.");
-                  }
+                  console.log("Autocomplete 'To Address' updated:", place);
               });
-          } catch (e) { console.error("Autocomplete failed (to-address)", e); }
-        } else { console.error("Input 'to-address' not found"); }
-  
-      // Call other initial setup functions AFTER maps API is ready
+          } catch (error) {
+              console.error("Autocomplete Initialization Error (to-address):", error);
+          }
+      } else {
+          console.error("Input 'to-address' not found in the DOM.");
+      }
+
       const elementRefs = getElementRefs();
       initializeFlatpickr(elementRefs);
       initializeEventListeners(elementRefs, config.placeholders, config);
@@ -428,16 +422,34 @@ const config = {
 
   function validateForm(elements) {
     let isValid = true;
-    clearError("from-location");
-    clearError("to-address");
+    clearAllErrors(elements); // Start with a clean slate
 
+    // Validate 'From' location
     if (!elements.fromLocationInput?.value.trim()) {
         showError(elements, "from-location", "Please enter a 'From' location.");
+        console.warn("Validation Failed: 'From' location is empty.");
         isValid = false;
     }
+
+    // Validate 'To' address
     if (!elements.toAddressInput?.value.trim()) {
         showError(elements, "to-address", "Please enter a 'To' address.");
+        console.warn("Validation Failed: 'To' address is empty.");
         isValid = false;
+    }
+
+    // Validate vehicle selection
+    const vehicleSelectedOneway = document.querySelector('input[name="vehicle_type_oneway"]:checked');
+    if (!vehicleSelectedOneway) {
+        showError(elements, "vehicle_type_oneway", "Please select a vehicle type.");
+        console.warn("Validation Failed: No vehicle type selected for One Way.");
+        isValid = false;
+    }
+
+    if (!isValid) {
+        console.warn("Form validation failed. Errors have been displayed to the user.");
+    } else {
+        console.log("Form validation passed. Ready to submit.");
     }
 
     return isValid;
@@ -445,7 +457,6 @@ const config = {
   
   // --- NEW: Load Google Maps API Script Dynamically ---
   async function loadGoogleMapsScript() {
-      // Check if the script tag is already in the DOM
       if (document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]')) {
           console.log("Google Maps script tag already exists.");
           return; // Exit if script is already in the DOM
@@ -457,6 +468,11 @@ const config = {
           const response = await fetch('/.netlify/functions/get-maps-key');
           if (!response.ok) {
               const errorData = await response.json();
+              console.error("API Key Fetch Error:", {
+                  status: response.status,
+                  statusText: response.statusText,
+                  errorDetails: errorData.error, // Log specific error from function response
+              });
               throw new Error(errorData.error || `Failed to fetch API key (Status: ${response.status})`);
           }
   
@@ -464,6 +480,7 @@ const config = {
           const apiKey = data.apiKey;
   
           if (!apiKey) {
+              console.error("Configuration Error: API key not received from Netlify function.");
               throw new Error("API key not received from Netlify function.");
           }
   
@@ -474,14 +491,12 @@ const config = {
           script.async = true;
           script.defer = true;
   
-          // Define onload and onerror handlers inside the block
           script.onload = () => {
               console.log("Google Maps API script loaded successfully.");
           };
   
           script.onerror = () => {
-              console.error("Failed to load Google Maps API script.");
-              // Display a user-friendly error message
+              console.error("Google Maps Script Load Error: Failed to load the script file. Ensure the API key is valid and the network is functional.");
               const elements = getElementRefs();
               showError(elements, "from-location", "Address lookup service failed to load.");
               showError(elements, "to-address", "Address lookup service failed to load.");
@@ -490,8 +505,10 @@ const config = {
           document.head.appendChild(script);
           console.log("Google Maps script tag added to head.");
       } catch (error) {
-          console.error("Error loading Google Maps script or fetching API key:", error);
-          // Display a user-friendly error message
+          console.error("Caught Error during Google Maps Script Loading Process:", {
+              message: error.message,
+              stack: error.stack,
+          });
           const elements = getElementRefs();
           showError(elements, "from-location", `Map service error: ${error.message}`);
           showError(elements, "to-address", `Map service error: ${error.message}`);
