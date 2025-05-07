@@ -552,7 +552,7 @@ const config = {
   }
   
   // --- Main Execution ---
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", async () => {
       console.log("DOM fully loaded and parsed.");
       const elementRefs = getElementRefs(); // Get refs early for potential error display
   
@@ -561,8 +561,29 @@ const config = {
           return; // Stop if form isn"t found
       }
   
-      // Load the Google Maps script. The callback "initAutocomplete" will handle the rest.
-      loadGoogleMapsScript();
+      try {
+          const response = await fetch('/.netlify/functions/get-maps-key');
+          if (!response.ok) {
+              throw new Error('Failed to fetch API key');
+          }
+          const data = await response.json();
+          const apiKey = data.apiKey;
+  
+          if (apiKey) {
+              // Check if the Google Maps API script is already loaded
+              if (!document.querySelector(`script[src*="maps.googleapis.com/maps/api/js"]`)) {
+                  const script = document.createElement('script');
+                  script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initAutocomplete`;
+                  script.async = true;
+                  script.defer = true;
+                  document.head.appendChild(script);
+              } else {
+                  console.warn("Google Maps API script is already loaded.");
+              }
+          }
+      } catch (error) {
+          console.error('Error fetching API key:', error);
+      }
   
       // NOTE: initializeFlatpickr and initializeEventListeners are now called *inside* initAutocomplete
       // because they depend on elements that might be manipulated or need Maps API features.
