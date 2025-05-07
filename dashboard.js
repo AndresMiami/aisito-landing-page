@@ -397,76 +397,7 @@ const config = {
             }
         }
     
-        // Toggles the visibility of airport-related fields (like flight number, baggage claim notes)
-        // based on whether a location is identified as an airport.
-        // Parameters:
-        // - addressInputId: The ID of the address input field ('from-location' or 'to-address').
-        // - isAirport: Boolean indicating if the selected place is an airport.
-        // Returns: void
-        function updateAirportFieldVisibility(addressInputId, isAirport) {
-            let typeContainerId, notesContainerId, hiddenInputId;
-            let typeInput, notesInput;
-            console.log(`Updating airport fields for ${addressInputId}. Is Airport: ${isAirport}`);
-    
-            // Determine the IDs of the relevant airport-related elements based on the input field ID
-            if (addressInputId === "from-location") {
-                 // Check the currently active tab panel ID to determine which set of airport fields to target
-                 const activePanelId = document.querySelector(".tab-panel:not(.hidden)")?.id;
-                 if (activePanelId === "panel-oneway") {
-                     // Target airport fields associated with the 'from' location in the One-Way panel
-                     typeContainerId = "pickup-type-container"; // Container for pickup type selection (e.g., Curb, Gate)
-                     notesContainerId = "pickup-notes-container"; // Container for pickup notes/instructions
-                     hiddenInputId = "isPickupAirportOneWay"; // Hidden input to store boolean flag
-                     typeInput = document.getElementById("pickup-type"); // Select input for pickup type
-                     notesInput = document.getElementById("pickup-notes"); // Textarea/input for notes
-                 } else if (activePanelId === "panel-experience-plus") {
-                      // Target airport fields associated with the 'from' location in the Experience+ (Hourly) panel
-                      // Assuming separate IDs for hourly airport fields if they exist
-                      typeContainerId = "pickup-type-container-hourly";
-                      notesContainerId = "pickup-notes-container-hourly";
-                      hiddenInputId = "isPickupAirportHourly";
-                      typeInput = document.getElementById("pickup-type-hourly");
-                      notesInput = document.getElementById("pickup-notes-hourly");
-                 } else {
-                     console.warn(`No active panel found for updating airport fields for ${addressInputId}.`);
-                     return; // Exit if no active panel is identified
-                 }
-             } else if (addressInputId === "to-address") { // Airport fields only apply to 'to-address' in the One-Way panel
-                 typeContainerId = "dropoff-type-container"; // Container for dropoff type selection
-                 notesContainerId = "dropoff-notes-container"; // Container for dropoff notes/instructions
-                 hiddenInputId = "isDropoffAirportOneWay"; // Hidden input to store boolean flag
-                 typeInput = document.getElementById("dropoff-type"); // Select input for dropoff type
-                 notesInput = document.getElementById("dropoff-notes"); // Textarea/input for notes
-             } else {
-                 console.warn(`Unknown address input ID (${addressInputId}) for airport fields visibility update.`);
-                 return; // Exit if the inputId is not recognized
-             }
-    
-            // Get references to the identified airport-related elements
-          const typeContainer = document.getElementById(typeContainerId);
-          const notesContainer = document.getElementById(notesContainerId);
-          const hiddenInput = document.getElementById(hiddenInputId);
-    
-          // IMPORTANT: Check if these airport-related elements actually EXIST in your current HTML.
-          // If they don't exist, attempting to access properties will cause errors.
-          if (!typeContainer || !notesContainer /*|| !hiddenInput*/ ) { // Note: hiddenInput might be optional depending on implementation
-              console.warn(`Airport-related elements (e.g., #${typeContainerId}) not found for ${addressInputId}. Skipping visibility update.`);
-              return; // Exit if necessary elements are missing
-          }
-    
-          // Toggle visibility of the airport-related fields based on the 'isAirport' flag
-          if (isAirport) {
-              typeContainer.classList.remove("hidden"); // Show the type container
-              notesContainer.classList.remove("hidden"); // Show the notes container
-              if (hiddenInput) hiddenInput.value = "true"; // Set the hidden input value if it exists
-          } else {
-              typeContainer.classList.add("hidden"); // Hide the type container
-              notesContainer.classList.add("hidden"); // Hide the notes container
-              if (hiddenInput) hiddenInput.value = "false"; // Set the hidden input value if it exists
-              if (typeInput) typeInput.selectedIndex = 0; // Reset the type input to the first option if it exists
-              if (notesInput) notesInput.value = ""; // Clear the notes input value if it exists
-          }
-      }
+        
     
     
       // --- Google Maps Autocomplete Callback ---
@@ -475,91 +406,6 @@ const config = {
       // It initializes the Google Places Autocomplete service on the location input fields
       // and performs other initializations that depend on the Maps API being ready.
       // Returns: void
-      function initAutocomplete() {
-          // Safeguard: Check if the Google Maps API and the Places library are fully loaded before proceeding.
-          if (typeof google === "undefined" || typeof google.maps === "undefined" || typeof google.maps.places === "undefined") {
-              console.error("Google Maps API or Places library not loaded correctly. Autocomplete cannot initialize.");
-              // Display a user-friendly error message on the relevant input fields to inform the user.
-              const elements = getElementRefs(); // Get element references to display the error messages
-              showError(elements, "from-location", "Address lookup service failed to load. Please refresh.");
-              showError(elements, "to-address", "Address lookup service failed to load. Please refresh.");
-              return; // Exit the function if the API is not ready
-          }
-    
-          console.log("Google Maps API loaded successfully via callback. Initializing Autocomplete...");
-          // Get references to the location input fields where Autocomplete will be applied
-          const fromLocationInput = document.getElementById("from-location");
-          const toAddressInput = document.getElementById("to-address");
-    
-          // Configuration options for the Autocomplete service
-          const options = {
-              componentRestrictions: { country: "us" }, // Restrict address predictions to the United States
-              fields: ["address_components", "geometry", "name", "formatted_address", "types"], // Specify the data fields to return for a selected place
-          };
-    
-          // Initialize Autocomplete for the 'From' location input field if the element exists
-          if (fromLocationInput) {
-              try {
-                  // Create a new Autocomplete instance and link it to the input field
-                  const acFrom = new google.maps.places.Autocomplete(fromLocationInput, options);
-                  // Add a listener for the 'place_changed' event, which fires when the user selects a place from the suggestions
-                  acFrom.addListener("place_changed", () => {
-                      const place = acFrom.getPlace(); // Get the details of the selected place
-                      console.log("Autocomplete 'From Location' updated:", place); // Log the selected place details for debugging
-                      // Update visibility of airport-related fields if the selected place is an airport
-                       // Check if airport-related elements exist before calling the update function
-                      if (document.getElementById("pickup-type-container")) {
-                          updateAirportFieldVisibility("from-location", !!(place && place.types && place.types.includes("airport")));
-                      } else {
-                           // Log a warning if the necessary airport elements are missing
-                           console.log("Airport fields not found for 'from-location'. Skipping visibility update.");
-                      }
-                  });
-              } catch (error) {
-                  // Log any errors that occur during the initialization of Autocomplete for the 'From' field
-                  console.error("Autocomplete Initialization Error (from-location):", error);
-              }
-          } else {
-              // Log an error if the 'From' location input element is not found in the DOM
-              console.error("Input 'from-location' not found in the DOM. Cannot initialize Autocomplete for this field.");
-          }
-    
-          // Initialize Autocomplete for the 'To' address input field if the element exists (similar logic to 'From' location)
-          if (toAddressInput) {
-              try {
-                  const acTo = new google.maps.places.Autocomplete(toAddressInput, options);
-                  // Add a listener for the 'place_changed' event
-                  acTo.addListener("place_changed", () => {
-                      const place = acTo.getPlace(); // Get the details of the selected place
-                      console.log("Autocomplete 'To Address' updated:", place); // Log the selected place details
-                      // Update visibility of airport-related fields if the selected place is an airport (only relevant for 'to-address' in One-Way)
-                      // Check if airport-related elements exist before calling the update function
-                      if (document.getElementById("dropoff-type-container")) {
-                          updateAirportFieldVisibility("to-address", !!(place && place.types && place.types.includes("airport")));
-                      } else {
-                          // Log a warning if the necessary airport elements are missing
-                          console.log("Airport fields not found for 'to-address'. Skipping visibility update.");
-                      }
-                  });
-              } catch (error) {
-                  // Log any errors that occur during the initialization of Autocomplete for the 'To' field
-                  console.error("Autocomplete Initialization Error (to-address):", error);
-            }
-        } else {
-              // Log an error if the 'To' address input element is not found in the DOM
-              console.error("Input 'to-address' not found in the DOM. Cannot initialize Autocomplete for this field.");
-          }
-    
-          // --- Initializations that depend on Google Maps API being ready ---
-          // These functions are called here to ensure they have access to the loaded Google Maps API objects
-          // and that the DOM elements they interact with are ready.
-          const elementRefs = getElementRefs(); // Re-get element references (defensive, should be available)
-          initializeFlatpickr(elementRefs); // Initialize the Flatpickr date and time pickers
-          initializeEventListeners(elementRefs, config.placeholders, config); // Set up main event listeners for form interactions
-          initializeValidationListeners(elementRefs); // Set up listeners that trigger validation (e.g., input changes)
-          switchTab("#panel-oneway", elementRefs, config.placeholders); // Set the initial active tab and update the UI accordingly
-      }
-      
       // --- Geolocation Functionality ---
       // Attempts to get the user's current geographical location using the browser's Geolocation API
       // and reverse geocodes it to populate a specified input field.
@@ -567,78 +413,7 @@ const config = {
       // Parameters:
       // - inputId: The ID of the input field to populate with the geocoded address.
       // Returns: void
-      async function getCurrentLocation(inputId) {
-          console.log(`getCurrentLocation called for input: ${inputId} at ${new Date().toISOString()}`);
-          // Check if the browser supports the Geolocation API
-          if (!navigator.geolocation) {
-              alert("Geolocation is not supported by your browser."); // Inform the user
-              console.warn("Geolocation not supported.");
-              return; // Exit if not supported
-          }
-      
-          // Check if the Google Maps API is loaded before attempting to use the geocoder
-          if (typeof google === "undefined" || typeof google.maps === "undefined" || typeof google.maps.Geocoder === "undefined") {
-              console.error("Google Maps API or Geocoding service not loaded. Cannot geocode location.");
-              alert("Mapping service is not available to find address."); // Inform the user
-              return; // Exit if Maps API/Geocoder is not ready
-          }
-    
-          // Request the user's current position
-          navigator.geolocation.getCurrentPosition( async (position) => {
-              const { latitude, longitude } = position.coords; // Extract latitude and longitude
-              console.log(`Geolocation retrieved: Lat ${latitude}, Lng ${longitude}`); // Log the retrieved coordinates
-              const geocoder = new google.maps.Geocoder(); // Create a new Geocoder instance
-              const latlng = { lat: latitude, lng: longitude }; // Format coordinates for the Geocoder
-    
-              try {
-                  // Perform the reverse geocoding request
-                  const response = await new Promise((resolve, reject) => {
-                      geocoder.geocode({ location: latlng }, (results, status) => {
-                          if (status === "OK" && results[0]) { 
-                               resolve(results); // Resolve with results if successful
-                           }
-                          else { 
-                               // Reject with an error if geocoding failed
-                               reject(new Error(`Geocoding failed with status: ${status}`)); 
-                           }
-                      });
-                  });
-                  const address = response[0].formatted_address; // Get the formatted address from the first result
-                  console.log(`Geocoded address: ${address}`); // Log the geocoded address
-    
-                  const inputField = document.getElementById(inputId); // Get the target input field element
-                  if (inputField) {
-                      inputField.value = address; // Populate the input field with the geocoded address
-                      // Update visibility of airport-related fields (assume not an airport when geolocating)
-                      // Check if the relevant airport field containers exist before calling the update function
-                      if (document.getElementById("pickup-type-container") || document.getElementById("dropoff-type-container")) {
-                          updateAirportFieldVisibility(inputId, false); // Assume the geolocated place is not an airport
-                      } else {
-                          // Log a warning if necessary airport elements are missing
-                          console.log("Airport fields not found. Skipping visibility update after geolocation.");
-                      }
-                  }
-                  else { 
-                      // Log an error if the target input field for populating is not found
-                      console.error(`Input field "${inputId}" not found in the DOM. Cannot populate with geocoded address.`); 
-                  }
-              } catch (error) {
-                  console.error("Error geocoding location:", error); // Log the geocoding error
-                  alert(`Unable to retrieve address: ${error.message}`); // Inform the user about the geocoding failure
-              }
-          }, (error) => {
-                console.error("Geolocation error:", error); // Log the geolocation API error
-               // Provide user-friendly messages for common geolocation errors
-               let errorMessage = "Unable to retrieve your location.";
-               switch(error.code) {
-                   case error.PERMISSION_DENIED: errorMessage = "Location access denied. Please enable location services in your browser settings."; break;
-                   case error.POSITION_UNAVAILABLE: errorMessage = "Location information unavailable. Please try again later."; break;
-                   case error.TIMEOUT: errorMessage = "Location request timed out. Please try again."; break;
-                   default: errorMessage = `An unknown error occurred (Code: ${error.code}).`; break;
-               }
-               alert(errorMessage); // Inform the user about the geolocation error
-          }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }); // Options for geolocation request
-      }
+  
     
     
       // --- Experience+ Specific Logic ---
@@ -1354,37 +1129,7 @@ const config = {
     
           // Load the Google Maps API script dynamically. This function includes safeguards
           // to prevent duplicate loading and handles fetching the API key.
-          loadGoogleMapsScript();
-    
-          // The following initializations (Flatpickr, Event Listeners, Validation Listeners, Tab Switching)
-          // are now called *inside* the initAutocomplete function, which is the callback executed
-          // by the Google Maps API when the script is fully loaded. This ensures that
-          // components depending on the Maps API (like Autocomplete) are ready before they are initialized.
-          // initializeFlatpickr(elementRefs);
-          // initializeEventListeners(elementRefs, config.placeholders, config);
-          // initializeValidationListeners(elementRefs);
-          // switchTab('#panel-oneway', elementRefs, config.placeholders);
-    
-          // Although listeners are initialized within initAutocomplete,
-          // we still need to add the main submit listener and reset the button state here
-          // as they are core to the form's initial state and don't strictly depend on Maps API.
-          // Add the main form submission listener.
-          elementRefs.bookingForm?.addEventListener('submit', (event) => {
-              event.preventDefault(); // Prevent default form submission
-              // The validation and data sending logic is within this listener
-               // If using a separate data sending function like sendFormData, call it here
-               // after validation: if (validateForm(elements)) { sendFormData(processFormData(elements), elements, config); }
-               // Since you are redirecting, the validation check should happen here before redirect.
-               if (validateForm(elementRefs)) {
-                    // If the form is valid, process data and redirect to the summary page.
-                    // Note: Data processing might be redundant if redirecting with query params.
-                    // const data = processFormData(elementRefs);
-                    redirectToSummaryPage(elementRefs); // Redirects with form data as query parameters
-               } else {
-                   // If validation fails, validateForm will handle displaying errors and focusing the first error.
-                   console.log("Form validation failed. Redirection aborted.");
-               }
-          });
+         
     
           resetSubmitButton(elementRefs); // Set the initial state and text of the submit button.
       });
