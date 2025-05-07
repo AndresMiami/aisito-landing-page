@@ -474,11 +474,16 @@ const config = {
           }
   
           // Create and append the script tag
-          const script = document.createElement('script');
-          script.id = "google-maps-script";
-          script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initAutocomplete`;
-          script.async = true;
-          script.defer = true;
+          if (!document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]')) {
+              const script = document.createElement('script');
+              script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initAutocomplete`;
+              script.async = true;
+              script.defer = true;
+              document.head.appendChild(script);
+              console.log("Google Maps API script added.");
+          } else {
+              console.warn("Google Maps API script already exists.");
+          }
   
           script.onload = () => {
               console.log("Google Maps API script loaded successfully.");
