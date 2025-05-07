@@ -444,22 +444,16 @@ const config = {
   }
   
   // --- NEW: Load Google Maps API Script Dynamically ---
-  let isGoogleMapsScriptLoaded = false;
-
   async function loadGoogleMapsScript() {
-      if (isGoogleMapsScriptLoaded) {
-          console.log("Google Maps script is already loaded.");
-          return;
-      }
-  
-      // Check if the script tag already exists in the DOM
+      // Check if the script tag is already in the DOM
       if (document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]')) {
           console.log("Google Maps script tag already exists.");
-          isGoogleMapsScriptLoaded = true;
-          return;
+          return; // Exit if script is already in the DOM
       }
   
+      console.log("Attempting to load Google Maps script...");
       try {
+          // Fetch the API key
           const response = await fetch('/.netlify/functions/get-maps-key');
           if (!response.ok) {
               const errorData = await response.json();
@@ -474,31 +468,30 @@ const config = {
           }
   
           // Create and append the script tag
-          if (!document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]')) {
-              const script = document.createElement('script');
-              script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initAutocomplete`;
-              script.async = true;
-              script.defer = true;
-              document.head.appendChild(script);
-              console.log("Google Maps API script added.");
-          } else {
-              console.warn("Google Maps API script already exists.");
-          }
+          const script = document.createElement('script');
+          script.id = "google-maps-script"; // Assign an ID for easier debugging
+          script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initAutocomplete`;
+          script.async = true;
+          script.defer = true;
   
+          // Define onload and onerror handlers inside the block
           script.onload = () => {
               console.log("Google Maps API script loaded successfully.");
-              isGoogleMapsScriptLoaded = true;
           };
   
           script.onerror = () => {
               console.error("Failed to load Google Maps API script.");
+              // Display a user-friendly error message
+              const elements = getElementRefs();
+              showError(elements, "from-location", "Address lookup service failed to load.");
+              showError(elements, "to-address", "Address lookup service failed to load.");
           };
   
           document.head.appendChild(script);
           console.log("Google Maps script tag added to head.");
       } catch (error) {
-          console.error("Error loading Google Maps script:", error);
-          // Display a user-friendly error message on the page
+          console.error("Error loading Google Maps script or fetching API key:", error);
+          // Display a user-friendly error message
           const elements = getElementRefs();
           showError(elements, "from-location", `Map service error: ${error.message}`);
           showError(elements, "to-address", `Map service error: ${error.message}`);
