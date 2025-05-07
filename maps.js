@@ -196,5 +196,5 @@ export function initAutocomplete() {
     }
 }
 
-// Grouped Export (Updated)
-export { loadGoogleMapsScript /* Removed initAutocomplete */ };
+// Grouped Export
+export { loadGoogleMapsScript };
