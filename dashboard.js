@@ -444,56 +444,60 @@ const config = {
   }
   
   // --- NEW: Load Google Maps API Script Dynamically ---
+  let isGoogleMapsScriptLoaded = false;
+
   async function loadGoogleMapsScript() {
-    console.log("Attempting to load Google Maps script...");
-    try {
-      const response = await fetch("/.netlify/functions/get-maps-key");
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to fetch API key (Status: ${response.status})`);
-      }
-      const data = await response.json();
-      const apiKey = data.apiKey;
-  
-      if (!apiKey) {
-        throw new Error("API key not received from Netlify function.");
+      if (isGoogleMapsScriptLoaded) {
+          console.log("Google Maps script is already loaded.");
+          return;
       }
   
-      // Check if script already exists (e.g., due to fast refresh/HMR)
-      if (document.getElementById("google-maps-script")) {
+      // Check if the script tag already exists in the DOM
+      if (document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]')) {
           console.log("Google Maps script tag already exists.");
-          // If it exists but google.maps isn"t loaded, might need to re-trigger init
-          if (typeof google === "undefined" || typeof google.maps === "undefined") {
-              console.warn("Script tag exists but google.maps not loaded. Re-attempting callback trigger might be needed or check script URL.");
-          } else {
-               // If script exists AND google.maps is loaded, maybe initAutocomplete wasn"t called?
-               // Or maybe it"s fine. Let"s assume the callback worked.
-               console.log("google.maps seems loaded.");
-          }
-          return; // Don"t load again
+          isGoogleMapsScriptLoaded = true;
+          return;
       }
   
+      try {
+          const response = await fetch('/.netlify/functions/get-maps-key');
+          if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.error || `Failed to fetch API key (Status: ${response.status})`);
+          }
   
-      const script = document.createElement("script");
-      script.id = "google-maps-script"; // Add an ID to prevent duplicates
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initAutocomplete`;
-      script.async = true;
-      script.defer = true;
-      script.onerror = () => {
-          console.error("Error loading the Google Maps script.");
-          // Display error to user
-          showError(getElementRefs(), "from-location", "Address lookup service failed to load. Check console.");
-          showError(getElementRefs(), "to-address", "Address lookup service failed to load. Check console.");
-      };
-      document.head.appendChild(script);
-      console.log("Google Maps script tag added to head.");
+          const data = await response.json();
+          const apiKey = data.apiKey;
   
-    } catch (error) {
-      console.error("Error loading Google Maps script:", error);
-      // Display a user-friendly error message on the page
-       showError(getElementRefs(), "from-location", `Map service error: ${error.message}`);
-       showError(getElementRefs(), "to-address", `Map service error: ${error.message}`);
-    }
+          if (!apiKey) {
+              throw new Error("API key not received from Netlify function.");
+          }
+  
+          // Create and append the script tag
+          const script = document.createElement('script');
+          script.id = "google-maps-script";
+          script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initAutocomplete`;
+          script.async = true;
+          script.defer = true;
+  
+          script.onload = () => {
+              console.log("Google Maps API script loaded successfully.");
+              isGoogleMapsScriptLoaded = true;
+          };
+  
+          script.onerror = () => {
+              console.error("Failed to load Google Maps API script.");
+          };
+  
+          document.head.appendChild(script);
+          console.log("Google Maps script tag added to head.");
+      } catch (error) {
+          console.error("Error loading Google Maps script:", error);
+          // Display a user-friendly error message on the page
+          const elements = getElementRefs();
+          showError(elements, "from-location", `Map service error: ${error.message}`);
+          showError(elements, "to-address", `Map service error: ${error.message}`);
+      }
   }
   
   // --- Validation and Redirection Logic ---
@@ -552,49 +556,24 @@ const config = {
   }
   
   // --- Main Execution ---
-  document.addEventListener("DOMContentLoaded", async () => {
+  document.addEventListener("DOMContentLoaded", () => {
       console.log("DOM fully loaded and parsed.");
-      const elementRefs = getElementRefs(); // Get refs early for potential error display
-  
+      const elementRefs = getElementRefs();
+
       if (!elementRefs.bookingForm) {
           console.error("Booking form (#booking-form) not found. Script initialization incomplete.");
-          return; // Stop if form isn"t found
+          return;
       }
-  
-      try {
-          const response = await fetch('/.netlify/functions/get-maps-key');
-          if (!response.ok) {
-              throw new Error('Failed to fetch API key');
-          }
-          const data = await response.json();
-          const apiKey = data.apiKey;
-  
-          if (apiKey) {
-              // Check if the Google Maps API script is already loaded
-              if (!document.querySelector(`script[src*="maps.googleapis.com/maps/api/js"]`)) {
-                  const script = document.createElement('script');
-                  script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initAutocomplete`;
-                  script.async = true;
-                  script.defer = true;
-                  document.head.appendChild(script);
-              } else {
-                  console.warn("Google Maps API script is already loaded.");
-              }
-          }
-      } catch (error) {
-          console.error('Error fetching API key:', error);
-      }
-  
-      // NOTE: initializeFlatpickr and initializeEventListeners are now called *inside* initAutocomplete
-      // because they depend on elements that might be manipulated or need Maps API features.
-  
+
+      loadGoogleMapsScript(); // Load the Google Maps API script
+
       // Add validation listeners
       initializeValidationListeners(elementRefs);
-  
+
       // Add redirection logic on form submission
       elementRefs.bookingForm?.addEventListener('submit', (event) => {
-        event.preventDefault();
-        redirectToSummaryPage(elementRefs);
+          event.preventDefault();
+          redirectToSummaryPage(elementRefs);
       });
 
       resetSubmitButton(elementRefs); // Call the function after initialization
