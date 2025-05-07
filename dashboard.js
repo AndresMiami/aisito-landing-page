@@ -369,36 +369,8 @@ export function clearError(fieldId) {
   // Parameters:
   // - elements: Object containing references to DOM elements.
   // Returns: void
-  function handleWynwoodDinnerChoice(elements) {
-    // Check if the 'Other' dinner preference radio button and its corresponding input container exist.
-    if (!elements.wynwoodOtherDinnerRadio || !elements.wynwoodOtherRestaurantContainer) {
-        // console.warn("Wynwood 'Other' dinner preference elements not found. Skipping conditional logic.");
-        return; // Exit if the necessary elements are not found in the DOM.
-    }
-    // Determine if the 'Other' dinner preference radio button is currently checked.
-    const showOtherInput = elements.wynwoodOtherDinnerRadio.checked;
-    // Toggle the 'hidden' class on the container div for the 'Other Restaurant' input.
-    // If showOtherInput is true, remove 'hidden'; if false, add 'hidden'.
-    elements.wynwoodOtherRestaurantContainer.classList.toggle('hidden', !showOtherInput);
-
-    // Find the actual input element for the 'Other Restaurant' text within its container.
-    const otherInput = elements.wynwoodOtherRestaurantContainer.querySelector('input');
-    if (otherInput) {
-        // Set the 'required' HTML attribute for the input. It's required only if 'Other' is selected.
-        otherInput.required = showOtherInput;
-        // If the 'Other' option is no longer selected (i.e., showOtherInput is false),
-        // clear the input's current value and any associated validation error message.
-        if (!showOtherInput) {
-            otherInput.value = ''; // Clear the input field
-            clearError('wynwood-other-restaurant'); // Clear any displayed error for this field
-        }
-    }
-  }
-
-
-  // --- UI Update Functions ---
-
-  // Updates the visibility of UI elements within the Experience+ panel based on the selected service type
+// --- UI Update Functions ---
+ // Updates the visibility of UI elements within the Experience+ panel based on the selected service type
   // (Hourly Chauffeur vs. curated experiences) and specific curated experience options.
   // Parameters:
   // - elements: Object containing references to DOM elements.
