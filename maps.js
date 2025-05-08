@@ -157,7 +157,7 @@ export async function loadGoogleMapsScript(elements) { // Exported here
         // The 'callback=initAutocomplete' is still used to signal when the script is loaded and initAutocomplete should run
         script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initAutocomplete`;
         script.async = true;
-        script.defer = true;
+        script.defer = true; // Using defer is generally good practice
 
         script.onload = () => {
             console.log("Google Maps API script loaded successfully.");
@@ -200,10 +200,11 @@ export function initAutocomplete() { // Exported here
 
     if (fromLocationElement instanceof google.maps.places.PlaceAutocompleteElement) {
         console.log("Configuring fromLocationElement.");
-        // Configure the element properties.
-        // For example, setting component restrictions:
-        fromLocationElement.componentRestrictions = { country: "us" };
-        // You can also set locationBias, locationRestriction, etc. here if needed.
+        // Configure the element properties using setAttribute for attributes
+        // or setting properties directly where supported (like locationBias).
+        // componentRestrictions is not supported directly as a property or attribute.
+        // Use address-filter attribute for country restriction.
+        fromLocationElement.setAttribute("address-filter", "country:us");
 
         // Add the event listener for when a place is selected from the autocomplete suggestions.
         fromLocationElement.addEventListener("gmp-placeselect", async (event) => {
@@ -247,7 +248,7 @@ export function initAutocomplete() { // Exported here
      if (toAddressElement instanceof google.maps.places.PlaceAutocompleteElement) {
          console.log("Configuring toAddressElement.");
          // Configure the element properties.
-         toAddressElement.componentRestrictions = { country: "us" };
+         toAddressElement.setAttribute("address-filter", "country:us");
 
          toAddressElement.addEventListener("gmp-placeselect", async (event) => {
              console.log("Place selected in to-address.");
