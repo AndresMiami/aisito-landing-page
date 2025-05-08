@@ -115,7 +115,7 @@
               <div class="relative">
                 <label for="from-location" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">From</label>
                 <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg></span>
-                <input type="text" name="from-location" id="from-location" required aria-describedby="from-location-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" placeholder="Address, airport, hotel, ..." />
+                <gmp-place-autocomplete id="from-location" required aria-describedby="from-location-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" placeholder="Address, airport, hotel, ..."></gmp-place-autocomplete>
                 <span id="from-location-error" class="mt-1 block text-xs text-red-600 hidden"></span>
               </div>
 
@@ -124,7 +124,7 @@
                   <div id="to-address-container" class="relative">
                     <label for="to-address" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">To</label>
                     <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg></span>
-                    <input type="text" name="to-address" id="to-address" aria-describedby="to-address-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" placeholder="Address, airport, hotel, ..." />
+                    <gmp-place-autocomplete id="to-address" aria-describedby="to-address-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" placeholder="Address, airport, hotel, ..."></gmp-place-autocomplete>
                     <span id="to-address-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                   </div>
 
@@ -133,7 +133,7 @@
                      <div class="grid grid-cols-2 gap-x-3" aria-labelledby="booking-time-error">
                          <button type="button" id="request-now-button" class="booking-time-button">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                               <path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A9.978 9.978 0 0 0 10 12c-2.31 0-4.438.784-6.131 2.1-.194.51-.02.979.406 1.393Z" />
+                               <path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A9.978 9.978 0 0 0 10 12c-2.31 0-4.438.784-6.131 2.1-.194.51-.02.979.406 1.393z" />
                             </svg>
                              Request now
                          </button>
@@ -190,7 +190,7 @@
                                </div>
                              </div>
                            </div>
-                           
+
                             <input type="radio" name="vehicle_type_oneway" value="Luxury Sedan" id="vehicle-sedan-card" class="sr-only" required aria-checked="false">
                          </label>
 
@@ -217,7 +217,7 @@
                                </div>
                              </div>
                            </div>
-                           
+
                             <input type="radio" name="vehicle_type_oneway" value="Premium SUV" id="vehicle-suv-card" class="sr-only" required aria-checked="false">
                          </label>
 
@@ -244,7 +244,7 @@
                                </div>
                              </div>
                            </div>
-                           
+
                             <input type="radio" name="vehicle_type_oneway" value="VIP Group Sprinter" id="vehicle-sprinter-card" class="sr-only" required aria-checked="false">
                          </label>
 
@@ -346,7 +346,6 @@
                    <div id="experience-options-container" class="hidden space-y-4">
                      <div id="water-sky-options" class="hidden relative border-t border-gray-200 pt-4"></div>
                       <div id="wynwood-night-options" class="hidden space-y-4 border-t border-gray-200 pt-4">
-                        <!-- Wynwood Art Tour Heading -->
                         <h2 class="text-2xl font-bold text-center" style="font-family: 'Permanent Marker', cursive; color: #ff4d4d;">
                           Wynwood Art Tour
                         </h2>
