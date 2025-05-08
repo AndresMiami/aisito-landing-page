@@ -48,7 +48,7 @@ const config = {
   // Gathers and returns references to key DOM elements used throughout the script.
   // Calling this function after DOMContentLoaded ensures elements exist in the page structure.
   // Returns: An object containing references to DOM elements.
- export function getElementRefs() {
+ export function getElementRefs() { // Exported here
     const refs = {};
     // Main form and tab navigation elements
     refs.bookingForm = document.getElementById("booking-form"); // The main form element by its ID
@@ -330,7 +330,7 @@ const config = {
               const otherInput = elements.wynwoodOtherRestaurantContainer.querySelector("input"); // Get the input field
               if (otherInput) {
                   otherInput.value = ""; // Clear the input value
-                  clearError("wynwood-other-restaurant"); // Clear any error message for this field
+                  clearError("wynwood-other-restaurant"); // Clear any validation error for this specific input
               }
           }
       }
@@ -651,4 +651,4 @@ window.initAutocomplete = initAutocomplete;
 // For example, if maps.js needed to call switchTab or updateExperiencePlusPanelUI,
 // you would export them here. Based on the current maps.js, only getElementRefs is needed.
 // The button state functions (setLoadingButton, resetSubmitButton) are passed directly to sendFormData.
-export { getElementRefs }; // Export getElementRefs as it's used by maps.js
+// export { getElementRefs }; // Removed duplicate export
