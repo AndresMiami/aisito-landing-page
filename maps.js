@@ -194,4 +194,6 @@ export function initAutocomplete() {
 }
 
 // Export other functions as needed
-export { getCurrentLocation };
+// Removed duplicate export of getCurrentLocation
+// Removed duplicate export of loadGoogleMapsScript
+export {}; // Empty export since all intended functions are exported where defined
