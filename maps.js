@@ -3,7 +3,11 @@
 // initialization of the Places Autocomplete service,
 // and related location-based functionalities like Geolocation.
 
-import { getElementRefs, showError } from './dashboard.js';
+// Import getElementRefs from dashboard.js
+import { getElementRefs } from './dashboard.js';
+// Import showError from the errorHandling.js module
+import { showError } from './errorHandling.js';
+
 
 // --- Helper Functions (related to Maps/Location) ---
 
@@ -107,11 +111,13 @@ export async function getCurrentLocation(inputId, elements) {
             }
         } catch (error) {
             console.error("Error geocoding location:", error);
-            alert(`Unable to retrieve address: ${error.message}`);
+            // Use the imported showError function
+            showError(elements, inputId, `Unable to retrieve address: ${error.message}`);
         }
     }, (error) => {
         console.error("Geolocation error:", error);
-        alert("Unable to retrieve your location.");
+        // Use the imported showError function
+        showError(elements, inputId, "Unable to retrieve your location.");
     }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
 }
 
@@ -143,6 +149,7 @@ export async function loadGoogleMapsScript(elements) {
 
         script.onerror = () => {
             console.error("Google Maps Script Load Error.");
+            // Use the imported showError function
             showError(elements, "from-location", "Address lookup service failed to load.");
             showError(elements, "to-address", "Address lookup service failed to load.");
         };
@@ -150,6 +157,7 @@ export async function loadGoogleMapsScript(elements) {
         document.head.appendChild(script);
     } catch (error) {
         console.error("Error during Google Maps Script Loading Process:", error);
+        // Use the imported showError function
         showError(elements, "from-location", `Map service error: ${error.message}`);
         showError(elements, "to-address", `Map service error: ${error.message}`);
     }
