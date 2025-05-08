@@ -13,62 +13,21 @@
     --color-blue-800: #1E40AF;     /* Tailwind blue-800 */
 }
 
-/* General body styles */
+html {
+    background-image: url('./images/miami-skyline-abstract-form.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100%;
+    background-color: black; /* Set the background color to black */
+}
+
 body {
+    background: transparent;
+    height: 100%;
     font-family: 'Inter', sans-serif;
-    color: #1f2937; /* Default text color */
-    min-height: 100vh;
-    background-color: #000; /* Fallback background color */
-    position: relative; /* Needed for pseudo-elements */
+    color: #ffffff; /* Change text color to white for better contrast */
 }
-
-/* Background image using a pseudo-element for better control */
-body::before {
-    content: '';
-    position: fixed; /* Use fixed to cover the whole viewport */
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    /* Replace 'image_c3287a.jpg' with the filename of your uploaded image */
-    background-image: url('image_c3287a.jpg'); /* Your new background image */
-    background-size: cover; /* Cover the entire background */
-    background-position: center; /* Center the image */
-    background-repeat: no-repeat; /* Do not repeat the image */
-    filter: blur(5px) brightness(0.6) saturate(0.8); /* Apply blur, reduce brightness, and slightly desaturate */
-    z-index: -2; /* Place far behind content */
-}
-
-/* Dark overlay using another pseudo-element */
-body::after {
-    content: '';
-    position: fixed; /* Use fixed to cover the whole viewport */
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7); /* Stronger dark overlay */
-    z-index: -1; /* Place behind content, above the image */
-}
-
-/* Ensure the header and main content containers have appropriate backgrounds and stacking context */
-header {
-    background-color: #ffffff; /* Keep header background white */
-    position: relative; /* Needed for z-index stacking */
-    z-index: 1; /* Ensure header is above background */
-}
-main {
-    background-color: transparent; /* Make main background transparent to show body background */
-    position: relative; /* Needed for z-index stacking */
-    z-index: 1; /* Ensure main content is above background */
-}
-/* Ensure the card background remains white and is above other content */
-.overflow-hidden.rounded-xl.bg-white.shadow-md {
-    background-color: #ffffff;
-    position: relative; /* Needed for z-index stacking */
-    z-index: 2; /* Ensure the form card is above other content */
-}
-
 
 h1, h2, h3, .font-playfair { font-family: 'Playfair Display', serif; }
 .brand-gradient-text { background: linear-gradient(to right, #f97316, #ef4444); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700; }
@@ -94,166 +53,49 @@ select { appearance: none; -webkit-appearance: none; -moz-appearance: none; back
 
 /* NEW: Booking Time Button Styles */
 .booking-time-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem 1rem; /* p-3 p-4 */
-  border: 1px solid #d1d5db; /* border-gray-300 */
-  border-radius: 0.375rem; /* rounded-md */
-  background-color: white;
-  cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
-  font-size: 0.875rem; /* text-sm */
-  font-weight: 500; /* font-medium */
-  color: #374151; /* text-gray-700 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1rem; /* p-3 p-4 */
+    border: 1px solid #d1d5db; /* border-gray-300 */
+    border-radius: 0.375rem; /* rounded-md */
+    background-color: white;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 500; /* font-medium */
+    color: #374151; /* text-gray-700 */
 }
 .booking-time-button:hover {
-  border-color: #9ca3af; /* hover:border-gray-400 */
+    border-color: #9ca3af; /* hover:border-gray-400 */
 }
 .booking-time-button svg {
-  margin-right: 0.5rem; /* mr-2 */
-  width: 1.1rem; /* ~h-4/w-4 */
-  height: 1.1rem;
-  fill: currentColor; /* Icon color matches text */
+    margin-right: 0.5rem; /* mr-2 */
+    width: 1.1rem; /* ~h-4/w-4 */
+    height: 1.1rem;
+    fill: currentColor; /* Icon color matches text */
 }
 .booking-time-button.active {
-   border-color: var(--color-teal);
-   background-color: var(--color-teal-50);
-   color: var(--color-teal-dark);
-   font-weight: 600; /* font-semibold */
-   box-shadow: 0 0 0 1px var(--color-teal); /* Ring effect */
+     border-color: var(--color-teal);
+     background-color: var(--color-teal-50);
+     color: var(--color-teal-dark);
+     font-weight: 600; /* font-semibold */
+     box-shadow: 0 0 0 1px var(--color-teal); /* Ring effect */
 }
 
 /* Mobile Responsiveness for Cards */
 @media (max-width: 400px) {
-  .vehicle-card { flex-direction: column; align-items: center; }
-  .vehicle-card-content { flex-direction: column; align-items: center; text-align: center; width: 100%; }
-  .vehicle-card-details { margin-left: 0; margin-top: 0.75rem; width: 100%; align-items: center; }
-  .vehicle-card-details .flex { justify-content: center; }
-  .badge-container { justify-content: center; margin-top: 0.25rem; }
-  .vehicle-image-container { width: 100%; max-width: 10rem; }
+    .vehicle-card { flex-direction: column; align-items: center; }
+    .vehicle-card-content { flex-direction: column; align-items: center; text-align: center; width: 100%; }
+    .vehicle-card-details { margin-left: 0; margin-top: 0.75rem; width: 100%; align-items: center; }
+    .vehicle-card-details .flex { justify-content: center; }
+    .badge-container { justify-content: center; margin-top: 0.25rem; }
+    .vehicle-image-container { width: 100%; max-width: 10rem; }
 }
 
-/* --- New styles for the booking form --- */
-
-/* Styling for the semi-transparent overlay container */
-.form-overlay-container {
-    background-color: rgba(0, 0, 0, 0.5); /* 50% black opacity */
-    padding: 2rem; /* p-8 */
-    border-radius: 0.5rem; /* rounded-lg */
-    max-width: 32rem; /* max-w-lg */
-    margin-left: auto; /* mx-auto */
-    margin-right: auto; /* mx-auto */
+/* Header Styles */
+header {
+    background-color: black; /* Set the header background to black */
+    color: white; /* Ensure the text color is white for contrast */
+    border-bottom: none; /* Remove the border for a seamless look */
 }
-
-/* Styling for the booking form itself */
-#booking-form {
-    background-color: #000; /* bg-black */
-    border: 4px solid #fff; /* border-4 border-white */
-    padding: 1.5rem; /* p-6 */
-    border-radius: 0.5rem; /* rounded-lg */
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
-    color: #fff; /* text-white */
-}
-
-#booking-form > div {
-    margin-bottom: 1rem; /* Adds vertical spacing between child elements */
-}
-
-/* Styling for input, select, and textarea elements within the form */
-#booking-form input[type="text"],
-#booking-form input[type="email"],
-#booking-form input[type="tel"],
-#booking-form input[type="number"],
-#booking-form select {
-    background-color: #1f2937; /* bg-gray-800 */
-    color: #fff; /* text-white */
-    border-color: #d1d5db; /* border-gray-300 */
-    border-width: 1px; /* ring-1 */
-    border-style: inset; /* ring-inset */
-    border-radius: 0.375rem; /* rounded-md */
-    padding: 0.5rem; /* p-2 */
-    width: 100%; /* w-full */
-    /* Remove default border-0 */
-    /* Remove default ring-1 ring-inset ring-gray-300 */
-}
-
-/* Focus states for input, select, and textarea */
-#booking-form input[type="text"]:focus,
-#booking-form input[type="email"]:focus,
-#booking-form input[type="tel"]:focus,
-#booking-form input[type="number"]:focus,
-#booking-form select:focus {
-    outline: none; /* Remove default outline */
-    box-shadow: 0 0 0 2px #fff; /* focus:ring-2 focus:ring-white */
-    border-color: #fff; /* focus:border-white */
-}
-
-/* Styling for labels within the form */
-#booking-form label {
-    display: block; /* block */
-    font-weight: 700; /* font-bold */
-    font-size: 1.125rem; /* text-lg */
-    margin-bottom: 0.5rem; /* Add some space below the label */
-}
-
-/* Styling for the submit button */
-#submit-button {
-    background-color: #fff; /* bg-white */
-    color: #000; /* text-black */
-    padding: 0.5rem; /* p-2 */
-    border-radius: 0.375rem; /* rounded-md */
-    display: flex; /* flex */
-    width: 100%; /* w-full */
-    align-items: center; /* items-center */
-    justify-content: center; /* justify-center */
-    font-size: 1.125rem; /* text-lg */
-    font-weight: 600; /* font-semibold */
-    border: none; /* Remove default border */
-    transition: background-color 0.2s ease-in-out; /* Add transition for hover effect */
-}
-
-/* Hover state for the submit button */
-#submit-button:hover {
-    background-color: #e5e7eb; /* hover:bg-gray-200 */
-}
-
-/* Focus state for the submit button */
-#submit-button:focus {
-    outline: none; /* Remove default outline */
-    box-shadow: 0 0 0 2px #fff; /* focus:ring-2 focus:ring-white */
-}
-
-/* Adjust text color for specific elements within the form if needed */
-#booking-form .text-gray-300 {
-    color: #d1d5db; /* Ensure light gray text has enough contrast */
-}
-
-#booking-form .text-gray-700 {
-     color: #d1d5db; /* Adjust color for headers/text that were gray-700 */
-}
-
-/* Adjust border color for dividers if needed */
-#booking-form .divide-y > :not([hidden]) ~ :not([hidden]) {
-    border-color: #4b5563; /* Adjust divider color for dark background */
-}
-
-/* Adjust background color for specific sections if needed */
-#booking-form .bg-gray-50 {
-     background-color: #1f2937; /* Adjust background for elements like hourly description */
-     border-color: #4b5563; /* Adjust border color for these elements */
-}
-
-/* Adjust text color for elements within vehicle cards */
-#booking-form .vehicle-card p,
-#booking-form .vehicle-card span {
-    color: #1f2937; /* Ensure text inside white cards is dark */
-}
-
-/* Adjust text color for confirmation message */
-#confirmation-message h3,
-#confirmation-message p {
-    color: #1f2937; /* Ensure confirmation message text is dark against white background */
-}
-
-
