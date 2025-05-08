@@ -19,13 +19,14 @@ html {
     background-position: center;
     background-repeat: no-repeat;
     height: 100%;
+    background-color: black; /* Set the background color to black */
 }
 
 body {
     background: transparent;
     height: 100%;
     font-family: 'Inter', sans-serif;
-    color: #1f2937;
+    color: #ffffff; /* Change text color to white for better contrast */
 }
 
 h1, h2, h3, .font-playfair { font-family: 'Playfair Display', serif; }
@@ -90,4 +91,11 @@ select { appearance: none; -webkit-appearance: none; -moz-appearance: none; back
     .vehicle-card-details .flex { justify-content: center; }
     .badge-container { justify-content: center; margin-top: 0.25rem; }
     .vehicle-image-container { width: 100%; max-width: 10rem; }
+}
+
+/* Header Styles */
+header {
+    background-color: black; /* Set the header background to black */
+    color: white; /* Ensure the text color is white for contrast */
+    border-bottom: none; /* Remove the border for a seamless look */
 }
