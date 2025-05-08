@@ -124,8 +124,7 @@ const config = {
     const commonTimeConfig = { enableTime: true, noCalendar: true, dateFormat: "H:i", altInput: true, altFormat: "h : i K", time_24hr: false, minuteIncrement: 10 };
 
     // Initialize pickers for One-Way and Hourly fields if the corresponding input elements exist
-    if (elements.oneWayPickupDateInput) flatpickr(elements.oneWayPickupDateInput, commonDateConfig);
-    if (elements.oneWayPickupTimeInput) flatpickr(elements.oneWayPickupTimeInput, commonTimeConfig);
+    // Note: One-Way pickers are now initialized when 'Book for later' button is clicked
     if (elements.hourlyPickupDateInput) flatpickr(elements.hourlyPickupDateInput, commonDateConfig);
     if (elements.hourlyPickupTimeInput) flatpickr(elements.hourlyPickupTimeInput, commonTimeConfig);
     console.log("Flatpickr initialized for relevant inputs.");
@@ -453,3 +452,201 @@ const config = {
 
   // Validates the form based on the currently active tab and the inputs within that tab.
   // Displays user-friendly error
+// --- Event Listener Setup ---
+// Sets up all necessary event listeners for tab switching, form submission,
+// input changes, etc.
+// Parameters:
+// - elements: Object containing references to DOM elements.
+// - placeholders: Object containing placeholder texts (from config).
+// - config: Application configuration object.
+// Returns: void
+function initializeEventListeners(elements, placeholders, config) {
+    console.log("Event listeners initialized.");
+
+    // Event listeners for tab switching buttons
+    elements.tabNavigationContainer?.addEventListener('click', (event) => {
+        const button = event.target.closest('.tab-button');
+        // Check if the clicked element is a tab button and not already the active tab
+        if (button && button.dataset.tabTarget && !button.classList.contains('active-tab')) {
+            // Call the switchTab function with the target panel ID
+            switchTab(button.dataset.tabTarget, elements, placeholders);
+        }
+    });
+
+    // Event listener for the Experience+ service dropdown to update UI
+    elements.serviceDropdown?.addEventListener('change', () => {
+        updateExperiencePlusPanelUI(elements, placeholders);
+    });
+
+    // Event listeners for One-Way booking preference buttons ('Request now' / 'Book for later')
+    elements.requestNowButton?.addEventListener('click', () => {
+        clearError('booking-time'); // Clear any previous error for this button group
+        elements.requestNowButton.classList.add('active'); // Add active styling
+        elements.bookLaterButton?.classList.remove('active'); // Remove active styling from the other button
+        elements.scheduledBookingInputsContainer?.classList.add('hidden'); // Hide the scheduled date/time inputs
+        elements.bookingPreferenceInput.value = 'ASAP'; // Set the hidden input value
+
+        // Clear scheduled inputs and destroy flatpickr instances if they exist
+        // This prevents submitting old scheduled data if the user switches back to ASAP
+        if (elements.oneWayPickupDateInput) elements.oneWayPickupDateInput.value = '';
+        if (elements.oneWayPickupTimeInput) elements.oneWayPickupTimeInput.value = '';
+        // Destroy Flatpickr instances to clean up resources and prevent potential issues
+        if (elements.flatpickrInstances && elements.flatpickrInstances.oneWayDate) { elements.flatpickrInstances.oneWayDate.destroy(); delete elements.flatpickrInstances.oneWayDate; }
+        if (elements.flatpickrInstances && elements.flatpickrInstances.oneWayTime) { elements.flatpickrInstances.oneWayTime.destroy(); delete elements.flatpickrInstances.oneWayTime; }
+        // Clear errors specifically for the scheduled date/time inputs
+        clearError('pickup-date-oneway');
+        clearError('pickup-time-oneway');
+    });
+
+    elements.bookLaterButton?.addEventListener('click', () => {
+        clearError('booking-time'); // Clear any previous error for this button group
+        elements.bookLaterButton.classList.add('active'); // Add active styling
+        elements.requestNowButton?.classList.remove('active'); // Remove active styling from the other button
+        elements.scheduledBookingInputsContainer?.classList.remove('hidden'); // Show the scheduled date/time inputs
+        elements.bookingPreferenceInput.value = 'Scheduled'; // Set the hidden input value
+
+        // Initialize Flatpickr for one-way inputs if not already done
+        // This ensures Flatpickr is only initialized when the user needs it
+        if (!elements.flatpickrInstances || !elements.flatpickrInstances.oneWayDate && elements.oneWayPickupDateInput) {
+            const commonDateConfig = { altInput: true, altFormat: "D, M j, Y", dateFormat: "Y-m-d", enableTime: false, minDate: "today" };
+            // Store the Flatpickr instance
+            elements.flatpickrInstances = elements.flatpickrInstances || {}; // Ensure the object exists
+            elements.flatpickrInstances.oneWayDate = flatpickr(elements.oneWayPickupDateInput, commonDateConfig);
+        }
+        if (!elements.flatpickrInstances || !elements.flatpickrInstances.oneWayTime && elements.oneWayPickupTimeInput) {
+             const commonTimeConfig = { enableTime: true, noCalendar: true, dateFormat: "H:i", altInput: true, altFormat: "h : i K", time_24hr: false, minuteIncrement: 10 };
+             // Store the Flatpickr instance
+             elements.flatpickrInstances = elements.flatpickrInstances || {}; // Ensure the object exists
+             elements.flatpickrInstances.oneWayTime = flatpickr(elements.oneWayPickupTimeInput, commonTimeConfig);
+        }
+        // Focus the date input after revealing the scheduled inputs for better UX
+        setTimeout(() => elements.oneWayPickupDateInput?.focus(), 50);
+    });
+
+
+    // Add input event listeners for real-time error clearing on key fields
+    // This helps clear validation errors as the user types or changes input
+    elements.bookingForm?.querySelectorAll('input:not([type="radio"]):not([type="button"]), select, textarea').forEach(input => {
+        let targetId = input.id || input.name; // Use ID or name as a fallback for error targeting
+        if (!targetId) return; // Skip if no ID or name is available
+
+        // Determine the event type based on the input type for optimal performance
+        // 'input' is good for text fields, 'change' for selects, dates, times, etc.
+        const eventType = (input.tagName === 'INPUT' && !['number', 'email', 'tel', 'date', 'time'].includes(input.type)) ? 'input' : 'change';
+
+        // Add the event listener to clear the error when the input changes
+        input.addEventListener(eventType, () => clearError(targetId));
+        // Also clear the error when the input loses focus (blur)
+        input.addEventListener('blur', () => clearError(targetId));
+    });
+
+    // Add listeners to specific radio groups (excluding vehicle_type_oneway, handled separately)
+    // This clears the group's error when a radio button within it is selected
+    ['dinner_style_preference', 'motivation', 'lounge_interest', 'date_preference'].forEach(name => {
+        document.querySelectorAll(`input[name="${name}"]`).forEach(radio => {
+            radio.addEventListener('change', () => {
+                clearError(name); // Clear error for the group using the name
+                // Special handling for Wynwood 'Other' dinner preference
+                if (name === 'dinner_style_preference' && elements.wynwoodNightOptions && !elements.wynwoodNightOptions.classList.contains('hidden')) {
+                    handleWynwoodDinnerChoice(elements);
+                }
+            });
+        });
+    });
+
+     // Add listener for vehicle card selection (clears error on change)
+     // This clears the specific error message for the vehicle type group
+     const vehicleCardRadios = document.querySelectorAll('.vehicle-card input[type="radio"][name="vehicle_type_oneway"]'); // First declaration
+
+     vehicleCardRadios.forEach(radio => {
+         radio.addEventListener('change', () => {
+             clearError('vehicle_type_oneway'); // Clear the specific error for the vehicle group
+         });
+     });
+
+     // Add event listener for the "Get Current Location" button if it exists
+     // This was previously in the missing initializeDashboard function
+     const getLocationButton = document.getElementById("get-location-button"); // Get the button reference here
+     if (getLocationButton) {
+         getLocationButton.addEventListener('click', (event) => {
+             event.preventDefault(); // Prevent default button behavior (like form submission)
+             // Call the getCurrentLocation function from maps.js for the 'from-location' input
+             // Need elements here, so get them inside the listener or pass them
+             const elements = getElementRefs(); // Get elements when button is clicked
+             getCurrentLocation('from-location', elements); // Pass elements to getCurrentLocation
+         });
+     }
+
+
+    console.log("Event listeners initialized.");
+}
+
+
+// --- Main Initialization Logic ---
+// This function runs when the DOM is fully loaded.
+function initializeDashboard() {
+    console.log("DOM fully loaded. Initializing dashboard.");
+    // Get references to all necessary DOM elements
+    const elements = getElementRefs();
+
+    // Initialize Flatpickr date/time pickers (Hourly pickers are initialized here, One-Way deferred)
+    // Note: One-Way pickers are now initialized when 'Book for later' button is clicked
+    initializeFlatpickr(elements);
+
+    // Initialize all event listeners for UI interactions and form handling
+    initializeEventListeners(elements, config.placeholders, config);
+
+    // --- Crucial Step: Load Google Maps Script ---
+    // Call the function from maps.js to dynamically load the Google Maps API script.
+    // This is necessary for the Places Autocomplete service to work.
+    // Pass elements so that showError can be called from maps.js if the script fails to load.
+    loadGoogleMapsScript(elements);
+
+
+    // Set up the initial active tab state (e.g., default to the One-Way tab)
+    // Find the button that is initially marked as active (e.g., via CSS class)
+    const defaultTabButton = elements.tabNavigationContainer?.querySelector('.tab-button.active-tab');
+    if (defaultTabButton) {
+         // Get the target panel ID from the data attribute of the default active button
+         const defaultPanelId = defaultTabButton.getAttribute('data-tab-target');
+         if (defaultPanelId) {
+             // Use a small timeout to ensure other initializations (like element references and event listeners)
+             // have completed before switching the tab and potentially focusing an element.
+             setTimeout(() => {
+                 switchTab(defaultPanelId, elements, config.placeholders);
+             }, 0); // 0ms timeout pushes the task to the end of the current event loop
+         }
+    } else {
+        // Fallback: if no default active tab is specified in the HTML, default to the first panel found.
+        const firstPanel = elements.formTabPanels?.[0];
+        if (firstPanel) {
+             const firstPanelId = '#' + firstPanel.id;
+             setTimeout(() => {
+                switchTab(firstPanelId, elements, config.placeholders);
+             }, 0);
+        }
+    }
+
+    // Initial update of the submit button text based on the default active tab
+    resetSubmitButton(elements);
+
+    // Note: The "Get Current Location" button listener is now added inside initializeEventListeners
+    // to ensure it's set up alongside other form element listeners.
+}
+
+// Ensure the dashboard initializes only after the DOM is fully loaded.
+// This is the main entry point for the module script.
+document.addEventListener('DOMContentLoaded', initializeDashboard);
+
+// Make initAutocomplete globally accessible for the Google Maps API callback
+// This is crucial if you are loading the Maps script using the `callback=initAutocomplete` parameter
+// in the script URL (which loadGoogleMapsScript in maps.js does).
+// We assign the imported initAutocomplete function to the window object.
+window.initAutocomplete = initAutocomplete;
+
+// Note: The getElementRefs function is exported so it can be used by maps.js
+// Export other functions from dashboard.js if they need to be called from other modules.
+// For example, if maps.js needed to call switchTab or updateExperiencePlusPanelUI,
+// you would export them here. Based on the current maps.js, only getElementRefs is needed.
+// The button state functions (setLoadingButton, resetSubmitButton) are passed directly to sendFormData.
+export { getElementRefs }; // Export getElementRefs as it's used by maps.js
