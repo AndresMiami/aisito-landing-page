@@ -67,12 +67,6 @@
       .booking-time-button:hover {
         border-color: #9ca3af; /* hover:border-gray-400 */
       }
-      .booking-time-button svg {
-        margin-right: 0.5rem; /* mr-2 */
-        width: 1.1rem; /* ~h-4/w-4 */
-        height: 1.1rem;
-        fill: currentColor; /* Icon color matches text */
-      }
       .booking-time-button.active {
          border-color: var(--color-teal);
          background-color: var(--color-teal-50);
@@ -133,7 +127,7 @@
                      <div class="grid grid-cols-2 gap-x-3" aria-labelledby="booking-time-error">
                          <button type="button" id="request-now-button" class="booking-time-button">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                               <path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A9.978 9.978 0 0 0 10 12c-2.31 0-4.438.784-6.131 2.1-.194.51-.02.979.406 1.393Z" />
+                               <path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A9.978 9.978 0 0 0 10 12c-2.31 0-4.438.784-6.131 2.1-.194.51-.02.979.406 1.393z" />
                             </svg>
                              Request now
                          </button>
@@ -181,7 +175,7 @@
                                  </span>
                                  <span class="flex items-center">
                                    <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 3.75A2.75 2.75 0 018.75 1h2.5A2.75 2.75 0 0114 3.75v.443c.57.055 1.14.122 1.71.2V3.75A3.75 3.75 0 0012 0h-4A3.75 3.75 0 004.25 3.75v.643c.57-.078 1.14-.145 1.71-.2V3.75zM4.75 5.11v9.14a.75.75 0 00.75.75h9a.75.75 0 00.75-.75v-9.14c-.61-.087-1.2-.19-1.75-.315V6.5a.75.75 0 00-1.5 0v-.194c-1.06-.214-2.14-.214-3.2 0V6.5a.75.75 0 00-1.5 0v-.409c-.55.125-1.14.228-1.75.315zM5.5 6.6v8.15h9V6.6a18.225 18.225 0 01-4.5 0c-1.06.214-2.14.214-3.2 0a18.225 18.225 0 01-1.3 0z" clip-rule="evenodd" /></svg>
-                                    <span class="font-medium">2</span>
+                                   <span class="font-medium">2</span>
                                  </span>
                                </div>
                                <p class="text-xs text-gray-500 mt-1">e.g., Tesla Model Y</p>
@@ -346,7 +340,6 @@
                    <div id="experience-options-container" class="hidden space-y-4">
                      <div id="water-sky-options" class="hidden relative border-t border-gray-200 pt-4"></div>
                       <div id="wynwood-night-options" class="hidden space-y-4 border-t border-gray-200 pt-4">
-                        <!-- Wynwood Art Tour Heading -->
                         <h2 class="text-2xl font-bold text-center" style="font-family: 'Permanent Marker', cursive; color: #ff4d4d;">
                           Wynwood Art Tour
                         </h2>
@@ -433,7 +426,7 @@
           refs.evergladesOptions = document.getElementById('everglades-options');
           refs.keysEscapeOptions = document.getElementById('keys-escape-options');
 
-          // Common Form Elements
+          // Common Submission/Feedback Elements
           document.getElementById('submit-button').querySelector('.button-text').textContent = 'Continue';
           refs.submitButtonText = refs.submitButton?.querySelector('.button-text');
           refs.submitButtonSpinner = refs.submitButton?.querySelector('.spinner');
@@ -724,7 +717,7 @@
 
             if (targetPanel) {
                 targetPanel.classList.remove("hidden");
-                firstFocusableElement = targetPanel.querySelector("input:not([type=\"hidden\"]):not(.sr-only):not(:disabled), select:not(:disabled), textarea:not(:disabled), button:not([disabled])");
+                firstFocusableElement = targetPanel.querySelector("input:not([type=\"hidden\"]):not(.sr-only):not(:disabled), select:not(:disabled), textarea:not([disabled]), button:not([disabled])");
             }
             if (targetButton) {
                 targetButton.classList.add("active-tab");
@@ -760,7 +753,8 @@
 
             setTimeout(() => {
                 if (firstFocusableElement) {
-                    firstFocusableElement.focus();
+                    firstFocusableElement.focus({ preventScroll: true });
+                    firstFocusableElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             }, 50);
 
@@ -770,382 +764,423 @@
 
 
         // --- Form Validation ---
-         function validateForm(elements) {
-          let isValid = true;
-          const activeTabButton = elements.tabNavigationContainer?.querySelector('.active-tab');
-          const activePanelId = activeTabButton ? activeTabButton.getAttribute('data-tab-target') : null;
+        // This function has been moved to formValidation.js
+        /*
+        function validateForm(elements) {
+            let isValid = true;
+            const activeTabButton = elements.tabNavigationContainer?.querySelector('.active-tab');
+            const activePanelId = activeTabButton ? activeTabButton.getAttribute('data-tab-target') : null;
 
-          clearAllErrors(elements); // Start fresh
+            clearAllErrors(elements);
 
-          // Always validate 'From' location
-          if (!elements.fromLocationInput?.value.trim()) {
-            showError(elements, 'from-location', 'Please enter a "From" location.');
-            isValid = false;
-          }
-
-          if (activePanelId === '#panel-oneway') {
-            // Validate 'To' address
-            if (!elements.toAddressInput?.value.trim()) {
-                showError(elements, 'to-address', 'Please enter a "To" address.');
+            if (!elements.fromLocationInput?.value.trim()) {
+                showError(elements, 'from-location', 'Please enter a "From" location.');
+                console.warn("Validation Failed: 'From' location is empty.");
                 isValid = false;
             }
 
-            // Validate Time Preference (NEW)
-            const bookingPref = elements.bookingPreferenceInput?.value;
-            if (!bookingPref) {
-                showError(elements, 'booking-time', 'Please select "Request now" or "Book for later".');
-                isValid = false;
-            } else if (bookingPref === 'Scheduled') {
-                // Validate Date/Time only if 'Book for later' is chosen
-                if (!elements.oneWayPickupDateInput?.value) {
-                    showError(elements, 'pickup-date-oneway', 'Please select a date.');
+            if (activePanelId === '#panel-oneway') {
+                if (!elements.toAddressInput?.value.trim()) {
+                    showError(elements, 'to-address', 'Please enter a "To" address.');
+                    console.warn("Validation Failed: 'To' address is empty for One Way.");
                     isValid = false;
                 }
-                if (!elements.oneWayPickupTimeInput?.value) {
-                    showError(elements, 'pickup-time-oneway', 'Please select a time.');
-                    isValid = false;
-                }
-            } // No date/time validation needed if 'ASAP'
 
-            // Validate Vehicle Selection
-            const vehicleSelectedOneway = document.querySelector('input[name="vehicle_type_oneway"]:checked');
-            if (!vehicleSelectedOneway) {
-                showError(elements, 'vehicle_type_oneway', 'Please select a vehicle type.');
-                isValid = false;
+                const bookingPref = elements.bookingPreferenceInput?.value;
+                if (!bookingPref) {
+                    showError(elements, 'booking-time', 'Please select "Request now" or "Book for later".');
+                    console.warn("Validation Failed: Booking time preference not selected for One Way.");
+                    isValid = false;
+                } else if (bookingPref === 'Scheduled') {
+                    if (!elements.oneWayPickupDateInput?.value) {
+                        showError(elements, 'pickup-date-oneway', 'Please select a date.');
+                        console.warn("Validation Failed: One-Way pickup date is empty.");
+                        isValid = false;
+                    }
+                    if (!elements.oneWayPickupTimeInput?.value) {
+                        showError(elements, 'pickup-time-oneway', 'Please select a time.');
+                        console.warn("Validation Failed: One-Way pickup time is empty.");
+                        isValid = false;
+                    }
+                }
+
+                const vehicleSelectedOneway = document.querySelector('input[name="vehicle_type_oneway"]:checked');
+                if (!vehicleSelectedOneway) {
+                    showError(elements, 'vehicle_type_oneway', 'Please select a vehicle type.');
+                    console.warn("Validation Failed: No vehicle type selected for One Way.");
+                    isValid = false;
+                }
+
+            } else if (activePanelId === '#panel-experience-plus') {
+                const selectedService = elements.serviceDropdown.value;
+                if (!selectedService) {
+                    showError(elements, 'experience-dropdown', 'Please select a Service.');
+                    console.warn("Validation Failed: No service selected in Experience+ dropdown.");
+                    isValid = false;
+                } else if (selectedService === 'hourly_chauffeur') {
+                    if (!elements.durationSelect?.value) { showError(elements, 'duration-hourly', 'Please select duration.'); isValid = false; }
+                    if (!elements.hourlyPickupDateInput?.value) { showError(elements, 'pickup-date-hourly', 'Please select a date.'); isValid = false; }
+                    if (!elements.hourlyPickupTimeInput?.value) { showError(elements, 'pickup-time-hourly', 'Please select a start time.'); isValid = false; }
+                } else {
+                    if (!elements.experienceNameInput?.value.trim()) { showError(elements, 'experience-name', 'Name required.'); isValid = false; }
+                    if (!elements.experienceGuestsInput?.value || parseInt(elements.experienceGuestsInput.value, 10) < 1) { showError(elements, 'experience-guests', 'Min 1 guest.'); isValid = false; }
+                    if (!elements.experienceEmailInput?.value.trim()) {
+                       showError(elements, 'experience-email', 'Email required.'); isValid = false;
+                    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(elements.experienceEmailInput.value.trim())) {
+                       showError(elements, 'experience-email', 'Invalid email format.'); isValid = false;
+                    }
+                    if (!elements.experiencePhoneInput?.value.trim()) {
+                        showError(elements, 'experience-phone', 'Phone required.');
+                        isValid = false;
+                    } else if (!/^\+?[\d\s()-]{10,20}$/.test(elements.experiencePhoneInput.value) || !/[\d]{10}/.test(elements.experiencePhoneInput.value.replace(/\D/g, ''))) {
+                      showError(elements, 'experience-phone', 'Invalid phone format (minimum 10 digits).');
+                      isValid = false;
+                    }
+                    const datePrefSelected = document.querySelector('input[name="date_preference"]:checked');
+                    if (!datePrefSelected) { showError(elements, 'date_preference', 'Please select timing preference.'); isValid = false; }
+
+                    if (selectedService === 'wynwood_night') {
+                      const motivationSelected = document.querySelector('#wynwood-night-options input[name="motivation"]:checked');
+                      const dinnerPrefSelected = document.querySelector('#wynwood-night-options input[name="dinner_style_preference"]:checked');
+                      const loungeSelected = document.querySelector('#wynwood-night-options input[name="lounge_interest"]:checked');
+                      if (!motivationSelected) { showError(elements, 'motivation', 'Occasion required.'); isValid = false; }
+                      if (!dinnerPrefSelected) { showError(elements, 'dinner_style_preference', 'Dinner preference required.'); isValid = false; }
+                        if (elements.wynwoodOtherDinnerRadio?.checked) {
+                            const otherRestaurantInput = document.getElementById('wynwood-other-restaurant');
+                            if (!otherRestaurantInput?.value.trim()) {
+                                showError(elements, 'wynwood-other-restaurant', 'Please specify other preference.');
+                                isValid = false;
+                            }
+                        }
+                      if (!loungeSelected) { showError(elements, 'lounge_interest', 'Lounge interest required.'); isValid = false;
+                      }
+                    }
+                }
+            } else {
+              isValid = false;
+              console.error("No active tab panel identified for validation.");
             }
 
-          } else if (activePanelId === '#panel-experience-plus') {
-            // Experience+ validation remains the same as before
-             const selectedService = elements.serviceDropdown.value;
-             if (!selectedService) {
-               showError(elements, 'experience-dropdown', 'Please select a Service.');
-               isValid = false;
-             } else if (selectedService === 'hourly_chauffeur') {
-               if (!elements.durationSelect?.value) { showError(elements, 'duration-hourly', 'Please select duration.'); isValid = false; }
-               if (!elements.hourlyPickupDateInput?.value) { showError(elements, 'pickup-date-hourly', 'Please select a date.'); isValid = false; }
-               if (!elements.hourlyPickupTimeInput?.value) { showError(elements, 'pickup-time-hourly', 'Please select a start time.'); isValid = false; }
-             } else { // Curated Experience selected
-               if (!elements.experienceNameInput?.value.trim()) { showError(elements, 'experience-name', 'Name required.'); isValid = false; }
-               if (!elements.experienceGuestsInput?.value || parseInt(elements.experienceGuestsInput.value, 10) < 1) { showError(elements, 'experience-guests', 'Min 1 guest.'); isValid = false; }
-               if (!elements.experienceEmailInput?.value.trim()) {
-                  showError(elements, 'experience-email', 'Email required.'); isValid = false;
-               } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(elements.experienceEmailInput.value.trim())) {
-                  showError(elements, 'experience-email', 'Invalid email format.'); isValid = false;
-               }
-               if (!elements.experiencePhoneInput?.value.trim()) {
-                   showError(elements, 'experience-phone', 'Phone required.');
-                   isValid = false;
-               } else if (!/^\+?[\d\s()-]{10,20}$/.test(elements.experiencePhoneInput.value) || !/[\d]{10}/.test(elements.experiencePhoneInput.value.replace(/\D/g, ''))) {
-                 showError(elements, 'experience-phone', 'Invalid phone format (minimum 10 digits).');
-                 isValid = false;
-               }
-               const datePrefSelected = document.querySelector('input[name="date_preference"]:checked');
-               if (!datePrefSelected) { showError(elements, 'date_preference', 'Please select timing preference.'); isValid = false; }
+            if (!isValid) {
+                console.warn("Form validation failed. Errors have been displayed to the user.");
+            } else {
+                console.log("Form validation passed. Ready to submit.");
+            }
 
-               // Wynwood specific validation
-               if (selectedService === 'wynwood_night') {
-                 const motivationSelected = document.querySelector('#wynwood-night-options input[name="motivation"]:checked');
-                 const dinnerPrefSelected = document.querySelector('#wynwood-night-options input[name="dinner_style_preference"]:checked');
-                 const loungeSelected = document.querySelector('#wynwood-night-options input[name="lounge_interest"]:checked');
-                 if (!motivationSelected) { showError(elements, 'motivation', 'Occasion required.'); isValid = false; }
-                 if (!dinnerPrefSelected) { showError(elements, 'dinner_style_preference', 'Dinner preference required.'); isValid = false; }
-                   if (elements.wynwoodOtherDinnerRadio?.checked) {
-                       const otherRestaurantInput = document.getElementById('wynwood-other-restaurant');
-                       if (!otherRestaurantInput?.value.trim()) {
-                           showError(elements, 'wynwood-other-restaurant', 'Please specify other preference.');
-                           isValid = false;
-                       }
-                   }
-                 if (!loungeSelected) { showError(elements, 'lounge_interest', 'Lounge interest required.'); isValid = false;
-                 }
-               }
-               // Add validation for other experiences if options are added
-             }
-          } else {
-            isValid = false;
-            console.error("No active tab panel identified for validation.");
-          }
-
-          return isValid;
+            return isValid;
         }
-
+        */
 
         // --- Form Data Processing ---
-         function processFormData(elements) {
-          const formData = new FormData(elements.bookingForm);
-          let serviceType = '';
-          const activeTabButton = elements.tabNavigationContainer?.querySelector('.active-tab');
-          const activePanelId = activeTabButton ? activeTabButton.getAttribute('data-tab-target') : null;
+        // These functions have been moved to formSubmission.js
+        /*
+        function processFormData(elements) {
+            const formData = new FormData(elements.bookingForm);
+            let serviceType = '';
+            const activeTabButton = elements.tabNavigationContainer?.querySelector('.active-tab');
+            const activePanelId = activeTabButton ? activeTabButton.getAttribute('data-tab-target') : null;
 
-          const dataObject = {
-            'from-location': formData.get('from-location')?.trim(),
-          };
+            const dataObject = {
+              'from-location': formData.get('from-location')?.trim(),
+            };
 
-          if (activePanelId === '#panel-oneway') {
-            serviceType = 'One Way';
-            dataObject.service_type = serviceType;
-            dataObject['to-address'] = formData.get('to-address')?.trim();
-            dataObject.vehicle_type = formData.get('vehicle_type_oneway'); // Get selected vehicle card
+            if (activePanelId === '#panel-oneway') {
+              serviceType = 'One Way';
+              dataObject.service_type = serviceType;
+              dataObject['to-address'] = formData.get('to-address')?.trim();
+              dataObject.vehicle_type = formData.get('vehicle_type_oneway');
 
-            // Add booking preference and conditional date/time (NEW)
-            dataObject.booking_preference = formData.get('booking_preference'); // 'ASAP' or 'Scheduled'
-            if (dataObject.booking_preference === 'Scheduled') {
-                 dataObject['pickup-date'] = formData.get('pickup-date-oneway');
-                 dataObject['pickup-time'] = formData.get('pickup-time-oneway');
+              dataObject.booking_preference = formData.get('booking_preference');
+              if (dataObject.booking_preference === 'Scheduled') {
+                   dataObject['pickup-date'] = formData.get('pickup-date-oneway');
+                   dataObject['pickup-time'] = formData.get('pickup-time-oneway');
+              }
+
+            } else if (activePanelId === '#panel-experience-plus') {
+               const selectedServiceValue = elements.serviceDropdown.value;
+               if (selectedServiceValue === 'hourly_chauffeur') {
+                 serviceType = 'Hourly';
+                 dataObject.service_type = serviceType;
+                 dataObject.experience_name = "Hourly Chauffeur";
+                 dataObject['duration-hourly'] = formData.get('duration-hourly');
+                 dataObject['pickup-date'] = formData.get('pickup-date-hourly');
+                 dataObject['pickup-time'] = formData.get('pickup-time-hourly');
+               } else if (selectedServiceValue) {
+                 serviceType = 'Experience';
+                 dataObject.service_type = serviceType;
+                 dataObject.experience_name = elements.serviceDropdown.options[elements.serviceDropdown.selectedIndex].text;
+                 dataObject.date_preference = formData.get('date_preference');
+                 dataObject.name = formData.get('name')?.trim();
+                 dataObject.guests = formData.get('guests');
+                 dataObject.email = formData.get('email')?.trim();
+                 dataObject.phone = formData.get('phone')?.trim();
+
+                 if (selectedServiceValue === 'wynwood_night') {
+                   dataObject.motivation = formData.get('motivation');
+                   dataObject.dinner_style_preference = formData.get('dinner_style_preference');
+                   if (formData.get('dinner_style_preference') === 'Other') {
+                     dataObject.other_restaurant_request = formData.get('other_restaurant_request')?.trim();
+                   }
+                   dataObject.lounge_interest = formData.get('lounge_interest');
+                 }
+               }
             }
 
-          } else if (activePanelId === '#panel-experience-plus') {
-            // Experience+ processing remains the same
-             const selectedServiceValue = elements.serviceDropdown.value;
-             if (selectedServiceValue === 'hourly_chauffeur') {
-               serviceType = 'Hourly';
-               dataObject.service_type = serviceType;
-               dataObject.experience_name = "Hourly Chauffeur"; // Keep consistent naming
-               dataObject['duration-hourly'] = formData.get('duration-hourly');
-               dataObject['pickup-date'] = formData.get('pickup-date-hourly');
-               dataObject['pickup-time'] = formData.get('pickup-time-hourly');
-             } else if (selectedServiceValue) {
-               serviceType = 'Experience';
-               dataObject.service_type = serviceType;
-               dataObject.experience_name = elements.serviceDropdown.options[elements.serviceDropdown.selectedIndex].text;
-               dataObject.date_preference = formData.get('date_preference');
-               dataObject.name = formData.get('name')?.trim();
-               dataObject.guests = formData.get('guests');
-               dataObject.email = formData.get('email')?.trim();
-               dataObject.phone = formData.get('phone')?.trim();
-
-               if (selectedServiceValue === 'wynwood_night') {
-                 dataObject.motivation = formData.get('motivation');
-                 dataObject.dinner_style_preference = formData.get('dinner_style_preference');
-                 if (formData.get('dinner_style_preference') === 'Other') {
-                   dataObject.other_restaurant_request = formData.get('other_restaurant_request')?.trim();
+            Object.keys(dataObject).forEach(key => {
+                 if (dataObject[key] === null || dataObject[key] === undefined || dataObject[key] === '') {
+                     if (key === 'other_restaurant_request' && dataObject.dinner_style_preference !== 'Other') {
+                         delete dataObject[key];
+                     } else if (key !== 'other_restaurant_request') {
+                         delete dataObject[key];
+                     }
                  }
-                 dataObject.lounge_interest = formData.get('lounge_interest');
-               }
-               // Add data processing for other experiences if options are added
-             }
+            });
+
+            console.log("Final Data Object for Submission:", dataObject);
+            return dataObject;
           }
 
-          // Clean up potential undefined/null/empty string values
-          Object.keys(dataObject).forEach(key => {
-               if (dataObject[key] === null || dataObject[key] === undefined || dataObject[key] === '') {
-                   // Special case: keep other_restaurant_request only if dinner style is 'Other'
-                   if (key === 'other_restaurant_request' && dataObject.dinner_style_preference !== 'Other') {
-                       delete dataObject[key];
-                   } else if (key !== 'other_restaurant_request') { // Delete other empty fields
-                       delete dataObject[key];
-                   }
-               }
-          });
+          function sendFormData(dataObject, elements, config) {
+            setLoadingButton(elements);
+            clearError('submit-button');
+
+             if (!config.FORM_ENDPOINT || config.FORM_ENDPOINT === "https://formspree.io/your-endpoint" || config.FORM_ENDPOINT === "YOUR_FORMSPREE_ENDPOINT") {
+               setTimeout(() => {
+                 console.warn("Formspree endpoint not configured. Data logged to console.");
+                 alert("DEV MODE: Form endpoint not set. Data logged to console.\n\n" + JSON.stringify(dataObject, null, 2));
+                 resetSubmitButton(elements);
+               }, 1000);
+               return;
+             }
+
+            fetch(config.FORM_ENDPOINT, {
+              method: 'POST',
+              body: JSON.stringify(dataObject),
+              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }
+            }).then(response => {
+              if (response.ok) {
+                const formContentContainer = elements.bookingForm.closest('.p-6');
+                const tabNav = elements.tabNavigationContainer;
+                if (formContentContainer) formContentContainer.classList.add('hidden');
+                if (tabNav) tabNav.classList.add('hidden');
+                if (elements.confirmationMessage) elements.confirmationMessage.classList.remove('hidden');
+                   elements.confirmationMessage.scrollIntoView({ behavior: 'smooth' });
+              } else {
+                response.json().then(data => {
+                   const errorMessage = data?.errors?.map(err => err.message).join(', ') || data?.error || 'Could not submit request. Please check details and try again.';
+                   showError(elements, 'submit-button', `Submission Error: ${errorMessage}`);
+                   resetSubmitButton(elements);
+                 }).catch(() => {
+                   showError(elements, 'submit-button', `Submission Error: Server returned status ${response.status}. Please try again.`);
+                   resetSubmitButton(elements);
+                 });
+              }
+            }).catch(error => {
+              console.error('Network error:', error);
+              showError(elements, 'submit-button', 'Network Error: Could not connect. Please check your internet connection and try again.');
+              resetSubmitButton(elements);
+            });
+          }
+          */
 
 
-          console.log("Final Data Object for Submission:", dataObject);
-          return dataObject;
-        }
-
-        // --- Form Submission ---
-         function sendFormData(dataObject, elements, config) {
-          // This function remains the same - handles sending data to Formspree
-          setLoadingButton(elements);
-          clearError('submit-button');
-
-           if (!config.FORM_ENDPOINT || config.FORM_ENDPOINT === "https://formspree.io/your-endpoint" || config.FORM_ENDPOINT === "YOUR_FORMSPREE_ENDPOINT") {
-             setTimeout(() => {
-               console.warn("Formspree endpoint not configured. Data logged to console.");
-               alert("DEV MODE: Form endpoint not set. Data logged to console.\n\n" + JSON.stringify(dataObject, null, 2));
-               resetSubmitButton(elements);
-             }, 1000);
-             return;
+    // --- Event Listener Setup ---
+    // Initializes various event listeners for form interactions, tab switching, and input changes.
+    // This function is called after the Google Maps API is loaded (within initAutocomplete).
+    // Parameters:
+    // - elements: Object containing references to DOM elements.
+    // - placeholders: Object containing placeholder texts (from config).
+    // - config: Application configuration object.
+    // Returns: void
+     function initializeEventListeners(elements, placeholders, config) {
+       // Add event listener for clicks on the tab navigation container to handle tab switching.
+       elements.tabNavigationContainer?.addEventListener('click', (event) => {
+           const button = event.target.closest('.tab-button'); // Find the closest tab button element that was clicked
+           // Check if a tab button was clicked, if it has a data-tab-target, and if it's not already the active tab.
+           if (button && button.dataset.tabTarget && !button.classList.contains('active-tab')) {
+               // Switch to the target tab panel specified in the data-tab-target attribute.
+               switchTab(button.dataset.tabTarget, elements, placeholders);
            }
+       });
 
-          fetch(config.FORM_ENDPOINT, {
-            method: 'POST',
-            body: JSON.stringify(dataObject),
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }
-          }).then(response => {
-            if (response.ok) {
-              const formContentContainer = elements.bookingForm.closest('.p-6');
-              const tabNav = elements.tabNavigationContainer;
-              if (formContentContainer) formContentContainer.classList.add('hidden');
-              if (tabNav) tabNav.classList.add('hidden');
-              if (elements.confirmationMessage) elements.confirmationMessage.classList.remove('hidden');
-                 elements.confirmationMessage.scrollIntoView({ behavior: 'smooth' });
-            } else {
-              response.json().then(data => {
-                 const errorMessage = data?.errors?.map(err => err.message).join(', ') || data?.error || 'Could not submit request. Please check details and try again.';
-                 showError(elements, 'submit-button', `Submission Error: ${errorMessage}`);
-                 resetSubmitButton(elements);
-               }).catch(() => {
-                 showError(elements, 'submit-button', `Submission Error: Server returned status ${response.status}. Please try again.`);
-                 resetSubmitButton(elements);
-               });
-            }
-          }).catch(error => {
-            console.error('Network error:', error);
-            showError(elements, 'submit-button', 'Network Error: Could not connect. Please check your internet connection and try again.');
-            resetSubmitButton(elements);
-          });
-        }
+       // Experience+ dropdown change
+       elements.serviceDropdown?.addEventListener('change', () => {
+           updateExperiencePlusPanelUI(elements, placeholders); // Update the visibility of fields based on the selected service
+       });
 
-        // --- Event Listener Setup ---
-        window.initializeEventListeners = function(elements, placeholders, config) {
-            // Tab switching
-            elements.tabNavigationContainer?.addEventListener('click', (event) => {
-                const button = event.target.closest('.tab-button');
-                if (button && button.dataset.tabTarget && !button.classList.contains('active-tab')) {
-                    switchTab(button.dataset.tabTarget, elements, placeholders);
-                }
-            });
+       // NEW: Add event listeners for the One-Way Time Preference buttons ('Request now' and 'Book for later').
+       elements.requestNowButton?.addEventListener('click', () => {
+           clearError('booking-time'); // Clear any validation error for the booking time choice
+           elements.requestNowButton.classList.add('active'); // Mark the 'Request now' button as active
+           elements.bookLaterButton?.classList.remove('active'); // Ensure the 'Book for later' button is not active
+           elements.scheduledBookingInputsContainer?.classList.add('hidden'); // Hide the date/time inputs for scheduled booking
+           elements.bookingPreferenceInput.value = 'ASAP'; // Set the hidden input value to 'ASAP'
+           // Clear any values in the scheduled date/time inputs and destroy their Flatpickr instances if they exist.
+           if (elements.oneWayPickupDateInput) elements.oneWayPickupDateInput.value = '';
+           if (elements.oneWayPickupTimeInput) elements.oneWayPickupTimeInput.value = '';
+           if (elements.flatpickrInstances.oneWayDate) { elements.flatpickrInstances.oneWayDate.destroy(); delete elements.flatpickrInstances.oneWayDate; }
+           if (elements.flatpickrInstances.oneWayTime) { elements.flatpickrInstances.oneWayTime.destroy(); delete elements.flatpickrInstances.oneWayTime; }
+           clearError('pickup-date-oneway'); // Clear any error for the date input
+           clearError('pickup-time-oneway'); // Clear any error for the time input
+       });
 
-            // Other event listeners...
-            console.log("Event listeners initialized.");
-        };
+       elements.bookLaterButton?.addEventListener('click', () => {
+           clearError('booking-time'); // Clear any validation error for the booking time choice
+           elements.bookLaterButton.classList.add('active'); // Mark the 'Book for later' button as active
+           elements.requestNowButton?.classList.remove('active'); // Ensure the 'Request now' button is not active
+           elements.scheduledBookingInputsContainer?.classList.remove('hidden'); // Show the date/time inputs for scheduled booking
+           elements.bookingPreferenceInput.value = 'Scheduled'; // Set the hidden input value to 'Scheduled'
 
-         function initializeEventListeners(elements, placeholders, config) {
-           // Tab switching
-           elements.tabNavigationContainer?.addEventListener('click', (event) => {
-               const button = event.target.closest('.tab-button');
-               if (button && button.dataset.tabTarget && !button.classList.contains('active-tab')) {
-                   switchTab(button.dataset.tabTarget, elements, placeholders);
-               }
-           });
+           // Initialize Flatpickr instances for the one-way date/time inputs if they haven't been initialized yet.
+           if (!elements.flatpickrInstances.oneWayDate && elements.oneWayPickupDateInput) {
+               const commonDateConfig = { altInput: true, altFormat: "D, M j, Y", dateFormat: "Y-m-d", enableTime: false, minDate: "today" };
+               elements.flatpickrInstances.oneWayDate = flatpickr(elements.oneWayPickupDateInput, commonDateConfig);
+           }
+           if (!elements.flatpickrInstances.oneWayTime && elements.oneWayPickupTimeInput) {
+                const commonTimeConfig = { enableTime: true, noCalendar: true, dateFormat: "H:i", altInput: true, altFormat: "h : i K", time_24hr: false, minuteIncrement: 10 };
+               elements.flatpickrInstances.oneWayTime = flatpickr(elements.oneWayPickupTimeInput, commonTimeConfig);
+           }
+           // Set focus to the date input after revealing it for better user flow.
+           setTimeout(() => elements.oneWayPickupDateInput?.focus(), 50); // Use a small delay to ensure element is visible and focusable
+       });
 
-           // Experience+ dropdown change
-           elements.serviceDropdown?.addEventListener('change', () => updateExperiencePlusPanelUI(elements, placeholders));
+       // 'Get Current Location' button listeners
+       elements.getLocationButton?.addEventListener("click", async () => {
+           console.log("Get Current Location button clicked.");
+           try {
+               // Call the imported getCurrentLocation function
+               // Pass elements to getCurrentLocation as it needs them for showError (which is now imported)
+               await getCurrentLocation("from-location", elements);
+               console.log("Location successfully retrieved and populated.");
+           } catch (error) {
+               console.error("Failed to get current location:", error);
+               showError(elements, "from-location", "Unable to retrieve location. Please try again."); // Display a user-friendly error
+           }
+       });
 
-           // NEW: One Way Time Preference Button Clicks
-           elements.requestNowButton?.addEventListener('click', () => {
-               clearError('booking-time');
-               elements.requestNowButton.classList.add('active');
-               elements.bookLaterButton?.classList.remove('active');
-               elements.scheduledBookingInputsContainer?.classList.add('hidden');
-               elements.bookingPreferenceInput.value = 'ASAP';
-               // Clear scheduled inputs and destroy flatpickr instances if they exist
-               if (elements.oneWayPickupDateInput) elements.oneWayPickupDateInput.value = '';
-               if (elements.oneWayPickupTimeInput) elements.oneWayPickupTimeInput.value = '';
-               if (elements.flatpickrInstances.oneWayDate) { elements.flatpickrInstances.oneWayDate.destroy(); delete elements.flatpickrInstances.oneWayDate; }
-               if (elements.flatpickrInstances.oneWayTime) { elements.flatpickrInstances.oneWayTime.destroy(); delete elements.flatpickrInstances.oneWayTime; }
-               clearError('pickup-date-oneway');
-               clearError('pickup-time-oneway');
-           });
+       // Add listeners to standard input, select, and textarea elements to clear their specific error messages when the user interacts with them.
+       elements.bookingForm?.querySelectorAll('input:not([type="radio"]):not([type="button"]):not([type="hidden"]), select, textarea').forEach(input => {
+           let targetId = input.id || input.name; // Get the ID or name of the input for error clearing
+           if (!targetId) return; // Skip if no ID or name is available
 
-           elements.bookLaterButton?.addEventListener('click', () => {
-               clearError('booking-time');
-               elements.bookLaterButton.classList.add('active');
-               elements.requestNowButton?.classList.remove('active');
-               elements.scheduledBookingInputsContainer?.classList.remove('hidden');
-               elements.bookingPreferenceInput.value = 'Scheduled';
+           // Special handling for date/time inputs initialized by Flatpickr - clear error on 'change' event.
+           if (targetId === 'pickup-date-oneway' || targetId === 'pickup-time-oneway' || targetId === 'pickup-date-hourly' || targetId === 'pickup-time-hourly') {
+               input.addEventListener('change', () => clearError(targetId)); // Flatpickr triggers 'change'
+           } else {
+               // For other inputs, clear error on 'input' (for text changes) and 'change' (for select/checkbox/radio)
+               const eventType = (input.tagName === 'INPUT' && !['number', 'email', 'tel'].includes(input.type)) ? 'input' : 'change'; // Determine appropriate event type
+               input.addEventListener(eventType, () => clearError(targetId));
+               input.addEventListener('blur', () => clearError(targetId)); // Also clear error when the input loses focus
+           }
+       });
 
-               // Initialize Flatpickr for one-way inputs if not already done
-               if (!elements.flatpickrInstances.oneWayDate && elements.oneWayPickupDateInput) {
-                   const commonDateConfig = { altInput: true, altFormat: "D, M j, Y", dateFormat: "Y-m-d", enableTime: false, minDate: "today" };
-                   elements.flatpickrInstances.oneWayDate = flatpickr(elements.oneWayPickupDateInput, commonDateConfig);
-               }
-               if (!elements.flatpickrInstances.oneWayTime && elements.oneWayPickupTimeInput) {
-                    const commonTimeConfig = { enableTime: true, noCalendar: true, dateFormat: "H:i", altInput: true, altFormat: "h : i K", time_24hr: false, minuteIncrement: 10 };
-                   elements.flatpickrInstances.oneWayTime = flatpickr(elements.oneWayPickupTimeInput, commonTimeConfig);
-               }
-               // Focus the date input after revealing
-               setTimeout(() => elements.oneWayPickupDateInput?.focus(), 50);
-           });
-
-
-           // Add listeners to regular inputs/selects to clear errors on input/change
-           elements.bookingForm?.querySelectorAll('input:not([type="radio"]):not([type="button"]), select, textarea').forEach(input => {
-               let targetId = input.id || input.name;
-               if (!targetId) return;
-               // Clear specific errors (date/time) when they get input
-               if (targetId === 'pickup-date-oneway' || targetId === 'pickup-time-oneway') {
-                   input.addEventListener('change', () => clearError(targetId)); // Use change for flatpickr
-               } else {
-                   const eventType = (input.tagName === 'INPUT' && !['number', 'email', 'tel', 'date', 'time'].includes(input.type)) ? 'input' : 'change';
-                   input.addEventListener(eventType, () => clearError(targetId));
-                   input.addEventListener('blur', () => clearError(targetId)); // Clear on blur too
-               }
-           });
-
-           // Add listeners to specific radio groups (excluding vehicle_type_oneway)
-           ['dinner_style_preference', 'motivation', 'lounge_interest', 'date_preference'].forEach(name => {
-               document.querySelectorAll(`input[name="${name}"]`).forEach(radio => {
-                   radio.addEventListener('change', () => {
-                       clearError(name); // Clear error for the group
-                       if (name === 'dinner_style_preference' && elements.wynwoodNightOptions && !elements.wynwoodNightOptions.classList.contains('hidden')) {
-                           handleWynwoodDinnerChoice(elements);
-                       }
-                   });
+       // Add listeners to specific radio button groups (excluding vehicle_type_oneway, handled separately) to clear errors on 'change'.
+       ['dinner_style_preference', 'motivation', 'lounge_interest', 'date_preference'].forEach(name => {
+           document.querySelectorAll(`input[name="${name}"]`).forEach(radio => {
+               radio.addEventListener('change', () => {
+                   clearError(name); // Clear the error associated with the radio group name
+                   // If the dinner style preference changes for Wynwood, call the specific handler.
+                   if (name === 'dinner_style_preference' && elements.wynwoodNightOptions && !elements.wynwoodNightOptions.classList.contains('hidden')) {
+                       handleWynwoodDinnerChoice(elements);
+                   }
                });
            });
+       });
 
-            // Add listener for vehicle card selection (clears error on change)
-            const vehicleCardRadios = document.querySelectorAll('.vehicle-card input[type="radio"][name="vehicle_type_oneway"]');
-            vehicleCardRadios.forEach(radio => {
-                radio.addEventListener('change', () => {
-                    clearError('vehicle_type_oneway'); // Clear the specific error for the vehicle group
-                });
+        // Add listener for vehicle card radio button selection to clear the vehicle type error on 'change'.
+        const vehicleCardRadios = document.querySelectorAll('.vehicle-card input[type="radio"][name="vehicle_type_oneway"]');
+        vehicleCardRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                clearError('vehicle_type_oneway'); // Clear the specific error for the vehicle selection group
             });
+        });
 
 
-           // Form Submission
-           elements.bookingForm?.addEventListener('submit', (event) => {
-               event.preventDefault();
-               // clearAllErrors(elements); // Moved inside validateForm
-               if (validateForm(elements)) {
-                   const data = processFormData(elements);
-                   sendFormData(data, elements, config);
-               } else {
-                   // Focus first error field
-                   const firstErrorField = elements.bookingForm.querySelector('[aria-invalid="true"], .border-red-500, fieldset.ring-red-500 input[type="radio"], fieldset.ring-red-500 input[type="checkbox"]');
-                   const firstFieldsetError = elements.bookingForm.querySelector('fieldset.ring-red-500');
-                   const firstButtonError = elements.bookingForm.querySelector('.booking-time-button.border-red-500');
+       // Add event listener for the main form submission.
+       elements.bookingForm?.addEventListener('submit', (event) => {
+           event.preventDefault(); // Prevent the default browser form submission
 
-                   let elementToFocus = firstErrorField || firstButtonError; // Prioritize inputs/buttons
-                   if (!elementToFocus && firstFieldsetError) {
-                       elementToFocus = firstFieldsetError.querySelector('input[type="radio"], input[type="checkbox"]');
-                   }
+           // Validate the form. If valid, process and send the data. Otherwise, display errors.
+           if (validateForm(elements)) {
+               // Call the imported processFormData and sendFormData functions
+               const data = processFormData(elements);
+               sendFormData(data, elements, config); // Pass elements and config as they are used within sendFormData
+           } else {
+               // If validation fails, find the first element with an error and focus it for accessibility.
+               // This includes inputs with aria-invalid, elements with border-red-500, or fieldsets with ring-red-500.
+               const firstErrorField = elements.bookingForm.querySelector('[aria-invalid="true"], .border-red-500, fieldset.ring-red-500 input[type="radio"], fieldset.ring-red-500 input[type="checkbox"]');
+               const firstFieldsetError = elements.bookingForm.querySelector('fieldset.ring-red-500'); // Check for fieldsets with errors
+               const firstButtonError = elements.bookingForm.querySelector('.booking-time-button.border-red-500'); // Check for time preference buttons with errors
 
-                   if (elementToFocus) {
-                       elementToFocus.focus({ preventScroll: true });
-                       elementToFocus.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                   }
-                    showError(elements, 'submit-button', 'Please review the errors above.');
+               // Determine the element to focus, prioritizing standard inputs/buttons, then radio/checkbox within fieldsets.
+               let elementToFocus = firstErrorField || firstButtonError;
+               if (!elementToFocus && firstFieldsetError) {
+                   elementToFocus = firstFieldsetError.querySelector('input[type="radio"], input[type="checkbox"]');
                }
-           });
 
-            // Accessibility Boost: Set aria-checked dynamically for vehicle cards
-            vehicleCardRadios.forEach(radio => {
-                radio.setAttribute('aria-checked', radio.checked ? 'true' : 'false'); // Initial state
-                radio.addEventListener('change', () => {
-                    vehicleCardRadios.forEach(r => {
-                        r.setAttribute('aria-checked', r.checked ? 'true' : 'false');
-                    });
+               // If an element with an error is found, focus it and scroll it into view.
+               if (elementToFocus) {
+                   elementToFocus.focus({ preventScroll: true }); // Set focus without changing scroll position initially
+                   elementToFocus.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Smoothly scroll the element into the center of the viewport
+               }
+               // Display a general error message near the submit button indicating that there are errors to review.
+                showError(elements, 'submit-button', 'Please review the errors above.');
+           }
+       });
+
+        // Accessibility Boost: Add a change listener to vehicle card radio buttons to dynamically
+        // update their 'aria-checked' attribute based on their checked state. This helps screen readers.
+        vehicleCardRadios.forEach(radio => {
+            radio.setAttribute('aria-checked', radio.checked ? 'true' : 'false'); // Set initial state
+            radio.addEventListener('change', () => {
+                // Update all vehicle card radios' aria-checked state when any one changes
+                vehicleCardRadios.forEach(r => {
+                    r.setAttribute('aria-checked', r.checked ? 'true' : 'false');
                 });
             });
+        });
 
 
-           console.log("Event listeners initialized.");
-        }
+       console.log("Event listeners initialized.");
+    }
 
 
-        // --- Main Execution ---
-        const elementRefs = getElementRefs();
-        const appConfig = config;
+  // --- Main Execution ---
+  // This block runs when the initial HTML document has been completely loaded and parsed.
+  // It serves as the entry point for initializing the form's dynamic functionality.
+  document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM fully loaded and parsed. Initializing script...");
+    const elementRefs = getElementRefs(); // Get references to all necessary DOM elements
 
-        if (elementRefs.bookingForm) {
-          initializeFlatpickr(elementRefs); // Initializes Hourly pickers
-          initializeEventListeners(elementRefs, appConfig.placeholders, appConfig);
-          switchTab('#panel-oneway', elementRefs, appConfig.placeholders); // Set initial state
-        } else {
-          console.error("Booking form not found. Script initialization incomplete.");
-        }
-      });
+    // Crucial check: Ensure the main booking form element exists.
+    if (!elementRefs.bookingForm) {
+        console.error("Booking form (#booking-form) not found in the DOM. Script initialization incomplete.");
+        return; // Stop script execution if the main form is missing
+    }
+
+    // Initialize non-map related components and event listeners FIRST.
+    initializeFlatpickr(elementRefs);
+    initializeEventListeners(elementRefs, config.placeholders, config);
+
+
+    // Set the initial active tab and update UI.
+    switchTab("#panel-oneway", elementRefs, config.placeholders);
+
+    // Make initAutocomplete globally accessible before loading the script.
+    // This is required by the Google Maps API when using the 'callback=initAutocomplete' parameter.
+    // It needs to be set BEFORE the Google Maps script is loaded.
+    window.initAutocomplete = initAutocomplete;
+
+    // Now, dynamically load the Google Maps script.
+    // Pass elementRefs to loadGoogleMapsScript as it needs them for showError (which is now imported)
+    loadGoogleMapsScript(elementRefs);
+
+
+    resetSubmitButton(elementRefs); // Set the initial state and text of the submit button.
+
+    console.log("Dashboard initialization complete (excluding async Maps load).");
+  });
+});
     </script>
-    <script type="module" src="dashboard.js"></script>
   </body>
 </html>
-
-
-
-
-
-
-
