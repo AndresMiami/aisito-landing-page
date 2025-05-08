@@ -1,4 +1,6 @@
 // dashboard.js
+console.log("dashboard.js script started."); // Added debug log
+
 // This script handles the dynamic behavior and form submissions
 // for the luxury vehicle booking dashboard page, including tab switching,
 // form validation, Google Maps Autocomplete integration, and orchestrating
@@ -269,7 +271,7 @@ const config = {
       // Ensure essential elements for this function to operate exist.
       if (!elements.experiencePlusPanel || !elements.serviceDropdown) {
           console.warn("Experience Plus Panel or Service Dropdown is missing. Cannot update UI.");
-          return; // Exit the function if required elements are missing
+          return; // Exit the function if required elements is missing
       }
 
       const selectedValue = elements.serviceDropdown.value; // Get the value of the currently selected service from the dropdown
@@ -556,7 +558,7 @@ function initializeEventListeners(elements, placeholders, config) {
 
      // Add listener for vehicle card selection (clears error on change)
      // This clears the specific error message for the vehicle type group
-     const vehicleCardRadios = document.querySelectorAll('.vehicle-card input[type="radio"][name="vehicle_type_oneway"]'); // First declaration
+     const vehicleCardRadios = document.querySelectorAll('.vehicle-card input[type="radio"][name="vehicle_type_oneway"]');
 
      vehicleCardRadios.forEach(radio => {
          radio.addEventListener('change', () => {
