@@ -83,6 +83,44 @@ select { appearance: none; -webkit-appearance: none; -moz-appearance: none; back
      box-shadow: 0 0 0 1px var(--color-teal); /* Ring effect */
 }
 
+/* Styling for the booking form container */
+#booking-form {
+    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+    border: 4px solid #fff; /* White border */
+    padding: 1.5rem; /* Padding inside the form */
+    border-radius: 0.5rem; /* Rounded corners */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+    color: #000; /* Black text for readability */
+}
+
+/* Styling for the "From" and "To" fields */
+#booking-form .from-to-field {
+    background-color: #1f2937; /* Dark gray background */
+    color: #fff; /* White text */
+    border: 2px solid #00A09A; /* Teal border for distinction */
+    border-radius: 0.375rem; /* Rounded corners */
+    padding: 0.75rem; /* Padding inside the input */
+    width: 100%; /* Full width */
+    margin-bottom: 1rem; /* Space between fields */
+    font-size: 1rem; /* Larger font size for better readability */
+}
+
+/* Focus state for "From" and "To" fields */
+#booking-form .from-to-field:focus {
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 0 2px #00A09A; /* Teal focus ring */
+    border-color: #00A09A; /* Teal border on focus */
+}
+
+/* Styling for labels */
+#booking-form label {
+    display: block; /* Block display for labels */
+    font-weight: 700; /* Bold text */
+    font-size: 1.125rem; /* Slightly larger font size */
+    margin-bottom: 0.5rem; /* Space below the label */
+    color: #000; /* Black text for contrast */
+}
+
 /* Mobile Responsiveness for Cards */
 @media (max-width: 400px) {
     .vehicle-card { flex-direction: column; align-items: center; }
