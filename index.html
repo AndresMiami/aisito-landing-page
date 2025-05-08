@@ -12,24 +12,78 @@
         /* Apply base font to body */
         body {
             font-family: 'Inter', sans-serif;
+            /* Fallback background color */
+            background-color: #000;
+            color: #e5e7eb; /* Ensure text color is light for contrast */
+            /* No direct background image here, using pseudo-element for more control */
         }
+
+        /* Background image with more control over opacity and filters */
+        body::before {
+            content: '';
+            position: fixed; /* Use fixed to cover the whole viewport */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('20250424_1438_Abstract Miami Vibes_remix_01jsmmvdzdfbb9wjwyq8arkhbh.jpg'); /* Your image file */
+            background-size: cover; /* Cover the entire background */
+            background-position: center; /* Center the image */
+            background-repeat: no-repeat; /* Do not repeat the image */
+            /* background-attachment: fixed; */ /* Not needed with position: fixed */
+            filter: saturate(0.5) brightness(0.8); /* Adjusted filters for more subtlety */
+            z-index: -1; /* Place behind content */
+            opacity: 0.4; /* Adjusted opacity for more subtlety */
+        }
+
+        /* Apply a dark overlay using another pseudo-element or a div */
+        body::after {
+            content: '';
+            position: fixed; /* Use fixed to cover the whole viewport */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark overlay */
+            z-index: -1; /* Place behind content, above the image */
+        }
+
+
         /* Apply specific font for the brand name heading */
         h1.brand-name {
             font-family: 'Playfair Display', serif;
+            /* Gradient based on image colors (orange, teal, red) */
+            background: linear-gradient(to right, #f97316, #00807A, #ef4444);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent; /* This makes the gradient visible */
         }
+        /* Style for the heart icon */
+        h1.brand-name .heart-icon {
+            color: #ff0000; /* Explicitly set heart color to red */
+            -webkit-text-fill-color: #ff0000; /* Ensure red color for webkit browsers */
+        }
+
         /* Custom style for text shadow */
         .text-shadow {
              text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4); /* Subtle black shadow */
         }
+
+        /* Ensure content is above the pseudo-elements */
+        .min-h-screen {
+            position: relative;
+            z-index: 2; /* Ensure content is above both pseudo-elements */
+        }
+
     </style>
 </head>
-<body class="bg-black text-gray-200">
+<body>
 
     <div class="min-h-screen flex flex-col items-center justify-center p-6">
 
         <div class="text-center flex-grow flex flex-col items-center justify-center">
-            <h1 class="brand-name text-5xl md:text-7xl font-bold text-white mb-20 tracking-wide text-shadow">
-                I ❤️ Miami
+            <h1 class="brand-name text-5xl md:text-7xl font-bold mb-20 tracking-wide text-shadow">
+                I <span class="heart-icon">❤️</span> Miami
             </h1>
         </div>
 
@@ -48,3 +102,4 @@
 
 </body>
 </html>
+

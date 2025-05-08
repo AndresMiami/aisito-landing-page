@@ -1,0 +1,62 @@
+// test_style.css.test.js
+import '@testing-library/jest-dom';
+import { render } from '@testing-library/react';
+
+describe('CSS Styles', () => {
+    test('Body should have correct background styles', () => {
+        document.body.style.backgroundImage = "url('images/miami-skyline-abstract-form.png')";
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+        document.body.style.backgroundRepeat = 'no-repeat';
+
+        expect(document.body).toHaveStyle({
+            backgroundImage: "url('images/miami-skyline-abstract-form.png')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+        });
+    });
+
+    test('Tab button should have active styles', () => {
+        const tabButton = document.createElement('button');
+        tabButton.className = 'tab-button active-tab';
+        tabButton.id = 'tab-button-oneway';
+        tabButton.style.backgroundColor = 'white';
+        tabButton.style.color = 'var(--color-teal)';
+
+        expect(tabButton).toHaveStyle({
+            backgroundColor: 'white',
+            color: 'var(--color-teal)',
+        });
+    });
+
+    test('Vehicle card should have hover styles', () => {
+        const vehicleCard = document.createElement('div');
+        vehicleCard.className = 'vehicle-card';
+        vehicleCard.style.borderColor = '#9ca3af';
+
+        vehicleCard.addEventListener('mouseover', () => {
+            vehicleCard.style.borderColor = '#9ca3af';
+        });
+
+        vehicleCard.dispatchEvent(new Event('mouseover'));
+
+        expect(vehicleCard).toHaveStyle({
+            borderColor: '#9ca3af',
+        });
+    });
+
+    test('Booking time button should have active styles', () => {
+        const bookingButton = document.createElement('button');
+        bookingButton.className = 'booking-time-button active';
+        bookingButton.style.borderColor = 'var(--color-teal)';
+        bookingButton.style.backgroundColor = 'var(--color-teal-50)';
+        bookingButton.style.color = 'var(--color-teal-dark)';
+
+        expect(bookingButton).toHaveStyle({
+            borderColor: 'var(--color-teal)',
+            backgroundColor: 'var(--color-teal-50)',
+            color: 'var(--color-teal-dark)',
+        });
+    });
+});

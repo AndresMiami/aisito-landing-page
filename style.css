@@ -11,32 +11,41 @@
     --color-green-800: #065F46;    /* Tailwind green-800 */
     --color-blue-100: #DBEAFE;     /* Tailwind blue-100 */
     --color-blue-800: #1E40AF;     /* Tailwind blue-800 */
-  }
-  body { font-family: 'Inter', sans-serif; color: #1f2937; }
-  h1, h2, h3, .font-playfair { font-family: 'Playfair Display', serif; }
-  .brand-gradient-text { background: linear-gradient(to right, #f97316, #ef4444); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700; }
-  select { appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="%2300A09A" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>'); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.25em; padding-right: 2.5rem; }
-  
-  /* Tab styles */
-  .tab-button.active-tab#tab-button-oneway { background-color: white; color: var(--color-teal); border-left-color: #e5e7eb; border-right-color: #e5e7eb; border-top-color: #e5e7eb; border-bottom-color: transparent; font-weight: 600; }
-  .tab-button:not(.active-tab)#tab-button-oneway { background-color: #f9fafb; color: #6b7280; border-color: transparent; }
-  .tab-button:not(.active-tab)#tab-button-oneway:hover { background-color: #f3f4f6; color: #4b5563; }
-  .tab-button.active-tab#tab-button-experience-plus { background-color: #FFC107; color: #1A237E; border-left-color: #FFC107; border-right-color: #FFC107; border-top-color: #FFC107; border-bottom-color: transparent; font-weight: 600; }
-  .tab-button:not(.active-tab)#tab-button-experience-plus { background-color: #FFF8E1; color: #FFB300; border-color: transparent; }
-  .tab-button:not(.active-tab)#tab-button-experience-plus:hover { background-color: #FFECB3; color: #FFA000; }
-  
-  /* Flatpickr styles */
-  .flatpickr-calendar { background: white; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
-  
-  /* Screen reader only */
-  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
-  
-  /* Vehicle Card Styles */
-  .vehicle-card:has(input:checked) { border-color: var(--color-teal); box-shadow: 0 0 0 2px var(--color-teal); background-color: var(--color-teal-50); }
-  .vehicle-card:hover { border-color: #9ca3af; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1); }
-  
-  /* NEW: Booking Time Button Styles */
-  .booking-time-button {
+}
+
+body {
+    background-image: url('images/miami-skyline-abstract-form.png'); /* Corrected path to your image */
+    background-size: cover; /* Ensures the image covers the entire background */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    font-family: 'Inter', sans-serif;
+    color: #1f2937;
+}
+
+h1, h2, h3, .font-playfair { font-family: 'Playfair Display', serif; }
+.brand-gradient-text { background: linear-gradient(to right, #f97316, #ef4444); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700; }
+select { appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="%2300A09A" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>'); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.25em; padding-right: 2.5rem; }
+
+/* Tab styles */
+.tab-button.active-tab#tab-button-oneway { background-color: white; color: var(--color-teal); border-left-color: #e5e7eb; border-right-color: #e5e7eb; border-top-color: #e5e7eb; border-bottom-color: transparent; font-weight: 600; }
+.tab-button:not(.active-tab)#tab-button-oneway { background-color: #f9fafb; color: #6b7280; border-color: transparent; }
+.tab-button:not(.active-tab)#tab-button-oneway:hover { background-color: #f3f4f6; color: #4b5563; }
+.tab-button.active-tab#tab-button-experience-plus { background-color: #FFC107; color: #1A237E; border-left-color: #FFC107; border-right-color: #FFC107; border-top-color: #FFC107; border-bottom-color: transparent; font-weight: 600; }
+.tab-button:not(.active-tab)#tab-button-experience-plus { background-color: #FFF8E1; color: #FFB300; border-color: transparent; }
+.tab-button:not(.active-tab)#tab-button-experience-plus:hover { background-color: #FFECB3; color: #FFA000; }
+
+/* Flatpickr styles */
+.flatpickr-calendar { background: white; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+
+/* Screen reader only */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
+
+/* Vehicle Card Styles */
+.vehicle-card:has(input:checked) { border-color: var(--color-teal); box-shadow: 0 0 0 2px var(--color-teal); background-color: var(--color-teal-50); }
+.vehicle-card:hover { border-color: #9ca3af; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1); }
+
+/* NEW: Booking Time Button Styles */
+.booking-time-button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -49,31 +58,30 @@
     font-size: 0.875rem; /* text-sm */
     font-weight: 500; /* font-medium */
     color: #374151; /* text-gray-700 */
-  }
-  .booking-time-button:hover {
+}
+.booking-time-button:hover {
     border-color: #9ca3af; /* hover:border-gray-400 */
-  }
-  .booking-time-button svg {
+}
+.booking-time-button svg {
     margin-right: 0.5rem; /* mr-2 */
     width: 1.1rem; /* ~h-4/w-4 */
     height: 1.1rem;
     fill: currentColor; /* Icon color matches text */
-  }
-  .booking-time-button.active {
+}
+.booking-time-button.active {
      border-color: var(--color-teal);
      background-color: var(--color-teal-50);
      color: var(--color-teal-dark);
      font-weight: 600; /* font-semibold */
      box-shadow: 0 0 0 1px var(--color-teal); /* Ring effect */
-  }
-  
-  /* Mobile Responsiveness for Cards */
-  @media (max-width: 400px) {
+}
+
+/* Mobile Responsiveness for Cards */
+@media (max-width: 400px) {
     .vehicle-card { flex-direction: column; align-items: center; }
     .vehicle-card-content { flex-direction: column; align-items: center; text-align: center; width: 100%; }
     .vehicle-card-details { margin-left: 0; margin-top: 0.75rem; width: 100%; align-items: center; }
     .vehicle-card-details .flex { justify-content: center; }
     .badge-container { justify-content: center; margin-top: 0.25rem; }
     .vehicle-image-container { width: 100%; max-width: 10rem; }
-  }
-  
+}
