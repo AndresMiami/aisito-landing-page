@@ -137,3 +137,42 @@ header {
     color: white; /* Ensure the text color is white for contrast */
     border-bottom: none; /* Remove the border for a seamless look */
 }
+
+/* Background */
+form {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Primary Button */
+button {
+    background-color: #FFC107;
+    color: #FFFFFF;
+    border: none;
+}
+button:hover {
+    background-color: #E0A800;
+}
+
+/* Input Fields */
+input, select {
+    background-color: #F9FAFB;
+    border: 1px solid #D1D5DB;
+    color: #374151;
+}
+input:focus, select:focus {
+    border-color: #20C997;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(32, 201, 151, 0.5);
+}
+
+/* Error Messages */
+.error {
+    color: #EF4444;
+}
+
+/* Success Messages */
+.success {
+    color: #10B981;
+}
