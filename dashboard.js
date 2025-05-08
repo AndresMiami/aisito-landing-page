@@ -58,8 +58,10 @@ const config = {
 
     // One-Way Specific Elements
     refs.oneWayPanel = document.getElementById("panel-oneway"); // The One-Way booking panel element
-    refs.fromLocationInput = document.getElementById("from-location"); // Input field for the starting location
-    refs.toAddressInput = document.getElementById("to-address"); // Input field for the destination address
+    // Reference the gmp-place-autocomplete elements directly
+    refs.fromLocationInput = document.getElementById("from-location"); // gmp-place-autocomplete element
+    refs.toAddressInput = document.getElementById("to-address"); // gmp-place-autocomplete element
+
     refs.requestNowButton = document.getElementById('request-now-button');
     refs.bookLaterButton = document.getElementById('book-later-button');
     refs.scheduledBookingInputsContainer = document.getElementById('scheduled-booking-inputs'); // Container for scheduled date/time inputs
@@ -90,8 +92,8 @@ const config = {
     refs.wynwoodOtherRestaurantContainer = document.getElementById("wynwood-other-restaurant-container"); // Container for the 'Other' restaurant input field
     refs.wynwoodOtherDinnerRadio = document.getElementById("wynwood-dinner-other-style"); // The 'Other' dinner preference radio button
     refs.waterSkyOptions = document.getElementById("water-sky-options"); // Div containing specific options for Water & Sky experience
-    refs.evergladesOptions = document.getElementById('everglades-options');
-    refs.keysEscapeOptions = document.getElementById('keys-escape-options');
+    refs.evergladesOptions = document.getElementById('everglades-options'); // Reference for Everglades options
+    refs.keysEscapeOptions = document.getElementById('keys-escape-options'); // Reference for Keys Escape options
     refs.getLocationButton = document.getElementById("get-location-button"); // Reference to the "Get Current Location" button
 
     // Common Submission/Feedback Elements
@@ -125,8 +127,8 @@ const config = {
     const commonDateConfig = { altInput: true, altFormat: "D, M j, Y", dateFormat: "Y-m-d", minDate: "today" };
     const commonTimeConfig = { enableTime: true, noCalendar: true, dateFormat: "H:i", altInput: true, altFormat: "h : i K", time_24hr: false, minuteIncrement: 10 };
 
-    // Initialize pickers for One-Way and Hourly fields if the corresponding input elements exist
-    // Note: One-Way pickers are now initialized when 'Book for later' button is clicked
+    // Initialize pickers for Hourly fields if the corresponding input elements exist
+    // One-Way pickers are initialized when 'Book for later' button is clicked
     if (elements.hourlyPickupDateInput) flatpickr(elements.hourlyPickupDateInput, commonDateConfig);
     if (elements.hourlyPickupTimeInput) flatpickr(elements.hourlyPickupTimeInput, commonTimeConfig);
     console.log("Flatpickr initialized for relevant inputs.");
@@ -176,6 +178,8 @@ const config = {
             return; // Exit the function if the button element is not available
         }
         elements.submitButton.disabled = false; // Enable the submit button
+        elements.submitButton.setAttribute('aria-disabled', 'false'); // Update ARIA attribute
+        elements.submitButton.removeAttribute('title'); // Remove title attribute
        // Hide the loading spinner if it is currently visible
         if (elements.submitButtonSpinner) elements.submitButtonSpinner.classList.add('hidden');
        // Update the text displayed on the button
@@ -197,6 +201,10 @@ const config = {
            return; // Exit the function if the button element is not available
         }
         elements.submitButton.disabled = true; // Disable the submit button to prevent multiple clicks
+        elements.submitButton.setAttribute('aria-disabled', 'true'); // Update ARIA attribute
+        elements.submitButton.setAttribute('aria-busy', 'true'); // Indicate busy state for accessibility
+        elements.submitButton.setAttribute('title', 'Processing...'); // Add a title for hover state
+
        // Hide the regular button text
         if (elements.submitButtonText) elements.submitButtonText.classList.add('hidden');
        // Show the loading spinner
@@ -284,6 +292,7 @@ const config = {
       console.log("Show Hourly Sections:", showHourly);
       console.log("Show Curated Experience Sections:", showCuratedExperience);
 
+      // Use optional chaining and check for element existence before toggling classes
       elements.hourlyDescription?.classList.toggle("hidden", !showHourly); // Show/hide the description for hourly service
       elements.durationContainer?.classList.toggle("hidden", !showHourly); // Show/hide the container for hourly duration selection
       elements.hourlyDateTimeContainer?.classList.toggle("hidden", !showHourly); // Show/hide the container for hourly date/time inputs
@@ -337,7 +346,7 @@ const config = {
 
       // Reset the submit button text and clear all previous validation errors after updating the UI.
       resetSubmitButton(elements);
-      clearAllErrors(elements);
+      clearAllErrors(elements); // Clear errors after tab switch
   }
 
   // Switches the active form tab and updates the UI accordingly by showing the target panel
@@ -368,8 +377,8 @@ const config = {
     if (targetPanel) {
         targetPanel.classList.remove("hidden"); // Show the content panel
         // Attempt to find the first focusable element within the newly shown panel for accessibility.
-        // Corrected selector: Removed extra :not() from textarea
-        firstFocusableElement = targetPanel.querySelector("input:not([type=\"hidden\"]):not(.sr-only):not(:disabled), select:not(:disabled), textarea:not([disabled]), button:not([disabled])");
+        // Corrected selector to include gmp-place-autocomplete
+        firstFocusableElement = targetPanel.querySelector("input:not([type=\"hidden\"]):not(.sr-only):not(:disabled), select:not(:disabled), textarea:not([disabled]), button:not([disabled]), gmp-place-autocomplete:not(:disabled)");
     } else {
          console.warn(`Target tab panel with ID ${targetPanelId} not found.`);
       }
@@ -386,9 +395,10 @@ const config = {
 
     // --- Update UI elements specific to the panels being switched from/to ---
     // Define arrays of elements that are specific to the One-Way and Experience+ panels.
+    // Use optional chaining for safety
     const oneWayElements = [
         elements.toAddressInput?.closest(".relative"), // Container for 'To' address
-        elements.oneWayPickupDateInput?.closest(".grid"), // Grid container for One-Way date/time inputs
+        elements.scheduledBookingInputsContainer, // Container for One-Way scheduled date/time inputs
         elements.vehicleSelectionOneway // Container for One-Way vehicle selection cards
     ];
     const expPlusElements = [
@@ -414,6 +424,29 @@ const config = {
         if (elements.serviceDropdown) elements.serviceDropdown.value = "";
         // Call the UI update function for the Experience+ panel to ensure its internal state is correct (hides specific options).
         updateExperiencePlusPanelUI(elements, placeholders);
+
+         // Ensure the correct booking preference button is active or neither if no default
+         // Check if either button has the 'active' class, otherwise default to 'Request now' or leave both inactive
+         const requestNowActive = elements.requestNowButton?.classList.contains('active');
+         const bookLaterActive = elements.bookLaterButton?.classList.contains('active');
+
+         if (!requestNowActive && !bookLaterActive) {
+             // Default to 'Request now' if neither is active on tab switch
+             elements.requestNowButton?.classList.add('active');
+             elements.bookingPreferenceInput.value = 'ASAP';
+             elements.scheduledBookingInputsContainer?.classList.add('hidden');
+         } else if (requestNowActive) {
+             // If 'Request now' was active, ensure scheduled inputs are hidden
+             elements.scheduledBookingInputsContainer?.classList.add('hidden');
+         } else if (bookLaterActive) {
+             // If 'Book for later' was active, ensure scheduled inputs are shown and Flatpickr initialized
+             elements.scheduledBookingInputsContainer?.classList.remove('hidden');
+             // Re-initialize Flatpickr if needed (the event listener handles this, but good to be sure)
+             // This part is handled by the click listener for bookLaterButton now,
+             // but ensure the container is visible.
+         }
+
+
     } else if (targetPanelId === "#panel-experience-plus") {
         // If switching to the Experience+ tab:
         // Hide elements specific to the One-Way panel.
@@ -433,6 +466,9 @@ const config = {
         // document.querySelectorAll(".vehicle-card").forEach(card => {
         //     card.classList.remove("selected-card-style");
         // });
+         // Clear any errors related to the One-Way vehicle selection
+         clearError('vehicle_type_oneway');
+
 
         // Ensure the service dropdown is the primary element to focus when entering the Experience+ tab.
         firstFocusableElement = elements.serviceDropdown || firstFocusableElement;
@@ -442,13 +478,16 @@ const config = {
     setTimeout(() => {
         if (firstFocusableElement) {
             firstFocusableElement.focus({ preventScroll: true }); // Set focus without changing scroll position initially
-            firstFocusableElement.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Smoothly scroll the element into the center of the viewport
+            // Use a slightly longer delay before scrolling to give focus time to settle
+            setTimeout(() => {
+                 firstFocusableElement.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Smoothly scroll the element into the center of the viewport
+            }, 100); // 100ms delay for scroll
         }
-    }, 50); // 50ms delay
+    }, 50); // 50ms delay for initial focus attempt
 
     // Reset the submit button state and clear any validation errors after the tab switch.
     resetSubmitButton(elements);
-    clearAllErrors(elements);
+    clearAllErrors(elements); // Ensure all errors are cleared on tab switch
   }
 
 
@@ -482,6 +521,7 @@ function initializeEventListeners(elements, placeholders, config) {
 
     // Event listeners for One-Way booking preference buttons ('Request now' / 'Book for later')
     elements.requestNowButton?.addEventListener('click', () => {
+        console.log("'Request now' button clicked.");
         clearError('booking-time'); // Clear any previous error for this button group
         elements.requestNowButton.classList.add('active'); // Add active styling
         elements.bookLaterButton?.classList.remove('active'); // Remove active styling from the other button
@@ -498,9 +538,12 @@ function initializeEventListeners(elements, placeholders, config) {
         // Clear errors specifically for the scheduled date/time inputs
         clearError('pickup-date-oneway');
         clearError('pickup-time-oneway');
+        // Reset submit button state as form validity might change
+        resetSubmitButton(elements);
     });
 
     elements.bookLaterButton?.addEventListener('click', () => {
+        console.log("'Book for later' button clicked.");
         clearError('booking-time'); // Clear any previous error for this button group
         elements.bookLaterButton.classList.add('active'); // Add active styling
         elements.requestNowButton?.classList.remove('active'); // Remove active styling from the other button
@@ -509,37 +552,50 @@ function initializeEventListeners(elements, placeholders, config) {
 
         // Initialize Flatpickr for one-way inputs if not already done
         // This ensures Flatpickr is only initialized when the user needs it
-        if (!elements.flatpickrInstances || !elements.flatpickrInstances.oneWayDate && elements.oneWayPickupDateInput) {
+        // Store Flatpickr instances on the elements object for later destruction
+        elements.flatpickrInstances = elements.flatpickrInstances || {}; // Ensure the object exists
+
+        if (!elements.flatpickrInstances.oneWayDate && elements.oneWayPickupDateInput) {
             const commonDateConfig = { altInput: true, altFormat: "D, M j, Y", dateFormat: "Y-m-d", enableTime: false, minDate: "today" };
-            // Store the Flatpickr instance
-            elements.flatpickrInstances = elements.flatpickrInstances || {}; // Ensure the object exists
             elements.flatpickrInstances.oneWayDate = flatpickr(elements.oneWayPickupDateInput, commonDateConfig);
         }
-        if (!elements.flatpickrInstances || !elements.flatpickrInstances.oneWayTime && elements.oneWayPickupTimeInput) {
+        if (!elements.flatpickrInstances.oneWayTime && elements.oneWayPickupTimeInput) {
              const commonTimeConfig = { enableTime: true, noCalendar: true, dateFormat: "H:i", altInput: true, altFormat: "h : i K", time_24hr: false, minuteIncrement: 10 };
-             // Store the Flatpickr instance
-             elements.flatpickrInstances = elements.flatpickrInstances || {}; // Ensure the object exists
              elements.flatpickrInstances.oneWayTime = flatpickr(elements.oneWayPickupTimeInput, commonTimeConfig);
         }
         // Focus the date input after revealing the scheduled inputs for better UX
         setTimeout(() => elements.oneWayPickupDateInput?.focus(), 50);
+         // Reset submit button state as form validity might change
+         resetSubmitButton(elements);
     });
 
 
     // Add input event listeners for real-time error clearing on key fields
     // This helps clear validation errors as the user types or changes input
-    elements.bookingForm?.querySelectorAll('input:not([type="radio"]):not([type="button"]), select, textarea').forEach(input => {
+    // Include gmp-place-autocomplete elements in the selector
+    elements.bookingForm?.querySelectorAll('input:not([type="radio"]):not([type="button"]), select, textarea, gmp-place-autocomplete').forEach(input => {
         let targetId = input.id || input.name; // Use ID or name as a fallback for error targeting
         if (!targetId) return; // Skip if no ID or name is available
 
         // Determine the event type based on the input type for optimal performance
         // 'input' is good for text fields, 'change' for selects, dates, times, etc.
-        const eventType = (input.tagName === 'INPUT' && !['number', 'email', 'tel', 'date', 'time'].includes(input.type)) ? 'input' : 'change';
+        // gmp-place-autocomplete fires 'input' events as the user types
+        const eventType = (input.tagName === 'INPUT' || input.tagName === 'GMP-PLACE-AUTOCOMPLETE' && !['number', 'email', 'tel', 'date', 'time'].includes(input.type)) ? 'input' : 'change';
 
         // Add the event listener to clear the error when the input changes
-        input.addEventListener(eventType, () => clearError(targetId));
+        input.addEventListener(eventType, () => {
+            console.log(`Input event on ${targetId}, clearing error.`);
+            clearError(targetId);
+            // Re-evaluate submit button state on input change
+            resetSubmitButton(elements);
+        });
         // Also clear the error when the input loses focus (blur)
-        input.addEventListener('blur', () => clearError(targetId));
+        input.addEventListener('blur', () => {
+             console.log(`Blur event on ${targetId}, clearing error.`);
+             clearError(targetId);
+             // Re-evaluate submit button state on blur (useful for required fields)
+             resetSubmitButton(elements);
+        });
     });
 
     // Add listeners to specific radio groups (excluding vehicle_type_oneway, handled separately)
@@ -547,11 +603,14 @@ function initializeEventListeners(elements, placeholders, config) {
     ['dinner_style_preference', 'motivation', 'lounge_interest', 'date_preference'].forEach(name => {
         document.querySelectorAll(`input[name="${name}"]`).forEach(radio => {
             radio.addEventListener('change', () => {
+                console.log(`Radio change event on ${name}, clearing error.`);
                 clearError(name); // Clear error for the group using the name
                 // Special handling for Wynwood 'Other' dinner preference
                 if (name === 'dinner_style_preference' && elements.wynwoodNightOptions && !elements.wynwoodNightOptions.classList.contains('hidden')) {
                     handleWynwoodDinnerChoice(elements);
                 }
+                 // Re-evaluate submit button state on radio change
+                 resetSubmitButton(elements);
             });
         });
     });
@@ -562,15 +621,18 @@ function initializeEventListeners(elements, placeholders, config) {
 
      vehicleCardRadios.forEach(radio => {
          radio.addEventListener('change', () => {
+             console.log("Vehicle radio change event, clearing error for vehicle_type_oneway.");
              clearError('vehicle_type_oneway'); // Clear the specific error for the vehicle group
+             // Re-evaluate submit button state on vehicle selection change
+             resetSubmitButton(elements);
          });
      });
 
      // Add event listener for the "Get Current Location" button if it exists
-     // This was previously in the missing initializeDashboard function
      const getLocationButton = document.getElementById("get-location-button"); // Get the button reference here
      if (getLocationButton) {
          getLocationButton.addEventListener('click', (event) => {
+             console.log("'Get Current Location' button clicked.");
              event.preventDefault(); // Prevent default button behavior (like form submission)
              // Call the getCurrentLocation function from maps.js for the 'from-location' input
              // Need elements here, so get them inside the listener or pass them
