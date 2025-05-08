@@ -193,5 +193,5 @@ export function initAutocomplete() {
     }
 }
 
-export { loadGoogleMapsScript, initAutocomplete, getCurrentLocation };
+export { loadGoogleMapsScript, getCurrentLocation };
 
