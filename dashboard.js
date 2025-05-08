@@ -32,7 +32,7 @@ const config = {
       defaultExp: "Optional notes or preferences..."
     }
   };
-  
+
   // --- Element References ---
   // Gathers and returns references to key DOM elements used throughout the script.
   // Calling this function after DOMContentLoaded ensures elements exist in the page structure.
@@ -91,7 +91,7 @@ const config = {
 
     return refs;
 }
-  
+
   // --- Initialize Flatpickr ---
   // Initializes the Flatpickr date and time pickers for relevant input fields.
   // Assumes the Flatpickr library is loaded globally (included via <script> tag).
@@ -107,7 +107,7 @@ const config = {
     // Configuration objects for date and time pickers with common settings
     const commonDateConfig = { altInput: true, altFormat: "D, M j, Y", dateFormat: "Y-m-d", minDate: "today" };
     const commonTimeConfig = { enableTime: true, noCalendar: true, dateFormat: "H:i", altInput: true, altFormat: "h : i K", time_24hr: false, minuteIncrement: 10 };
-  
+
     // Initialize pickers for One-Way and Hourly fields if the corresponding input elements exist
     if (elements.oneWayPickupDateInput) flatpickr(elements.oneWayPickupDateInput, commonDateConfig);
     if (elements.oneWayPickupTimeInput) flatpickr(elements.oneWayPickupTimeInput, commonTimeConfig);
@@ -129,7 +129,7 @@ const config = {
     const errorSpanId = `${fieldId}-error`; // Construct the ID of the error message span
     const errorSpan = document.getElementById(errorSpanId); // Get the error span element
     // Get the input element by ID; might be null for radio/button groups where error is on a container/fieldset
-    const inputElement = document.getElementById(fieldId); 
+    const inputElement = document.getElementById(fieldId);
     let labelText = fieldId; // Default label text if no corresponding label found
 
       // --- Specific handling for different field types ---
@@ -166,9 +166,9 @@ const config = {
       // --- General handling for standard inputs (text, select, textarea, etc.) ---
       // Attempt to find a label element associated with the input for a more user-friendly error message
       const labelElement = document.querySelector(`label[for="${fieldId}"]`) || document.getElementById(`${fieldId}-label`);
-      if (labelElement) { 
+      if (labelElement) {
           // Use the label's text content, removing potential '*' for required fields and trimming whitespace
-          labelText = labelElement.textContent.replace('*', '').trim(); 
+          labelText = labelElement.textContent.replace('*', '').trim();
       }
       // Fallback labels for specific fields if a standard label[for] or id-label is not found
       else if (fieldId === 'date_preference') labelText = 'Preferred Timing';
@@ -179,7 +179,6 @@ const config = {
       else if (fieldId === 'pickup-date-oneway') labelText = 'Date'; // Label for the one-way pickup date input
       else if (fieldId === 'pickup-time-oneway') labelText = 'Time'; // Label for the one-way pickup time input
 
-
       // Construct the full error message including the field label for clarity
     const fullMessage = `${labelText}: ${message}`;
 
@@ -187,9 +186,9 @@ const config = {
     if (errorSpan) {
       errorSpan.textContent = fullMessage; // Set the text content of the error span
       errorSpan.classList.remove('hidden'); // Make the error message visible
-    } else { 
+    } else {
         // Log a warning if the expected error span element is missing from the HTML
-        console.warn(`Error span not found for ID: ${errorSpanId}. Cannot display error message: "${fullMessage}"`); 
+        console.warn(`Error span not found for ID: ${errorSpanId}. Cannot display error message: "${fullMessage}"`);
     }
 
     // Apply visual styling and ARIA attributes to the input element itself to highlight the error and improve accessibility
@@ -345,7 +344,7 @@ export function clearError(fieldId) {
         }
     }
 
-    
+
 
 
   // --- Google Maps Autocomplete Callback ---
@@ -397,7 +396,6 @@ export function clearError(fieldId) {
       console.log("Show Hourly Sections:", showHourly);
       console.log("Show Curated Experience Sections:", showCuratedExperience);
 
-      // Toggle the 'hidden' class on main sections within the Experience+ panel.
       elements.hourlyDescription?.classList.toggle("hidden", !showHourly); // Show/hide the description for hourly service
       elements.durationContainer?.classList.toggle("hidden", !showHourly); // Show/hide the container for hourly duration selection
       elements.hourlyDateTimeContainer?.classList.toggle("hidden", !showHourly); // Show/hide the container for hourly date/time inputs
@@ -668,21 +666,21 @@ export function clearError(fieldId) {
                   isValid = false;
               }
               if (!elements.experiencePhoneInput?.value.trim()) {
-                  showError(elements, 'experience-phone', 'Phone required.');
-                  console.warn("Validation Failed: Experience phone is empty.");
-                  isValid = false;
-              } else if (!/^\+?[\d\s()-]{10,20}$/.test(elements.experiencePhoneInput.value) || !/[\d]{10}/.test(elements.experiencePhoneInput.value.replace(/\D/g, ''))) {
+                   showError(elements, 'experience-phone', 'Phone required.');
+                   console.warn("Validation Failed: Experience phone is empty.");
+                   isValid = false;
+               } else if (!/^\+?[\d\s()-]{10,20}$/.test(elements.experiencePhoneInput.value) || !/[\d]{10}/.test(elements.experiencePhoneInput.value.replace(/\D/g, ''))) {
                  // Basic phone format check: allows +, digits, spaces, (), - and requires at least 10 digits after removing non-digits
                   showError(elements, 'experience-phone', 'Invalid phone format (minimum 10 digits).');
                   console.warn("Validation Failed: Invalid phone format for experience.");
                   isValid = false;
-              }
-              const datePrefSelected = document.querySelector('input[name="date_preference"]:checked');
-              if (!datePrefSelected) {
+               }
+               const datePrefSelected = document.querySelector('input[name="date_preference"]:checked');
+               if (!datePrefSelected) {
                   showError(elements, 'date_preference', 'Please select timing preference.');
                   console.warn("Validation Failed: Date preference not selected for curated experience.");
                   isValid = false;
-              }
+               }
 
               // --- Specific validation for Wynwood Night experience if selected ---
               if (selectedService === 'wynwood_night') {
@@ -796,8 +794,8 @@ export function clearError(fieldId) {
                   dataObject.lounge_interest = formData.get('lounge_interest'); // Get lounge interest selection
               }
               // Add data processing for other experiences here if their options are included
+             }
           }
-      }
 
       // Clean up the data object by removing properties with null, undefined, or empty string values.
       // This keeps the submitted data clean and avoids sending unnecessary empty fields.
@@ -847,7 +845,7 @@ export function clearError(fieldId) {
       fetch(config.FORM_ENDPOINT, {
         method: 'POST', // Use the POST method for form submission
         body: JSON.stringify(dataObject), // Send the data object as a JSON string in the request body
-        headers: { 
+        headers: {
             'Content-Type': 'application/json', // Indicate that the request body is JSON
             'Accept': 'application/json' // Request a JSON response
          }
@@ -904,7 +902,7 @@ export function clearError(fieldId) {
            }
        });
 
-       // Add event listener for changes in the Experience+ service dropdown to update the UI.
+       // Experience+ dropdown change
        elements.serviceDropdown?.addEventListener('change', () => {
            updateExperiencePlusPanelUI(elements, placeholders); // Update the visibility of fields based on the selected service
        });
@@ -950,7 +948,8 @@ export function clearError(fieldId) {
            console.log("Get Current Location button clicked.");
            try {
                // Call the imported getCurrentLocation function
-               await getCurrentLocation("from-location"); // Replace "from-location" with the correct input ID if needed
+               // Pass elements to getCurrentLocation as it needs them for showError
+               await getCurrentLocation("from-location", elements);
                console.log("Location successfully retrieved and populated.");
            } catch (error) {
                console.error("Failed to get current location:", error);
@@ -1059,24 +1058,29 @@ export function clearError(fieldId) {
 
     // Initialize non-map related components and event listeners FIRST.
     initializeFlatpickr(elementRefs);
+    // Corrected typo: Changed initializeValidationListeners to initializeEventListeners
     initializeEventListeners(elementRefs, config.placeholders, config);
-    initializeValidationListeners(elementRefs);
+
 
     // Set the initial active tab and update UI.
     switchTab("#panel-oneway", elementRefs, config.placeholders);
 
     // Make initAutocomplete globally accessible before loading the script.
+    // This is required by the Google Maps API when using the 'callback=initAutocomplete' parameter.
+    // It needs to be set BEFORE the Google Maps script is loaded.
     window.initAutocomplete = initAutocomplete;
 
     // Now, dynamically load the Google Maps script.
-    loadGoogleMapsScript();
+    // Pass elementRefs to loadGoogleMapsScript as it needs them for showError
+    loadGoogleMapsScript(elementRefs);
+
 
     resetSubmitButton(elementRefs); // Set the initial state and text of the submit button.
 
     console.log("Dashboard initialization complete (excluding async Maps load).");
 });
-  
-  // Make the initAutocomplete function globally accessible. This is required by the Google Maps API
-  // when using the 'callback=initAutocomplete' parameter in the script URL. The API
-  // will look for a function with this name in the global scope (window) once it's loaded.
-  window.initAutocomplete = initAutocomplete;
+
+// Removed duplicate window.initAutocomplete = initAutocomplete; assignment
+// This was causing a harmless but unnecessary re-assignment.
+// The assignment within the DOMContentLoaded listener is sufficient and correctly placed
+// before the Google Maps script is loaded.
