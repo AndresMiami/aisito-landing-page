@@ -66,7 +66,7 @@ function updateAirportFieldVisibility(addressInputId, isAirport, elements) {
 }
 
 // Attempts to get the user's current geographical location using the browser's Geolocation API
-async function getCurrentLocation(inputId, elements) {
+export async function getCurrentLocation(inputId, elements) {
     console.log(`getCurrentLocation called for input: ${inputId} at ${new Date().toISOString()}`);
     if (!navigator.geolocation) {
         alert("Geolocation is not supported by your browser.");
@@ -193,5 +193,5 @@ export function initAutocomplete() {
     }
 }
 
-export { loadGoogleMapsScript, getCurrentLocation };
-
+// Export other functions as needed
+export { getCurrentLocation };
