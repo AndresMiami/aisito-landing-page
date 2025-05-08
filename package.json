@@ -4,10 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:css": "tailwindcss -i ./src/styles/tailwind.css -o ./dist/tailwind.css",
-    "watch:css": "tailwindcss -i ./src/styles/tailwind.css -o ./dist/tailwind.css --watch",
-    "build": "npm run build:css",
-    "dev": "npm run watch:css"
+    "build": "echo 'No CSS build needed with CDN'",
+    "dev": "echo 'No CSS watch needed with CDN or run a simple local server command if needed'"
   },
   "repository": {
     "type": "git",
@@ -31,4 +29,5 @@
   },
   "description": ""
 }
+
 
