@@ -22,8 +22,10 @@ export function validateForm(elements) {
 
     // --- Validation logic for fields that are always visible regardless of the tab ---
     // Validate the 'From' location input field.
-    if (!elements.fromLocationInput?.value.trim()) {
+    // Now targeting the gmp-place-autocomplete element and checking its value property
+    if (!elements.fromLocationInput?.value?.trim()) {
         // If the field is empty, display an error message using the imported showError function.
+        // The showError function is set up to target elements by ID, which should work for the gmp-place-autocomplete element
         showError(elements, 'from-location', 'Please enter a "From" location.');
         console.warn("Validation Failed: 'From' location is empty."); // Log the validation failure for debugging.
         isValid = false; // Set the overall form validity to false.
@@ -32,7 +34,8 @@ export function validateForm(elements) {
     // --- Validation logic specific to the One-Way tab ---
     if (activePanelId === '#panel-oneway') {
         // Validate the 'To' address input field for the One-Way service.
-        if (!elements.toAddressInput?.value.trim()) {
+        // Now targeting the gmp-place-autocomplete element and checking its value property
+        if (!elements.toAddressInput?.value?.trim()) {
             showError(elements, 'to-address', 'Please enter a "To" address.');
             console.warn("Validation Failed: 'To' address is empty for One Way.");
             isValid = false;

@@ -70,7 +70,7 @@ function updateAirportFieldVisibility(addressInputId, isAirport, elements) {
 }
 
 // Attempts to get the user's current geographical location using the browser's Geolocation API
-export async function getCurrentLocation(inputId, elements) {
+export async function getCurrentLocation(inputId, elements) { // Exported here
     console.log(`getCurrentLocation called for input: ${inputId} at ${new Date().toISOString()}`);
     if (!navigator.geolocation) {
         alert("Geolocation is not supported by your browser.");
@@ -136,7 +136,7 @@ export async function getCurrentLocation(inputId, elements) {
 }
 
 // Dynamically loads the Google Maps API script
-export async function loadGoogleMapsScript(elements) {
+export async function loadGoogleMapsScript(elements) { // Exported here
     if (document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]')) {
         console.log("Google Maps script tag already exists. Skipping loading.");
         return;
@@ -181,7 +181,7 @@ export async function loadGoogleMapsScript(elements) {
 
 // Google Maps Autocomplete Callback
 // This function is called by the Google Maps API script once it's loaded
-export function initAutocomplete() {
+export function initAutocomplete() { // Exported here
     console.log("initAutocomplete callback fired.");
     // Check if the necessary components from the Google Maps API are loaded
     if (typeof google === "undefined" || typeof google.maps === "undefined" || typeof google.maps.places === "undefined" || typeof google.maps.places.PlaceAutocompleteElement === "undefined") {
@@ -285,5 +285,6 @@ export function initAutocomplete() {
      // and calls getCurrentLocation, which has been updated to handle the new element type.
 }
 
-// Export other functions as needed
-export { loadGoogleMapsScript, getCurrentLocation };
+// Removed the duplicate export statement at the end.
+// loadGoogleMapsScript and initAutocomplete are exported where defined.
+// getCurrentLocation is also exported where defined.
