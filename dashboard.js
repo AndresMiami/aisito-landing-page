@@ -714,3 +714,4 @@ window.initAutocomplete = initAutocomplete;
 // you would export them here. Based on the current maps.js, only getElementRefs is needed.
 // The button state functions (setLoadingButton, resetSubmitButton) are passed directly to sendFormData.
 // export { getElementRefs }; // Removed duplicate export
+

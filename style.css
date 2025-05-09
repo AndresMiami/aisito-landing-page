@@ -50,28 +50,28 @@ select {
 
 /* Tab styles */
 .tab-button {
-    flex: 1; /* Each tab button takes equal space dynamically */
-    padding: 0.5rem;
+    flex: 1;
+    padding: 0.75rem 0.5rem; /* Adjust padding */
     font-weight: 600;
-    font-size: 0.875rem;
-    border: none;
-    transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effects */
+    font-size: 0.875rem; /* 14px */
+    border: none; /* No individual borders */
+    transition: background-color 0.3s, color 0.3s;
     text-align: center;
+    cursor: pointer;
 }
 
 .tab-button.active-tab {
-    background-color: #ffffff;
-    color: var(--color-teal);
+    background-color: #FEF3C7; /* Light creamy yellow */
+    color: #B08D57; /* Gold/brown text */
 }
 
 .tab-button:not(.active-tab) {
-    background-color: var(--color-muted-yellow);
-    color: #ec891e;
+    background-color: #FFFFFF; /* White background */
+    color: #00A09A; /* Teal text */
 }
 
 .tab-button:not(.active-tab):hover {
-    background-color: var(--color-yellow); /* Highlight when hovered */
-    color: #ffffff;
+    background-color: #F0F0F0; /* Hover effect */
 }
 
 /* A container for the tabs if not already present */
@@ -82,6 +82,14 @@ select {
     width: 100%; /* Ensure it spans the full width of the form */
 }
 
+/* Tab navigation styles */
+#tab-navigation nav {
+    border: 1px solid #E2E8F0; /* Light grey border */
+    border-radius: 0.375rem; /* Rounded corners */
+    overflow: hidden; /* Conform child corners */
+    display: flex; /* Row layout */
+}
+
 /* Flatpickr styles */
 .flatpickr-calendar { background: white; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
 
@@ -89,12 +97,24 @@ select {
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
 
 /* Vehicle Card Styles */
+.vehicle-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0; /* Light grey border */
+    border-radius: 0.5rem; /* Rounded corners */
+    padding: 1rem; /* Adjust padding */
+    display: flex;
+    align-items: center;
+}
+
 .vehicle-card:has(input:checked) { 
     border-color: var(--color-teal); 
     box-shadow: 0 0 0 2px var(--color-teal); 
     background-color: var(--color-teal-50); 
 }
-.vehicle-card:hover { border-color: #9ca3af; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1); }
+
+.vehicle-card:hover {
+    border-color: #CBD5E1; /* Darker grey on hover */
+}
 
 /* Updated Booking Time Button Styles */
 .booking-time-button {
@@ -133,14 +153,21 @@ select {
 
 /* Styling for the booking form container */
 #booking-form {
-    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
-    border: 2px solid #fff; /* Reduced border */
-    padding: 1rem; /* Reduced padding */
+    background-color: transparent; /* Make the background transparent */
+    border: none; /* Remove the border */
+    box-shadow: none; /* Remove the shadow */
+    padding: 1rem; /* Adjust padding */
     border-radius: 0.5rem; /* Rounded corners */
-    box-shadow: none; /* No outer shadow for minimal layering */
-    color: #000; /* Black text for readability */
+    color: #000; /* Text color */
 }
-
+/* Add this class for the form container */
+.transparent-card {
+    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+    border: 1px solid rgba(255, 255, 255, 0.6); /* Light border */
+    border-radius: 0.75rem; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    padding: 1.5rem; /* Add padding inside the container */
+}
 /* Styling for the "From" and "To" fields */
 #booking-form .from-to-field {
     background-color: #1E293B; /* Navy blue background */
@@ -163,6 +190,55 @@ select {
     box-shadow: 0 0 0 3px rgba(32, 201, 151, 0.5); /* Subtle focus shadow */
 }
 
+/* Update input field styles */
+gmp-place-autocomplete#from-location,
+gmp-place-autocomplete#to-address {
+    background-color: #1C2430; /* Dark background */
+    color: #FFFFFF; /* White text */
+    border: 1px solid #4A5568; /* Light border */
+    border-radius: 0.375rem; /* Rounded corners */
+    padding: 0.75rem 1rem; /* Adjust padding */
+    width: 100%;
+}
+
+/* Placeholder styling */
+gmp-place-autocomplete#from-location::placeholder,
+gmp-place-autocomplete#to-address::placeholder {
+    color: #A0AEC0; /* Light grey placeholder */
+    opacity: 1;
+}
+
+/* Label styling */
+label[for="from-location"],
+label[for="to-address"] {
+    display: block;
+    margin-bottom: 0.25rem; /* Space below label */
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #FFFFFF; /* White text */
+    position: static;
+    background-color: transparent;
+    padding-left: 0;
+}
+
+/* Update continue button styles */
+#submit-button {
+    background-color: #FFC107; /* Bright yellow */
+    color: #FFFFFF; /* White text */
+    border: none;
+    border-radius: 0.375rem; /* Rounded corners */
+    padding: 0.75rem 1rem; /* Adjust padding */
+    width: 100%; /* Full width */
+    font-size: 1rem; /* Adjust font size */
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+#submit-button:hover {
+    background-color: #E0A800; /* Darker yellow on hover */
+}
+
 /* Mobile Responsiveness for Cards */
 @media (max-width: 400px) {
     .vehicle-card { flex-direction: column; align-items: center; }
@@ -178,13 +254,6 @@ header {
     background-color: black; /* Set the header background to black */
     color: white; /* Ensure the text color is white for contrast */
     border-bottom: none; /* Remove the border for a seamless look */
-}
-
-/* Background */
-form {
-    background-color: #FFFFFF;
-    border: 1px solid #E5E7EB;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Primary Button */
