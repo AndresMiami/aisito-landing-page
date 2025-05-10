@@ -13,8 +13,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAd_O4s_73E_A8rq7TGCHKVEBFHzNecAHM&libraries=places&callback=initAutocomplete" async defer></script>
+    <script>
+      function initAutocomplete() {
+        const fromInput = document.getElementById("from-location");
+        const toInput = document.getElementById("to-address");
 
-    </head>
+        // Initialize Google Maps Autocomplete
+        const fromAutocomplete = new google.maps.places.Autocomplete(fromInput, { types: ["geocode"] });
+        const toAutocomplete = new google.maps.places.Autocomplete(toInput, { types: ["geocode"] });
+      }
+    </script>
+  </head>
   <body class="bg-gray-100" style="background-image: url('./images/miami-skyline-abstract-form.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
     <header class="bg-black">
       <nav class="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -32,7 +41,8 @@
 
     <main class="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
       <div class="dashboard">
-        </div>
+        <!-- Dashboard content here -->
+      </div>
       <div class="mr-auto w-full max-w-lg">
         <div class="overflow-hidden rounded-xl transparent-card">
           <div id="tab-navigation" class="border-b border-gray-200">
@@ -48,14 +58,7 @@
               <div class="relative">
                 <label for="from-location" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">From</label>
                 <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg></span>
-                <input
-                  type="text"
-                  id="from-location"
-                  required
-                  aria-describedby="from-location-error"
-                  class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6"
-                  placeholder="Address, airport, hotel, ..."
-                >
+                <gmp-place-autocomplete id="from-location" required aria-describedby="from-location-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" placeholder="Address, airport, hotel, ..."></gmp-place-autocomplete>
                 <span id="from-location-error" class="mt-1 block text-xs text-red-600 hidden"></span>
               </div>
 
@@ -64,140 +67,150 @@
                   <div id="to-address-container" class="relative">
                     <label for="to-address" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">To</label>
                     <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg></span>
-                    <input
-                      type="text"
-                      id="to-address"
-                      aria-describedby="to-address-error"
-                      class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6"
-                      placeholder="Address, airport, hotel, ..."
-                    >
+                    <gmp-place-autocomplete id="to-address" aria-describedby="to-address-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" placeholder="Address, airport, hotel, ..."></gmp-place-autocomplete>
                     <span id="to-address-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                   </div>
 
                   <div id="date-time-container-oneway" class="relative">
                     <input type="hidden" name="booking_preference" id="booking-preference" value=""> <label class="block text-xs font-medium text-gray-500 mb-1">Pickup Time</label>
                      <div class="grid grid-cols-2 gap-x-3" aria-labelledby="booking-time-error">
-                          <button type="button" id="request-now-button" class="booking-time-button">
-                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                         <button type="button" id="request-now-button" class="booking-time-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                <path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A9.978 9.978 0 0 0 10 12c-2.31 0-4.438.784-6.131 2.1-.194.51-.02.979.406 1.393z" />
-                             </svg>
-                              Request now
-                           </button>
-                           <button type="button" id="book-later-button" class="booking-time-button">
-                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                 <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd" />
-                              </svg>
-                             Book for later
-                           </button>
+                            </svg>
+                             Request now
+                         </button>
+                         <button type="button" id="book-later-button" class="booking-time-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd" />
+                            </svg>
+                            Book for later
+                         </button>
                      </div>
                      <span id="booking-time-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                   </div>
+                  </div>
 
-                   <div id="scheduled-booking-inputs" class="hidden mt-4 space-y-4">
-                       <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
-                         <div>
-                             <label for="pickup-date-oneway" class="block text-xs font-medium text-gray-500 mb-0.5">Date</label>
-                             <input type="text" name="pickup_date_oneway" id="pickup-date-oneway" aria-describedby="pickup-date-oneway-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Date..." />
-                             <span id="pickup-date-oneway-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                         </div>
-                         <div>
-                           <label for="pickup-time-oneway" class="block text-xs font-medium text-gray-500 mb-0.5">Time</label>
-                             <input type="text" name="pickup_time_oneway" id="pickup-time-oneway" aria-describedby="pickup-time-oneway-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Time..." />
-                             <span id="pickup-time-oneway-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                         </div>
-                       </div>
-                   </div>
-                   <div id="vehicle-selection-oneway" class="pt-4">
-                     <h4 class="text-sm font-semibold text-gray-700 mb-3 font-playfair" id="vehicle-selection-oneway-label">Choose Your Luxury Ride</h4>
-                     <fieldset aria-labelledby="vehicle-selection-oneway-label" aria-describedby="vehicle-type-oneway-error">
-                         <legend class="sr-only">Vehicle Selection</legend>
-                         <div class="space-y-3 divide-y divide-gray-200">
+                  <div id="scheduled-booking-inputs" class="hidden mt-4 space-y-4">
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
+                        <div>
+                           <div class="relative">
+  <label for="from-location" class="input-label">From</label>
+  <input
+    type="text"
+    id="from-location"
+    name="from-location"
+    class="custom-input"
+    placeholder="Enter pickup address"
+    required
+  />
+</div>
+                        </div>
+                        <div>
+                           <div class="relative">
+  <label for="to-address" class="input-label">To</label>
+  <input
+    type="text"
+    id="to-address"
+    name="to-address"
+    class="custom-input"
+    placeholder="Enter drop-off address"
+    required
+  />
+</div>
+                        </div>
+                     </div>
+                  </div>
+                  <div id="vehicle-selection-oneway" class="pt-4">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-3 font-playfair" id="vehicle-selection-oneway-label">Choose Your Luxury Ride</h4>
+                    <fieldset aria-labelledby="vehicle-selection-oneway-label" aria-describedby="vehicle-type-oneway-error">
+                       <legend class="sr-only">Vehicle Selection</legend>
+                       <div class="space-y-3 divide-y divide-gray-200">
 
-                           <label for="vehicle-sedan-card" class="vehicle-card pt-3 flex items-center justify-between rounded-lg border border-transparent bg-white px-2 sm:px-3 py-3 sm:py-4 shadow-sm cursor-pointer transition duration-150 ease-in-out focus-within:ring-2 focus-within:ring-[--color-teal]">
-                              <div class="vehicle-card-content flex items-center space-x-4 w-full">
-                                <div class="vehicle-image-container flex-shrink-0 w-28 aspect-[4/3] overflow-hidden rounded-md">
-                                 <img src="images/luxury-sedan.jpg" alt="Luxury Sedan" class="w-full h-full object-cover">
-                                 </div>
-                                 <div class="vehicle-card-details">
-                                 <p class="text-base font-medium text-gray-900">Luxury Sedan</p>
-                                 <div class="flex items-center space-x-3 text-xs text-gray-500 mt-1">
-                                  <span class="flex items-center">
-                                     <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A9.978 9.978 0 0010 12c-2.31 0-4.438.784-6.131 2.1-.194.51-.02.979.406 1.393z" /></svg>
-                                     <span class="font-medium">3</span>
-                                   </span>
-                                   <span class="flex items-center">
-                                     <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 3.75A2.75 2.75 0 018.75 1h2.5A2.75 2.75 0 0114 3.75v.443c.57.055 1.14.122 1.71.2V3.75A3.75 3.75 0 0012 0h-4A3.75 3.75 0 004.25 3.75v.643c.57-.078 1.14-.145 1.71-.2V3.75zM4.75 5.11v9.14a.75.75 0 00.75.75h9a.75.75 0 00.75-.75v-9.14c-.61-.087-1.2-.19-1.75-.315V6.5a.75.75 0 00-1.5 0v-.194c-1.06-.214-2.14-.214-3.2 0V6.5a.75.75 0 00-1.5 0v-.409c-.55.125-1.14.228-1.75.315zM5.5 6.6v8.15h9V6.6a18.225 18.225 0 01-4.5 0c-1.06.214-2.14.214-3.2 0a18.225 18.225 0 01-1.3 0z" clip-rule="evenodd" /> </svg>
-                                    <span class="font-medium">2</span>
-                                   </span>
-                                 </div>
-                                 <p class="text-xs text-gray-500 mt-1">e.g., Tesla Model Y</p>
-                                 <div class="badge-container flex flex-wrap gap-2 mt-1.5">
-                                   <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[--color-green-100] text-[--color-green-800]">EV Available</span>
-                                </div>
-                                </div>
-                              </div>
-
-                              <input type="radio" name="vehicle_type_oneway" value="Luxury Sedan" id="vehicle-sedan-card" class="sr-only" required aria-checked="false">
-                           </label>
-
-                           <label for="vehicle-suv-card" class="vehicle-card pt-3 flex items-center justify-between rounded-lg border border-transparent bg-white px-2 sm:px-3 py-3 sm:py-4 shadow-sm cursor-pointer transition duration-150 ease-in-out focus-within:ring-2 focus-within:ring-[--color-teal]">
-                             <div class="vehicle-card-content flex items-center space-x-4 w-full">
-                               <div class="vehicle-image-container flex-shrink-0 w-28 aspect-[4/3] overflow-hidden rounded-md">
-                                 <img src="images/premium-suv-escalade.jpg" alt="Premium SUV" class="w-full h-full object-cover">
-                                </div>
-                                <div class="vehicle-card-details">
-                                 <p class="text-base font-medium text-gray-900">Premium SUV</p>
-                                 <div class="flex items-center space-x-3 text-xs text-gray-500 mt-1">
-                                   <span class="flex items-center">
-                                     <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"> <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A9.978 9.978 0 0010 12c-2.31 0-4.438.784-6.131 2.1-.194.51-.02.979.406 1.393z" /> </svg>
-                                     <span class="font-medium">6</span>
-                                   </span>
-                                   <span class="flex items-center">
-                                     <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"> <path fill-rule="evenodd" d="M6 3.75A2.75 2.75 0 018.75 1h2.5A2.75 2.75 0 0114 3.75v.443c.57.055 1.14.122 1.71.2V3.75A3.75 3.75 0 0012 0h-4A3.75 3.75 0 004.25 3.75v.643c.57-.078 1.14-.145 1.71-.2V3.75zM4.75 5.11v9.14a.75.75 0 00.75.75h9a.75.75 0 00.75-.75v-9.14c-.61-.087-1.2-.19-1.75-.315V6.5a.75.75 0 00-1.5 0v-.194c-1.06-.214-2.14-.214-3.2 0V6.5a.75.75 0 00-1.5 0v-.409c-.55.125-1.14.228-1.75.315zM5.5 6.6v8.15h9V6.6a18.225 18.225 0 01-4.5 0c-1.06.214-2.14.214-3.2 0a18.225 18.225 0 01-1.3 0z" clip-rule="evenodd" /> </svg>
-                                     <span class="font-medium">5</span>
-                                   </span>
-                                 </div>
-                                 <p class="text-xs text-gray-500 mt-1">e.g., Cadillac Escalade</p>
-                                  <div class="badge-container flex flex-wrap gap-2 mt-1.5">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[--color-green-100] text-[--color-green-800]">EV Available</span>
-                                 </div>
-                                </div>
+                         <label for="vehicle-sedan-card" class="vehicle-card pt-3 flex items-center justify-between rounded-lg border border-transparent bg-white px-2 sm:px-3 py-3 sm:py-4 shadow-sm cursor-pointer transition duration-150 ease-in-out focus-within:ring-2 focus-within:ring-[--color-teal]">
+                           <div class="vehicle-card-content flex items-center space-x-4 w-full">
+                             <div class="vehicle-image-container flex-shrink-0 w-28 aspect-[4/3] overflow-hidden rounded-md">
+                               <img src="images/luxury-sedan.jpg" alt="Luxury Sedan" class="w-full h-full object-cover">
                              </div>
+                             <div class="vehicle-card-details">
+                               <p class="text-base font-medium text-gray-900">Luxury Sedan</p>
+                               <div class="flex items-center space-x-3 text-xs text-gray-500 mt-1">
+                                 <span class="flex items-center">
+                                   <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A9.978 9.978 0 0010 12c-2.31 0-4.438.784-6.131 2.1-.194.51-.02.979.406 1.393z" /></svg>
+                                   <span class="font-medium">3</span>
+                                 </span>
+                                 <span class="flex items-center">
+                                   <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 3.75A2.75 2.75 0 018.75 1h2.5A2.75 2.75 0 0114 3.75v.443c.57.055 1.14.122 1.71.2V3.75A3.75 3.75 0 0012 0h-4A3.75 3.75 0 004.25 3.75v.643c.57-.078 1.14-.145 1.71-.2V3.75zM4.75 5.11v9.14a.75.75 0 00.75.75h9a.75.75 0 00.75-.75v-9.14c-.61-.087-1.2-.19-1.75-.315V6.5a.75.75 0 00-1.5 0v-.194c-1.06-.214-2.14-.214-3.2 0V6.5a.75.75 0 00-1.5 0v-.409c-.55.125-1.14.228-1.75.315zM5.5 6.6v8.15h9V6.6a18.225 18.225 0 01-4.5 0c-1.06.214-2.14.214-3.2 0a18.225 18.225 0 01-1.3 0z" clip-rule="evenodd" /> </svg>
+                                   <span class="font-medium">2</span>
+                                 </span>
+                               </div>
+                               <p class="text-xs text-gray-500 mt-1">e.g., Tesla Model Y</p>
+                               <div class="badge-container flex flex-wrap gap-2 mt-1.5">
+                                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[--color-green-100] text-[--color-green-800]">EV Available</span>
+                               </div>
+                             </div>
+                           </div>
 
-                              <input type="radio" name="vehicle_type_oneway" value="Premium SUV" id="vehicle-suv-card" class="sr-only" required aria-checked="false">
-                            </label>
+                            <input type="radio" name="vehicle_type_oneway" value="Luxury Sedan" id="vehicle-sedan-card" class="sr-only" required aria-checked="false">
+                         </label>
 
-                            <label for="vehicle-sprinter-card" class="vehicle-card pt-3 flex items-center justify-between rounded-lg border border-transparent bg-white px-2 sm:px-3 py-3 sm:py-4 shadow-sm cursor-pointer transition duration-150 ease-in-out focus-within:ring-2 focus-within:ring-[--color-teal]">
-                             <div class="vehicle-card-content flex items-center space-x-4 w-full">
-                                <div class="vehicle-image-container flex-shrink-0 w-28 aspect-[4/3] overflow-hidden rounded-md">
-                                  <img src="images/vip-sprinter.jpg" alt="VIP Sprinter" class="w-full h-full object-cover">
-                                 </div>
-                                 <div class="vehicle-card-details">
-                                 <p class="text-base font-medium text-gray-900">VIP Group Sprinter</p>
-                                 <div class="flex items-center space-x-3 text-xs text-gray-500 mt-1">
-                                   <span class="flex items-center">
-                                     <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"> <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A9.978 9.978 0 0010 12c-2.31 0-4.438.784-6.131 2.1-.194.51-.02.979.406 1.393z" /> </svg>
-                                     <span class="font-medium">14</span>
-                                   </span>
-                                   <span class="flex items-center">
-                                     <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"> <path fill-rule="evenodd" d="M6 3.75A2.75 2.75 0 018.75 1h2.5A2.75 2.75 0 0114 3.75v.443c.57.055 1.14.122 1.71.2V3.75A3.75 3.75 0 0012 0h-4A3.75 3.75 0 004.25 3.75v.643c.57-.078 1.14-.145 1.71-.2V3.75zM4.75 5.11v9.14a.75.75 0 00.75.75h9a.75.75 0 00.75-.75v-9.14c-.61-.087-1.2-.19-1.75-.315V6.5a.75.75 0 00-1.5 0v-.194c-1.06-.214-2.14-.214-3.2 0V6.5a.75.75 0 00-1.5 0v-.409c-.55.125-1.14.228-1.75.315zM5.5 6.6v8.15h9V6.6a18.225 18.225 0 01-4.5 0c-1.06.214-2.14.214-3.2 0a18.225 18.225 0 01-1.3 0z" clip-rule="evenodd" /> </svg>
-                                     <span class="font-medium">14</span>
-                                   </span>
-                                 </div>
-                                 <p class="text-xs text-gray-500 mt-1">e.g., Mercedes Sprinter</p>
-                                  <div class="badge-container flex flex-wrap gap-2 mt-1.5">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[--color-blue-100] text-[--color-blue-800]">Mobile Lounge</span>
-                                 </div>
-                                </div>
-                              </div>
+                         <label for="vehicle-suv-card" class="vehicle-card pt-3 flex items-center justify-between rounded-lg border border-transparent bg-white px-2 sm:px-3 py-3 sm:py-4 shadow-sm cursor-pointer transition duration-150 ease-in-out focus-within:ring-2 focus-within:ring-[--color-teal]">
+                            <div class="vehicle-card-content flex items-center space-x-4 w-full">
+                              <div class="vehicle-image-container flex-shrink-0 w-28 aspect-[4/3] overflow-hidden rounded-md">
+                                <img src="images/premium-suv-escalade.jpg" alt="Premium SUV" class="w-full h-full object-cover">
+                             </div>
+                             <div class="vehicle-card-details">
+                               <p class="text-base font-medium text-gray-900">Premium SUV</p>
+                               <div class="flex items-center space-x-3 text-xs text-gray-500 mt-1">
+                                 <span class="flex items-center">
+                                   <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"> <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A9.978 9.978 0 0010 12c-2.31 0-4.438.784-6.131 2.1-.194.51-.02.979.406 1.393z" /> </svg>
+                                   <span class="font-medium">6</span>
+                                 </span>
+                                 <span class="flex items-center">
+                                   <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"> <path fill-rule="evenodd" d="M6 3.75A2.75 2.75 0 018.75 1h2.5A2.75 2.75 0 0114 3.75v.443c.57.055 1.14.122 1.71.2V3.75A3.75 3.75 0 0012 0h-4A3.75 3.75 0 004.25 3.75v.643c.57-.078 1.14-.145 1.71-.2V3.75zM4.75 5.11v9.14a.75.75 0 00.75.75h9a.75.75 0 00.75-.75v-9.14c-.61-.087-1.2-.19-1.75-.315V6.5a.75.75 0 00-1.5 0v-.194c-1.06-.214-2.14-.214-3.2 0V6.5a.75.75 0 00-1.5 0v-.409c-.55.125-1.14.228-1.75.315zM5.5 6.6v8.15h9V6.6a18.225 18.225 0 01-4.5 0c-1.06.214-2.14.214-3.2 0a18.225 18.225 0 01-1.3 0z" clip-rule="evenodd" /> </svg>
+                                   <span class="font-medium">5</span>
+                                 </span>
+                               </div>
+                               <p class="text-xs text-gray-500 mt-1">e.g., Cadillac Escalade</p>
+                                <div class="badge-container flex flex-wrap gap-2 mt-1.5">
+                                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[--color-green-100] text-[--color-green-800]">EV Available</span>
+                               </div>
+                             </div>
+                           </div>
 
-                              <input type="radio" name="vehicle_type_oneway" value="VIP Group Sprinter" id="vehicle-sprinter-card" class="sr-only" required aria-checked="false">
-                           </label>
+                            <input type="radio" name="vehicle_type_oneway" value="Premium SUV" id="vehicle-suv-card" class="sr-only" required aria-checked="false">
+                         </label>
 
-                         </div> <span id="vehicle-type-oneway-error" class="mt-1 block text-xs text-red-600 hidden"></span> </fieldset>
-                   </div>
-                   </div>
-                 <div id="panel-experience-plus" class="tab-panel space-y-3 hidden" role="tabpanel" tabindex="0" aria-labelledby="tab-button-experience-plus">
+                         <label for="vehicle-sprinter-card" class="vehicle-card pt-3 flex items-center justify-between rounded-lg border border-transparent bg-white px-2 sm:px-3 py-3 sm:py-4 shadow-sm cursor-pointer transition duration-150 ease-in-out focus-within:ring-2 focus-within:ring-[--color-teal]">
+                            <div class="vehicle-card-content flex items-center space-x-4 w-full">
+                              <div class="vehicle-image-container flex-shrink-0 w-28 aspect-[4/3] overflow-hidden rounded-md">
+                                <img src="images/vip-sprinter.jpg" alt="VIP Sprinter" class="w-full h-full object-cover">
+                             </div>
+                             <div class="vehicle-card-details">
+                               <p class="text-base font-medium text-gray-900">VIP Group Sprinter</p>
+                               <div class="flex items-center space-x-3 text-xs text-gray-500 mt-1">
+                                 <span class="flex items-center">
+                                   <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"> <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A9.978 9.978 0 0010 12c-2.31 0-4.438.784-6.131 2.1-.194.51-.02.979.406 1.393z" /> </svg>
+                                   <span class="font-medium">14</span>
+                                 </span>
+                                 <span class="flex items-center">
+                                   <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"> <path fill-rule="evenodd" d="M6 3.75A2.75 2.75 0 018.75 1h2.5A2.75 2.75 0 0114 3.75v.443c.57.055 1.14.122 1.71.2V3.75A3.75 3.75 0 0012 0h-4A3.75 3.75 0 004.25 3.75v.643c.57-.078 1.14-.145 1.71-.2V3.75zM4.75 5.11v9.14a.75.75 0 00.75.75h9a.75.75 0 00.75-.75v-9.14c-.61-.087-1.2-.19-1.75-.315V6.5a.75.75 0 00-1.5 0v-.194c-1.06-.214-2.14-.214-3.2 0V6.5a.75.75 0 00-1.5 0v-.409c-.55.125-1.14.228-1.75.315zM5.5 6.6v8.15h9V6.6a18.225 18.225 0 01-4.5 0c-1.06.214-2.14.214-3.2 0a18.225 18.225 0 01-1.3 0z" clip-rule="evenodd" /> </svg>
+                                   <span class="font-medium">14</span>
+                                 </span>
+                               </div>
+                               <p class="text-xs text-gray-500 mt-1">e.g., Mercedes Sprinter</p>
+                                <div class="badge-container flex flex-wrap gap-2 mt-1.5">
+                                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[--color-blue-100] text-[--color-blue-800]">Mobile Lounge</span>
+                               </div>
+                             </div>
+                           </div>
+
+                            <input type="radio" name="vehicle_type_oneway" value="VIP Group Sprinter" id="vehicle-sprinter-card" class="sr-only" required aria-checked="false">
+                         </label>
+
+                       </div> <span id="vehicle-type-oneway-error" class="mt-1 block text-xs text-red-600 hidden"></span> </fieldset>
+                  </div>
+                  </div>
+                <div id="panel-experience-plus" class="tab-panel space-y-3 hidden" role="tabpanel" tabindex="0" aria-labelledby="tab-button-experience-plus">
                    <div id="experience-dropdown-container" class="relative">
                      <label for="experience-dropdown" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Select Service</label>
                      <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27Z"></path></svg></span>
@@ -237,13 +250,13 @@
                    <div id="date-preference-container" class="relative hidden pt-2">
                      <label class="block text-sm font-medium text-gray-700 mb-1" id="date-preference-label">Preferred Timing</label>
                      <fieldset aria-labelledby="date-preference-label" aria-describedby="date_preference-error">
-                         <legend class="sr-only">Select Preferred Timing</legend>
-                         <div class="flex flex-wrap gap-x-4 gap-y-2">
-                           <div class="flex items-center"><input id="pref-asap" name="date_preference" type="radio" value="ASAP / Next Day" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-asap" class="ml-2 block text-sm text-gray-900">ASAP / Next Day</label></div>
-                           <div class="flex items-center"><input id="pref-weekend" name="date_preference" type="radio" value="This Coming Weekend" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-weekend" class="ml-2 block text-sm text-gray-900">This Coming Weekend</label></div>
-                           <div class="flex items-center"><input id="pref-weekday" name="date_preference" type="radio" value="Next Week (Mon-Fri)" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-weekday" class="ml-2 block text-sm text-gray-900">Next Week (Mon-Fri)</label></div>
-                           <div class="flex items-center"><input id="pref-flexible" name="date_preference" type="radio" value="Flexible / Other Date" checked class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-flexible" class="ml-2 block text-sm text-gray-900">Flexible / Other Date</label></div>
-                         </div>
+                       <legend class="sr-only">Select Preferred Timing</legend>
+                       <div class="flex flex-wrap gap-x-4 gap-y-2">
+                         <div class="flex items-center"><input id="pref-asap" name="date_preference" type="radio" value="ASAP / Next Day" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-asap" class="ml-2 block text-sm text-gray-900">ASAP / Next Day</label></div>
+                         <div class="flex items-center"><input id="pref-weekend" name="date_preference" type="radio" value="This Coming Weekend" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-weekend" class="ml-2 block text-sm text-gray-900">This Coming Weekend</label></div>
+                         <div class="flex items-center"><input id="pref-weekday" name="date_preference" type="radio" value="Next Week (Mon-Fri)" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-weekday" class="ml-2 block text-sm text-gray-900">Next Week (Mon-Fri)</label></div>
+                         <div class="flex items-center"><input id="pref-flexible" name="date_preference" type="radio" value="Flexible / Other Date" checked class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-flexible" class="ml-2 block text-sm text-gray-900">Flexible / Other Date</label></div>
+                       </div>
                      </fieldset>
                      <span id="date_preference-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                    </div>
@@ -299,28 +312,28 @@
                       <div id="everglades-options" class="hidden relative border-t border-gray-200 pt-4"></div>
                       <div id="keys-escape-options" class="hidden relative border-t border-gray-200 pt-4"></div>
                     </div>
-                  </div>
                 </div>
+              </div>
 
-                <div>
-                  <button type="submit" id="submit-button" disabled
+              <div>
+                <button type="submit" id="submit-button" disabled
                     class="mt-4 flex w-full items-center justify-center rounded-lg border border-transparent bg-gray-300 px-4 py-3 text-lg font-semibold text-gray-600 hover:bg-gray-400"
                     title="Complete all required fields to enable submission" aria-disabled="true" aria-busy="false">
                     <span class="spinner hidden" aria-hidden="true"></span>
                     <span class="button-text">Continue</span>
-                  </button>
-                  <span id="submit-button-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                </div>
-              </form>
-
-              <div id="confirmation-message" class="hidden text-center mt-6">
-                <h3 class="font-playfair text-xl text-gray-900">Thank You!</h3>
-                <p class="text-gray-600">Your request has been submitted successfully. We'll get back to you soon.</p>
+                </button>
+                <span id="submit-button-error" class="mt-1 block text-xs text-red-600 hidden"></span>
               </div>
+            </form>
+
+            <div id="confirmation-message" class="hidden text-center mt-6">
+              <h3 class="font-playfair text-xl text-gray-900">Thank You!</h3>
+              <p class="text-gray-600">Your request has been submitted successfully. We'll get back to you soon.</p>
             </div>
           </div>
         </div>
-      </main>
-    <script type="module" src="dashboard.js"></script>
+      </div>
+    </main>
+  <script type="module" src="dashboard.js"></script>
 </body>
 </html>

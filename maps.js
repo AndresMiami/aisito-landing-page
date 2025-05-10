@@ -1,6 +1,7 @@
 // Import functions from the maps.js module (if this file imports from elsewhere, keep those)
 // Example: import { showError } from './errorHandling.js';
 
+// Export the function for modular use
 export function initAutocomplete() {
     console.log("initAutocomplete callback fired.");
 
@@ -189,6 +190,9 @@ export function initAutocomplete() {
     // or modify showError to not strictly require the elements object for all cases.
     // Example: import { showError, clearError } from './errorHandling.js';
 }
+
+// Make it globally accessible for the Google Maps API callback
+window.initAutocomplete = initAutocomplete;
 
 // Note: The window.initAutocomplete assignment in dashboard.js
 // makes the function globally accessible for the Google Maps API callback.
