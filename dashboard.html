@@ -12,7 +12,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
-    </head>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAd_O4s_73E_A8rq7TGCHKVEBFHzNecAHM&libraries=places" async defer></script>
+    <script type="module" src="dashboard.js"></script>
+  </head>
   <body class="bg-gray-100" style="background-image: url('./images/miami-skyline-abstract-form.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
     <header class="bg-black">
       <nav class="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -46,8 +48,14 @@
             <form action="#" method="POST" id="booking-form" class="space-y-3">
               <div class="relative">
                 <label for="from-location" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">From</label>
-                <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg></span>
-                <gmp-place-autocomplete id="from-location" required aria-describedby="from-location-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" placeholder="Address, airport, hotel, ..."></gmp-place-autocomplete>
+                <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path>
+                  </svg>
+                </span>
+                <input type="text" id="from-location" required aria-describedby="from-location-error" 
+                       class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[--color-teal]" 
+                       placeholder="Enter pickup location">
                 <span id="from-location-error" class="mt-1 block text-xs text-red-600 hidden"></span>
               </div>
 
@@ -55,8 +63,14 @@
                 <div id="panel-oneway" class="tab-panel space-y-3" role="tabpanel" tabindex="0" aria-labelledby="tab-button-oneway">
                   <div id="to-address-container" class="relative">
                     <label for="to-address" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">To</label>
-                    <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path></svg></span>
-                    <gmp-place-autocomplete id="to-address" aria-describedby="to-address-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6" placeholder="Address, airport, hotel, ..."></gmp-place-autocomplete>
+                    <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path>
+                      </svg>
+                    </span>
+                    <input type="text" id="to-address" required aria-describedby="to-address-error" 
+                           class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[--color-teal]" 
+                           placeholder="Enter drop-off location">
                     <span id="to-address-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                   </div>
 
@@ -307,8 +321,7 @@
         </div>
       </div>
     </main>
-  <script type="module" src="dashboard.js"></script>
-</body>
+  </body>
 </html>
 
 

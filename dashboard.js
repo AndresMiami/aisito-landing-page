@@ -645,6 +645,34 @@ function initializeEventListeners(elements, placeholders, config) {
     console.log("Event listeners initialized.");
 }
 
+// --- Initialize Google Maps Autocomplete ---
+function initializeAutocomplete() {
+  // Get input elements
+  const fromInput = document.getElementById('from-location');
+  const toInput = document.getElementById('to-address');
+
+  // Attach Google Maps Autocomplete to the inputs
+  const fromAutocomplete = new google.maps.places.Autocomplete(fromInput, {
+    types: ['geocode'], // Restrict results to addresses
+  });
+  const toAutocomplete = new google.maps.places.Autocomplete(toInput, {
+    types: ['geocode'], // Restrict results to addresses
+  });
+
+  // Log the selected location to the console (optional)
+  fromAutocomplete.addListener('place_changed', () => {
+    const place = fromAutocomplete.getPlace();
+    console.log('Selected From Location:', place);
+  });
+
+  toAutocomplete.addListener('place_changed', () => {
+    const place = toAutocomplete.getPlace();
+    console.log('Selected To Location:', place);
+  });
+}
+
+// Initialize Autocomplete when the page loads
+window.addEventListener('load', initializeAutocomplete);
 
 // --- Main Initialization Logic ---
 // This function runs when the DOM is fully loaded.
