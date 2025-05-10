@@ -288,20 +288,25 @@
                 </div>
               </div>
 
-              <div>
-                <button type="submit" id="submit-button" disabled
-                    class="mt-4 flex w-full items-center justify-center rounded-lg border border-transparent bg-gray-300 px-4 py-3 text-lg font-semibold text-gray-600 hover:bg-gray-400"
-                    title="Complete all required fields to enable submission" aria-disabled="true" aria-busy="false">
-                    <span class="spinner hidden" aria-hidden="true"></span>
-                    <span class="button-text">Continue</span>
-                </button>
-                <span id="submit-button-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+              <!-- "From" Input Field -->
+              <div class="input-group">
+                <label for="from-location">From</label>
+                <input type="text" id="from-location" name="from-location" placeholder="Enter pickup address" required>
+              </div>
+
+              <!-- "To" Input Field -->
+              <div class="input-group">
+                <label for="to-address">To</label>
+                <input type="text" id="to-address" name="to-address" placeholder="Enter drop-off address" required>
               </div>
             </form>
 
-            <div id="confirmation-message" class="hidden text-center mt-6">
-              <h3 class="font-playfair text-xl text-gray-900">Thank You!</h3>
-              <p class="text-gray-600">Your request has been submitted successfully. We'll get back to you soon.</p>
+            <div class="input-container relative">
+              <label for="to-address" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">To</label>
+              <input type="text" id="to-address" name="to-address" placeholder="Address, airport, hotel, ..." required
+                     class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-[--color-gold] sm:text-sm sm:leading-6"
+                     aria-describedby="to-address-error">
+              <span id="to-address-error" class="mt-1 block text-xs text-red-600 hidden"></span>
             </div>
           </div>
         </div>
