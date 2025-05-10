@@ -106,10 +106,10 @@ select {
     align-items: center;
 }
 
-.vehicle-card:has(input:checked) { 
-    border-color: var(--color-teal); 
-    box-shadow: 0 0 0 2px var(--color-teal); 
-    background-color: var(--color-teal-50); 
+.vehicle-card:has(input:checked) {
+    border-color: var(--color-teal);
+    box-shadow: 0 0 0 2px var(--color-teal);
+    background-color: var(--color-teal-50);
 }
 
 .vehicle-card:hover {
@@ -169,44 +169,75 @@ select {
     padding: 1.5rem; /* Add padding inside the container */
 }
 /* Styling for the "From" and "To" fields */
-#booking-form .from-to-field {
-    background-color: #1E293B; /* Navy blue background */
-    color: #FFFFFF; /* White text */
-    border: 2px solid #00A09A; /* Teal border for distinction */
-    border-radius: 0.375rem; /* Rounded corners */
-    padding: 0.75rem; /* Padding inside the input */
-    width: 100%; /* Full width */
-    margin-bottom: 1rem; /* Space between fields */
-    font-size: 1rem; /* Larger font size for better readability */
-}
+/* This might be general styling for other inputs or repurposed. Adjust as needed. */
+/* #booking-form .from-to-field { */
+    /* background-color: #1E293B; */ /* Navy blue background */
+    /* color: #FFFFFF; */ /* White text */
+    /* border: 2px solid #00A09A; */ /* Teal border for distinction */
+    /* border-radius: 0.375rem; */ /* Rounded corners */
+    /* padding: 0.75rem; */ /* Padding inside the input */
+    /* width: 100%; */ /* Full width */
+    /* margin-bottom: 1rem; */ /* Space between fields */
+    /* font-size: 1rem; */ /* Larger font size for better readability */
+/* } */
 
-#booking-form .from-to-field::placeholder {
-    color: #94A3B8; /* Light gray placeholder text for contrast */
-}
+/* #booking-form .from-to-field::placeholder { */
+    /* color: #94A3B8; */ /* Light gray placeholder text for contrast */
+/* } */
+/* ... other focus styles for .from-to-field ... */
 
-#booking-form .from-to-field:focus {
-    outline: none;
-    border-color: #20C997; /* Lighter teal border on focus */
-    box-shadow: 0 0 0 3px rgba(32, 201, 151, 0.5); /* Subtle focus shadow */
-}
 
-/* Update input field styles */
+/* *** REMOVED: Old styling for gmp-place-autocomplete elements *** */
+/*
 gmp-place-autocomplete#from-location,
 gmp-place-autocomplete#to-address {
-    background-color: #1C2430; /* Dark background */
-    color: #FFFFFF; /* White text */
-    border: 1px solid #4A5568; /* Light border */
-    border-radius: 0.375rem; /* Rounded corners */
-    padding: 0.75rem 1rem; /* Adjust padding */
+    background-color: #000000 !important;
+    color: #FFFFFF !important;
+    border: 1px solid #333333;
+    border-radius: 0.375rem;
+    padding: 0.75rem 1rem;
     width: 100%;
 }
+*/
 
-/* Placeholder styling */
+/* *** REMOVED: Old placeholder styling for gmp-place-autocomplete *** */
+/*
 gmp-place-autocomplete#from-location::placeholder,
 gmp-place-autocomplete#to-address::placeholder {
-    color: #A0AEC0; /* Light grey placeholder */
+    color: #A0AEC0;
     opacity: 1;
 }
+*/
+
+/* *** ADDED/MODIFIED: Style the new standard input elements for From and To *** */
+#from-location,
+#to-address {
+    /* Force black background and white text, overriding general input and Tailwind */
+    background-color: #000000 !important; /* Set black background */
+    color: #FFFFFF !important; /* Set white text */
+
+    /* Remove any default browser input appearance */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    /* Your Tailwind classes (like border, padding, rounded corners) are now applied to the input */
+    /* If those aren't giving the exact look you want, you can add overrides here: */
+    /* Example: border: 1px solid #333333 !important; */ /* Example: Dark grey border */
+    /* Example: padding: 12px 15px !important; */ /* Example: Adjust padding */
+    /* Example: border-radius: 0.375rem !important; */ /* Example: Rounded corners */
+
+    /* Ensure no default outline when focused if Tailwind ring handles it */
+    outline: none !important;
+}
+
+/* *** ADDED: Style the placeholder text using the standard pseudo-element *** */
+#from-location::placeholder,
+#to-address::placeholder {
+    color: #A0AEC0 !important; /* Light grey placeholder */
+    opacity: 1 !important; /* Ensure opacity is not zero */
+}
+
 
 /* Label styling */
 label[for="from-location"],
@@ -216,10 +247,22 @@ label[for="to-address"] {
     font-size: 0.875rem;
     font-weight: 500;
     color: #FFFFFF; /* White text */
-    position: static;
-    background-color: transparent;
+    position: static; /* Revert from absolute if needed for the new input layout */
+    background-color: transparent; /* Ensure label background doesn't interfere */
     padding-left: 0;
 }
+
+/* Adjust the absolute label background if needed */
+/* Your labels have 'bg-white px-1'. You might want to change the background color */
+/* or make it transparent depending on the final look with the black input */
+.relative > label {
+    /* Example: Make label background match the parent container or be transparent */
+    /* background-color: #000 !important; */
+    /* color: #fff !important; */
+    background-color: transparent !important; /* Make label background transparent */
+    color: #FFFFFF !important; /* Ensure label text is white */
+}
+
 
 /* Update continue button styles */
 #submit-button {
@@ -266,11 +309,12 @@ button:hover {
     background-color: #E0A800;
 }
 
-/* Input Fields */
+/* General Input Fields */
+/* This rule provides default styling for all inputs/selects */
 input, select {
-    background-color: #F9FAFB;
-    border: 1px solid #D1D5DB;
-    color: #374151;
+    background-color: #F9FAFB; /* Light background */
+    border: 1px solid #D1D5DB; /* Light border */
+    color: #374151; /* Dark text */
 }
 input:focus, select:focus {
     border-color: #20C997;
@@ -287,3 +331,38 @@ input:focus, select:focus {
 .success {
     color: #10B981;
 }
+
+/* Label styling */
+/* This rule might be a duplicate or conflict with the more specific label rules above */
+/* .input-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: #a0aec0;
+} */
+
+/* Input field styling */
+/* This rule might be for other inputs. Adjust or remove if #from-location/#to-address cover all needed styling. */
+/* .custom-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.375rem;
+  background-color: #2d3748;
+  color: #fff;
+  font-size: 1rem;
+  box-sizing: border-box;
+} */
+
+/* Placeholder styling */
+/* This rule might be for other inputs. Adjust or remove if #from-location/#to-address::placeholder covers all needed styling. */
+/* .custom-input::placeholder {
+  color: #a0aec0;
+} */
+
+/* Focus state */
+/* This rule might be for other inputs. Adjust or remove if #from-location/#to-address:focus covers all needed styling. */
+/* .custom-input:focus {
+  outline: none;
+  border-color: #ff4d4d;
+} */

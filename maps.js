@@ -1,290 +1,194 @@
-// maps.js
-// This module handles the loading of the Google Maps API,
-// initialization of the Places Autocomplete service,
-// and related location-based functionalities like Geolocation.
+// Import functions from the maps.js module (if this file imports from elsewhere, keep those)
+// Example: import { showError } from './errorHandling.js';
 
-// Import getElementRefs from dashboard.js
-import { getElementRefs } from './dashboard.js';
-// Import showError from the errorHandling.js module
-import { showError } from './errorHandling.js';
-
-
-// --- Helper Functions (related to Maps/Location) ---
-
-// Toggles the visibility of airport-related fields (like flight number, baggage claim notes)
-// based on whether a location is identified as an airport.
-function updateAirportFieldVisibility(addressInputId, isAirport, elements) {
-    let typeContainerId, notesContainerId, hiddenInputId;
-    let typeInput, notesInput;
-    console.log(`Updating airport fields for ${addressInputId}. Is Airport: ${isAirport}`);
-
-    if (addressInputId === "from-location") {
-        const activePanelId = document.querySelector(".tab-panel:not(.hidden)")?.id;
-        if (activePanelId === "panel-oneway") {
-            typeContainerId = "pickup-type-container"; // Ensure these IDs match your HTML structure
-            notesContainerId = "pickup-notes-container"; // Ensure these IDs match your HTML structure
-            hiddenInputId = "isPickupAirportOneWay"; // Ensure these IDs match your HTML structure
-            typeInput = document.getElementById("pickup-type"); // Ensure these IDs match your HTML structure
-            notesInput = document.getElementById("pickup-notes"); // Ensure these IDs match your HTML structure
-        } else if (activePanelId === "panel-experience-plus") {
-            typeContainerId = "pickup-type-container-hourly"; // Ensure these IDs match your HTML structure
-            notesContainerId = "pickup-notes-container-hourly"; // Ensure these IDs match your HTML structure
-            hiddenInputId = "isPickupAirportHourly"; // Ensure these IDs match your HTML structure
-            typeInput = document.getElementById("pickup-type-hourly"); // Ensure these IDs match your HTML structure
-            notesInput = document.getElementById("pickup-notes-hourly"); // Ensure these IDs match your HTML structure
-        } else {
-            console.warn(`No active panel found for updating airport fields for ${addressInputId}.`);
-            return;
-        }
-    } else if (addressInputId === "to-address") {
-        typeContainerId = "dropoff-type-container"; // Ensure these IDs match your HTML structure
-        notesContainerId = "dropoff-notes-container"; // Ensure these IDs match your HTML structure
-        hiddenInputId = "isDropoffAirportOneWay"; // Ensure these IDs match your HTML structure
-        typeInput = document.getElementById("dropoff-type"); // Ensure these IDs match your HTML structure
-        notesInput = document.getElementById("dropoff-notes"); // Ensure these IDs match your HTML structure
-    } else {
-        console.warn(`Unknown address input ID (${addressInputId}) for airport fields visibility update.`);
-        return;
-    }
-
-    const typeContainer = document.getElementById(typeContainerId);
-    const notesContainer = document.getElementById(notesContainerId);
-    const hiddenInput = document.getElementById(hiddenInputId);
-
-    if (!typeContainer || !notesContainer) {
-        console.warn(`Airport-related elements (e.g., #${typeContainerId}) not found for ${addressInputId}. Skipping visibility update.`);
-        return;
-    }
-
-    if (isAirport) {
-        typeContainer.classList.remove("hidden");
-        notesContainer.classList.remove("hidden");
-        if (hiddenInput) hiddenInput.value = "true";
-    } else {
-        typeContainer.classList.add("hidden");
-        notesContainer.classList.add("hidden");
-        if (hiddenInput) hiddenInput.value = "false";
-        if (typeInput) typeInput.selectedIndex = 0;
-        if (notesInput) notesInput.value = "";
-    }
-}
-
-// Attempts to get the user's current geographical location using the browser's Geolocation API
-export async function getCurrentLocation(inputId, elements) { // Exported here
-    console.log(`getCurrentLocation called for input: ${inputId} at ${new Date().toISOString()}`);
-    if (!navigator.geolocation) {
-        alert("Geolocation is not supported by your browser.");
-        console.warn("Geolocation not supported by browser.");
-        return;
-    }
-
-    if (typeof google === "undefined" || typeof google.maps === "undefined" || typeof google.maps.Geocoder === "undefined") {
-        console.error("Google Maps API or Geocoding service not loaded. Cannot geocode location.");
-        alert("Mapping service is not available to find address.");
-        return;
-    }
-
-    // Note: getCurrentPosition is asynchronous
-    navigator.geolocation.getCurrentPosition(async (position) => {
-        const { latitude, longitude } = position.coords;
-        const geocoder = new google.maps.Geocoder();
-        const latlng = { lat: latitude, lng: longitude };
-
-        try {
-            const response = await new Promise((resolve, reject) => {
-                geocoder.geocode({ location: latlng }, (results, status) => {
-                    if (status === "OK" && results[0]) {
-                        resolve(results);
-                    } else {
-                        reject(new Error(`Geocoding failed with status: ${status}`));
-                    }
-                });
-            });
-            const address = response[0].formatted_address;
-            // Target the underlying input element within the gmp-place-autocomplete
-            const placeAutocompleteElement = document.getElementById(inputId);
-             // Ensure the element is the new type
-            if (placeAutocompleteElement instanceof google.maps.places.PlaceAutocompleteElement) {
-                // Set the address value on the element, which updates the internal input
-                placeAutocompleteElement.value = address;
-
-                // Geolocation doesn't typically return airport types,
-                // so we assume it's not an airport location for this scenario.
-                if (document.getElementById("pickup-type-container") || document.getElementById("dropoff-type-container")) {
-                    updateAirportFieldVisibility(inputId, false, elements);
-                }
-                 // Optional: You might want to trigger a 'gmp-placeselect' like behavior
-                 // if setting the value programmatically should behave like a user selecting a place.
-                 // However, the element's value setter usually just updates the text field.
-                 // For full place details, you might need to perform a separate Place Details request
-                 // using the formatted_address if needed elsewhere, but for just setting the text
-                 // and hiding airport fields, setting the value is sufficient here.
-
-            } else {
-                console.error(`Input field "${inputId}" not found or is not a PlaceAutocompleteElement in the DOM.`);
-            }
-        } catch (error) {
-            console.error("Error geocoding location:", error);
-            // Use the imported showError function
-            showError(elements, inputId, `Unable to retrieve address: ${error.message}`);
-        }
-    }, (error) => {
-        console.error("Geolocation error:", error);
-        // Use the imported showError function
-        showError(elements, inputId, "Unable to retrieve your location.");
-    }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
-}
-
-// Dynamically loads the Google Maps API script
-export async function loadGoogleMapsScript(elements) { // Exported here
-    if (document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]')) {
-        console.log("Google Maps script tag already exists. Skipping loading.");
-        return;
-    }
-
-    try {
-        const response = await fetch('/.netlify/functions/get-maps-key');
-        const data = await response.json();
-        const apiKey = data.apiKey;
-
-        if (!apiKey) {
-            throw new Error("API key not received from Netlify function.");
-        }
-
-        const script = document.createElement('script');
-        script.id = "google-maps-script";
-        // Ensure the 'places' library is requested
-        // The 'callback=initAutocomplete' is still used to signal when the script is loaded and initAutocomplete should run
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initAutocomplete`;
-        script.async = true;
-        script.defer = true; // Using defer is generally good practice
-
-        script.onload = () => {
-            console.log("Google Maps API script loaded successfully.");
-        };
-
-        script.onerror = () => {
-            console.error("Google Maps Script Load Error.");
-            // Use the imported showError function
-            showError(elements, "from-location", "Address lookup service failed to load.");
-            showError(elements, "to-address", "Address lookup service failed to load.");
-        };
-
-        document.head.appendChild(script);
-    } catch (error) {
-        console.error("Error during Google Maps Script Loading Process:", error);
-        // Use the imported showError function
-        showError(elements, "from-location", `Map service error: ${error.message}`);
-        showError(elements, "to-address", `Map service error: ${error.message}`);
-    }
-}
-
-// Google Maps Autocomplete Callback
-// This function is called by the Google Maps API script once it's loaded
-export function initAutocomplete() { // Exported here
+export function initAutocomplete() {
     console.log("initAutocomplete callback fired.");
+
     // Check if the necessary components from the Google Maps API are loaded
-    if (typeof google === "undefined" || typeof google.maps === "undefined" || typeof google.maps.places === "undefined" || typeof google.maps.places.PlaceAutocompleteElement === "undefined") {
-        console.error("Google Maps API, Places library, or PlaceAutocompleteElement not loaded correctly for initAutocomplete.");
+    if (
+        typeof google === "undefined" ||
+        typeof google.maps === "undefined" ||
+        typeof google.maps.places === "undefined"
+        // No longer need to check for PlaceAutocompleteElement
+        // typeof google.maps.places.PlaceAutocompleteElement === "undefined"
+    ) {
+        console.error(
+            "Google Maps API or Places library not loaded correctly for initAutocomplete."
+        );
+        // You might want to call showError here if you have access to that function and elements
+        // Example: if (typeof showError !== 'undefined' && elements && elements.bookingForm) { showError(elements, 'general', 'Maps API failed to load.'); }
         return;
     }
 
-    // Get references to the new <gmp-place-autocomplete> elements
-    const fromLocationElement = document.getElementById("from-location");
-    const toAddressElement = document.getElementById("to-address");
+    // Get references to the STANDARD INPUT elements using their IDs
+    const fromLocationInput = document.getElementById("from-location");
+    const toAddressInput = document.getElementById("to-address");
 
     // Define the fields you need when a place is selected.
-    // This is done when fetching details *after* a selection, not on initialization.
-     const placeFields = ["address_components", "geometry", "name", "formatted_address", "types"];
+    const placeFields = [
+        "address_components",
+        "geometry",
+        "name",
+        "formatted_address",
+        "types",
+        "place_id", // Often useful to get the place ID
+        // Add any other fields your application needs
+    ];
+
+    // Define Autocomplete options
+    const autocompleteOptions = {
+        fields: placeFields,
+        types: ['geocode', 'establishment'], // Or other types as needed (e.g., address, establishment)
+        componentRestrictions: { country: "us" }, // Apply country filter
+        // bias: ... // You could add location biasing options here if needed
+        // strictBounds: true, // Or restrict results to bounds
+    };
 
 
-    if (fromLocationElement instanceof google.maps.places.PlaceAutocompleteElement) {
-        console.log("Configuring fromLocationElement.");
-        // Configure the element properties using setAttribute for attributes
-        // or setting properties directly where supported (like locationBias).
-        // componentRestrictions is not supported directly as a property or attribute.
-        // Use address-filter attribute for country restriction.
-        fromLocationElement.setAttribute("address-filter", "country:us");
+    // Initialize Autocomplete on the STANDARD INPUT elements
+    if (fromLocationInput) {
+        console.log("Initializing Autocomplete on fromLocationInput.");
+        // Create a new Autocomplete instance and link it to the input
+        const fromAutocomplete = new google.maps.places.Autocomplete(fromLocationInput, autocompleteOptions);
 
-        // Add the event listener for when a place is selected from the autocomplete suggestions.
-        fromLocationElement.addEventListener("gmp-placeselect", async (event) => {
-            console.log("Place selected in from-location.");
-            // The event.placePrediction property holds a PlacePrediction object.
-            const placePrediction = event.placePrediction;
-            if (!placePrediction) {
-                console.warn("Autocomplete selected but no place prediction available.");
-                return;
-            }
+        // *** MODIFIED: Add listener for the 'place_changed' event on the Autocomplete instance ***
+        // This event fires when the user selects a place from the predictions dropdown
+        fromAutocomplete.addListener("place_changed", () => {
+            console.log("Place changed in from-location input.");
+            const place = fromAutocomplete.getPlace(); // Get the selected place details
+            console.log("Selected place:", place);
+            // *** Your logic to handle the selected place goes here ***
+            // This 'place' object contains the details you requested in placeFields
+            // You would typically update other parts of your form or application based on this data.
+            // Example: document.getElementById('from-address-lat').value = place.geometry.location.lat();
+            // Example: document.getElementById('from-address-lng').value = place.geometry.location.lng();
 
-             try {
-                 // Fetch the full Place object with the required fields using the prediction's place ID.
-                const place = await placePrediction.toPlace().fetchFields({
-                    fields: placeFields, // Specify the fields you need
-                });
-
-                console.log("Fetched Place details for from-location:", place);
-                const elements = getElementRefs(); // Get element references when needed
-
-                 // Now 'place' is a full Place object. You can access its properties.
-                // Update airport field visibility based on the fetched place types.
-                if (document.getElementById("pickup-type-container") || document.getElementById("pickup-notes-container")) {
-                    updateAirportFieldVisibility("from-location", !!(place && place.types && place.types.includes("airport")), elements);
-                }
-                 // You might also want to update the form's internal value or state
-                 // with the formatted address from the place object here,
-                 // although the element itself manages the text input.
-                 // elements.fromLocationInput.value = place.formattedAddress; // Example if you still needed the original input value
-            } catch (error) {
-                console.error("Error fetching place details for from-location:", error);
-                 const elements = getElementRefs();
-                 showError(elements, "from-location", "Could not retrieve place details for selected location.");
-            }
+             // You might also want to trigger form validation or update UI elements here
+             // Example: validateForm(elements); // If validateForm is accessible here
         });
+
+         // If you have a "Get Current Location" button for this input, ensure its logic
+         // correctly populates the standard input element and clears any related errors.
+         // (Your dashboard.js seems to handle this by calling getCurrentLocation)
+         // The getCurrentLocation function itself also needs to set the value on the standard input.
+         // Example: document.getElementById(inputId).value = geocodedAddress;
     } else {
-         console.warn("From location element with ID 'from-location' not found or is not a PlaceAutocompleteElement after Maps API loaded.");
+        console.warn("From location input element not found in initAutocomplete.");
+        // Handle the case where the element is not found (e.g., show an error message)
+        // Example: if (typeof showError !== 'undefined' && elements && elements.bookingForm) { showError(elements, 'from-location', 'Autocomplete input not found.'); }
     }
 
 
-     if (toAddressElement instanceof google.maps.places.PlaceAutocompleteElement) {
-         console.log("Configuring toAddressElement.");
-         // Configure the element properties.
-         toAddressElement.setAttribute("address-filter", "country:us");
+    if (toAddressInput) {
+        console.log("Initializing Autocomplete on toAddressInput.");
+         // Create a new Autocomplete instance and link it to the input
+        const toAutocomplete = new google.maps.places.Autocomplete(toAddressInput, autocompleteOptions);
 
-         toAddressElement.addEventListener("gmp-placeselect", async (event) => {
-             console.log("Place selected in to-address.");
-            const placePrediction = event.placePrediction;
-            if (!placePrediction) {
-                console.warn("Autocomplete selected but no place prediction available.");
-                return;
-            }
-
-             try {
-                 // Fetch the full Place object
-                const place = await placePrediction.toPlace().fetchFields({
-                    fields: placeFields, // Specify the fields you need
-                });
-
-                console.log("Fetched Place details for to-address:", place);
-                const elements = getElementRefs(); // Get element references when needed
-
-                 // Update airport field visibility based on the fetched place types.
-                if (document.getElementById("dropoff-type-container") || document.getElementById("dropoff-notes-container")) {
-                    updateAirportFieldVisibility("to-address", !!(place && place.types && place.types.includes("airport")), elements);
-                }
-                 // elements.toAddressInput.value = place.formattedAddress; // Example
-             } catch (error) {
-                 console.error("Error fetching place details for to-address:", error);
-                 const elements = getElementRefs();
-                 showError(elements, "to-address", "Could not retrieve place details for selected location.");
-             }
+         // *** MODIFIED: Add listener for the 'place_changed' event on the Autocomplete instance ***
+         toAutocomplete.addListener("place_changed", () => {
+            console.log("Place changed in to-address input.");
+            const place = toAutocomplete.getPlace(); // Get the selected place details
+            console.log("Selected place:", place);
+            // *** Your logic to handle the selected place goes here ***
+             // You might also want to trigger form validation or update UI elements here
          });
-     } else {
-          console.warn("To address element with ID 'to-address' not found or is not a PlaceAutocompleteElement after Maps API loaded.");
-     }
+    } else {
+         console.warn("To address input element not found in initAutocomplete.");
+         // Handle the case where the element is not found
+         // Example: if (typeof showError !== 'undefined' && elements && elements.bookingForm) { showError(elements, 'to-address', 'Autocomplete input not found.'); }
+    }
 
-     // Note: The Geolocation button listener is already in initializeEventListeners in dashboard.js
-     // and calls getCurrentLocation, which has been updated to handle the new element type.
+    // Note: The loadGoogleMapsScript function should ensure the API script is loaded with the 'places' library
+    // and the 'callback=initAutocomplete' parameter in its URL. This function is typically called once
+    // when your page loads or when the DOM is ready.
+
+    // Example of how loadGoogleMapsScript might be structured (assuming it's in this file or imported):
+    /*
+    export function loadGoogleMapsScript(elements) { // Pass elements if needed for error reporting
+         if (document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]')) {
+             console.log("Google Maps script already loaded.");
+             return; // Script is already on the page
+         }
+
+         const script = document.createElement('script');
+         const apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
+         // Ensure libraries=places and callback=initAutocomplete are in the URL
+         script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initAutocomplete`;
+         script.async = true;
+         script.defer = true;
+         script.onerror = () => {
+             console.error("Failed to load Google Maps script.");
+             // Handle the error, maybe show a message to the user
+             // Example: if (typeof showError !== 'undefined' && elements && elements.bookingForm) { showError(elements, 'general', 'Failed to load maps service.'); }
+         };
+         document.head.appendChild(script);
+         console.log("Google Maps script added to head.");
+     }
+    */
+
+    // Keep the getCurrentLocation function if you are using it
+    // Make sure it correctly sets the value on the standard input element by its ID
+    /*
+    export function getCurrentLocation(inputId, elements) {
+         console.log("Attempting to get current location for input:", inputId);
+         if (navigator.geolocation) {
+             navigator.geolocation.getCurrentPosition(
+                 async (position) => {
+                     const pos = {
+                         lat: position.coords.latitude,
+                         lng: position.coords.longitude,
+                     };
+                     console.log("Geolocation successful:", pos);
+
+                     // Use Google Geocoding service to get an address from coordinates
+                     const geocoder = new google.maps.Geocoder();
+                     geocoder.geocode({ location: pos }, (results, status) => {
+                         if (status === "OK" && results[0]) {
+                             const address = results[0].formatted_address;
+                             console.log("Geocoded address:", address);
+                             // Set the geocoded address on the standard input element
+                             const inputElement = document.getElementById(inputId);
+                             if (inputElement) {
+                                 inputElement.value = address;
+                                 console.log("Input value set to geocoded address.");
+                                 // Trigger an input event if necessary for your form logic/validation
+                                 // inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+                             } else {
+                                 console.warn("Target input element not found for geolocation result.");
+                             }
+                              // Clear any general error message related to getting location
+                              // if (typeof clearError !== 'undefined') { clearError('general'); }
+
+                         } else {
+                             console.error("Geocoder failed due to: " + status);
+                             // Show an error message to the user
+                             // if (typeof showError !== 'undefined' && elements && elements.bookingForm) { showError(elements, inputId || 'general', 'Could not geocode location.'); }
+                         }
+                     });
+                      // Clear any button-specific error message
+                      // if (typeof clearError !== 'undefined') { clearError('get-location-button'); }
+                 },
+                 (error) => {
+                     console.error("Geolocation failed due to: " + error.message);
+                     // Show an error message to the user
+                      // if (typeof showError !== 'undefined' && elements && elements.bookingForm) { showError(elements, inputId || 'general', 'Geolocation denied or failed.'); }
+                      // if (typeof clearError !== 'undefined') { clearError('get-location-button'); } // Clear the button error specifically
+                 }
+             );
+         } else {
+             // Browser doesn't support Geolocation
+             console.error("Browser doesn't support Geolocation");
+              // if (typeof showError !== 'undefined' && elements && elements.bookingForm) { showError(elements, inputId || 'general', 'Your browser does not support Geolocation.'); }
+              // if (typeof clearError !== 'undefined') { clearError('get-location-button'); }
+         }
+     }
+    */
+
+    // If you import showError from errorHandling.js and use it in this file,
+    // ensure you have access to the elements object where showError might need it,
+    // or modify showError to not strictly require the elements object for all cases.
+    // Example: import { showError, clearError } from './errorHandling.js';
 }
 
-// Removed the duplicate export statement at the end.
-// loadGoogleMapsScript, getCurrentLocation, and initAutocomplete are exported where defined.
+// Note: The window.initAutocomplete assignment in dashboard.js
+// makes the function globally accessible for the Google Maps API callback.
