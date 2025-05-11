@@ -31,6 +31,11 @@ body {
 }
 
 h1, h2, h3, .font-playfair { font-family: 'Playfair Display', serif; }
+h2 {
+    font-size: 1.875rem; /* text-3xl */
+    font-family: 'Playfair Display', serif; /* font-playfair */
+    color: var(--color-gold-dark);
+}
 .brand-gradient-text {
     background: linear-gradient(to right, #f97316, #ef4444);
     -webkit-background-clip: text;
@@ -61,13 +66,13 @@ select {
 }
 
 .tab-button.active-tab {
-    background-color: #FEF3C7; /* Light creamy yellow */
-    color: #B08D57; /* Gold/brown text */
+    background-color: var(--color-gold);
+    color: #000; /* darker text for contrast */
 }
 
 .tab-button:not(.active-tab) {
-    background-color: #FFFFFF; /* White background */
-    color: #00A09A; /* Teal text */
+    background-color: #fff;
+    color: var(--color-teal-dark);
 }
 
 .tab-button:not(.active-tab):hover {
@@ -98,22 +103,30 @@ select {
 
 /* Vehicle Card Styles */
 .vehicle-card {
-    background-color: #FFFFFF;
-    border: 1px solid #E2E8F0; /* Light grey border */
-    border-radius: 0.5rem; /* Rounded corners */
-    padding: 1rem; /* Adjust padding */
-    display: flex;
-    align-items: center;
+    background: #fff;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.vehicle-card:has(input:checked) {
+.vehicle-card:hover,
+.vehicle-card:focus-within {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     border-color: var(--color-teal);
-    box-shadow: 0 0 0 2px var(--color-teal);
-    background-color: var(--color-teal-50);
 }
 
-.vehicle-card:hover {
-    border-color: #CBD5E1; /* Darker grey on hover */
+.vehicle-card.sedan {
+    border-top: 4px solid var(--color-gold);
+}
+
+.vehicle-card.suv {
+    border-top: 4px solid var(--color-teal);
+}
+
+.vehicle-card.sprinter {
+    border-top: 4px solid var(--color-palm-green);
 }
 
 /* Updated Booking Time Button Styles */
@@ -160,84 +173,41 @@ select {
     border-radius: 0.5rem; /* Rounded corners */
     color: #000; /* Text color */
 }
+form {
+    gap: 1.5rem; /* gap-6 */
+}
 /* Add this class for the form container */
 .transparent-card {
-    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
-    border: 1px solid rgba(255, 255, 255, 0.6); /* Light border */
+    background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+    border: 1px solid rgba(255, 255, 255, 0.4); /* Light border */
     border-radius: 0.75rem; /* Rounded corners */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3); /* Subtle inner shadow */
     padding: 1.5rem; /* Add padding inside the container */
+    backdrop-filter: blur(12px); /* Add backdrop blur for depth */
 }
-/* Styling for the "From" and "To" fields */
-/* This might be general styling for other inputs or repurposed. Adjust as needed. */
-/* #booking-form .from-to-field { */
-    /* background-color: #1E293B; */ /* Navy blue background */
-    /* color: #FFFFFF; */ /* White text */
-    /* border: 2px solid #00A09A; */ /* Teal border for distinction */
-    /* border-radius: 0.375rem; */ /* Rounded corners */
-    /* padding: 0.75rem; */ /* Padding inside the input */
-    /* width: 100%; */ /* Full width */
-    /* margin-bottom: 1rem; */ /* Space between fields */
-    /* font-size: 1rem; */ /* Larger font size for better readability */
-/* } */
 
-/* #booking-form .from-to-field::placeholder { */
-    /* color: #94A3B8; */ /* Light gray placeholder text for contrast */
-/* } */
-/* ... other focus styles for .from-to-field ... */
-
-
-/* *** REMOVED: Old styling for gmp-place-autocomplete elements *** */
-/*
-gmp-place-autocomplete#from-location,
-gmp-place-autocomplete#to-address {
-    background-color: #000000 !important;
-    color: #FFFFFF !important;
-    border: 1px solid #333333;
-    border-radius: 0.375rem;
-    padding: 0.75rem 1rem;
-    width: 100%;
-}
-*/
-
-/* *** REMOVED: Old placeholder styling for gmp-place-autocomplete *** */
-/*
-gmp-place-autocomplete#from-location::placeholder,
-gmp-place-autocomplete#to-address::placeholder {
-    color: #A0AEC0;
-    opacity: 1;
-}
-*/
-
-/* *** ADDED/MODIFIED: Style the new standard input elements for From and To *** */
+/* Updated styles for From and To fields */
 #from-location,
 #to-address {
-    /* Force black background and white text, overriding general input and Tailwind */
-    background-color: #000000 !important; /* Set black background */
-    color: #FFFFFF !important; /* Set white text */
-
-    /* Remove any default browser input appearance */
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-
-    /* Your Tailwind classes (like border, padding, rounded corners) are now applied to the input */
-    /* If those aren't giving the exact look you want, you can add overrides here: */
-    /* Example: border: 1px solid #333333 !important; */ /* Example: Dark grey border */
-    /* Example: padding: 12px 15px !important; */ /* Example: Adjust padding */
-    /* Example: border-radius: 0.375rem !important; */ /* Example: Rounded corners */
-
-    /* Ensure no default outline when focused if Tailwind ring handles it */
-    outline: none !important;
+  background-color: #2C3E50;      /* deep slate-blue */
+  color: #FFFFFF;                /* white text */
+  border-radius: 1.5rem;         /* your existing pill shape */
+  padding: 0.75rem 1.25rem;      /* generous padding */
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.2);
 }
 
-/* *** ADDED: Style the placeholder text using the standard pseudo-element *** */
 #from-location::placeholder,
 #to-address::placeholder {
-    color: #A0AEC0 !important; /* Light grey placeholder */
-    opacity: 1 !important; /* Ensure opacity is not zero */
+  color: rgba(255,255,255,0.7);
+  font-family: "Playfair Display", serif;
+  font-weight: 400;
 }
 
+#from-location:focus,
+#to-address:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-teal), inset 0 1px 4px rgba(0,0,0,0.2);
+}
 
 /* Label styling */
 label[for="from-location"],
@@ -263,6 +233,14 @@ label[for="to-address"] {
     color: #FFFFFF !important; /* Ensure label text is white */
 }
 
+/* Hide teal pin SVGs inside `.relative` containers */
+.relative > span.absolute {
+  display: none !important;
+}
+
+.relative.mb-4 {
+  margin-bottom: 0.5rem; /* Reduced gap between form rows */
+}
 
 /* Update continue button styles */
 #submit-button {
@@ -297,6 +275,7 @@ header {
     background-color: black; /* Set the header background to black */
     color: white; /* Ensure the text color is white for contrast */
     border-bottom: none; /* Remove the border for a seamless look */
+    background: linear-gradient(to bottom, #000, rgba(0, 0, 0, 0.9)); /* Gradient overlay */
 }
 
 /* Primary Button */
@@ -366,3 +345,57 @@ input:focus, select:focus {
   outline: none;
   border-color: #ff4d4d;
 } */
+
+/* Card Container */
+.card-container {
+    padding: 2rem; /* p-8 */
+}
+
+/* Continue Button Animation Styles */
+.continue-button {
+    transition: box-shadow 0.2s ease-in-out;
+}
+
+.continue-button.valid {
+    box-shadow: 0 0 8px rgba(255, 193, 7, 0.6);
+}
+
+.continue-button:not(.valid) {
+    box-shadow: none;
+}
+
+/* Input with Label Styles */
+.input-with-label {
+  position: relative;
+  margin-bottom: 1.5rem; /* Space between fields */
+}
+
+.input-with-label input {
+  padding-top: 1.5rem; /* Space for the label */
+  padding-left: 1rem; /* Adjust padding after removing the icon */
+  padding-right: 1rem; /* Standard right padding */
+  height: 3.5rem; /* Adjust height for better proportions */
+  border-radius: 2rem; /* Rounded corners for a pill shape */
+  background-color: #2C3E50; /* Dark blue-gray background */
+  border: 2px solid #1A2930; /* Slightly darker border */
+  color: #FFFFFF; /* White text for better contrast */
+  font-size: 1rem; /* Adjust font size */
+  font-weight: 500; /* Slightly bold text */
+}
+
+.input-with-label label {
+  position: absolute;
+  top: 0.5rem; /* Position inside the input field */
+  left: 1rem; /* Align with input padding */
+  font-size: 0.875rem; /* Slightly smaller font size */
+  font-weight: 600; /* Bold for emphasis */
+  color: #FFFFFF; /* White text */
+  pointer-events: none; /* Prevent interaction */
+}
+
+.input-with-label input::placeholder {
+  color: #94A3B8; /* Light gray for placeholder text */
+  font-size: 0.875rem; /* Slightly smaller font size for placeholder */
+  font-weight: 400; /* Regular weight for placeholder */
+  font-style: italic; /* Optional: Add a subtle italic style */
+}
