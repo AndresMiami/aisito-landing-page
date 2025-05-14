@@ -14,7 +14,9 @@
 }
 
 html {
-    background-image: url('./images/miami-skyline-abstract-form.png');
+    /* MODIFIED: Using a placeholder for the background image. Replace with your actual image path. */
+    background-image: url('https://placehold.co/1920x1080/000000/333333?text=Miami+Skyline+Background');
+    /* Original: background-image: url('./images/miami-skyline-abstract-form.png'); */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -31,10 +33,11 @@ body {
 }
 
 h1, h2, h3, .font-playfair { font-family: 'Playfair Display', serif; }
-h2 {
+/* Ensure this h2 style is specific enough or adjust if it affects other h2s unintentionally */
+h2.text-center.text-2xl.font-playfair {
     font-size: 1.875rem; /* text-3xl */
     font-family: 'Playfair Display', serif; /* font-playfair */
-    color: var(--color-gold-dark);
+     color: var(--color-gold);
 }
 .brand-gradient-text {
     background: linear-gradient(to right, #f97316, #ef4444);
@@ -66,7 +69,7 @@ select {
 }
 
 .tab-button.active-tab {
-    background-color: var(--color-gold);
+    background-color:#9ba538d9; /* Semi-transparent yellow */
     color: #000; /* darker text for contrast */
 }
 
@@ -80,7 +83,7 @@ select {
 }
 
 /* A container for the tabs if not already present */
-.tab-container {
+.tab-container { /* This class is not used in the HTML, but defined in CSS */
     display: flex;
     gap: 0.5rem; /* Space between tabs */
     margin-bottom: 1rem; /* Space below tabs */
@@ -89,11 +92,14 @@ select {
 
 /* Tab navigation styles */
 #tab-navigation nav {
-    border: 1px solid #E2E8F0; /* Light grey border */
-    border-radius: 0.375rem; /* Rounded corners */
+    /* border: 1px solid #E2E8F0; */ /* Tailwind border-b border-gray-200 is on the parent div */
+    border-radius: 0.375rem 0.375rem 0 0; /* Rounded top corners for the nav container */
     overflow: hidden; /* Conform child corners */
     display: flex; /* Row layout */
 }
+/* Individual tab button borders are handled by Tailwind in the HTML */
+#tab-button-oneway { border-radius: 0.5rem 0 0 0; } /* rounded-tl-xl */
+#tab-button-experience-plus { border-radius: 0 0.5rem 0 0; } /* rounded-tr-xl */
 
 /* Flatpickr styles */
 .flatpickr-calendar { background: white; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
@@ -103,96 +109,113 @@ select {
 
 /* Vehicle Card Styles */
 .vehicle-card {
-    background: #fff;
-    border-radius: 0.75rem;
-    padding: 1rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid transparent;
+  background-color: #ffffff;
+  width: 100%; /* Stretch to full width of parent */
 }
+
 
 .vehicle-card:hover,
 .vehicle-card:focus-within {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border-color: var(--color-teal);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Slightly larger shadow on hover/focus */
+    border-color: var(--color-teal); /* Teal border on hover/focus */
 }
-
-.vehicle-card.sedan {
-    border-top: 4px solid var(--color-gold);
-}
-
-.vehicle-card.suv {
-    border-top: 4px solid var(--color-teal);
-}
-
-.vehicle-card.sprinter {
-    border-top: 4px solid var(--color-palm-green);
-}
+/* These specific top borders are not in the HTML classes but present in CSS */
+.vehicle-card.sedan { border-top: 4px solid var(--color-gold); }
+.vehicle-card.suv { border-top: 4px solid var(--color-teal); }
+.vehicle-card.sprinter { border-top: 4px solid var(--color-palm-green); }
 
 /* Updated Booking Time Button Styles */
 .booking-time-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem 1rem; /* Adjust padding */
-    border: 1px solid #d1d5db; /* Light gray border */
-    border-radius: 0.375rem; /* Rounded corners */
-    background-color: white; /* White background */
-    color: #1E3A8A; /* Blue text color */
-    font-size: 0.875rem; /* Slightly smaller font size */
-    font-weight: 500; /* Medium font weight */
-    cursor: pointer;
-    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
-    gap: 0.5rem; /* Space between icon and text */
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+  flex: 1;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 2px solid #E5E7EB;
+  border-radius: 0.375rem;
+  background-color: #FFFFFF;
+  color: #1E3A8A;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  width: 100%; /* Stretch to fill available space */
+  max-width: none; /* Remove max-width constraint */
+  margin: 0; /* Remove centering */
 }
-.booking-time-button:hover {
-    background-color: #EFF6FF; /* Light blue background on hover */
-    border-color: #93C5FD; /* Light blue border on hover */
-    color: #1D4ED8; /* Darker blue text on hover */
+
+@media (min-width: 640px) {
+    .booking-time-button {
+        max-width: 220px; /* Slightly larger on medium screens */
+    }
 }
+
+@media (min-width: 1024px) {
+  .booking-time-button {
+    max-width: none; /* Remove constraint */
+  }
+}
+
 .booking-time-button svg {
-    width: 1rem; /* Adjust icon size */
-    height: 1rem;
-    fill: currentColor; /* Match icon color with text */
-}
-.booking-time-button.active {
-     border-color: var(--color-teal);
-     background-color: var(--color-teal-50);
-     color: var(--color-teal-dark);
-     font-weight: 600; /* font-semibold */
-     box-shadow: none; /* Reduced to avoid over-layering */
+    width: 1.25rem; /* Icon width */
+    height: 1.25rem; /* Icon height */
+    color: #1E3A8A; /* Icon color */
 }
 
-/* Styling for the booking form container */
-#booking-form {
-    background-color: transparent; /* Make the background transparent */
-    border: none; /* Remove the border */
-    box-shadow: none; /* Remove the shadow */
-    padding: 1rem; /* Adjust padding */
-    border-radius: 0.5rem; /* Rounded corners */
-    color: #000; /* Text color */
+.booking-time-button:hover {
+    background-color: #F3F4F6; /* Light gray background on hover */
+    border-color: #1E3A8A; /* Dark blue border on hover */
+    color: #1E3A8A; /* Dark blue text on hover */
 }
-form {
-    gap: 1.5rem; /* gap-6 */
+
+.booking-time-button:active {
+    background-color: #E5E7EB; /* Slightly darker gray on click */
+    border-color: #1E3A8A; /* Dark blue border */
 }
-/* Add this class for the form container */
+
+.spinner {
+    display: inline-block;
+    width: 1.25rem; /* w-5 */
+    height: 1.25rem; /* h-5 */
+    border: 2px solid rgba(0,0,0,.3); /* Adjusted for black text on yellow button */
+    border-radius: 50%;
+    border-top-color: currentColor; /* Uses button's text color (black) */
+    animation: spin 1s ease infinite; /* Fixed invalid value */
+    margin-right: 0.5rem; /* mr-2 */
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.hidden { display: none !important; } /* Tailwind's hidden utility */
+
 .transparent-card {
-    background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
-    border: 1px solid rgba(255, 255, 255, 0.4); /* Light border */
-    border-radius: 0.75rem; /* Rounded corners */
-    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3); /* Subtle inner shadow */
-    padding: 1.5rem; /* Add padding inside the container */
-    backdrop-filter: blur(12px); /* Add backdrop blur for depth */
+    background-color: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 0.75rem; /* Tailwind rounded-xl */
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4);
+    /* padding: 1.5rem; */ /* Padding is handled by .p-6 or .p-8 on the child div */
+    backdrop-filter: blur(12px);
 }
 
-/* Updated styles for From and To fields */
+/* Styles for From and To fields - HTML uses Tailwind, these are for reference or if Tailwind is removed */
+/* These specific input styles are quite different from the Tailwind classes used in the HTML */
+/*
 #from-location,
 #to-address {
-  background-color: #2C3E50;      /* deep slate-blue */
-  color: #FFFFFF;                /* white text */
-  border-radius: 1.5rem;         /* your existing pill shape */
-  padding: 0.75rem 1.25rem;      /* generous padding */
+  background-color: #2C3E50;
+  color: #FFFFFF;
+  border-radius: 1.5rem;
+  padding: 0.75rem 1.25rem;
   box-shadow: inset 0 1px 4px rgba(0,0,0,0.2);
 }
 
@@ -208,77 +231,61 @@ form {
   outline: none;
   box-shadow: 0 0 0 2px var(--color-teal), inset 0 1px 4px rgba(0,0,0,0.2);
 }
+*/
 
-/* Label styling */
-label[for="from-location"],
-label[for="to-address"] {
-    display: block;
-    margin-bottom: 0.25rem; /* Space below label */
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #FFFFFF; /* White text */
-    position: static; /* Revert from absolute if needed for the new input layout */
-    background-color: transparent; /* Ensure label background doesn't interfere */
-    padding-left: 0;
+/* Label styling for floating labels (as in HTML) */
+.relative > label.absolute {
+    /* Tailwind classes: -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500 */
+    /* Ensure these labels are readable on the transparent card background */
+    background-color: rgba(255, 255, 255, 0.8) !important; /* Make label bg slightly transparent for blending */
+    color: #374151 !important; /* Darker text for readability */
+    border-radius: 0.25rem;
 }
 
-/* Adjust the absolute label background if needed */
-/* Your labels have 'bg-white px-1'. You might want to change the background color */
-/* or make it transparent depending on the final look with the black input */
-.relative > label {
-    /* Example: Make label background match the parent container or be transparent */
-    /* background-color: #000 !important; */
-    /* color: #fff !important; */
-    background-color: transparent !important; /* Make label background transparent */
-    color: #FFFFFF !important; /* Ensure label text is white */
-}
+/* Hide teal pin SVGs inside `.relative` containers if inputs are not padded for them */
+/* The HTML input has pl-12, so the icon should be visible. This CSS rule would hide it. */
+/* .relative > span.absolute { display: none !important; } */
 
-/* Hide teal pin SVGs inside `.relative` containers */
-.relative > span.absolute {
-  display: none !important;
-}
+/* .relative.mb-4 { margin-bottom: 0.5rem; } */ /* Not used in the current HTML snippet */
 
-.relative.mb-4 {
-  margin-bottom: 0.5rem; /* Reduced gap between form rows */
-}
-
-/* Update continue button styles */
 #submit-button {
     background-color: #FFC107; /* Bright yellow */
-    color: #FFFFFF; /* White text */
-    border: none;
-    border-radius: 0.375rem; /* Rounded corners */
-    padding: 0.75rem 1rem; /* Adjust padding */
-    width: 100%; /* Full width */
-    font-size: 1rem; /* Adjust font size */
-    font-weight: bold;
-    text-align: center;
+    color: #000000; /* Black text for better contrast */
+    /* Tailwind classes handle other properties: mt-4 flex w-full items-center justify-center rounded-lg border border-transparent px-4 py-3 text-lg font-semibold */
     transition: background-color 0.3s;
 }
 
-#submit-button:hover {
+#submit-button:hover:not(:disabled) {
     background-color: #E0A800; /* Darker yellow on hover */
+}
+#submit-button:disabled {
+    background-color: #D1D5DB; /* Tailwind gray-300 */
+    color: #6B7280; /* Tailwind gray-500 */
+    cursor: not-allowed;
 }
 
 /* Mobile Responsiveness for Cards */
-@media (max-width: 400px) {
+@media (max-width: 400px) { /* This breakpoint is quite small, consider sm: or md: from Tailwind */
     .vehicle-card { flex-direction: column; align-items: center; }
     .vehicle-card-content { flex-direction: column; align-items: center; text-align: center; width: 100%; }
     .vehicle-card-details { margin-left: 0; margin-top: 0.75rem; width: 100%; align-items: center; }
-    .vehicle-card-details .flex { justify-content: center; }
+    .vehicle-card-details .flex { justify-content: center; } /* For passenger/luggage icons */
     .badge-container { justify-content: center; margin-top: 0.25rem; }
-    .vehicle-image-container { width: 100%; max-width: 10rem; }
+    .vehicle-image-container { width: 100%; max-width: 10rem; /* Limits image size on small screens */ }
 }
 
 /* Header Styles */
-header {
-    background-color: black; /* Set the header background to black */
-    color: white; /* Ensure the text color is white for contrast */
-    border-bottom: none; /* Remove the border for a seamless look */
-    background: linear-gradient(to bottom, #000, rgba(0, 0, 0, 0.9)); /* Gradient overlay */
+header.bg-black { /* Tailwind class */
+    background-color: black !important; /* Ensure it overrides other potential styles */
+    color: white;
+    border-bottom: none;
+    /* background: linear-gradient(to bottom, #000, rgba(0, 0, 0, 0.9)); */ /* Gradient might be too complex with body BG */
 }
 
-/* Primary Button */
+/* General Button Styling - This is very broad and will affect all buttons. */
+/* It's generally better to style buttons with more specific classes or Tailwind utilities. */
+/* This will conflict with .booking-time-button and #submit-button styles. */
+/*
 button {
     background-color: #FFC107;
     color: #FFFFFF;
@@ -287,115 +294,87 @@ button {
 button:hover {
     background-color: #E0A800;
 }
+*/
 
-/* General Input Fields */
-/* This rule provides default styling for all inputs/selects */
+/* General Input Fields - Tailwind classes are used in HTML, these are fallbacks or overrides. */
+/*
 input, select {
-    background-color: #F9FAFB; /* Light background */
-    border: 1px solid #D1D5DB; /* Light border */
-    color: #374151; /* Dark text */
+    background-color: #F9FAFB;
+    border: 1px solid #D1D5DB;
+    color: #374151;
 }
 input:focus, select:focus {
-    border-color: #20C997;
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(32, 201, 151, 0.5);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-teal);
+}
+}
+*/
+/* Specific styling for inputs within the transparent card to ensure readability */
+.transparent-card input[type="text"],
+.transparent-card input[type="email"],
+.transparent-card input[type="tel"],
+.transparent-card input[type="number"],
+.transparent-card select {
+    background-color: rgba(255, 255, 255, 0.9); /* Slightly more opaque for better readability */
+    color: #1F2937; /* Darker text */
+    border: 1px solid rgba(209, 213, 219, 0.7); /* Slightly more visible border */
+}
+.transparent-card input[type="text"]::placeholder,
+.transparent-card input[type="email"]::placeholder,
+.transparent-card input[type="tel"]::placeholder,
+.transparent-card input[type="number"]::placeholder {
+    color: #6B7280; /* Tailwind gray-500 */
+}
+.transparent-card input[type="text"]:focus,
+.transparent-card input[type="email"]:focus,
+.transparent-card input[type="tel"]:focus,
+.transparent-card input[type="number"]:focus,
+.transparent-card select:focus {
+    background-color: white;
+    border-color: var(--color-teal); /* Use theme color for focus */
+    box-shadow: 0 0 0 2px rgba(0, 160, 154, 0.5); /* Teal focus ring */
 }
 
 /* Error Messages */
-.error {
-    color: #EF4444;
-}
-
+.error { color: #EF4444; } /* Tailwind red-500/600 */
 /* Success Messages */
-.success {
-    color: #10B981;
+.success { color: #10B981; } /* Tailwind green-500/600 */
+
+/* .card-container { padding: 2rem; } */ /* Not used, .transparent-card has .p-6/.p-8 */
+
+/* .continue-button styles are for a different button, #submit-button is used */
+
+/* .input-with-label styles are very specific and not matching the current HTML structure with Tailwind */
+
+/* Spinner for submit button */
+.spinner {
+    display: inline-block;
+    width: 1.25rem; /* w-5 */
+    height: 1.25rem; /* h-5 */
+    border: 2px solid rgba(0,0,0,.3); /* Adjusted for black text on yellow button */
+    border-radius: 50%;
+    border-top-color: currentColor; /* Uses button's text color (black) */
+    animation: spin 1s ease infinite; /* Fixed invalid value */
+    margin-right: 0.5rem; /* mr-2 */
 }
 
-/* Label styling */
-/* This rule might be a duplicate or conflict with the more specific label rules above */
-/* .input-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-size: 0.875rem;
-  color: #a0aec0;
-} */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.hidden { display: none !important; } /* Tailwind's hidden utility */
 
-/* Input field styling */
-/* This rule might be for other inputs. Adjust or remove if #from-location/#to-address cover all needed styling. */
-/* .custom-input {
+
+
+.example-class {
+  color: red;
+}
+.button-container {
+  display: flex;
+  justify-content: space-between; /* Change from center to space-between */
+  gap: 1rem;
+  width: 100%; /* Stretch to full width of parent */
+  margin: 0; /* Remove centering */
+}
+#vehicle-selection-oneway .space-y-3 {
   width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 0.375rem;
-  background-color: #2d3748;
-  color: #fff;
-  font-size: 1rem;
-  box-sizing: border-box;
-} */
-
-/* Placeholder styling */
-/* This rule might be for other inputs. Adjust or remove if #from-location/#to-address::placeholder covers all needed styling. */
-/* .custom-input::placeholder {
-  color: #a0aec0;
-} */
-
-/* Focus state */
-/* This rule might be for other inputs. Adjust or remove if #from-location/#to-address:focus covers all needed styling. */
-/* .custom-input:focus {
-  outline: none;
-  border-color: #ff4d4d;
-} */
-
-/* Card Container */
-.card-container {
-    padding: 2rem; /* p-8 */
-}
-
-/* Continue Button Animation Styles */
-.continue-button {
-    transition: box-shadow 0.2s ease-in-out;
-}
-
-.continue-button.valid {
-    box-shadow: 0 0 8px rgba(255, 193, 7, 0.6);
-}
-
-.continue-button:not(.valid) {
-    box-shadow: none;
-}
-
-/* Input with Label Styles */
-.input-with-label {
-  position: relative;
-  margin-bottom: 1.5rem; /* Space between fields */
-}
-
-.input-with-label input {
-  padding-top: 1.5rem; /* Space for the label */
-  padding-left: 1rem; /* Adjust padding after removing the icon */
-  padding-right: 1rem; /* Standard right padding */
-  height: 3.5rem; /* Adjust height for better proportions */
-  border-radius: 2rem; /* Rounded corners for a pill shape */
-  background-color: #2C3E50; /* Dark blue-gray background */
-  border: 2px solid #1A2930; /* Slightly darker border */
-  color: #FFFFFF; /* White text for better contrast */
-  font-size: 1rem; /* Adjust font size */
-  font-weight: 500; /* Slightly bold text */
-}
-
-.input-with-label label {
-  position: absolute;
-  top: 0.5rem; /* Position inside the input field */
-  left: 1rem; /* Align with input padding */
-  font-size: 0.875rem; /* Slightly smaller font size */
-  font-weight: 600; /* Bold for emphasis */
-  color: #FFFFFF; /* White text */
-  pointer-events: none; /* Prevent interaction */
-}
-
-.input-with-label input::placeholder {
-  color: #94A3B8; /* Light gray for placeholder text */
-  font-size: 0.875rem; /* Slightly smaller font size for placeholder */
-  font-weight: 400; /* Regular weight for placeholder */
-  font-style: italic; /* Optional: Add a subtle italic style */
 }
