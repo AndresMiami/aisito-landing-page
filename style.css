@@ -35,9 +35,17 @@ body {
 h1, h2, h3, .font-playfair { font-family: 'Playfair Display', serif; }
 /* Ensure this h2 style is specific enough or adjust if it affects other h2s unintentionally */
 h2.text-center.text-2xl.font-playfair {
-    font-size: 1.875rem; /* text-3xl */
-    font-family: 'Playfair Display', serif; /* font-playfair */
-     color: var(--color-gold);
+    font-size: 2.75rem; /* text-4xl */
+    color: var(--color-gold); /* Slightly lighter gold for better contrast */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    letter-spacing: 0.05em;
+    line-height: 3.5rem; /* Adjust this value to control the height *//* Slight spacing for elegance */
+}
+h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  letter-spacing: 0.5px;
+  color: var(--color-gold);
 }
 .brand-gradient-text {
     background: linear-gradient(to right, #f97316, #ef4444);
@@ -66,6 +74,7 @@ select {
     transition: background-color 0.3s, color 0.3s;
     text-align: center;
     cursor: pointer;
+    transition: all 0.3s ease-in-out;
 }
 
 .tab-button.active-tab {
@@ -80,6 +89,14 @@ select {
 
 .tab-button:not(.active-tab):hover {
     background-color: #F0F0F0; /* Hover effect */
+}
+
+.tab-button[aria-selected="true"] {
+    background-color: var(--color-gold);
+    color: white;
+    font-weight: bold;
+    transform: scale(1.05);
+    z-index: 10;
 }
 
 /* A container for the tabs if not already present */
@@ -119,17 +136,27 @@ select {
   width: 100%; /* Stretch to full width of parent */
 }
 
-
 .vehicle-card:hover,
 .vehicle-card:focus-within {
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.02); /* Slight scale on hover */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Slightly larger shadow on hover/focus */
     border-color: var(--color-teal); /* Teal border on hover/focus */
 }
-/* These specific top borders are not in the HTML classes but present in CSS */
-.vehicle-card.sedan { border-top: 4px solid var(--color-gold); }
-.vehicle-card.suv { border-top: 4px solid var(--color-teal); }
-.vehicle-card.sprinter { border-top: 4px solid var(--color-palm-green); }
+
+.vehicle-card.sedan {
+  border-top: 4px solid var(--color-gold);
+  background-color: rgba(176, 141, 87, 0.1); /* Light gold tint */
+}
+
+.vehicle-card.suv {
+  border-top: 4px solid var(--color-teal);
+  background-color: rgba(0, 160, 154, 0.1); /* Light teal tint */
+}
+
+.vehicle-card.sprinter {
+  border-top: 4px solid var(--color-palm-green);
+  background-color: rgba(60, 179, 113, 0.1); /* Light palm green tint */
+}
 
 /* Updated Booking Time Button Styles */
 .booking-time-button {
@@ -143,8 +170,8 @@ select {
   border-radius: 0.375rem;
   background-color: #FFFFFF;
   color: #1E3A8A;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.125rem; /* text-lg */
+  font-weight: 700;
   transition: all 0.3s ease;
   cursor: pointer;
   width: 100%; /* Stretch to fill available space */
@@ -204,7 +231,10 @@ select {
     border-radius: 0.75rem; /* Tailwind rounded-xl */
     box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4);
     /* padding: 1.5rem; */ /* Padding is handled by .p-6 or .p-8 on the child div */
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(2px);
+}
+.custom-border-radius {
+  border-radius: 1.25rem !important;
 }
 
 /* Styles for From and To fields - HTML uses Tailwind, these are for reference or if Tailwind is removed */
@@ -235,11 +265,27 @@ select {
 
 /* Label styling for floating labels (as in HTML) */
 .relative > label.absolute {
-    /* Tailwind classes: -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500 */
-    /* Ensure these labels are readable on the transparent card background */
-    background-color: rgba(255, 255, 255, 0.8) !important; /* Make label bg slightly transparent for blending */
-    color: #374151 !important; /* Darker text for readability */
-    border-radius: 0.25rem;
+  font-size: 0.875rem; /* text-sm */
+  color: #1F2937; /* Tailwind gray-900 */
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 0 0.5rem;
+}
+
+label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+#panel-experience-plus label {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 600;
+  color: #374151; /* Tailwind gray-700 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 /* Hide teal pin SVGs inside `.relative` containers if inputs are not padded for them */
@@ -377,4 +423,7 @@ input:focus, select:focus {
 }
 #vehicle-selection-oneway .space-y-3 {
   width: 100%;
+}
+.form-padding {
+  padding: 1.25rem !important; /* Overrides Tailwind's p-6 and md:p-8 */
 }

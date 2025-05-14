@@ -31,9 +31,9 @@
     </header>
 
     <main class="flex items-center justify-center min-h-screen">
-      <div class="w-full max-w-lg md:max-w-xl lg:max-w-2xl">
+     <div class="w-full max-w-full sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl">
         <!-- Dashboard content here -->
-      <div class="overflow-hidden rounded-xl transparent-card">
+      <div class="overflow-hidden rounded-xl transparent-card custom-border-radius min-h-96 md:min-h-128 lg:min-h-custom">
           <div id="tab-navigation" class="border-b border-gray-200">
             <nav class="-mb-px flex" aria-label="Tabs" role="tablist">
               <button type="button" id="tab-button-oneway" data-tab-target="#panel-oneway" class="tab-button w-1/2 whitespace-nowrap py-4 px-1 border-t border-l border-r border-b-2 text-sm text-center rounded-tl-xl" role="tab" aria-selected="true" aria-controls="panel-oneway">One Way</button>
@@ -41,10 +41,9 @@
             </nav>
           </div>
 
-          <div class="p-6 md:p-8">
-            <h2 class="text-center text-2xl font-playfair font-bold mb-6" style="color: #B08D57;">BOOK YOUR TRIP</h2>
-            <form action="#" method="POST" id="booking-form" class="space-y-3">
-              <div class="grid grid-cols-1 gap-4">
+          <div class="p-6 md:p-8 form-padding">
+ <h2 class="text-center text-2xl font-playfair font-bold mb-6 leading-12">BOOK YOUR TRIP</h2>
+   <form action="#" method="POST" id="booking-form" class="space-y-4">
                 <!-- From Input -->
                 <div class="relative">
                   <label for="from-location" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">From</label>
@@ -54,8 +53,9 @@
                     </svg>
                   </span>
                   <input type="text" id="from-location" required aria-describedby="from-location-error" 
-                         class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[--color-teal]" 
-                         placeholder="Enter pickup location">
+                         class="block w-full rounded-xl border-0 py-3 pr-3 pl-12 text-white placeholder-gray-200 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[--color-teal] pac-target-input" 
+                         style="background-color: rgb(28 22 4 / 90%); color: white;" 
+                         placeholder="Enter pickup location" autocomplete="off">
                   <span id="from-location-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                 </div>
 
@@ -68,7 +68,8 @@
                     </svg>
                   </span>
                   <input type="text" id="to-address" required aria-describedby="to-address-error" 
-                         class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[--color-teal]" 
+                         class="block w-full rounded-xl border-0 py-3 pr-3 pl-12 text-white placeholder-gray-200 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[--color-teal]" 
+                         style="background-color: rgb(28 22 4 / 90%); color: white;" 
                          placeholder="Enter drop-off location">
                   <span id="to-address-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                 </div>
@@ -79,7 +80,7 @@
                 <div id="panel-oneway" class="tab-panel space-y-3" role="tabpanel" tabindex="0" aria-labelledby="tab-button-oneway">
                   <div id="date-time-container-oneway" class="relative">
                     <input type="hidden" name="booking_preference" id="booking-preference" value="">
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Pickup Time</label>
+                    
                     <div class="button-container">
   <button type="button" id="request-now-button" class="booking-time-button">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#1e3a8a" class="w-6 h-6">
@@ -89,7 +90,7 @@
   </button>
   <button type="button" id="book-later-button" class="booking-time-button">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#1e3a8a" class="w-6 h-6">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 2 00-2-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
     </svg>
     <span class="text-lg font-bold">Book for Later</span>
   </button>
@@ -114,7 +115,7 @@
                      </div>
                   </div>
                   <div id="vehicle-selection-oneway" class="pt-4">
-                    <h4 class="text-sm font-semibold text-gray-700 mb-3 font-playfair" id="vehicle-selection-oneway-label">Choose Your Luxury Ride</h4>
+                    
                     <fieldset aria-labelledby="vehicle-selection-oneway-label" aria-describedby="vehicle-type-oneway-error">
                        <legend class="sr-only">Vehicle Selection</legend>
                        <div class="space-y-3 divide-y divide-gray-200">
