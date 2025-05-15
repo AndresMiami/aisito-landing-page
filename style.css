@@ -26,8 +26,12 @@ html {
 }
 
 body {
-    background: transparent;
-    height: 100%;
+    /* Ensure the background image covers the entire viewport height */
+    min-height: 100vh;
+    background-image: url('./images/miami-skyline-abstract-form.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     font-family: 'Inter', sans-serif;
     color: #ffffff; /* Change text color to white for better contrast */
 }
@@ -143,6 +147,12 @@ select {
     border-color: var(--color-teal); /* Teal border on hover/focus */
 }
 
+.vehicle-card.selected {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: 2px solid var(--color-teal);
+}
+
 .vehicle-card.sedan {
   border-top: 4px solid var(--color-gold);
   background-color: rgba(176, 141, 87, 0.1); /* Light gold tint */
@@ -206,6 +216,12 @@ select {
 .booking-time-button:active {
     background-color: #E5E7EB; /* Slightly darker gray on click */
     border-color: #1E3A8A; /* Dark blue border */
+}
+
+.booking-time-button.active {
+    background-color: var(--color-teal-50);
+    border-color: var(--color-teal);
+    color: var(--color-teal-dark);
 }
 
 .spinner {
@@ -426,4 +442,19 @@ input:focus, select:focus {
 }
 .form-padding {
   padding: 1.25rem !important; /* Overrides Tailwind's p-6 and md:p-8 */
+}
+
+@media (max-width: 640px) {
+  .vehicle-card-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  .vehicle-image-container {
+    margin: 0 auto 1rem;
+    width: 100%;
+    max-width: 12rem;
+  }
+  .vehicle-card-details {
+    width: 100%;
+  }
 }

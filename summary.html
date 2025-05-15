@@ -4,16 +4,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trip Summary</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAd_O4s_73E_A8rq7TGCHKVEBFHzNecAHM&libraries=places" async defer></script>
   </head>
   <body class="bg-gray-100">
-    <main class="flex items-center justify-center min-h-screen">
-      <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+    <main class="flex items-center justify-center min-h-screen py-8">
+      <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6 w-full">
+        <!-- Map Section -->
+        <div id="map" class="w-full h-64 rounded-lg mb-6 border border-gray-200"></div>
+        
+        <!-- Trip Details Section -->
         <h1 class="text-2xl font-bold text-gray-900 mb-4">Trip Summary</h1>
-        <div id="summary-details" class="space-y-4">
+        <div id="summary-details" class="space-y-2 mb-6">
           <!-- Trip details will be dynamically populated here -->
         </div>
-        <button onclick="window.history.back()" class="mt-6 w-full bg-[--color-gold] text-white py-3 rounded-lg font-semibold hover:bg-[--color-gold-dark]">
+        
+        <!-- Included Benefits Section -->
+        <div class="mb-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-3">Includes:</h2>
+          <ul class="space-y-2 text-gray-700">
+            <li class="flex items-start">
+              <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              Free cancellation up to 1hr before
+            </li>
+            <li class="flex items-start">
+              <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              Free 15 minutes wait time
+            </li>
+            <li class="flex items-start">
+              <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              Complimentary WiFi
+            </li>
+            <li class="flex items-start">
+              <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              Tissues & sanitizer
+            </li>
+            <li class="flex items-start">
+              <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              Complimentary bottle of water
+            </li>
+            <li class="flex items-start">
+              <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              Apple & Android chargers
+            </li>
+            <li class="flex items-start">
+              <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              Entertainment package
+            </li>
+            <li class="flex items-start">
+              <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              Only top drivers
+            </li>
+          </ul>
+        </div>
+        
+        <!-- Vehicle Selection Section -->
+        <h2 class="text-xl font-semibold text-gray-800 mb-3">Select Vehicle</h2>
+        <div id="vehicle-selection" class="space-y-3 mb-6">
+          <!-- Vehicle cards will be dynamically populated here -->
+        </div>
+        
+        <!-- Book Now Button -->
+        <button id="book-now-button" class="mt-6 w-full bg-[--color-gold] text-white py-3 rounded-lg font-semibold hover:bg-[--color-gold-dark] disabled:bg-gray-300 disabled:text-gray-600" disabled>
+          Book Now
+        </button>
+        
+        <!-- Back Button -->
+        <button onclick="window.history.back()" class="mt-3 w-full bg-gray-200 text-gray-800 py-3 rounded-lg font-semibold hover:bg-gray-300">
           Back to Booking
         </button>
       </div>
@@ -22,20 +96,186 @@
       document.addEventListener('DOMContentLoaded', () => {
         const params = new URLSearchParams(window.location.search);
         const summaryDetails = document.getElementById('summary-details');
-
+        const vehicleSelection = document.getElementById('vehicle-selection');
+        const bookNowButton = document.getElementById('book-now-button');
+        let map;
+        let directionsService;
+        let directionsRenderer;
+        
+        // Trip details
         const tripDetails = {
           'From': params.get('from'),
           'To': params.get('to'),
-          'Vehicle': params.get('vehicle'),
-          'Booking Preference': params.get('preference'),
-          'Pickup Date': params.get('date') || 'N/A',
-          'Pickup Time': params.get('time') || 'N/A',
+          'Booking Preference': params.get('preference') || 'ASAP',
         };
-
+        
+        // Add date and time if booking preference is Scheduled
+        if (tripDetails['Booking Preference'] === 'Scheduled') {
+          tripDetails['Pickup Date'] = params.get('date') || 'N/A';
+          tripDetails['Pickup Time'] = params.get('time') || 'N/A';
+        }
+        
+        // Calculate estimated arrival and distance
+        const estimatedArrival = new Date();
+        estimatedArrival.setHours(estimatedArrival.getHours() + 1);
+        const formattedTime = estimatedArrival.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        tripDetails['Estimated Arrival'] = formattedTime;
+        
+        // Populate trip details
         for (const [key, value] of Object.entries(tripDetails)) {
           const detail = document.createElement('p');
-          detail.innerHTML = `<strong>${key}:</strong> ${value}`;
+          detail.innerHTML = `<strong>${key}:</strong> ${value || 'N/A'}`;
           summaryDetails.appendChild(detail);
+        }
+        
+        // Initialize map
+        function initMap() {
+          directionsService = new google.maps.DirectionsService();
+          directionsRenderer = new google.maps.DirectionsRenderer();
+          
+          map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 12,
+            center: { lat: 25.7617, lng: -80.1918 }, // Miami coordinates
+            mapTypeControl: false,
+            streetViewControl: false,
+            fullscreenControl: false
+          });
+          
+          directionsRenderer.setMap(map);
+          
+          // Calculate and display route if both from and to are provided
+          if (tripDetails['From'] && tripDetails['To']) {
+            calculateAndDisplayRoute();
+          }
+        }
+        
+        function calculateAndDisplayRoute() {
+          directionsService.route(
+            {
+              origin: tripDetails['From'],
+              destination: tripDetails['To'],
+              travelMode: google.maps.TravelMode.DRIVING,
+            },
+            (response, status) => {
+              if (status === "OK") {
+                directionsRenderer.setDirections(response);
+                
+                // Get distance and duration
+                const route = response.routes[0];
+                const leg = route.legs[0];
+                
+                // Add distance to trip details
+                const distanceDetail = document.createElement('p');
+                distanceDetail.innerHTML = `<strong>Distance:</strong> ${leg.distance.text}`;
+                summaryDetails.appendChild(distanceDetail);
+              } else {
+                console.error("Directions request failed due to " + status);
+              }
+            }
+          );
+        }
+        
+        // Vehicle data
+        const vehicles = [
+          {
+            id: 'luxury-sedan',
+            name: 'Luxury Sedan',
+            image: 'images/luxury-sedan.jpg',
+            passengers: 2,
+            description: 'e.g., Tesla Model Y',
+            badges: ['EV Available'],
+            price: '$89'
+          },
+          {
+            id: 'premium-suv',
+            name: 'Premium SUV',
+            image: 'images/premium-suv-escalade.jpg',
+            passengers: 5,
+            description: 'e.g., Cadillac Escalade',
+            badges: ['EV Available'],
+            price: '$129'
+          },
+          {
+            id: 'vip-sprinter',
+            name: 'VIP Group Sprinter',
+            image: 'images/vip-sprinter.jpg',
+            passengers: 12,
+            description: 'e.g., Mercedes Sprinter',
+            badges: ['Mobile Lounge'],
+            price: '$199'
+          }
+        ];
+        
+        // Create vehicle cards
+        vehicles.forEach(vehicle => {
+          const vehicleCard = document.createElement('label');
+          vehicleCard.htmlFor = `vehicle-${vehicle.id}`;
+          vehicleCard.className = 'vehicle-card pt-3 flex items-center justify-between rounded-lg border border-transparent bg-white px-2 sm:px-3 py-3 sm:py-4 shadow-sm cursor-pointer transition duration-150 ease-in-out focus-within:ring-2 focus-within:ring-[--color-teal]';
+          
+          vehicleCard.innerHTML = `
+            <div class="vehicle-card-content flex items-center space-x-4 w-full">
+              <div class="vehicle-image-container flex-shrink-0 w-28 aspect-[4/3] overflow-hidden rounded-md">
+                <img src="${vehicle.image}" alt="${vehicle.name}" class="w-full h-full object-cover">
+              </div>
+              <div class="vehicle-card-details">
+                <div class="flex justify-between items-start">
+                  <p class="text-base font-medium text-gray-900">${vehicle.name}</p>
+                  <p class="text-lg font-bold text-[--color-teal]">${vehicle.price}</p>
+                </div>
+                <div class="flex items-center space-x-3 text-xs text-gray-500 mt-1">
+                  <span class="flex items-center">
+                    <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
+                    </svg>
+                    <span class="font-medium">${vehicle.passengers}</span>
+                  </span>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">${vehicle.description}</p>
+                <div class="badge-container flex flex-wrap gap-2 mt-1.5">
+                  ${vehicle.badges.map(badge => 
+                    `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[--color-green-100] text-[--color-green-800]">${badge}</span>`
+                  ).join('')}
+                </div>
+              </div>
+            </div>
+            <input type="radio" name="vehicle_type" value="${vehicle.name}" id="vehicle-${vehicle.id}" class="sr-only" required>
+          `;
+          
+          vehicleSelection.appendChild(vehicleCard);
+          
+          // Add event listener to each vehicle card
+          vehicleCard.addEventListener('click', () => {
+            // Remove selected class from all cards
+            document.querySelectorAll('.vehicle-card').forEach(card => {
+              card.classList.remove('selected');
+            });
+            // Add selected class to clicked card
+            vehicleCard.classList.add('selected');
+            // Enable book now button
+            bookNowButton.disabled = false;
+          });
+        });
+        
+        // Book Now button functionality
+        bookNowButton.addEventListener('click', () => {
+          const selectedVehicle = document.querySelector('input[name="vehicle_type"]:checked');
+          
+          if (selectedVehicle) {
+            // Here you would typically submit the booking to your backend
+            alert('Booking successful! A confirmation will be sent to your email.');
+            
+            // For demo purposes, you could redirect to a confirmation page
+            // window.location.href = 'confirmation.html';
+          }
+        });
+        
+        // Initialize Google Maps when API is loaded
+        window.initMap = initMap;
+        
+        // If Google Maps API is already loaded, initialize the map
+        if (window.google && window.google.maps) {
+          initMap();
         }
       });
     </script>
