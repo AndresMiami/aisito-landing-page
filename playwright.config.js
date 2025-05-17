@@ -1,6 +1,8 @@
-testDir: 'tests',
-use: {
-    browserName: 'chromium',
-    headless: true
-},
-reporter: 'list'
+module.exports = {
+    testDir: 'tests',
+    use: {
+        browserName: 'chromium',
+        headless: true
+    },
+    reporter: 'list'
+};

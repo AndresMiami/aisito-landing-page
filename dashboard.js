@@ -743,4 +743,39 @@ window.initAutocomplete = initAutocomplete;
 // The button state functions (setLoadingButton, resetSubmitButton) are passed directly to sendFormData.
 // export { getElementRefs }; // Removed duplicate export
 
+// Add this script at the end of your body tag or to your dashboard.js file
+document.addEventListener('DOMContentLoaded', function() {
+  // Tab switching functionality
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+  
+  // Set initial active tab
+  document.getElementById('tab-button-oneway').classList.add('active');
+  
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Remove active class from all buttons and hide all panels
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      tabPanels.forEach(panel => panel.classList.add('hidden'));
+      
+      // Add active class to clicked button
+      button.classList.add('active');
+      
+      // Show the target panel
+      const targetPanel = document.querySelector(button.dataset.tabTarget);
+      if (targetPanel) {
+        targetPanel.classList.remove('hidden');
+      }
+      
+      // Set aria-selected attributes for accessibility
+      tabButtons.forEach(btn => btn.setAttribute('aria-selected', 'false'));
+      button.setAttribute('aria-selected', 'true');
+    });
+  });
+});
+
+
+
+
+
 

@@ -1,0 +1,699 @@
+/* Root variables including new ones for cards */
+
+:root {
+  --color-gold: #B08D57;
+  --color-gold-dark: #9A7B4F;
+  --color-teal: #00A09A;
+  --color-teal-dark: #00807A;
+  --color-teal-50: #E6F5F4;
+  /* Light teal for selected card/button background */
+  --color-teal-light-bg: #f0fdfa;
+  --color-palm-green: #3CB371;
+  --color-green-100: #D1FAE5;
+  /* Tailwind green-100 */
+  --color-green-800: #065F46;
+  /* Tailwind green-800 */
+  --color-blue-100: #DBEAFE;
+  /* Tailwind blue-100 */
+  --color-blue-800: #1E40AF;
+  /* Tailwind blue-800 */
+}
+
+html {
+  /* MODIFIED: Using a placeholder for the background image. Replace with your actual image path. */
+  background-image: url('https://placehold.co/1920x1080/000000/333333?text=Miami+Skyline+Background');
+  /* Original: background-image: url('./images/miami-skyline-abstract-form.png'); */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100%;
+  background-color: black;
+  /* Set the background color to black */
+  opacity: 0.9;
+  /* Slight transparency for better contrast */
+}
+
+body {
+  /* Ensure the background image covers the entire viewport height */
+  min-height: 100vh;
+  background-image: url('./images/miami-skyline-abstract-form.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  font-family: 'Inter', sans-serif;
+  color: #ffffff;
+  /* Change text color to white for better contrast */
+}
+
+h1, h2, h3, .font-playfair {
+  font-family: 'Playfair Display', serif;
+}
+
+/* Ensure this h2 style is specific enough or adjust if it affects other h2s unintentionally */
+
+h2.text-center.text-2xl.font-playfair {
+  font-size: 2.75rem;
+  /* text-4xl */
+  color: var(--color-gold);
+  /* Slightly lighter gold for better contrast */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  /* Subtle shadow for depth */
+  letter-spacing: 0.05em;
+  line-height: 3.5rem;
+  /* Adjust this value to control the height */
+  /* Slight spacing for elegance */
+}
+
+h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  letter-spacing: 0.5px;
+  color: var(--color-gold);
+}
+
+.brand-gradient-text {
+  background: linear-gradient(to right, #f97316, #ef4444);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1rem;
+}
+
+/* Tab styles */
+
+.tab-button {
+  flex: 1;
+  padding: 0.75rem 0.5rem;
+  /* Adjust padding */
+  font-weight: 600;
+  font-size: 0.875rem;
+  /* 14px */
+  border: none;
+  /* No individual borders */
+  transition: background-color 0.3s, color 0.3s;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.tab-button.active-tab {
+  background-color:#9ba538d9;
+  /* Semi-transparent yellow */
+  color: #000;
+  /* darker text for contrast */
+}
+
+.tab-button:not(.active-tab) {
+  background-color: #fff;
+  color: var(--color-teal-dark);
+}
+
+.tab-button:not(.active-tab):hover {
+  background-color: #F0F0F0;
+  /* Hover effect */
+}
+
+.tab-button[aria-selected="true"] {
+  background-color: var(--color-gold);
+  color: white;
+  font-weight: bold;
+  transform: scale(1.05);
+  z-index: 10;
+}
+
+/* A container for the tabs if not already present */
+
+.tab-container {
+  /* This class is not used in the HTML, but defined in CSS */
+  display: flex;
+  gap: 0.5rem;
+  /* Space between tabs */
+  margin-bottom: 1rem;
+  /* Space below tabs */
+  width: 100%;
+  /* Ensure it spans the full width of the form */
+}
+
+/* Tab navigation styles */
+
+#tab-navigation nav {
+  /* border: 1px solid #E2E8F0; */
+  /* Tailwind border-b border-gray-200 is on the parent div */
+  border-radius: 0.375rem 0.375rem 0 0;
+  /* Rounded top corners for the nav container */
+  overflow: hidden;
+  /* Conform child corners */
+  display: flex;
+  /* Row layout */
+}
+
+/* Individual tab button borders are handled by Tailwind in the HTML */
+
+#tab-button-oneway {
+  border-radius: 0.5rem 0 0 0;
+}
+
+/* rounded-tl-xl */
+
+#tab-button-experience-plus {
+  border-radius: 0 0.5rem 0 0;
+}
+
+/* rounded-tr-xl */
+
+/* Flatpickr styles */
+
+.flatpickr-calendar {
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Screen reader only */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Vehicle Card Styles */
+
+.vehicle-card {
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid transparent;
+  background-color: #ffffff;
+  width: 260px;
+  /* Ensure consistent card width */
+  flex-shrink: 0;
+  /* Prevent cards from shrinking */
+  scroll-snap-align: center;
+  /* Ensure each card snaps to the center */
+}
+
+.vehicle-card:hover,
+.vehicle-card:focus-within {
+  transform: translateY(-2px) scale(1.02);
+  /* Slight scale on hover */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  /* Slightly larger shadow on hover/focus */
+  border-color: var(--color-teal);
+  /* Teal border on hover/focus */
+}
+
+.vehicle-card.selected {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.vehicle-card.sedan {
+  border-top: 4px solid var(--color-gold);
+  background-color: rgba(176, 141, 87, 0.1);
+  /* Light gold tint */
+}
+
+.vehicle-card.suv {
+  border-top: 4px solid var(--color-teal);
+  background-color: rgba(0, 160, 154, 0.1);
+  /* Light teal tint */
+}
+
+.vehicle-card.sprinter {
+  border-top: 4px solid var(--color-palm-green);
+  background-color: rgba(60, 179, 113, 0.1);
+  /* Light palm green tint */
+}
+
+.vehicle-card:nth-child(2) {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  /* Highlight the centered card */
+  transform: scale(1.05);
+  /* Slightly enlarge the centered card */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.vehicle-card:not(:nth-child(2)) {
+  opacity: 0.8;
+  /* Dim non-centered cards */
+  transition: opacity 0.3s ease;
+}
+
+/* Updated Booking Time Button Styles */
+
+.booking-time-button {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 2px solid #E5E7EB;
+  border-radius: 0.375rem;
+  background-color: #FFFFFF;
+  color: #1E3A8A;
+  font-size: 1.125rem;
+  /* text-lg */
+  font-weight: 700;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  width: 100%;
+  /* Stretch to fill available space */
+  max-width: none;
+  /* Remove max-width constraint */
+  margin: 0;
+  /* Remove centering */
+}
+
+@media (min-width: 640px) {
+  .booking-time-button {
+    max-width: 220px;
+    /* Slightly larger on medium screens */
+  }
+}
+
+@media (min-width: 1024px) {
+  .booking-time-button {
+    max-width: none;
+    /* Remove constraint */
+  }
+}
+
+.booking-time-button svg {
+  width: 1.25rem;
+  /* Icon width */
+  height: 1.25rem;
+  /* Icon height */
+  color: #1E3A8A;
+  /* Icon color */
+}
+
+.booking-time-button:hover {
+  background-color: #F3F4F6;
+  /* Light gray background on hover */
+  border-color: #1E3A8A;
+  /* Dark blue border on hover */
+  color: #1E3A8A;
+  /* Dark blue text on hover */
+}
+
+.booking-time-button:active {
+  background-color: #E5E7EB;
+  /* Slightly darker gray on click */
+  border-color: #1E3A8A;
+  /* Dark blue border */
+}
+
+.booking-time-button.active {
+  background-color: var(--color-teal-50);
+  border-color: var(--color-teal);
+  color: var(--color-teal-dark);
+}
+
+.spinner {
+  display: inline-block;
+  width: 1.25rem;
+  /* w-5 */
+  height: 1.25rem;
+  /* h-5 */
+  border: 2px solid rgba(0,0,0,.3);
+  /* Adjusted for black text on yellow button */
+  border-radius: 50%;
+  border-top-color: currentColor;
+  /* Uses button's text color (black) */
+  animation: spin 1s ease infinite;
+  /* Fixed invalid value */
+  margin-right: 0.5rem;
+  /* mr-2 */
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Tailwind's hidden utility */
+
+.transparent-card {
+  background-color: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 0.75rem;
+  /* Tailwind rounded-xl */
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4);
+  /* padding: 1.5rem; */
+  /* Padding is handled by .p-6 or .p-8 on the child div */
+  -webkit-backdrop-filter: blur(2px);
+          backdrop-filter: blur(2px);
+}
+
+.custom-border-radius {
+  border-radius: 1.25rem !important;
+}
+
+/* Styles for From and To fields - HTML uses Tailwind, these are for reference or if Tailwind is removed */
+
+/* These specific input styles are quite different from the Tailwind classes used in the HTML */
+
+/*
+#from-location,
+#to-address {
+  background-color: #2C3E50;
+  color: #FFFFFF;
+  border-radius: 1.5rem;
+  padding: 0.75rem 1.25rem;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.2);
+}
+
+#from-location::placeholder,
+#to-address::placeholder {
+  color: rgba(255,255,255,0.7);
+  font-family: "Playfair Display", serif;
+  font-weight: 400;
+}
+
+#from-location:focus,
+#to-address:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-teal), inset 0 1px 4px rgba(0,0,0,0.2);
+}
+*/
+
+/* Label styling for floating labels (as in HTML) */
+
+.relative > label.absolute {
+  font-size: 0.875rem;
+  /* text-sm */
+  color: #1F2937;
+  /* Tailwind gray-900 */
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 0 0.5rem;
+}
+
+label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+#panel-experience-plus label {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.875rem;
+  /* text-sm */
+  font-weight: 600;
+  color: #374151;
+  /* Tailwind gray-700 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Hide teal pin SVGs inside `.relative` containers if inputs are not padded for them */
+
+/* The HTML input has pl-12, so the icon should be visible. This CSS rule would hide it. */
+
+/* .relative > span.absolute { display: none !important; } */
+
+/* .relative.mb-4 { margin-bottom: 0.5rem; } */
+
+/* Not used in the current HTML snippet */
+
+#submit-button {
+  background-color: #FFC107;
+  /* Bright yellow */
+  color: #000000;
+  /* Black text for better contrast */
+  /* Tailwind classes handle other properties: mt-4 flex w-full items-center justify-center rounded-lg border border-transparent px-4 py-3 text-lg font-semibold */
+  transition: background-color 0.3s;
+}
+
+#submit-button:hover:not(:disabled) {
+  background-color: #E0A800;
+  /* Darker yellow on hover */
+}
+
+#submit-button:disabled {
+  background-color: #D1D5DB;
+  /* Tailwind gray-300 */
+  color: #6B7280;
+  /* Tailwind gray-500 */
+  cursor: not-allowed;
+}
+
+/* Mobile Responsiveness for Cards */
+
+@media (max-width: 400px) {
+  /* This breakpoint is quite small, consider sm: or md: from Tailwind */
+
+  .vehicle-card {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .vehicle-card-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .vehicle-card-details {
+    margin-left: 0;
+    margin-top: 0.75rem;
+    width: 100%;
+    align-items: center;
+  }
+
+  .vehicle-card-details .flex {
+    justify-content: center;
+  }
+
+  /* For passenger/luggage icons */
+
+  .badge-container {
+    justify-content: center;
+    margin-top: 0.25rem;
+  }
+
+  .vehicle-image-container {
+    width: 100%;
+    max-width: 10rem;
+    /* Limits image size on small screens */
+  }
+}
+
+/* Header Styles */
+
+header.bg-black {
+  /* Tailwind class */
+  background-color: black !important;
+  /* Ensure it overrides other potential styles */
+  color: white;
+  border-bottom: none;
+  /* background: linear-gradient(to bottom, #000, rgba(0, 0, 0, 0.9)); */
+  /* Gradient might be too complex with body BG */
+}
+
+/* General Button Styling - This is very broad and will affect all buttons. */
+
+/* It's generally better to style buttons with more specific classes or Tailwind utilities. */
+
+/* This will conflict with .booking-time-button and #submit-button styles. */
+
+/*
+button {
+    background-color: #FFC107;
+    color: #FFFFFF;
+    border: none;
+}
+button:hover {
+    background-color: #E0A800;
+}
+*/
+
+/* General Input Fields - Tailwind classes are used in HTML, these are fallbacks or overrides. */
+
+/*
+input, select {
+    background-color: #F9FAFB;
+    border: 1px solid #D1D5DB;
+    color: #374151;
+}
+input:focus, select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-teal);
+}
+}
+*/
+
+/* Specific styling for inputs within the transparent card to ensure readability */
+
+.transparent-card input[type="text"],
+.transparent-card input[type="email"],
+.transparent-card input[type="tel"],
+.transparent-card input[type="number"],
+.transparent-card select {
+  background-color: rgba(255, 255, 255, 0.9);
+  /* Slightly more opaque for better readability */
+  color: #1F2937;
+  /* Darker text */
+  border: 1px solid rgba(209, 213, 219, 0.7);
+  /* Slightly more visible border */
+}
+
+.transparent-card input[type="text"]::-moz-placeholder, .transparent-card input[type="email"]::-moz-placeholder, .transparent-card input[type="tel"]::-moz-placeholder, .transparent-card input[type="number"]::-moz-placeholder {
+  color: #6B7280;
+  /* Tailwind gray-500 */
+}
+
+.transparent-card input[type="text"]::placeholder,
+.transparent-card input[type="email"]::placeholder,
+.transparent-card input[type="tel"]::placeholder,
+.transparent-card input[type="number"]::placeholder {
+  color: #6B7280;
+  /* Tailwind gray-500 */
+}
+
+.transparent-card input[type="text"]:focus,
+.transparent-card input[type="email"]:focus,
+.transparent-card input[type="tel"]:focus,
+.transparent-card input[type="number"]:focus,
+.transparent-card select:focus {
+  background-color: white;
+  border-color: var(--color-teal);
+  /* Use theme color for focus */
+  box-shadow: 0 0 0 2px rgba(0, 160, 154, 0.5);
+  /* Teal focus ring */
+}
+
+/* Error Messages */
+
+.error {
+  color: #EF4444;
+}
+
+/* Tailwind red-500/600 */
+
+/* Success Messages */
+
+.success {
+  color: #10B981;
+}
+
+/* Tailwind green-500/600 */
+
+/* .card-container { padding: 2rem; } */
+
+/* Not used, .transparent-card has .p-6/.p-8 */
+
+/* .continue-button styles are for a different button, #submit-button is used */
+
+/* .input-with-label styles are very specific and not matching the current HTML structure with Tailwind */
+
+/* Spinner for submit button */
+
+.spinner {
+  display: inline-block;
+  width: 1.25rem;
+  /* w-5 */
+  height: 1.25rem;
+  /* h-5 */
+  border: 2px solid rgba(0,0,0,.3);
+  /* Adjusted for black text on yellow button */
+  border-radius: 50%;
+  border-top-color: currentColor;
+  /* Uses button's text color (black) */
+  animation: spin 1s ease infinite;
+  /* Fixed invalid value */
+  margin-right: 0.5rem;
+  /* mr-2 */
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Tailwind's hidden utility */
+
+.example-class {
+  color: red;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  /* Change from center to space-between */
+  gap: 1rem;
+  width: 100%;
+  /* Stretch to full width of parent */
+  margin: 0;
+  /* Remove centering */
+}
+
+#vehicle-selection-oneway .space-y-3 {
+  width: 100%;
+}
+
+.form-padding {
+  padding: 1.25rem !important;
+  /* Overrides Tailwind's p-6 and md:p-8 */
+}
+
+@media (max-width: 640px) {
+  .vehicle-card-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .vehicle-image-container {
+    margin: 0 auto 1rem;
+    width: 100%;
+    max-width: 12rem;
+  }
+
+  .vehicle-card-details {
+    width: 100%;
+  }
+}
+
+#vehicle-scroll-container-oneway {
+  scroll-snap-type: x mandatory;
+  /* Enable horizontal snapping */
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  /* Matches Tailwind's gap-4 */
+  scroll-behavior: smooth;
+  /* Smooth scrolling */
+}

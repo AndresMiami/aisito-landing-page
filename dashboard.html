@@ -30,10 +30,16 @@
       </nav>
     </header>
 
-    <main class="flex items-center justify-center min-h-screen">
-     <div class="w-full max-w-full sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl">
-        <!-- Dashboard content here -->
-      <div class="overflow-hidden rounded-xl transparent-card custom-border-radius min-h-96 md:min-h-128 lg:min-h-custom max-w-md mx-auto">
+    <main>
+      <!-- Left column - Hero content -->
+      <div class="hero-content">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6 text-white">Premium Transportation in Miami</h1>
+        <p class="text-xl text-white mb-8">Experience luxury travel with our premium chauffeur services.</p>
+      </div>
+      
+      <!-- Right column - Booking form -->
+      <div class="booking-form-container">
+        <div class="booking-form-card">
           <div id="tab-navigation" class="border-b border-gray-200">
             <nav class="-mb-px flex" aria-label="Tabs" role="tablist">
               <button type="button" id="tab-button-oneway" data-tab-target="#panel-oneway" class="tab-button w-1/2 whitespace-nowrap py-4 px-1 border-t border-l border-r border-b-2 text-sm text-center rounded-tl-xl" role="tab" aria-selected="true" aria-controls="panel-oneway">One Way</button>
@@ -41,9 +47,9 @@
             </nav>
           </div>
 
-          <div class="p-6 md:p-8 form-padding">
- <h2 class="text-center text-2xl font-playfair font-bold mb-6 leading-12">BOOK YOUR TRIP</h2>
-   <form action="#" method="POST" id="booking-form" class="space-y-4">
+          <div class="form-padding">
+            
+            <form action="#" method="POST" id="booking-form" class="space-y-4">
                 <!-- From Input -->
                 <div class="relative">
                   <label for="from-location" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">From</label>
@@ -231,12 +237,12 @@
                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
                        <div>
                          <label for="pickup-date-hourly" class="block text-xs font-medium text-gray-500 mb-0.5">Date</label>
-                         <input type="text" name="pickup-date-hourly" id="pickup-date-hourly" required aria-describedby="pickup-date-hourly-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Date..." />
+                         <input type="text" name="pickup-date-hourly" id="pickup-date-hourly" required aria-describedby="pickup-date-hourly-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Date..." />
                          <span id="pickup-date-hourly-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                        </div>
                        <div>
                          <label for="pickup-time-hourly" id="pickup-time-label-hourly" class="block text-xs font-medium text-gray-500 mb-0.5">Start Time</label>
-                         <input type="text" name="pickup-time-hourly" id="pickup-time-hourly" required aria-describedby="pickup-time-hourly-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Start Time..." />
+                         <input type="text" name="pickup-time-hourly" id="pickup-time-hourly" required aria-describedby="pickup-time-hourly-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Start Time..." />
                          <span id="pickup-time-hourly-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                        </div>
                      </div>
@@ -311,7 +317,7 @@
 
               <div>
                 <button type="submit" id="submit-button" disabled
-                    class="mt-4 flex w-full items-center justify-center rounded-lg border border-transparent bg-gray-300 px-4 py-3 text-lg font-semibold text-gray-600 hover:bg-gray-400"
+                    class="mt-4 flex items-center justify-center text-lg font-semibold"
                     title="Complete all required fields to enable submission" aria-disabled="true" aria-busy="false">
                     <span class="spinner hidden" aria-hidden="true"></span>
                     <span class="button-text">Continue</span>
@@ -330,6 +336,50 @@
     </main>
   </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
