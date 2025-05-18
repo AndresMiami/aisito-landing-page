@@ -100,19 +100,85 @@
     </style>
   </head>
   <body class="bg-gray-100" style="background-image: url('./images/miami-skyline-abstract-form.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
-    <header class="bg-black">
-      <nav class="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-        <div>
-          <a href="index.html" class="text-3xl font-bold text-white">
-            I ❤️ <span class="brand-gradient-text">Miami</span>
-          </a>
-        </div>
-        <div>
-          <span class="mr-4 text-gray-300">Welcome, [Name]!</span>
-          <a href="#" class="text-sm font-medium text-[--color-gold] hover:text-[--color-gold-dark]">Logout</a>
-        </div>
-      </nav>
-    </header>
+    <header class="site-header">
+  <div class="header-container">
+    <!-- Logo -->
+    <a href="index.html" class="site-logo">
+      I ❤️ <span class="brand-gradient-text">Miami</span>
+    </a>
+
+    <!-- Mobile menu toggle -->
+    <button class="mobile-menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <!-- Navigation menu -->
+    <nav class="site-nav">
+      <ul class="nav-list">
+        <!-- Our experiences dropdown -->
+        <li class="nav-item dropdown">
+          <button class="nav-link dropdown-toggle" aria-expanded="false">
+            Our experiences
+            <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12">
+              <path fill="currentColor" d="M7 10l5 5 5-5z"/>
+            </svg>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="hourly.html" class="dropdown-item">Hourly Chauffeur</a></li>
+            <li><a href="airport.html" class="dropdown-item">Airport Transfers</a></li>
+            <li><a href="yacht.html" class="dropdown-item">Premier SUV & Yacht Day</a></li>
+            <li><a href="wynwood.html" class="dropdown-item">Wynwood Night Art & Club</a></li>
+          </ul>
+        </li>
+
+        <!-- Partner with us dropdown -->
+        <li class="nav-item dropdown">
+          <button class="nav-link dropdown-toggle" aria-expanded="false">
+            Partner with us
+            <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12">
+              <path fill="currentColor" d="M7 10l5 5 5-5z"/>
+            </svg>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="business.html" class="dropdown-item">For Business</a></li>
+            <li><a href="hotels.html" class="dropdown-item">Hotels & Resorts</a></li>
+            <li><a href="events.html" class="dropdown-item">Event Planners</a></li>
+          </ul>
+        </li>
+
+        <!-- Direct links -->
+        <li class="nav-item">
+          <a href="chauffeurs.html" class="nav-link">For chauffeurs</a>
+        </li>
+
+        <li class="nav-item">
+          <a href="chat.html" class="nav-link">Chat</a>
+        </li>
+
+        <!-- Language selector -->
+        <li class="nav-item dropdown">
+          <button class="nav-link dropdown-toggle" aria-expanded="false">
+            English
+            <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12">
+              <path fill="currentColor" d="M7 10l5 5 5-5z"/>
+            </svg>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-small">
+            <li><a href="?lang=en" class="dropdown-item">English</a></li>
+            <li><a href="?lang=es" class="dropdown-item">Español</a></li>
+          </ul>
+        </li>
+
+        <!-- Sign in -->
+        <li class="nav-item">
+          <a href="login.html" class="nav-link">Sign in</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
 
     <main>
       <!-- Left column - Hero content -->
@@ -139,7 +205,7 @@
                   <label for="from-location" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">From</label>
                   <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path>
+                      <path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7z"></path>
                     </svg>
                   </span>
                   <input type="text" id="from-location" required aria-describedby="from-location-error" 
@@ -154,7 +220,7 @@
                   <label for="to-address" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">To</label>
                   <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z"></path>
+                      <path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7z"></path>
                     </svg>
                   </span>
                   <input type="text" id="to-address" required aria-describedby="to-address-error" 

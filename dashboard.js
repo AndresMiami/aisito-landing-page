@@ -743,34 +743,63 @@ window.initAutocomplete = initAutocomplete;
 // The button state functions (setLoadingButton, resetSubmitButton) are passed directly to sendFormData.
 // export { getElementRefs }; // Removed duplicate export
 
-// Add this script at the end of your body tag or to your dashboard.js file
+// Add this to your existing JavaScript or as a new script
 document.addEventListener('DOMContentLoaded', function() {
-  // Tab switching functionality
-  const tabButtons = document.querySelectorAll('.tab-button');
-  const tabPanels = document.querySelectorAll('.tab-panel');
+  // Mobile menu toggle
+  const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+  const siteNav = document.querySelector('.site-nav');
+
+  mobileMenuToggle.addEventListener('click', function() {
+    const isExpanded = this.getAttribute('aria-expanded') === 'true';
+    this.setAttribute('aria-expanded', !isExpanded);
+    siteNav.classList.toggle('active');
+    
+    // Prevent scrolling when menu is open
+    document.body.style.overflow = !isExpanded ? 'hidden' : '';
+  });
+
+  // Dropdown toggles for mobile
+  const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
   
-  // Set initial active tab
-  document.getElementById('tab-button-oneway').classList.add('active');
-  
-  tabButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      // Remove active class from all buttons and hide all panels
-      tabButtons.forEach(btn => btn.classList.remove('active'));
-      tabPanels.forEach(panel => panel.classList.add('hidden'));
-      
-      // Add active class to clicked button
-      button.classList.add('active');
-      
-      // Show the target panel
-      const targetPanel = document.querySelector(button.dataset.tabTarget);
-      if (targetPanel) {
-        targetPanel.classList.remove('hidden');
+  dropdownToggles.forEach(toggle => {
+    toggle.addEventListener('click', function(e) {
+      // Only apply this for mobile view
+      if (window.innerWidth <= 768) {
+        e.preventDefault();
+        const isExpanded = this.getAttribute('aria-expanded') === 'true';
+        this.setAttribute('aria-expanded', !isExpanded);
       }
-      
-      // Set aria-selected attributes for accessibility
-      tabButtons.forEach(btn => btn.setAttribute('aria-selected', 'false'));
-      button.setAttribute('aria-selected', 'true');
     });
+  });
+
+  // Close mobile menu when clicking outside
+  document.addEventListener('click', function(e) {
+    if (window.innerWidth <= 768 && 
+        siteNav.classList.contains('active') && 
+        !siteNav.contains(e.target) && 
+        !mobileMenuToggle.contains(e.target)) {
+      siteNav.classList.remove('active');
+      mobileMenuToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+  });
+
+  // Handle keyboard navigation for accessibility
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && siteNav.classList.contains('active')) {
+      siteNav.classList.remove('active');
+      mobileMenuToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+  });
+
+  // Handle resize events
+  window.addEventListener('resize', function() {
+    if (window.innerWidth > 768 && siteNav.classList.contains('active')) {
+      siteNav.classList.remove('active');
+      mobileMenuToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
   });
 });
 
