@@ -97,6 +97,44 @@
         color: #dbeafe;
         border: 1px solid rgba(59, 130, 246, 0.4);
       }
+
+      /* Add this to your existing CSS styles */
+      .tab-button {
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  position: relative;
+  font-size: 16px;
+  padding: 12px 0;
+}
+
+/* Inactive tab styling */
+.tab-button:not([aria-selected="true"]) {
+  background-color: rgba(28, 22, 4, 0.75);
+  color: rgba(255, 255, 255, 0.8);
+  border-bottom: 2px solid transparent;
+}
+
+/* Active tab styling */
+.tab-button[aria-selected="true"] {
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
+  color: white;
+  border-bottom: 2px solid #e4c07e;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover effect for inactive tab */
+.tab-button:not([aria-selected="true"]):hover {
+  background-color: rgba(28, 22, 4, 0.9);
+  color: white;
+}
+
+/* Tab container styling */
+#tab-navigation {
+  border-bottom: none;
+  background-color: transparent;
+  margin-bottom: 1rem;
+}
     </style>
   </head>
   <body class="bg-gray-100" style="background-image: url('./images/miami-skyline-abstract-form.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">

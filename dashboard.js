@@ -803,6 +803,37 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
+// Add this to your existing DOM content loaded event listener
+const tabButtons = document.querySelectorAll('.tab-button');
+const tabPanels = document.querySelectorAll('.tab-panel');
+
+tabButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    // Set the clicked button as active
+    tabButtons.forEach(btn => {
+      btn.setAttribute('aria-selected', 'false');
+      btn.classList.remove('selected');
+    });
+    button.setAttribute('aria-selected', 'true');
+    button.classList.add('selected');
+    
+    // Show the corresponding panel
+    const targetPanelId = button.getAttribute('data-tab-target');
+    tabPanels.forEach(panel => {
+      if ('#' + panel.id === targetPanelId) {
+        panel.classList.remove('hidden');
+      } else {
+        panel.classList.add('hidden');
+      }
+    });
+  });
+});
+
+// Set the first tab as active by default
+if (tabButtons.length > 0 && !tabButtons[0].hasAttribute('aria-selected')) {
+  tabButtons[0].click();
+}
+
 
 
 
