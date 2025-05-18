@@ -14,6 +14,90 @@
     <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAd_O4s_73E_A8rq7TGCHKVEBFHzNecAHM&libraries=places" async defer></script>
     <script type="module" src="dashboard.js"></script>
+    <!-- Add this CSS in the head section -->
+    <style>
+      .vehicle-selection-container {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 1.15s cubic-bezier(0.4, 0, 0.2, 1), 
+                    opacity 0.72s cubic-bezier(0.4, 0, 0.2, 1),
+                    transform 0.86s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0;
+        transform: translateY(-10px);
+        margin-top: 0;
+      }
+      
+      .vehicle-selection-container.show {
+        max-height: 1200px; /* Slightly larger to ensure room for all content */
+        opacity: 1;
+        transform: translateY(0);
+        margin-top: 1rem;
+      }
+      
+      /* Add smooth transitions for vehicle cards individually */
+      .vehicle-card {
+        opacity: 0;
+        transform: translateY(15px);
+        transition: opacity 0.58s ease, transform 0.72s ease, border-color 0.43s ease, box-shadow 0.43s ease;
+      }
+      
+      .vehicle-selection-container.show .vehicle-card {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      
+      /* Staggered animation for each card */
+      .vehicle-selection-container.show .vehicle-card:nth-child(1) {
+        transition-delay: 0.12s;
+      }
+      
+      .vehicle-selection-container.show .vehicle-card:nth-child(2) {
+        transition-delay: 0.24s;
+      }
+      
+      .vehicle-selection-container.show .vehicle-card:nth-child(3) {
+        transition-delay: 0.36s;
+      }
+      
+      /* Enhance selection effect */
+      .vehicle-card.selected {
+        border-color: var(--color-teal, #14b8a6);
+        box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.3);
+        transform: translateY(-2px);
+        background-color: rgb(28 22 4 / 90%); /* Match the input background color */
+        color: white; /* White text */
+      }
+      
+      /* Style changes for text elements inside selected cards */
+      .vehicle-card.selected .text-gray-900 {
+        color: white; /* Change dark text to white */
+        font-weight: 600; /* Make text slightly bolder */
+      }
+      
+      .vehicle-card.selected .text-gray-500, 
+      .vehicle-card.selected .text-gray-600, 
+      .vehicle-card.selected .text-gray-700 {
+        color: #d1d5db; /* Change gray text to light gray */
+      }
+      
+      /* Style for SVG icons in selected cards */
+      .vehicle-card.selected svg {
+        color: var(--color-teal, #14b8a6); /* Keep teal color for icons */
+      }
+      
+      /* Keep badge colors visible against dark background */
+      .vehicle-card.selected .badge-container span.bg-\[\--color-green-100\] {
+        background-color: rgba(20, 184, 166, 0.2); 
+        color: #d1fae5;
+        border: 1px solid rgba(20, 184, 166, 0.4);
+      }
+      
+      .vehicle-card.selected .badge-container span.bg-\[\--color-blue-100\] {
+        background-color: rgba(59, 130, 246, 0.2);
+        color: #dbeafe;
+        border: 1px solid rgba(59, 130, 246, 0.4);
+      }
+    </style>
   </head>
   <body class="bg-gray-100" style="background-image: url('./images/miami-skyline-abstract-form.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
     <header class="bg-black">
@@ -120,8 +204,8 @@
                         </div>
                      </div>
                   </div>
-                  <div id="vehicle-selection-oneway" class="pt-4">
-                    
+                  <div id="vehicle-selection-oneway" class="vehicle-selection-container pt-4">
+                    <h3 class="text-lg font-medium text-gray-900 mb-3">Select Your Vehicle</h3>
                     <fieldset aria-labelledby="vehicle-selection-oneway-label" aria-describedby="vehicle-type-oneway-error">
                        <legend class="sr-only">Vehicle Selection</legend>
                        <div class="space-y-3 divide-y divide-gray-200">
@@ -315,14 +399,19 @@
                 </div>
               </div>
 
-              <div>
+              <div class="form-action-buttons">
+                <button type="button" id="reset-button" class="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  Reset
+                </button>
                 <button type="submit" id="submit-button" disabled
-                    class="mt-4 flex items-center justify-center text-lg font-semibold"
+                    class="flex items-center justify-center text-lg font-semibold"
                     title="Complete all required fields to enable submission" aria-disabled="true" aria-busy="false">
                     <span class="spinner hidden" aria-hidden="true"></span>
                     <span class="button-text">Continue</span>
                 </button>
-                <span id="submit-button-error" class="mt-1 block text-xs text-red-600 hidden"></span>
               </div>
             </form>
 
@@ -334,6 +423,170 @@
         </div>
       </div>
     </main>
+
+    <!-- Add the following JS before the closing body tag -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Form elements
+        const fromLocation = document.getElementById('from-location');
+        const toAddress = document.getElementById('to-address');
+        const requestNowBtn = document.getElementById('request-now-button');
+        const bookLaterBtn = document.getElementById('book-later-button');
+        const pickupDate = document.getElementById('pickup-date-oneway');
+        const pickupTime = document.getElementById('pickup-time-oneway');
+        const scheduledBookingInputs = document.getElementById('scheduled-booking-inputs');
+        const vehicleSelection = document.getElementById('vehicle-selection-oneway');
+        const submitButton = document.getElementById('submit-button');
+        const resetButton = document.getElementById('reset-button');
+        
+        let bookingPreference = '';
+        
+        // Form validation state
+        const formState = {
+          fromValid: false,
+          toValid: false,
+          timePreferenceSelected: false,
+          dateTimeValid: false,
+          vehicleSelected: false
+        };
+        
+        // Check if form is ready to show vehicles
+        function checkShowVehicles() {
+          const { fromValid, toValid, timePreferenceSelected, dateTimeValid } = formState;
+          
+          if (fromValid && toValid && timePreferenceSelected) {
+            // If "Book Later" is selected, we also need date/time
+            if (bookingPreference === 'later' && !dateTimeValid) {
+              vehicleSelection.classList.remove('show');
+              return;
+            }
+            
+            // Show vehicles with animation
+            vehicleSelection.classList.add('show');
+          } else {
+            vehicleSelection.classList.remove('show');
+          }
+        }
+        
+        // Check if form is valid for submission
+        function checkFormValidity() {
+          const { fromValid, toValid, timePreferenceSelected, dateTimeValid, vehicleSelected } = formState;
+          
+          if (fromValid && toValid && timePreferenceSelected && vehicleSelected) {
+            if (bookingPreference === 'later' && !dateTimeValid) {
+              submitButton.disabled = true;
+              return;
+            }
+            
+            submitButton.disabled = false;
+          } else {
+            submitButton.disabled = true;
+          }
+        }
+        
+        // Event listeners for form fields
+        fromLocation.addEventListener('input', () => {
+          formState.fromValid = fromLocation.value.trim() !== '';
+          checkShowVehicles();
+          checkFormValidity();
+        });
+        
+        toAddress.addEventListener('input', () => {
+          formState.toValid = toAddress.value.trim() !== '';
+          checkShowVehicles();
+          checkFormValidity();
+        });
+        
+        // Request Now button
+        requestNowBtn.addEventListener('click', () => {
+          requestNowBtn.classList.add('selected');
+          bookLaterBtn.classList.remove('selected');
+          scheduledBookingInputs.classList.add('hidden');
+          
+          bookingPreference = 'now';
+          document.getElementById('booking-preference').value = 'now';
+          formState.timePreferenceSelected = true;
+          formState.dateTimeValid = true; // Not needed for "now"
+          
+          checkShowVehicles();
+          checkFormValidity();
+        });
+        
+        // Book Later button
+        bookLaterBtn.addEventListener('click', () => {
+          bookLaterBtn.classList.add('selected');
+          requestNowBtn.classList.remove('selected');
+          scheduledBookingInputs.classList.remove('hidden');
+          
+          bookingPreference = 'later';
+          document.getElementById('booking-preference').value = 'later';
+          formState.timePreferenceSelected = true;
+          
+          // Date/time need to be checked
+          formState.dateTimeValid = pickupDate.value.trim() !== '' && pickupTime.value.trim() !== '';
+          
+          checkShowVehicles();
+          checkFormValidity();
+        });
+        
+        // Date/time inputs for "Book Later"
+        pickupDate.addEventListener('change', () => {
+          formState.dateTimeValid = pickupDate.value.trim() !== '' && pickupTime.value.trim() !== '';
+          checkShowVehicles();
+          checkFormValidity();
+        });
+        
+        pickupTime.addEventListener('change', () => {
+          formState.dateTimeValid = pickupDate.value.trim() !== '' && pickupTime.value.trim() !== '';
+          checkShowVehicles();
+          checkFormValidity();
+        });
+        
+        // Vehicle selection
+        document.querySelectorAll('input[name="vehicle_type_oneway"]').forEach(radio => {
+          radio.addEventListener('change', () => {
+            formState.vehicleSelected = true;
+            checkFormValidity();
+          });
+        });
+        
+        // Reset button functionality
+        resetButton.addEventListener('click', () => {
+          // Reset form fields
+          document.getElementById('booking-form').reset();
+          
+          // Reset selection visuals
+          requestNowBtn.classList.remove('selected');
+          bookLaterBtn.classList.remove('selected');
+          document.querySelectorAll('.vehicle-card').forEach(card => {
+            card.classList.remove('selected');
+          });
+          
+          // Hide conditional elements
+          scheduledBookingInputs.classList.add('hidden');
+          vehicleSelection.classList.remove('show');
+          
+          // Reset form state
+          formState.fromValid = false;
+          formState.toValid = false;
+          formState.timePreferenceSelected = false;
+          formState.dateTimeValid = false;
+          formState.vehicleSelected = false;
+          bookingPreference = '';
+          
+          // Disable submit button
+          submitButton.disabled = true;
+        });
+        
+        // Add selected class to vehicle cards on click
+        document.querySelectorAll('.vehicle-card').forEach(card => {
+          card.addEventListener('click', () => {
+            document.querySelectorAll('.vehicle-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+          });
+        });
+      });
+    </script>
   </body>
 </html>
 
