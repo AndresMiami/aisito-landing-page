@@ -165,7 +165,7 @@
           </button>
           <ul class="dropdown-menu">
             <li><a href="hourly.html" class="dropdown-item">Hourly Chauffeur</a></li>
-            <li><a href="yacht.html" class="dropdown-item">Yacht Day & SUv</a></li>
+            <li><a href="yacht.html" class="dropdown-item">Yacht & Premier Suv</a></li>
             <li><a href="dining.html" class="dropdown-item">Dining Experiences</a></li>
             <li><a href="performances.html" class="dropdown-item">Live Performances</a></li>
             <li><a href="wynwood.html" class="dropdown-item">Wynwood Art & Fun</a></li>
@@ -225,8 +225,8 @@
     <main>
       <!-- Left column - Hero content -->
       <div class="hero-content">
-        <h1 class="text-4xl md:text-5xl font-bold mb-6 text-white">Premium Transportation in Miami</h1>
-        <p class="text-xl text-white mb-8">Experience luxury travel with our premium chauffeur services.</p>
+        <h1 class="text-4xl md:text-5xl font-bold mb-6 text-white">Time is Valuable so Enjoy the moment</h1>
+        <p class="text-xl text-white mb-8">Dont just see it live it.</p>
       </div>
       
       <!-- Right column - Booking form -->
@@ -331,7 +331,7 @@
                                    <span class="font-medium">3</span>
                                  </span>
                                  <span class="flex items-center">
-                                   <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 3.75A2.75 2.75 0 018.75 1h2.5A2.75 2.75 0 0114 3.75v.443c.57.055 1.14.122 1.71.2V3.75zM4.75 5.11v9.14a.75.75 0 00.75.75h9a.75.75 0 00.75-.75v-9.14c-.61-.087-1.2-.19-1.75-.315V6.5a.75.75 0 00-1.5 0v-.194c-1.06-.214-2.14-.214-3.2 0V6.5a.75.75 0 00-1.5 0v-.409c-.55.125-1.14.228-1.75.315zM5.5 6.6v8.15h9V6.6a18.225 18.225 0 01-4.5 0c-1.06.214-2.14.214-3.2 0a18.225 18.225 0 01-1.3 0z" clip-rule="evenodd" /> </svg>
+                                   <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 3.75A2.75 2.75 0 018.75 1h2.5A2.75 2.75 0 0114 3.75v.443c.57.055 1.14.122 1.71.2V3.75a.75.75 0 00-1.5 0v-.194c-1.06-.214-2.14-.214-3.2 0V6.5a.75.75 0 00-1.5 0v-.409c-.55.125-1.14.228-1.75.315zM5.5 6.6v8.15h9V6.6a18.225 18.225 0 01-4.5 0c-1.06.214-2.14.214-3.2 0a18.225 18.225 0 01-1.3 0z" clip-rule="evenodd" /> </svg>
                                    <span class="font-medium">2</span>
                                  </span>
                                </div>
@@ -409,7 +409,7 @@
                      <select name="experience-dropdown" id="experience-dropdown" required aria-describedby="experience-dropdown-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6">
                        <option value="">-- Choose Service --</option>
                        <option value="hourly_chauffeur">Hourly Chauffeur</option>
-                       <option value="water_sky">Yacht & Premier SUv</option>
+                       <option value="water_sky">Yacht & Premier Suv</option>
                        <option value="Dining Expiriences">Dining Experiences</option>
                        <option value="wynwood_night">Wynwood Art & Fun</option>
                        <option value="Live Performances">Live Performances</option>
@@ -444,7 +444,7 @@
                      </div>
                    </div>
                    <div id="date-preference-container" class="relative hidden pt-2">
-                     <label class="block text-sm font-medium text-gray-700 mb-1" id="date-preference-label">Preferred Timing</label>
+                     <label class="block text-sm font-medium text-black mb-1" id="date-preference-label">Preferred Timing</label>
                      <fieldset aria-labelledby="date-preference-label" aria-describedby="date_preference-error">
                        <legend class="sr-only">Select Preferred Timing</legend>
                        <div class="flex flex-wrap gap-x-4 gap-y-2">
@@ -683,6 +683,133 @@
         });
       });
     </script>
+    <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // 1. Create URL-to-Experience Mapping
+    const urlToExperienceMap = {
+      'hourly.html': 'hourly_chauffeur',
+      'yacht.html': 'water_sky',  // Updated to match dropdown value
+      'dining.html': 'Dining Expiriences',  // Match the value in your dropdown
+      'performances.html': 'Live Performances',  // Match the value in your dropdown
+      'wynwood.html': 'wynwood_night',
+      'airport.html': 'Airport Pick up & drop off'  // Match the value in your dropdown
+    };
+    
+    // 2. Get references to key elements
+    const experienceTab = document.getElementById('tab-button-experience-plus');
+    const experienceDropdown = document.getElementById('experience-dropdown');
+    const navLinks = document.querySelectorAll('.dropdown-menu .dropdown-item');
+    
+    // 3. Add click event listeners to all navigation links
+    navLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        // Prevent default navigation
+        e.preventDefault();
+        
+        const href = this.getAttribute('href');
+        const experienceValue = urlToExperienceMap[href];
+        
+        if (experienceValue) {
+          // Switch to Experience+ tab if not already active
+          if (experienceTab.getAttribute('aria-selected') !== 'true') {
+            // Trigger a click on the Experience+ tab
+            experienceTab.click();
+          }
+          
+          // Wait for tab switch animation to complete
+          setTimeout(() => {
+            // Set the experience dropdown value to match the clicked link
+            experienceDropdown.value = experienceValue;
+            
+            // Manually trigger change event to activate related functionality
+            const changeEvent = new Event('change', { bubbles: true });
+            experienceDropdown.dispatchEvent(changeEvent);
+            
+            // Scroll the form into view
+            document.querySelector('.booking-form-card').scrollIntoView({ behavior: 'smooth' });
+          }, 100);
+        }
+      });
+    });
+    
+    // 4. Update existing experience dropdown change handler
+    // (assuming you already have one; we'll enhance it)
+    experienceDropdown.addEventListener('change', () => {
+      // Hide all specific option containers
+      document.getElementById('hourly-description')?.classList.add('hidden');
+      document.getElementById('duration-container')?.classList.add('hidden');
+      document.getElementById('date-time-container-hourly')?.classList.add('hidden');
+      document.getElementById('date-preference-container')?.classList.add('hidden');
+      document.getElementById('common-experience-fields')?.classList.add('hidden');
+      document.getElementById('experience-options-container')?.classList.add('hidden');
+      document.getElementById('water-sky-options')?.classList.add('hidden');
+      document.getElementById('wynwood-night-options')?.classList.add('hidden');
+      
+      // Get the selected value
+      const selectedExperience = experienceDropdown.value;
+      
+      if (selectedExperience) {
+        // Show common fields for all experiences
+        document.getElementById('common-experience-fields')?.classList.remove('hidden');
+        document.getElementById('experience-options-container')?.classList.remove('hidden');
+        document.getElementById('date-time-container-hourly')?.classList.remove('hidden');
+        
+        // Show specific fields based on experience
+        switch (selectedExperience) {
+          case 'hourly_chauffeur':
+            document.getElementById('hourly-description')?.classList.remove('hidden');
+            document.getElementById('duration-container')?.classList.remove('hidden');
+            break;
+            
+          case 'water_sky':
+            document.getElementById('water-sky-options')?.classList.remove('hidden');
+            document.getElementById('date-preference-container')?.classList.remove('hidden');
+            break;
+            
+          case 'wynwood_night':
+            document.getElementById('wynwood-night-options')?.classList.remove('hidden');
+            document.getElementById('date-preference-container')?.classList.remove('hidden');
+            break;
+            
+          case 'Dining Expiriences':
+            // Add dining-specific container display logic here
+            document.getElementById('date-preference-container')?.classList.remove('hidden');
+            break;
+            
+          case 'Live Performances':
+            // Add performances-specific container display logic here
+            document.getElementById('date-preference-container')?.classList.remove('hidden');
+            break;
+            
+          case 'Airport Pick up & drop off':
+            // Add airport-specific container display logic here
+            document.getElementById('date-preference-container')?.classList.remove('hidden');
+            break;
+        }
+      }
+    });
+    
+    // 5. Add tab switching logic to maintain consistent state
+    document.querySelectorAll('.tab-button').forEach(button => {
+      button.addEventListener('click', function() {
+        // Set aria-selected for all buttons
+        document.querySelectorAll('.tab-button').forEach(btn => {
+          btn.setAttribute('aria-selected', 'false');
+        });
+        this.setAttribute('aria-selected', 'true');
+        
+        // Hide all panels
+        document.querySelectorAll('.tab-panel').forEach(panel => {
+          panel.classList.add('hidden');
+        });
+        
+        // Show the target panel
+        const targetPanelId = this.getAttribute('data-tab-target');
+        document.querySelector(targetPanelId)?.classList.remove('hidden');
+      });
+    });
+  });
+</script>
   </body>
 </html>
 

@@ -23,6 +23,163 @@ html {
     height: 100%;
     background-color: black; /* Set the background color to black */
     opacity: 0.9; /* Slight transparency for better contrast */
+    font-family: 'Inter', sans-serif;
+}
+
+/* Typography Enhancements */
+
+/* Font pairing system: Playfair Display for headings, Inter for UI elements */
+
+/* Enhanced heading typography */
+h1, h2, h3, .hero-content h1, .hero-content p {
+  font-family: 'Playfair Display', serif;
+  letter-spacing: 0.01em;
+}
+
+/* Main hero heading with enhanced visibility */
+.hero-content h1 {
+  color: white;
+  text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.5), 0 0 30px rgba(20, 184, 166, 0.25);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* Hero text with improved contrast */
+.hero-content p {
+  text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+}
+
+/* Experience tab section headings */
+#panel-experience-plus h2, 
+#panel-experience-plus h3,
+#panel-experience-plus fieldset legend,
+#panel-oneway h2, 
+#panel-oneway h3,
+#panel-oneway fieldset legend {
+  font-family: 'Playfair Display', serif;
+  color: #14b8a6;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+  font-weight: 600;
+}
+
+/* Enhanced section headings */
+#panel-experience-plus h5,
+#panel-oneway h5,
+#date-preference-label,
+.vehicle-selection-container h3 {
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.75rem;
+}
+
+/* Form labels with cleaner sans-serif */
+#panel-experience-plus label,
+#panel-oneway label,
+.dropdown-item,
+input::placeholder,
+select,
+button {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Form field text - cleaner sans-serif */
+#experience-name,
+#experience-guests,
+#experience-email,
+#experience-phone,
+#from-location,
+#to-address,
+select,
+.dropdown-item,
+button:not(.tab-button) {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+}
+
+/* Increased contrast for labels */
+label.block,
+.absolute label {
+  font-weight: 500;
+  color: rgba(14, 1, 1, 0.9) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Make tab button text more readable */
+.tab-button {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Vehicle card typography enhancement */
+.vehicle-card .text-base.font-medium {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+}
+
+/* Submit button with enhanced typography */
+#submit-button {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  text-transform: uppercase;
+}
+
+/* Luxury accent font for special headings */
+.text-center h2 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #14b8a6;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Experience details enhancement */
+#water-sky-options h2,
+#wynwood-night-options h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  color: #14b8a6;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.02em;
+}
+
+/* Add subtle emphasis to dropdown options */
+select option {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+}
+
+/* Make vehicle selection header stand out */
+.vehicle-selection-container h3 {
+  font-family: 'Playfair Display', serif;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* Mobile typography adjustments */
+@media (max-width: 640px) {
+  .hero-content h1 {
+    font-size: 2.25rem !important;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6), 0 0 30px rgba(20, 184, 166, 0.3);
+    line-height: 1.2;
+  }
+  
+  #submit-button {
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+  }
+  
+  /* Increase contrast for small screens */
+  label, .text-gray-900 {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  }
 }
 
 body {
@@ -32,7 +189,6 @@ body {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    font-family: 'Inter', sans-serif;
     color: #ffffff; /* Change text color to white for better contrast */
     background-attachment: fixed;
     overflow-x: hidden;
