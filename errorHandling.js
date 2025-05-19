@@ -142,3 +142,4 @@ function clearAllErrors(elements) {
 
 // Export the clearAllErrors function as well, as it's used outside this module (e.g., in validateForm)
 export { clearAllErrors };
+

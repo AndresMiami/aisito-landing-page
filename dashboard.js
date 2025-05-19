@@ -642,6 +642,51 @@ function initializeEventListeners(elements, placeholders, config) {
      }
 
 
+    // Add click event listeners to all navigation links
+    const navLinks = document.querySelectorAll('a[data-experience]');
+    const experienceTab = document.querySelector('.tab-button[data-tab-target="#panel-experience-plus"]');
+    const experienceDropdown = document.getElementById('experience-dropdown');
+
+    // Map of URL to Experience value for quick lookup
+    const urlToExperienceMap = {
+      '/luxury-vehicle-booking/wynwood-night-experience': 'wynwood_night',
+      '/luxury-vehicle-booking/water-sky-experience': 'water_sky',
+      '/luxury-vehicle-booking/everglades-experience': 'everglades',
+      '/luxury-vehicle-booking/keys-escape-experience': 'keys_escape'
+    };
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        // Prevent default navigation
+        e.preventDefault();
+        
+        const href = this.getAttribute('href');
+        const experienceValue = urlToExperienceMap[href];
+        
+        if (experienceValue) {
+          // Switch to Experience+ tab if not already active
+          if (experienceTab.getAttribute('aria-selected') !== 'true') {
+            // Trigger a click on the Experience+ tab
+            experienceTab.click();
+          }
+          
+          // Wait for tab switch animation to complete
+          setTimeout(() => {
+            // Set the experience dropdown value
+            experienceDropdown.value = experienceValue;
+            
+            // Manually trigger change event
+            const changeEvent = new Event('change', { bubbles: true });
+            experienceDropdown.dispatchEvent(changeEvent);
+            
+            // Scroll form into view
+            document.querySelector('.booking-form-card').scrollIntoView({ behavior: 'smooth' });
+          }, 100);
+        }
+      });
+    });
+
+
     console.log("Event listeners initialized.");
 }
 
@@ -808,24 +853,21 @@ const tabButtons = document.querySelectorAll('.tab-button');
 const tabPanels = document.querySelectorAll('.tab-panel');
 
 tabButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    // Set the clicked button as active
-    tabButtons.forEach(btn => {
+  button.addEventListener('click', function() {
+    // Set aria-selected for all buttons
+    document.querySelectorAll('.tab-button').forEach(btn => {
       btn.setAttribute('aria-selected', 'false');
-      btn.classList.remove('selected');
     });
-    button.setAttribute('aria-selected', 'true');
-    button.classList.add('selected');
+    this.setAttribute('aria-selected', 'true');
     
-    // Show the corresponding panel
-    const targetPanelId = button.getAttribute('data-tab-target');
-    tabPanels.forEach(panel => {
-      if ('#' + panel.id === targetPanelId) {
-        panel.classList.remove('hidden');
-      } else {
-        panel.classList.add('hidden');
-      }
+    // Hide all panels
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+      panel.classList.add('hidden');
     });
+    
+    // Show the target panel
+    const targetPanelId = this.getAttribute('data-tab-target');
+    document.querySelector(targetPanelId)?.classList.remove('hidden');
   });
 });
 
@@ -833,6 +875,48 @@ tabButtons.forEach(button => {
 if (tabButtons.length > 0 && !tabButtons[0].hasAttribute('aria-selected')) {
   tabButtons[0].click();
 }
+
+// Check form validity and enable/disable submit button accordingly
+function checkFormValidity() {
+  const { fromValid, toValid, timePreferenceSelected, dateTimeValid, vehicleSelected } = formState;
+  
+  if (fromValid && toValid && timePreferenceSelected && vehicleSelected) {
+    if (bookingPreference === 'later' && !dateTimeValid) {
+      submitButton.disabled = true;
+      return;
+    }
+    
+    submitButton.disabled = false;
+  } else {
+    submitButton.disabled = true;
+  }
+}
+
+// In src/components/vehicle-card/vehicle-card.js
+export class VehicleCard {
+  constructor(element) {
+    this.element = element;
+    this.input = element.querySelector('.vehicle-card__input');
+    this.init();
+  }
+  
+  init() {
+    // Component initialization logic
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
