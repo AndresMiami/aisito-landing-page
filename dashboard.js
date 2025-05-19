@@ -21,6 +21,7 @@ import { showError, clearError, clearAllErrors } from './errorHandling.js';
 import { validateForm } from './formValidation.js';
 // Import form data processing and submission functions from the new formSubmission.js module
 import { processFormData, sendFormData } from './formSubmission.js';
+import { createExperienceMapper } from './src/components/experience-mapper/index.js';
 
 
 // --- Global variables ---
@@ -905,21 +906,27 @@ export class VehicleCard {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+document.addEventListener('DOMContentLoaded', () => {
+  // Initialize the experience mapper
+  const experienceMapper = createExperienceMapper();
+  
+  // Subscribe to experience changes
+  experienceMapper.onExperienceChange((experienceType) => {
+    console.log(`Experience changed to: ${experienceType}`);
+    
+    // You can update UI elements, analytics, or other components here
+    // For example, update form validation requirements based on experience type
+    if (experienceType === 'hourly_chauffeur') {
+      // Require duration field validation
+      const durationField = document.getElementById('duration-hourly');
+      if (durationField) {
+        durationField.setAttribute('required', 'true');
+      }
+    }
+  });
+  
+  // Initialize the mapper (sets up event listeners)
+  experienceMapper.init();
+  
+  // Other dashboard initialization code...
+});
