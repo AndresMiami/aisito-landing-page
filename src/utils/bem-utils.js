@@ -84,3 +84,112 @@ export function setActiveInGroup(element, group) {
     return false;
   }
 }
+
+/**
+ * Utility functions for working with BEM class names
+ */
+
+/**
+ * Adds a class to an element if it doesn't already have it
+ * @param {HTMLElement} element - The element to add the class to
+ * @param {string} className - The class name to add
+ * @returns {boolean} Whether the class was added
+ */
+export function addClass(element, className) {
+  if (!element || !className) return false;
+  
+  try {
+    if (element.classList) {
+      if (!element.classList.contains(className)) {
+        element.classList.add(className);
+        return true;
+      }
+    } else {
+      const classes = element.className.split(' ');
+      if (classes.indexOf(className) === -1) {
+        element.className += ' ' + className;
+        return true;
+      }
+    }
+    return false;
+  } catch (error) {
+    console.error('Error adding class:', error);
+    return false;
+  }
+}
+
+/**
+ * Removes a class from an element if it has it
+ * @param {HTMLElement} element - The element to remove the class from
+ * @param {string} className - The class name to remove
+ * @returns {boolean} Whether the class was removed
+ */
+export function removeClass(element, className) {
+  if (!element || !className) return false;
+  
+  try {
+    if (element.classList) {
+      if (element.classList.contains(className)) {
+        element.classList.remove(className);
+        return true;
+      }
+    } else {
+      const classes = element.className.split(' ');
+      const index = classes.indexOf(className);
+      if (index !== -1) {
+        classes.splice(index, 1);
+        element.className = classes.join(' ');
+        return true;
+      }
+    }
+    return false;
+  } catch (error) {
+    console.error('Error removing class:', error);
+    return false;
+  }
+}
+
+/**
+ * Checks if an element has a specific class
+ * @param {HTMLElement} element - The element to check
+ * @param {string} className - The class name to check for
+ * @returns {boolean} Whether the element has the class
+ */
+export function hasClass(element, className) {
+  if (!element || !className) return false;
+  
+  try {
+    if (element.classList) {
+      return element.classList.contains(className);
+    } else {
+      const classes = element.className.split(' ');
+      return classes.indexOf(className) !== -1;
+    }
+  } catch (error) {
+    console.error('Error checking class:', error);
+    return false;
+  }
+}
+
+/**
+ * Toggles a class on an element
+ * @param {HTMLElement} element - The element to toggle the class on
+ * @param {string} className - The class name to toggle
+ * @returns {boolean} The new state of the class (true if added, false if removed)
+ */
+export function toggleClass(element, className) {
+  if (!element || !className) return false;
+  
+  try {
+    if (hasClass(element, className)) {
+      removeClass(element, className);
+      return false;
+    } else {
+      addClass(element, className);
+      return true;
+    }
+  } catch (error) {
+    console.error('Error toggling class:', error);
+    return false;
+  }
+}

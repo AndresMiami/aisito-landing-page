@@ -21,6 +21,7 @@ import { showError, clearError, clearAllErrors } from './errorHandling.js';
 import { validateForm } from './formValidation.js';
 // Import form data processing and submission functions from the new formSubmission.js module
 import { processFormData, sendFormData } from './formSubmission.js';
+import { createVehicleSelector } from './src/components/vehicle-selector/index.js';
 
 
 // --- Global variables ---
@@ -628,9 +629,9 @@ function initializeEventListeners(elements, placeholders, config) {
          });
      });
 
-     // Add event listener for the "Get Current Location" button if it exists
-     const getLocationButton = document.getElementById("get-location-button"); // Get the button reference here
-     if (getLocationButton) {
+    // Add event listener for the "Get Current Location" button if it exists
+    const getLocationButton = document.getElementById("get-location-button"); // Get the button reference here
+    if (getLocationButton) {
          getLocationButton.addEventListener('click', (event) => {
              console.log("'Get Current Location' button clicked.");
              event.preventDefault(); // Prevent default button behavior (like form submission)
@@ -904,3 +905,221 @@ export class VehicleCard {
     // Component initialization logic
   }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Form elements
+  const fromLocation = document.getElementById('from-location');
+  const toAddress = document.getElementById('to-address');
+  const requestNowBtn = document.getElementById('request-now-button');
+  const bookLaterBtn = document.getElementById('book-later-button');
+  const pickupDate = document.getElementById('pickup-date-oneway');
+  const pickupTime = document.getElementById('pickup-time-oneway');
+  const scheduledBookingInputs = document.getElementById('scheduled-booking-inputs');
+  const vehicleSelection = document.getElementById('vehicle-selection-oneway');
+  const submitButton = document.getElementById('submit-button');
+  const resetButton = document.getElementById('reset-button');
+  
+  let bookingPreference = '';
+  
+  // Form validation state
+  const formState = {
+    fromValid: false,
+    toValid: false,
+    timePreferenceSelected: false,
+    dateTimeValid: false,
+    vehicleSelected: false
+  };
+  
+  // Initialize the vehicle selector
+  const vehicleSelector = createVehicleSelector(vehicleSelection, {
+    onSelectionChange: (selectedVehicle) => {
+      // Update form state when selection changes
+      formState.vehicleSelected = !!selectedVehicle;
+      checkFormValidity();
+    }
+  });
+  
+  // Initialize the component
+  vehicleSelector.init();
+  
+  // Check if form is ready to show vehicles
+  function checkShowVehicles() {
+    const { fromValid, toValid, timePreferenceSelected, dateTimeValid } = formState;
+    
+    if (fromValid && toValid && timePreferenceSelected) {
+      // If "Book Later" is selected, we also need date/time
+      if (bookingPreference === 'later' && !dateTimeValid) {
+        vehicleSelection.classList.remove('show');
+        return;
+      }
+      
+      // Show vehicles with animation
+      vehicleSelection.classList.add('show');
+    } else {
+      vehicleSelection.classList.remove('show');
+    }
+  }
+  
+  // Check if form is valid for submission
+  function checkFormValidity() {
+    const { fromValid, toValid, timePreferenceSelected, dateTimeValid, vehicleSelected } = formState;
+    
+    if (fromValid && toValid && timePreferenceSelected && vehicleSelected) {
+      if (bookingPreference === 'later' && !dateTimeValid) {
+        submitButton.disabled = true;
+        return;
+      }
+      
+      submitButton.disabled = false;
+    } else {
+      submitButton.disabled = true;
+    }
+  }
+  
+  // Event listeners for form fields
+  fromLocation.addEventListener('input', () => {
+    formState.fromValid = fromLocation.value.trim() !== '';
+    checkShowVehicles();
+    checkFormValidity();
+  });
+  
+  toAddress.addEventListener('input', () => {
+    formState.toValid = toAddress.value.trim() !== '';
+    checkShowVehicles();
+    checkFormValidity();
+  });
+  
+  // Request Now button
+  requestNowBtn.addEventListener('click', () => {
+    requestNowBtn.classList.add('selected');
+    bookLaterBtn.classList.remove('selected');
+    scheduledBookingInputs.classList.add('hidden');
+    
+    bookingPreference = 'now';
+    document.getElementById('booking-preference').value = 'now';
+    formState.timePreferenceSelected = true;
+    formState.dateTimeValid = true; // Not needed for "now"
+    
+    checkShowVehicles();
+    checkFormValidity();
+  });
+  
+  // Book Later button
+  bookLaterBtn.addEventListener('click', () => {
+    bookLaterBtn.classList.add('selected');
+    requestNowBtn.classList.remove('selected');
+    scheduledBookingInputs.classList.remove('hidden');
+    
+    bookingPreference = 'later';
+    document.getElementById('booking-preference').value = 'later';
+    formState.timePreferenceSelected = true;
+    
+    // Date/time need to be checked
+    formState.dateTimeValid = pickupDate.value.trim() !== '' && pickupTime.value.trim() !== '';
+    
+    checkShowVehicles();
+    checkFormValidity();
+  });
+  
+  // Date/time inputs for "Book Later"
+  pickupDate.addEventListener('change', () => {
+    formState.dateTimeValid = pickupDate.value.trim() !== '' && pickupTime.value.trim() !== '';
+    checkShowVehicles();
+    checkFormValidity();
+  });
+  
+  pickupTime.addEventListener('change', () => {
+    formState.dateTimeValid = pickupDate.value.trim() !== '' && pickupTime.value.trim() !== '';
+    checkShowVehicles();
+    checkFormValidity();
+  });
+  
+  // Reset button functionality
+  resetButton.addEventListener('click', () => {
+    // Reset form fields
+    document.getElementById('booking-form').reset();
+    
+    // Reset selection visuals
+    requestNowBtn.classList.remove('selected');
+    bookLaterBtn.classList.remove('selected');
+    
+    // Reset vehicle selection using our component
+    vehicleSelector.reset();
+    
+    // Hide conditional elements
+    scheduledBookingInputs.classList.add('hidden');
+    vehicleSelection.classList.remove('show');
+    
+    // Reset form state
+    formState.fromValid = false;
+    formState.toValid = false;
+    formState.timePreferenceSelected = false;
+    formState.dateTimeValid = false;
+    formState.vehicleSelected = false;
+    bookingPreference = '';
+    
+    // Disable submit button
+    submitButton.disabled = true;
+  });
+  
+  // Tab switching functionality
+  document.querySelectorAll('.tab-button').forEach(button => {
+    button.addEventListener('click', function() {
+      // Set aria-selected for all buttons
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.setAttribute('aria-selected', 'false');
+      });
+      this.setAttribute('aria-selected', 'true');
+      
+      // Hide all panels
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.add('hidden');
+      });
+      
+      // Show the target panel
+      const targetPanelId = this.getAttribute('data-tab-target');
+      document.querySelector(targetPanelId)?.classList.remove('hidden');
+    });
+  });
+  
+  // Find all radio inputs for vehicle selection
+  const vehicleRadios = document.querySelectorAll('input[name="vehicle_type_oneway"]');
+  
+  // Add change event listeners to all radio inputs
+  vehicleRadios.forEach(radio => {
+    radio.addEventListener('change', () => {
+      // Remove 'selected' class from all vehicle cards
+      document.querySelectorAll('.vehicle-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      
+      // Add 'selected' class to the parent label of the checked radio
+      if (radio.checked) {
+        radio.closest('.vehicle-card').classList.add('selected');
+      }
+    });
+  });
+  
+  // Also handle direct clicks on vehicle cards (not just the radio input)
+  document.querySelectorAll('.vehicle-card').forEach(card => {
+    card.addEventListener('click', function() {
+      // Remove 'selected' class from all cards
+      document.querySelectorAll('.vehicle-card').forEach(c => {
+        c.classList.remove('selected');
+      });
+      
+      // Add 'selected' class to this card
+      this.classList.add('selected');
+      
+      // Make sure the associated radio button is checked
+      const radio = this.querySelector('input[type="radio"]');
+      if (radio) {
+        radio.checked = true;
+        
+        // Dispatch a change event to trigger any listeners
+        const event = new Event('change', { bubbles: true });
+        radio.dispatchEvent(event);
+      }
+    });
+  });
+});

@@ -6,15 +6,6 @@
  * Modifier: .block-name--modifier or .block-name__element--modifier
  */
 
-/* Import the original styles first */
-@import 'original-styles.css';
-
-/* Then import BEM component styles which will override/extend original styles */
-@import 'components/_booking-form.css';
-@import 'components/_tab-navigation.css';
-@import 'components/_vehicle-selector.css';
-@import 'components/_experience-options.css';
-
 /* Remove the debug styles for now - they're causing visual problems */
 /* 
 [class*="booking-form__"] {
@@ -30,3 +21,76 @@
   border: 1px dashed rgba(255, 165, 0, 0.2);
 }
 */
+
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+
+/* Import base styles - with proper relative paths */
+@import url('./_variables.css');
+@import url('./_reset.css');
+@import url('./_typography.css');
+@import url('./_layout.css');
+@import url('./_animations.css');
+
+/* Import component styles - with proper relative paths */
+@import url('./components/_header.css');
+@import url('./components/_tabs.css');
+@import url('./components/_booking-form.css');
+@import url('./components/_vehicle-cards.css');
+@import url('./components/_buttons.css');
+@import url('./components/_vehicle-selector.css');
+
+/* Global utility classes */
+.hidden { 
+  display: none !important; 
+}
+
+/* Helper classes */
+.transparent-card {
+  background-color: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 0.75rem;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(2px);
+}
+
+.form-padding {
+  padding: 1.25rem !important;
+}
+
+/* Error Messages */
+.error { 
+  color: #EF4444; 
+}
+
+/* Success Messages */
+.success { 
+  color: #10B981; 
+}
+
+/* Fix for CSS variable references in HTML */
+.text-\[--color-teal\] {
+  color: var(--color-teal);
+}
+
+.text-\[--color-gold\] {
+  color: var(--color-gold);
+}
+
+.bg-\[--color-green-100\] {
+  background-color: var(--color-green-100);
+}
+
+.text-\[--color-green-800\] {
+  color: var(--color-green-800);
+}
+
+.bg-\[--color-blue-100\] {
+  background-color: var(--color-blue-100);
+}
+
+.text-\[--color-blue-800\] {
+  color: var(--color-blue-800);
+}

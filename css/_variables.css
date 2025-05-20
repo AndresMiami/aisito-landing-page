@@ -1,0 +1,30 @@
+:root {
+    --color-gold: #B08D57;
+    --color-gold-dark: #9A7B4F;
+    /* IMPORTANT: Change back to original value from your style.css */
+    --color-teal: #00A09A; 
+    --color-teal-dark: #00807A;
+    --color-teal-50: #E6F5F4;
+    --color-teal-light-bg: #f0fdfa;
+    --color-palm-green: #3CB371;
+    --color-green-100: #D1FAE5;
+    --color-green-800: #065F46;
+    --color-blue-100: #DBEAFE;
+    --color-blue-800: #1E40AF;
+    
+    /* Spacing variables */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 1rem;
+    --space-4: 1.5rem;
+    --space-5: 3rem;
+    
+    /* Border radius */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    
+    /* Container widths */
+    --container-max: 1200px;
+}

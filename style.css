@@ -320,24 +320,32 @@ select {
   color: white;
 }
 
-.vehicle-card.selected .text-gray-900 {
+/* Add this to your existing CSS */
+
+/* Style for selected vehicle cards */
+.vehicle-card.selected {
+  background-color: rgb(28 22 4 / 90%); /* Match the input background */
   color: white;
-  font-weight: 600;
+  border-color: var(--color-teal);
+  border-width: 2px;
+  transition: all 0.3s ease;
 }
 
-.vehicle-card.sedan {
-  border-top: 4px solid var(--color-gold);
-  background-color: rgba(176, 141, 87, 0.1); /* Light gold tint */
+/* Text color adjustments when card is selected */
+.vehicle-card.selected p.text-base,
+.vehicle-card.selected p.text-xs {
+  color: white;
 }
 
-.vehicle-card.suv {
-  border-top: 4px solid var(--color-teal);
-  background-color: rgba(0, 160, 154, 0.1); /* Light teal tint */
+/* Icon color adjustments when card is selected */
+.vehicle-card.selected .text-[--color-teal] {
+  color: var(--color-teal);
 }
 
-.vehicle-card.sprinter {
-  border-top: 4px solid var(--color-palm-green);
-  background-color: rgba(60, 179, 113, 0.1); /* Light palm green tint */
+/* Badge color adjustments when card is selected */
+.vehicle-card.selected .badge-container span {
+  background-color: var(--color-teal);
+  color: white;
 }
 
 /* Updated Booking Time Button Styles */
@@ -770,7 +778,68 @@ input:focus, select:focus {
     color: #6b7280;
   }
 
-  /* Create a second page section */
+  /* Tab component styling */
+.tab-button {
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  position: relative;
+  font-size: 16px;
+  padding: 12px 0;
+  cursor: pointer;
+  width: 50%; /* Since you have two tabs with equal width */
+  border-top: 1px solid;
+  border-left: 1px solid;
+  border-right: 1px solid;
+  border-color: transparent;
+}
+
+/* Using aria-selected attribute for state management */
+.tab-button[aria-selected="false"] {
+  background-color: rgba(28, 22, 4, 0.75);
+  color: rgba(255, 255, 255, 0.8);
+  border-bottom: 2px solid transparent;
+}
+
+.tab-button[aria-selected="true"] {
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
+  color: white;
+  border-bottom: 2px solid #e4c07e;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tab-button[aria-selected="false"]:hover {
+  background-color: rgba(28, 22, 4, 0.9);
+  color: white;
+}
+
+/* Tab container styling */
+#tab-navigation {
+  border-bottom: none;
+  background-color: transparent;
+  margin-bottom: 1rem;
+  display: flex;
+}
+
+/* Tab panel styling */
+.tab-panel {
+  display: block;
+}
+
+.tab-panel.hidden {
+  display: none;
+}
+
+/* Styling for first tab (left) and second tab (right) */
+#tab-button-oneway {
+  border-top-left-radius: 0.75rem;
+}
+
+#tab-button-experience-plus {
+  border-top-right-radius: 0.75rem;
+}
+
+/* Create a second page section */
 
 body {
   background-attachment: fixed;
@@ -881,7 +950,7 @@ main {
   }
 }
 
-/* Add to your existing CSS or style.css */
+/* Add to your existing CSS */
 /* Reset and base styles */
 *, *::before, *::after {
   box-sizing: border-box;

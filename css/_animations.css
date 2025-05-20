@@ -1,0 +1,42 @@
+/* Vehicle selection container animation */
+.vehicle-selection-container {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 1.15s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.72s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.86s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  transform: translateY(-10px);
+  margin-top: 0;
+}
+
+.vehicle-selection-container.show {
+  max-height: 1200px;
+  opacity: 1;
+  transform: translateY(0);
+  margin-top: 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Transition effects for tabs */
+.tab-button {
+  transition: all 0.3s ease;
+}
+
+/* Transition for dropdowns */
+.dropdown-menu {
+  transition: all 0.3s ease;
+}
+
+/* Animation for mobile menu toggle */
+.mobile-menu-toggle span {
+  transition: all 0.3s ease;
+}
+
+/* Navigation animation */
+.site-nav {
+  transition: transform 0.3s ease-in-out;
+}

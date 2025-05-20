@@ -1,0 +1,95 @@
+/* Vehicle Card Styles */
+.vehicle-card {
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid transparent;
+  background-color: #ffffff;
+  width: 100%;
+}
+
+.vehicle-card:hover,
+.vehicle-card:focus-within {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: var(--color-teal);
+}
+
+.vehicle-card--selected {
+  border-color: var(--color-teal);
+  box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.3);
+  transform: translateY(-2px);
+  background-color: rgb(28 22 4 / 90%);
+  color: white;
+}
+
+/* Style for selected vehicle cards */
+.vehicle-card.selected {
+  background-color: rgb(28 22 4 / 90%);
+  color: white;
+  border-color: var(--color-teal);
+  border-width: 2px;
+  transition: all 0.3s ease;
+}
+
+/* Text color adjustments when card is selected */
+.vehicle-card.selected p.text-base,
+.vehicle-card.selected p.text-xs {
+  color: white;
+}
+
+/* Icon color adjustments when card is selected */
+.vehicle-card.selected .text-\[--color-teal\] {
+  color: var(--color-teal);
+}
+
+/* Badge color adjustments when card is selected */
+.vehicle-card.selected .badge-container span {
+  background-color: var(--color-teal);
+  color: white;
+}
+
+/* Vehicle selection container animation */
+.vehicle-selection-container {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 1.15s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.72s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.86s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  transform: translateY(-10px);
+  margin-top: 0;
+}
+
+.vehicle-selection-container.show {
+  max-height: 1200px;
+  opacity: 1;
+  transform: translateY(0);
+  margin-top: 1rem;
+}
+
+/* Mobile Responsiveness for Cards */
+@media (max-width: 400px) {
+  .vehicle-card-content { flex-direction: column; align-items: center; text-align: center; width: 100%; }
+  .vehicle-card-details { margin-left: 0; margin-top: 0.75rem; width: 100%; align-items: center; }
+  .vehicle-card-details .flex { justify-content: center; }
+  .badge-container { justify-content: center; margin-top: 0.25rem; }
+  .vehicle-image-container { width: 100%; max-width: 10rem; }
+}
+
+@media (max-width: 640px) {
+  .vehicle-card-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  .vehicle-image-container {
+    margin: 0 auto 1rem;
+    width: 100%;
+    max-width: 12rem;
+  }
+  .vehicle-card-details {
+    width: 100%;
+  }
+}

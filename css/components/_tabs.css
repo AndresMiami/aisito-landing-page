@@ -1,0 +1,84 @@
+/* Tab Component
+   ========================================================================== */
+
+:root {
+  --tab-inactive-bg: rgba(28, 22, 4, 0.75);
+  --tab-active-gradient-start: #14b8a6;
+  --tab-active-gradient-end: #0d9488;
+  --tab-active-border: #e4c07e;
+  --tab-text-inactive: rgba(255, 255, 255, 0.8);
+  --tab-text-active: white;
+}
+
+/* Tab container */
+.tab-container {
+  margin-bottom: 1rem;
+}
+
+/* Tab navigation */
+.tab-navigation {
+  display: flex;
+  border-bottom: none;
+  background-color: transparent;
+}
+
+/* Tab buttons */
+.tab-button {
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  position: relative;
+  font-size: 16px;
+  padding: 1rem 0.5rem;
+  cursor: pointer;
+  width: 50%;
+  margin: 0;
+  border-top: 1px solid;
+  border-left: 1px solid;
+  border-right: 1px solid;
+  border-color: transparent;
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0;
+  text-align: center;
+}
+
+/* Inactive tab styling */
+.tab-button[aria-selected="false"] {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  border-bottom-color: #e5e7eb;
+}
+
+/* Active tab styling */
+.tab-button[aria-selected="true"] {
+  background: linear-gradient(135deg, var(--tab-active-gradient-start), var(--tab-active-gradient-end));
+  color: var(--tab-text-active);
+  border-bottom: 2px solid var(--tab-active-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover effect for inactive tab */
+.tab-button[aria-selected="false"]:hover {
+  background-color: rgba(28, 22, 4, 0.9);
+  color: var(--tab-text-active);
+}
+
+/* Border radius for first and last tabs */
+.tab-button:first-child {
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0;
+}
+
+.tab-button:last-child {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0.75rem;
+}
+
+/* Tab panels */
+.tab-panel {
+  display: block;
+}
+
+.tab-panel.hidden {
+  display: none;
+}

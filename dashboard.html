@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Booking - I ❤️ Miami Concierge</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/main.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>
@@ -14,130 +14,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAd_O4s_73E_A8rq7TGCHKVEBFHzNecAHM&libraries=places" async defer></script>
     <script type="module" src="dashboard.js"></script>
-    <!-- Add this CSS in the head section -->
-    <style>
-      .vehicle-selection-container {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 1.15s cubic-bezier(0.4, 0, 0.2, 1), 
-                    opacity 0.72s cubic-bezier(0.4, 0, 0.2, 1),
-                    transform 0.86s cubic-bezier(0.4, 0, 0.2, 1);
-        opacity: 0;
-        transform: translateY(-10px);
-        margin-top: 0;
-      }
-      
-      .vehicle-selection-container.show {
-        max-height: 1200px; /* Slightly larger to ensure room for all content */
-        opacity: 1;
-        transform: translateY(0);
-        margin-top: 1rem;
-      }
-      
-      /* Add smooth transitions for vehicle cards individually */
-      .vehicle-card {
-        opacity: 0;
-        transform: translateY(15px);
-        transition: opacity 0.58s ease, transform 0.72s ease, border-color 0.43s ease, box-shadow 0.43s ease;
-      }
-      
-      .vehicle-selection-container.show .vehicle-card {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      
-      /* Staggered animation for each card */
-      .vehicle-selection-container.show .vehicle-card:nth-child(1) {
-        transition-delay: 0.12s;
-      }
-      
-      .vehicle-selection-container.show .vehicle-card:nth-child(2) {
-        transition-delay: 0.24s;
-      }
-      
-      .vehicle-selection-container.show .vehicle-card:nth-child(3) {
-        transition-delay: 0.36s;
-      }
-      
-      /* Enhance selection effect */
-      .vehicle-card.selected {
-        border-color: var(--color-teal, #14b8a6);
-        box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.3);
-        transform: translateY(-2px);
-        background-color: rgb(28 22 4 / 90%); /* Match the input background color */
-        color: white; /* White text */
-      }
-      
-      /* Style changes for text elements inside selected cards */
-      .vehicle-card.selected .text-gray-900 {
-        color: white; /* Change dark text to white */
-        font-weight: 600; /* Make text slightly bolder */
-      }
-      
-      .vehicle-card.selected .text-gray-500, 
-      .vehicle-card.selected .text-gray-600, 
-      .vehicle-card.selected .text-gray-700 {
-        color: #d1d5db; /* Change gray text to light gray */
-      }
-      
-      /* Style for SVG icons in selected cards */
-      .vehicle-card.selected svg {
-        color: var(--color-teal, #14b8a6); /* Keep teal color for icons */
-      }
-      
-      /* Keep badge colors visible against dark background */
-      .vehicle-card.selected .badge-container span.bg-\[\--color-green-100\] {
-        background-color: rgba(20, 184, 166, 0.2); 
-        color: #d1fae5;
-        border: 1px solid rgba(20, 184, 166, 0.4);
-      }
-      
-      .vehicle-card.selected .badge-container span.bg-\[\--color-blue-100\] {
-        background-color: rgba(59, 130, 246, 0.2);
-        color: #dbeafe;
-        border: 1px solid rgba(59, 130, 246, 0.4);
-      }
-
-      /* Add this to your existing CSS styles */
-      .tab-button {
-  font-weight: 600;
-  transition: all 0.3s ease;
-  border: none;
-  position: relative;
-  font-size: 16px;
-  padding: 12px 0;
-}
-
-/* Inactive tab styling */
-.tab-button:not([aria-selected="true"]) {
-  background-color: rgba(28, 22, 4, 0.75);
-  color: rgba(255, 255, 255, 0.8);
-  border-bottom: 2px solid transparent;
-}
-
-/* Active tab styling */
-.tab-button[aria-selected="true"] {
-  background: linear-gradient(135deg, #14b8a6, #0d9488);
-  color: white;
-  border-bottom: 2px solid #e4c07e;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-/* Hover effect for inactive tab */
-.tab-button:not([aria-selected="true"]):hover {
-  background-color: rgba(28, 22, 4, 0.9);
-  color: white;
-}
-
-/* Tab container styling */
-#tab-navigation {
-  border-bottom: none;
-  background-color: transparent;
-  margin-bottom: 1rem;
-}
-    </style>
+    <!-- Add this line temporarily while fixing CSS issues -->
+    <link rel="stylesheet" href="style.css">
   </head>
-  <body class="bg-gray-100" style="background-image: url('./images/miami-skyline-abstract-form.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+  <body class="bg-gray-100" style="background-image: url('images/miami-skyline-abstract-form.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
     <header class="site-header">
   <div class="header-container">
     <!-- Logo -->
@@ -233,12 +113,12 @@
       <div class="booking-form-container">
         <div class="booking-form-card">
           <div id="tab-navigation" class="border-b border-gray-200">
-            <nav class="-mb-px flex" aria-label="Tabs" role="tablist">
+            <nav class="-mb-px flex w-full" aria-label="Tabs" role="tablist">
               <button type="button" id="tab-button-oneway" data-tab-target="#panel-oneway" 
-                      class="tab-button w-1/2 whitespace-nowrap py-4 px-1 border-t border-l border-r border-b-2 text-sm text-center rounded-tl-xl" 
+                      class="tab-button" 
                       role="tab" aria-selected="true" aria-controls="panel-oneway">One Way</button>
               <button type="button" id="tab-button-experience-plus" data-tab-target="#panel-experience-plus" 
-                      class="tab-button w-1/2 whitespace-nowrap py-4 px-1 border-t border-l border-r border-b-2 text-sm text-center rounded-tr-xl" 
+                      class="tab-button" 
                       role="tab" aria-selected="false" aria-controls="panel-experience-plus">Experience +</button>
             </nav>
           </div>
@@ -284,13 +164,13 @@
                     <input type="hidden" name="booking_preference" id="booking-preference" value="">
                     
                     <div class="button-container mb-4">
-  <button type="button" id="request-now-button" class="booking-time-button">
+  <button type="button" id="request-now-button" class="booking-time-button" id="request-now">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#1e3a8a" class="w-6 h-6">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
     <span class="text-lg font-bold">Request Now</span>
   </button>
-  <button type="button" id="book-later-button" class="booking-time-button">
+  <button type="button" id="book-later-button" class="booking-time-button" id="book-for-later">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#1e3a8a" class="w-6 h-6">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 2 00-2-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
     </svg>
@@ -814,5 +694,48 @@
     });
   });
 </script>
+
+<style>
+/* Fix for CSS variable references in HTML */
+.text-\[--color-teal\] {
+  color: var(--color-teal);
+}
+
+.text-\[--color-gold\] {
+  color: var(--color-gold);
+}
+
+.ring-\[--color-teal\]:focus {
+  box-shadow: 0 0 0 2px var(--color-teal);
+}
+
+.ring-\[--color-gold\]:focus {
+  box-shadow: 0 0 0 2px var(--color-gold);
+}
+
+.focus\:ring-\[--color-teal\]:focus {
+  box-shadow: 0 0 0 2px var(--color-teal);
+}
+
+.focus\:ring-\[--color-gold\]:focus {
+  box-shadow: 0 0 0 2px var(--color-gold);
+}
+
+.bg-\[--color-green-100\] {
+  background-color: var(--color-green-100);
+}
+
+.text-\[--color-green-800\] {
+  color: var(--color-green-800);
+}
+
+.bg-\[--color-blue-100\] {
+  background-color: var(--color-blue-100);
+}
+
+.text-\[--color-blue-800\] {
+  color: var(--color-blue-800);
+}
+</style>
   </body>
 </html>
