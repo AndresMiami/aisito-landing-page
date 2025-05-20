@@ -1,0 +1,1 @@
+export { TabNavigation, createTabNavigation } from './tab-navigation.js';

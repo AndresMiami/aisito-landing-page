@@ -22,6 +22,7 @@ import { validateForm } from './formValidation.js';
 // Import form data processing and submission functions from the new formSubmission.js module
 import { processFormData, sendFormData } from './formSubmission.js';
 import { createVehicleSelector } from './src/components/vehicle-selector/index.js';
+import { createTabNavigation } from './src/components/tab-navigation/index.js';
 
 
 // --- Global variables ---
@@ -907,6 +908,39 @@ export class VehicleCard {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Initialize tab navigation
+  try {
+    const tabNavigation = createTabNavigation('#tab-navigation', {
+      // Use your existing selectors that match your HTML
+      tabSelector: '.tab-button, [role="tab"]',
+      activeTabClass: 'active',
+      onTabChange: (tab, panel) => {
+        console.log('Tab changed to:', tab.id);
+        
+        // Make sure we update any UI or state that depends on the active tab
+        const isOnewayTab = tab.id === 'tab-button-oneway';
+        const isExperienceTab = tab.id === 'tab-button-experience-plus';
+        
+        // Show/hide elements based on which tab is active
+        if (isOnewayTab) {
+          // Any specific actions for oneway tab activation
+        } else if (isExperienceTab) {
+          // Any specific actions for experience tab activation
+        }
+      }
+    });
+    
+    tabNavigation.init();
+    
+    // Make it available globally for debugging or external access
+    window.miamitabs = tabNavigation;
+    
+  } catch (error) {
+    console.error('Failed to initialize tab navigation:', error);
+  }
+
+  // Your existing code continues below:
+  
   // Form elements
   const fromLocation = document.getElementById('from-location');
   const toAddress = document.getElementById('to-address');
@@ -929,18 +963,6 @@ document.addEventListener('DOMContentLoaded', () => {
     dateTimeValid: false,
     vehicleSelected: false
   };
-  
-  // Initialize the vehicle selector
-  const vehicleSelector = createVehicleSelector(vehicleSelection, {
-    onSelectionChange: (selectedVehicle) => {
-      // Update form state when selection changes
-      formState.vehicleSelected = !!selectedVehicle;
-      checkFormValidity();
-    }
-  });
-  
-  // Initialize the component
-  vehicleSelector.init();
   
   // Check if form is ready to show vehicles
   function checkShowVehicles() {
@@ -1034,6 +1056,14 @@ document.addEventListener('DOMContentLoaded', () => {
     checkFormValidity();
   });
   
+  // Vehicle selection
+  document.querySelectorAll('input[name="vehicle_type_oneway"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      formState.vehicleSelected = true;
+      checkFormValidity();
+    });
+  });
+  
   // Reset button functionality
   resetButton.addEventListener('click', () => {
     // Reset form fields
@@ -1042,9 +1072,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Reset selection visuals
     requestNowBtn.classList.remove('selected');
     bookLaterBtn.classList.remove('selected');
-    
-    // Reset vehicle selection using our component
-    vehicleSelector.reset();
+    document.querySelectorAll('.vehicle-card').forEach(card => {
+      card.classList.remove('selected');
+    });
     
     // Hide conditional elements
     scheduledBookingInputs.classList.add('hidden');
@@ -1062,64 +1092,106 @@ document.addEventListener('DOMContentLoaded', () => {
     submitButton.disabled = true;
   });
   
-  // Tab switching functionality
-  document.querySelectorAll('.tab-button').forEach(button => {
-    button.addEventListener('click', function() {
-      // Set aria-selected for all buttons
-      document.querySelectorAll('.tab-button').forEach(btn => {
-        btn.setAttribute('aria-selected', 'false');
-      });
-      this.setAttribute('aria-selected', 'true');
-      
-      // Hide all panels
-      document.querySelectorAll('.tab-panel').forEach(panel => {
-        panel.classList.add('hidden');
-      });
-      
-      // Show the target panel
-      const targetPanelId = this.getAttribute('data-tab-target');
-      document.querySelector(targetPanelId)?.classList.remove('hidden');
-    });
-  });
-  
-  // Find all radio inputs for vehicle selection
-  const vehicleRadios = document.querySelectorAll('input[name="vehicle_type_oneway"]');
-  
-  // Add change event listeners to all radio inputs
-  vehicleRadios.forEach(radio => {
-    radio.addEventListener('change', () => {
-      // Remove 'selected' class from all vehicle cards
-      document.querySelectorAll('.vehicle-card').forEach(card => {
-        card.classList.remove('selected');
-      });
-      
-      // Add 'selected' class to the parent label of the checked radio
-      if (radio.checked) {
-        radio.closest('.vehicle-card').classList.add('selected');
-      }
-    });
-  });
-  
-  // Also handle direct clicks on vehicle cards (not just the radio input)
+  // Add selected class to vehicle cards on click
   document.querySelectorAll('.vehicle-card').forEach(card => {
-    card.addEventListener('click', function() {
-      // Remove 'selected' class from all cards
-      document.querySelectorAll('.vehicle-card').forEach(c => {
-        c.classList.remove('selected');
-      });
-      
-      // Add 'selected' class to this card
-      this.classList.add('selected');
-      
-      // Make sure the associated radio button is checked
-      const radio = this.querySelector('input[type="radio"]');
-      if (radio) {
-        radio.checked = true;
-        
-        // Dispatch a change event to trigger any listeners
-        const event = new Event('change', { bubbles: true });
-        radio.dispatchEvent(event);
-      }
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.vehicle-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
     });
   });
+
+  // Initialize flatpickr date/time pickers if available
+  if (typeof flatpickr !== 'undefined') {
+    if (pickupDate) {
+      flatpickr(pickupDate, {
+        minDate: "today",
+        dateFormat: "Y-m-d"
+      });
+    }
+    
+    if (pickupTime) {
+      flatpickr(pickupTime, {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        time_24hr: false
+      });
+    }
+
+    // Also initialize other datepickers if they exist
+    const hourlyDatePicker = document.getElementById('pickup-date-hourly');
+    const hourlyTimePicker = document.getElementById('pickup-time-hourly');
+    
+    if (hourlyDatePicker) {
+      flatpickr(hourlyDatePicker, {
+        minDate: "today",
+        dateFormat: "Y-m-d"
+      });
+    }
+    
+    if (hourlyTimePicker) {
+      flatpickr(hourlyTimePicker, {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        time_24hr: false
+      });
+    }
+  }
+
+  // Experience dropdown functionality
+  const experienceDropdown = document.getElementById('experience-dropdown');
+  if (experienceDropdown) {
+    experienceDropdown.addEventListener('change', () => {
+      // Hide all specific option containers
+      document.getElementById('hourly-description')?.classList.add('hidden');
+      document.getElementById('duration-container')?.classList.add('hidden');
+      document.getElementById('date-time-container-hourly')?.classList.add('hidden');
+      document.getElementById('date-preference-container')?.classList.add('hidden');
+      document.getElementById('common-experience-fields')?.classList.add('hidden');
+      document.getElementById('experience-options-container')?.classList.add('hidden');
+      document.getElementById('water-sky-options')?.classList.add('hidden');
+      document.getElementById('wynwood-night-options')?.classList.add('hidden');
+      
+      // Get the selected value
+      const selectedExperience = experienceDropdown.value;
+      
+      if (selectedExperience) {
+        // Show common fields for all experiences
+        document.getElementById('common-experience-fields')?.classList.remove('hidden');
+        document.getElementById('experience-options-container')?.classList.remove('hidden');
+        document.getElementById('date-time-container-hourly')?.classList.remove('hidden');
+        
+        // Show specific fields based on experience
+        switch (selectedExperience) {
+          case 'hourly_chauffeur':
+            document.getElementById('hourly-description')?.classList.remove('hidden');
+            document.getElementById('duration-container')?.classList.remove('hidden');
+            break;
+            
+          case 'water_sky':
+            document.getElementById('water-sky-options')?.classList.remove('hidden');
+            document.getElementById('date-preference-container')?.classList.remove('hidden');
+            break;
+            
+          case 'wynwood_night':
+            document.getElementById('wynwood-night-options')?.classList.remove('hidden');
+            document.getElementById('date-preference-container')?.classList.remove('hidden');
+            break;
+            
+          case 'Dining Expiriences':
+            document.getElementById('date-preference-container')?.classList.remove('hidden');
+            break;
+            
+          case 'Live Performances':
+            document.getElementById('date-preference-container')?.classList.remove('hidden');
+            break;
+            
+          case 'Airport Pick up & drop off':
+            document.getElementById('date-preference-container')?.classList.remove('hidden');
+            break;
+        }
+      }
+    });
+  }
 });
