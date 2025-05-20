@@ -12,8 +12,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAd_O4s_73E_A8rq7TGCHKVEBFHzNecAHM&libraries=places" async defer></script>
+    <link rel="stylesheet" href="css/custom-places.css">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAd_O4s_73E_A8rq7TGCHKVEBFHzNecAHM&libraries=places&v=beta" async defer></script>
     <script type="module" src="dashboard.js"></script>
+    <script src="js/custom-places.js" defer></script>
   </head>
   <body class="bg-gray-100" style="background-image: url('images/miami-skyline-abstract-form.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
     <header class="site-header">
@@ -125,32 +127,38 @@
             
             <form action="#" method="POST" id="booking-form" class="space-y-4">
                 <!-- From Input -->
-                <div class="relative">
-                  <label for="from-location" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">From</label>
-                  <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]">
+                <div class="google-maps-container">
+                  <label for="from-location" class="location-label">From</label>
+                  <span class="location-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7z"></path>
                     </svg>
                   </span>
-                  <input type="text" id="from-location" required aria-describedby="from-location-error" 
-                         class="block w-full rounded-xl border-0 py-3 pr-3 pl-12 text-white placeholder-gray-200 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[--color-teal] pac-target-input" 
-                         style="background-color: rgb(28 22 4 / 90%); color: white;" 
-                         placeholder="Enter pickup location" autocomplete="off">
+                  <gmp-place-autocomplete id="from-location"
+                    address-filter="country:us"
+                    type-filter="establishment,geocode,airport,lodging,point_of_interest" 
+                    placeholder="Enter pickup location"
+                    required
+                    aria-describedby="from-location-error">
+                  </gmp-place-autocomplete>
                   <span id="from-location-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                 </div>
 
                 <!-- To Input -->
-                <div class="relative">
-                  <label for="to-address" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">To</label>
-                  <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]">
+                <div class="google-maps-container">
+                  <label for="to-address" class="location-label">To</label>
+                  <span class="location-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7z"></path>
                     </svg>
                   </span>
-                  <input type="text" id="to-address" required aria-describedby="to-address-error" 
-                         class="block w-full rounded-xl border-0 py-3 pr-3 pl-12 text-white placeholder-gray-200 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[--color-teal]" 
-                         style="background-color: rgb(28 22 4 / 90%); color: white;" 
-                         placeholder="Enter drop-off location">
+                  <gmp-place-autocomplete id="to-address"
+                    address-filter="country:us"
+                    type-filter="establishment,geocode,airport,lodging,point_of_interest,tourist_attraction" 
+                    placeholder="Enter drop-off location"
+                    required
+                    aria-describedby="to-address-error">
+                  </gmp-place-autocomplete>
                   <span id="to-address-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                 </div>
 

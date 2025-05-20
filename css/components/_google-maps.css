@@ -1,0 +1,113 @@
+/* Google Maps PlaceAutocompleteElement Styling */
+
+/* Container styling */
+.google-maps-container {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+/* Base styling for the web component */
+gmp-place-autocomplete {
+  display: block;
+  width: 100%;
+  border-radius: 0.75rem;
+  background-color: rgb(28 22 4 / 90%);
+}
+
+/* Style the shadow DOM input element */
+gmp-place-autocomplete::part(input) {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 0;
+  padding: 0.75rem 0.75rem 0.75rem 3rem;
+  color: white;
+  background-color: transparent !important; /* Force transparent background */
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  box-shadow: none !important; /* Remove any default box shadows */
+}
+
+/* Style the input on focus */
+gmp-place-autocomplete::part(input):focus {
+  outline: none;
+  box-shadow: 0 0 0 2px inset var(--color-teal, #14b8a6);
+  background-color: transparent !important;
+}
+
+/* Style the placeholder text */
+gmp-place-autocomplete::part(input)::placeholder {
+  color: #e5e7eb;
+  opacity: 1;
+}
+
+/* Google Maps dropdown styling */
+.pac-container {
+  border-radius: 0.5rem;
+  margin-top: 4px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  font-family: 'Inter', sans-serif;
+  z-index: 9999 !important;
+  background-color: white;
+}
+
+.pac-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-top: 1px solid #e5e7eb;
+}
+
+.pac-item:first-child {
+  border-top: none;
+}
+
+.pac-item:hover {
+  background-color: #f3f4f6;
+}
+
+.pac-item-selected {
+  background-color: #f0f9ff;
+}
+
+.pac-icon {
+  margin-right: 8px;
+}
+
+.pac-item-query {
+  font-size: 14px;
+  color: #111827;
+}
+
+.pac-matched {
+  font-weight: 600;
+}
+
+.pac-item-selected .pac-item-query,
+.pac-item-selected .pac-matched {
+  color: var(--color-teal, #14b8a6);
+}
+
+/* Handle form label and icon positioning */
+.location-label {
+  position: absolute;
+  top: -0.5rem;
+  left: 0.5rem;
+  display: inline-block;
+  background-color: white;
+  padding: 0 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  z-index: 1;
+}
+
+.location-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  height: 1rem;
+  width: 1rem;
+  transform: translateY(-50%);
+  color: var(--color-teal, #14b8a6);
+  z-index: 1;
+}

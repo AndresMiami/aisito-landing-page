@@ -1194,4 +1194,42 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Update event listeners for the PlaceAutocompleteElement components
+  // Add listeners for gmp-placeselect events
+  const fromLocationElement = document.getElementById('from-location');
+  if (fromLocationElement) {
+    fromLocationElement.addEventListener("gmp-placeselect", () => {
+      console.log("From location place selected");
+      formState.fromValid = true;
+      checkShowVehicles();
+      checkFormValidity();
+    });
+    
+    // Also listen for the input event
+    fromLocationElement.addEventListener("input", () => {
+      console.log("From location input event");
+      formState.fromValid = true;
+      checkShowVehicles();
+      checkFormValidity();
+    });
+  }
+  
+  const toAddressElement = document.getElementById('to-address');
+  if (toAddressElement) {
+    toAddressElement.addEventListener("gmp-placeselect", () => {
+      console.log("To address place selected");
+      formState.toValid = true;
+      checkShowVehicles();
+      checkFormValidity();
+    });
+    
+    // Also listen for the input event
+    toAddressElement.addEventListener("input", () => {
+      console.log("To address input event");
+      formState.toValid = true;
+      checkShowVehicles();
+      checkFormValidity();
+    });
+  }
 });

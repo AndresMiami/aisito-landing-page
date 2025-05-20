@@ -41,6 +41,7 @@
 @import url('./components/_vehicle-cards.css');
 @import url('./components/_buttons.css');
 @import url('./components/_vehicle-selector.css');
+@import url('./components/_google-maps.css');
 
 /* Global utility classes */
 .hidden { 

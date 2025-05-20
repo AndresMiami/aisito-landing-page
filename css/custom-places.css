@@ -1,0 +1,126 @@
+/* Custom styling for the Google Places Autocomplete */
+
+/* Container styling */
+.google-maps-container {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+/* Custom input styling to match the dark theme */
+.custom-place-input {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.75rem;
+  background-color: rgb(28 22 4 / 90%) !important;
+  color: white !important;
+  padding: 0.75rem 0.75rem 0.75rem 3rem;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  outline: none;
+}
+
+.custom-place-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-teal, #14b8a6);
+}
+
+.custom-place-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+  opacity: 1;
+}
+
+/* Custom dropdown styling */
+.custom-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 0.25rem;
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: rgb(28 22 4 / 90%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.custom-dropdown.hidden {
+  display: none;
+}
+
+.suggestion-item {
+  padding: 12px 16px;
+  cursor: pointer;
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item:hover,
+.suggestion-item.active {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.suggestion-main-text {
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 2px;
+  color: white;
+}
+
+.suggestion-secondary-text {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.airport-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64B5F6;
+  height: 20px;
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.airport-text {
+  font-weight: 600;
+  color: #90CAF9;
+}
+
+.airport-input {
+  border: 1px solid #64B5F6 !important;
+}
+
+/* Preserve existing styles for labels and icons */
+.location-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: white;
+  margin-bottom: 0.25rem;
+}
+
+.location-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-teal, #14b8a6);
+  width: 1.25rem;
+  height: 1.25rem;
+  z-index: 10;
+  pointer-events: none;
+}

@@ -182,108 +182,113 @@ export async function loadGoogleMapsScript(elements) { // Exported here
 // Google Maps Autocomplete Callback
 // This function is called by the Google Maps API script once it's loaded
 export function initAutocomplete() { // Exported here
-    console.log("initAutocomplete callback fired.");
+    console.log("Initializing Maps with PlaceAutocompleteElement");
+    
     // Check if the necessary components from the Google Maps API are loaded
-    if (typeof google === "undefined" || typeof google.maps === "undefined" || typeof google.maps.places === "undefined" || typeof google.maps.places.PlaceAutocompleteElement === "undefined") {
-        console.error("Google Maps API, Places library, or PlaceAutocompleteElement not loaded correctly for initAutocomplete.");
+    if (typeof google === "undefined" || typeof google.maps === "undefined") {
+        console.error("Google Maps API not loaded correctly");
         return;
     }
-
-    // Get references to the new <gmp-place-autocomplete> elements
+    
+    // Get the web component elements
     const fromLocationElement = document.getElementById("from-location");
     const toAddressElement = document.getElementById("to-address");
-
-    // Define the fields you need when a place is selected.
-    // This is done when fetching details *after* a selection, not on initialization.
-     const placeFields = ["address_components", "geometry", "name", "formatted_address", "types"];
-
-
-    if (fromLocationElement instanceof google.maps.places.PlaceAutocompleteElement) {
-        console.log("Configuring fromLocationElement.");
-        // Configure the element properties using setAttribute for attributes
-        // or setting properties directly where supported (like locationBias).
-        // componentRestrictions is not supported directly as a property or attribute.
-        // Use address-filter attribute for country restriction.
-        fromLocationElement.setAttribute("address-filter", "country:us");
-
-        // Add the event listener for when a place is selected from the autocomplete suggestions.
-        fromLocationElement.addEventListener("gmp-placeselect", async (event) => {
-            console.log("Place selected in from-location.");
-            // The event.placePrediction property holds a PlacePrediction object.
-            const placePrediction = event.placePrediction;
-            if (!placePrediction) {
-                console.warn("Autocomplete selected but no place prediction available.");
-                return;
-            }
-
-             try {
-                 // Fetch the full Place object with the required fields using the prediction's place ID.
-                const place = await placePrediction.toPlace().fetchFields({
-                    fields: placeFields, // Specify the fields you need
-                });
-
-                console.log("Fetched Place details for from-location:", place);
-                const elements = getElementRefs(); // Get element references when needed
-
-                 // Now 'place' is a full Place object. You can access its properties.
-                // Update airport field visibility based on the fetched place types.
-                if (document.getElementById("pickup-type-container") || document.getElementById("pickup-notes-container")) {
-                    updateAirportFieldVisibility("from-location", !!(place && place.types && place.types.includes("airport")), elements);
-                }
-                 // You might also want to update the form's internal value or state
-                 // with the formatted address from the place object here,
-                 // although the element itself manages the text input.
-                 // elements.fromLocationInput.value = place.formattedAddress; // Example if you still needed the original input value
-            } catch (error) {
-                console.error("Error fetching place details for from-location:", error);
-                 const elements = getElementRefs();
-                 showError(elements, "from-location", "Could not retrieve place details for selected location.");
-            }
-        });
-    } else {
-         console.warn("From location element with ID 'from-location' not found or is not a PlaceAutocompleteElement after Maps API loaded.");
+    
+    // Make sure the elements are on the page
+    if (!fromLocationElement || !toAddressElement) {
+        console.error("Could not find autocomplete elements");
+        return;
     }
-
-
-     if (toAddressElement instanceof google.maps.places.PlaceAutocompleteElement) {
-         console.log("Configuring toAddressElement.");
-         // Configure the element properties.
-         toAddressElement.setAttribute("address-filter", "country:us");
-
-         toAddressElement.addEventListener("gmp-placeselect", async (event) => {
-             console.log("Place selected in to-address.");
-            const placePrediction = event.placePrediction;
-            if (!placePrediction) {
-                console.warn("Autocomplete selected but no place prediction available.");
-                return;
-            }
-
-             try {
-                 // Fetch the full Place object
-                const place = await placePrediction.toPlace().fetchFields({
-                    fields: placeFields, // Specify the fields you need
-                });
-
-                console.log("Fetched Place details for to-address:", place);
-                const elements = getElementRefs(); // Get element references when needed
-
-                 // Update airport field visibility based on the fetched place types.
-                if (document.getElementById("dropoff-type-container") || document.getElementById("dropoff-notes-container")) {
-                    updateAirportFieldVisibility("to-address", !!(place && place.types && place.types.includes("airport")), elements);
-                }
-                 // elements.toAddressInput.value = place.formattedAddress; // Example
-             } catch (error) {
-                 console.error("Error fetching place details for to-address:", error);
-                 const elements = getElementRefs();
-                 showError(elements, "to-address", "Could not retrieve place details for selected location.");
-             }
-         });
-     } else {
-          console.warn("To address element with ID 'to-address' not found or is not a PlaceAutocompleteElement after Maps API loaded.");
-     }
-
-     // Note: The Geolocation button listener is already in initializeEventListeners in dashboard.js
-     // and calls getCurrentLocation, which has been updated to handle the new element type.
+    
+    // Define the Miami area bounds to bias results towards Miami
+    const miamiArea = {
+        north: 26.2, // North boundary
+        south: 25.6, // South boundary
+        east: -80.0, // East boundary
+        west: -80.5  // West boundary
+    };
+    
+    // Configure the elements with location bias properties
+    if (fromLocationElement.setLocationBias) {
+        fromLocationElement.setLocationBias({
+            rectangle: miamiArea
+        });
+    }
+    
+    if (toAddressElement.setLocationBias) {
+        toAddressElement.setLocationBias({
+            rectangle: miamiArea
+        });
+    }
+    
+    // Add event listeners for place selection
+    fromLocationElement.addEventListener("gmp-placeselect", async (event) => {
+        console.log("Place selected in from-location");
+        const place = event.detail.place;
+        
+        // Get complete place details to check for airport
+        try {
+            const placeDetails = await place.fetchFields({
+                fields: ["name", "formatted_address", "geometry", "types", "place_id"]
+            });
+            
+            // Extract location data
+            const latitude = placeDetails.geometry?.location?.lat;
+            const longitude = placeDetails.geometry?.location?.lng;
+            const placeId = placeDetails.place_id;
+            
+            // Store data attributes for form processing
+            fromLocationElement.dataset.latitude = latitude;
+            fromLocationElement.dataset.longitude = longitude;
+            fromLocationElement.dataset.placeId = placeId;
+            
+            // Check if it's an airport
+            const isAirport = placeDetails.types?.includes('airport');
+            updateAirportFieldVisibility("from-location", isAirport);
+            
+            // Trigger input event for form validation
+            const inputEvent = new Event('input', { bubbles: true });
+            fromLocationElement.dispatchEvent(inputEvent);
+            
+            console.log("From place details:", placeDetails);
+        } catch (error) {
+            console.error("Error fetching place details:", error);
+        }
+    });
+    
+    toAddressElement.addEventListener("gmp-placeselect", async (event) => {
+        console.log("Place selected in to-address");
+        const place = event.detail.place;
+        
+        // Get complete place details to check for airport
+        try {
+            const placeDetails = await place.fetchFields({
+                fields: ["name", "formatted_address", "geometry", "types", "place_id"]
+            });
+            
+            // Extract location data
+            const latitude = placeDetails.geometry?.location?.lat;
+            const longitude = placeDetails.geometry?.location?.lng;
+            const placeId = placeDetails.place_id;
+            
+            // Store data attributes for form processing
+            toAddressElement.dataset.latitude = latitude;
+            toAddressElement.dataset.longitude = longitude;
+            toAddressElement.dataset.placeId = placeId;
+            
+            // Check if it's an airport
+            const isAirport = placeDetails.types?.includes('airport');
+            updateAirportFieldVisibility("to-address", isAirport);
+            
+            // Trigger input event for form validation
+            const inputEvent = new Event('input', { bubbles: true });
+            toAddressElement.dispatchEvent(inputEvent);
+            
+            console.log("To place details:", placeDetails);
+        } catch (error) {
+            console.error("Error fetching place details:", error);
+        }
+    });
 }
 
 // Removed the duplicate export statement at the end.
