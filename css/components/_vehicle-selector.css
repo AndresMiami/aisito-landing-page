@@ -1,0 +1,88 @@
+/* 
+ * vehicle-selector block
+ * Maintains original styling while adding BEM structure
+ */
+
+.vehicle-selector {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 1.15s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.72s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.86s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  transform: translateY(-10px);
+  margin-top: 0;
+}
+
+/* This ensures compatibility with existing JS */
+.vehicle-selector.vehicle-selection-container {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.vehicle-selector--visible,
+.vehicle-selector.show,
+.vehicle-selection-container.show {
+  max-height: 1200px; /* Slightly larger to ensure room for all content */
+  opacity: 1;
+  transform: translateY(0);
+  margin-top: 1rem;
+}
+
+.vehicle-selector__card {
+  opacity: 0;
+  transform: translateY(15px);
+  transition: opacity 0.58s ease, transform 0.72s ease, border-color 0.43s ease, box-shadow 0.43s ease;
+  padding-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  background-color: white;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+}
+
+/* Make sure both class naming systems work together */
+.vehicle-selector--visible .vehicle-selector__card,
+.vehicle-selection-container.show .vehicle-card,
+.vehicle-selector.show .vehicle-selector__card {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered animation for each card */
+.vehicle-selector--visible .vehicle-selector__card:nth-child(1),
+.vehicle-selection-container.show .vehicle-card:nth-child(1),
+.vehicle-selector.show .vehicle-selector__card:nth-child(1) {
+  transition-delay: 0.12s;
+}
+
+.vehicle-selector--visible .vehicle-selector__card:nth-child(2),
+.vehicle-selection-container.show .vehicle-card:nth-child(2),
+.vehicle-selector.show .vehicle-selector__card:nth-child(2) {
+  transition-delay: 0.24s;
+}
+
+.vehicle-selector--visible .vehicle-selector__card:nth-child(3),
+.vehicle-selection-container.show .vehicle-card:nth-child(3),
+.vehicle-selector.show .vehicle-selector__card:nth-child(3) {
+  transition-delay: 0.36s;
+}
+
+/* Similar styling for selected cards */
+.vehicle-selector__card--selected,
+.vehicle-selector__card.selected,
+.vehicle-card.selected {
+  border-color: var(--color-teal, #14b8a6);
+  box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.3);
+  transform: translateY(-2px);
+  background-color: rgb(28 22 4 / 90%);
+  color: white;
+}
+
+/* Additional styling carried over from original CSS... */

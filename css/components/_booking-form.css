@@ -1,0 +1,100 @@
+/* 
+ * booking-form block
+ * Preserves the existing styling while adding BEM structure
+ */
+.booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.booking-form__group {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.booking-form__label {
+  position: absolute;
+  top: -0.5rem;
+  left: 0.5rem;
+  display: inline-block;
+  background-color: white;
+  padding: 0 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.booking-form__icon {
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  height: 1rem;
+  width: 1rem;
+  transform: translateY(-50%);
+  color: var(--color-teal, #14b8a6);
+}
+
+.booking-form__input {
+  display: block;
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 0;
+  padding: 0.75rem 0.75rem 0.75rem 3rem;
+  color: white;
+  background-color: rgb(28 22 4 / 90%);
+}
+
+.booking-form__input::placeholder {
+  color: #e5e7eb;
+}
+
+.booking-form__input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px inset var(--color-teal, #14b8a6);
+}
+
+.booking-form__error {
+  margin-top: 0.25rem;
+  display: block;
+  font-size: 0.75rem;
+  color: #dc2626;
+}
+
+.booking-form__error--hidden {
+  display: none;
+}
+
+/* booking-form time selection */
+.booking-form__time-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.booking-form__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background-color: white;
+  color: #1f2937;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.booking-form__button:hover {
+  background-color: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.booking-form__button--selected {
+  background-color: #f3f4f6;
+  border-color: var(--color-teal, #14b8a6);
+  box-shadow: 0 0 0 1px var(--color-teal, #14b8a6);
+}
+
+/* Additional styling for the rest of the form elements... */

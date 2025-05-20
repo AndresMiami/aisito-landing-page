@@ -1,0 +1,68 @@
+/* 
+ * tab-navigation block
+ * Purpose: Switches between form sections
+ */
+.tab-navigation {
+  border-bottom: none;
+  background-color: transparent;
+  margin-bottom: 1rem;
+}
+
+/* tab-navigation elements */
+.tab-navigation__container {
+  display: flex;
+  margin-bottom: -1px;
+}
+
+.tab-navigation__button {
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  position: relative;
+  font-size: 16px;
+  padding: 12px 0;
+  width: 50%;
+  white-space: nowrap;
+  text-align: center;
+  border-top: 1px solid;
+  border-left: 1px solid;
+  border-right: 1px solid;
+  border-bottom: 2px solid;
+  font-size: 0.875rem;
+}
+
+/* This preserves the existing tab styling from the original CSS */
+.tab-navigation__button:first-child {
+  border-top-left-radius: 0.75rem;
+}
+
+.tab-navigation__button:last-child {
+  border-top-right-radius: 0.75rem;
+}
+
+.tab-navigation__button--inactive {
+  background-color: rgba(28, 22, 4, 0.75);
+  color: rgba(255, 255, 255, 0.8);
+  border-bottom-color: transparent;
+}
+
+.tab-navigation__button--active {
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
+  color: white;
+  border-bottom-color: #e4c07e;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tab-navigation__button--inactive:hover {
+  background-color: rgba(28, 22, 4, 0.9);
+  color: white;
+}
+
+.tab-navigation__panel {
+  padding: 1rem 0;
+  display: block;
+}
+
+.tab-navigation__panel--hidden {
+  display: none;
+}

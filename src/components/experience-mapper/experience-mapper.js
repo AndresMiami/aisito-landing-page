@@ -1,18 +1,17 @@
+import { updateElementState, toggleVisibility } from '../../utils/bem-utils.js';
+
 /**
  * @typedef {Object} ExperienceMapperOptions
  * @property {Object.<string, string>} [urlMappings] - Custom URL to experience type mappings
- * @property {string} [tabSelector='.tab-button'] - Selector for tab buttons
- * @property {string} [experienceTabId='tab-button-experience-plus'] - ID of the experience tab
- * @property {string} [dropdownId='experience-dropdown'] - ID of the experience dropdown
- * @property {string} [navLinkSelector='.dropdown-menu .dropdown-item'] - Selector for navigation links
+ * @property {string} [defaultExperience='hourly_chauffeur'] - Default experience type to fall back to
  */
 
 /**
- * ExperienceMapper - A class to handle experience mapping and navigation
+ * Maps URL paths to experience types and manages experience navigation
  */
 export class ExperienceMapper {
   /**
-   * Create an ExperienceMapper instance
+   * Creates a new ExperienceMapper instance
    * @param {ExperienceMapperOptions} options - Configuration options
    */
   constructor(options = {}) {
@@ -26,22 +25,19 @@ export class ExperienceMapper {
       'airport.html': 'Airport Pick up & drop off'
     };
 
-    // DOM selectors
-    this.tabSelector = options.tabSelector || '.tab-button';
-    this.experienceTabId = options.experienceTabId || 'tab-button-experience-plus';
-    this.dropdownId = options.dropdownId || 'experience-dropdown';
-    this.navLinkSelector = options.navLinkSelector || '.dropdown-menu .dropdown-item';
-
-    // Container selectors for showing/hiding UI elements
+    // Default experience to fall back to
+    this.defaultExperience = options.defaultExperience || 'hourly_chauffeur';
+    
+    // Container selectors using BEM classes
     this.containerSelectors = {
-      hourlyDescription: '#hourly-description',
-      durationContainer: '#duration-container',
-      dateTimeContainer: '#date-time-container-hourly',
-      datePreferenceContainer: '#date-preference-container',
-      commonFields: '#common-experience-fields',
-      optionsContainer: '#experience-options-container',
-      waterSkyOptions: '#water-sky-options',
-      wynwoodOptions: '#wynwood-night-options'
+      hourlyDescription: '[data-experience-section="hourly-description"]',
+      durationContainer: '[data-experience-section="duration"]',
+      dateTimeContainer: '[data-experience-section="date-time"]',
+      datePreferenceContainer: '[data-experience-section="date-preference"]',
+      commonFields: '[data-experience-section="common-fields"]',
+      optionsContainer: '[data-experience-section="options"]',
+      waterSkyOptions: '[data-experience-section="water-sky"]',
+      wynwoodOptions: '[data-experience-section="wynwood"]'
     };
 
     // Event subscribers
@@ -56,14 +52,25 @@ export class ExperienceMapper {
    * Initialize the experience mapper
    */
   init() {
-    this.initNavigationListeners();
-    this.initDropdownHandler();
-    this.initTabSwitchingLogic();
-    
-    // Check if current URL contains experience parameters
-    const experienceFromUrl = this.getExperienceFromUrl();
-    if (experienceFromUrl) {
-      this.setExperience(experienceFromUrl);
+    try {
+      // Initialize with data attribute selectors
+      this.experienceTab = document.querySelector('[data-tab-id="experience-plus"]');
+      this.experienceDropdown = document.querySelector('[data-form-element="dropdown"][data-form-field="experience"]');
+      this.navLinks = document.querySelectorAll('[data-nav-type="experience"]');
+      
+      this.initNavigationListeners();
+      this.initDropdownHandler();
+      
+      // Check if current URL contains experience parameters
+      const experienceFromUrl = this.getExperienceFromUrl();
+      if (experienceFromUrl) {
+        this.setExperience(experienceFromUrl);
+      }
+      
+      return this;
+    } catch (error) {
+      console.error('Error initializing ExperienceMapper:', error);
+      return this;
     }
   }
 
@@ -72,17 +79,22 @@ export class ExperienceMapper {
    * @returns {string|null} The experience type or null if not found
    */
   getExperienceFromUrl() {
-    const currentPath = window.location.pathname;
-    const filename = currentPath.substring(currentPath.lastIndexOf('/') + 1);
-    
-    // Check if current page is in our mappings
-    if (this.urlMappings[filename]) {
-      return this.urlMappings[filename];
+    try {
+      const currentPath = window.location.pathname;
+      const filename = currentPath.substring(currentPath.lastIndexOf('/') + 1);
+      
+      // Check if current page is in our mappings
+      if (this.urlMappings[filename]) {
+        return this.urlMappings[filename];
+      }
+      
+      // Check URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('experience');
+    } catch (error) {
+      console.error('Error getting experience from URL:', error);
+      return null;
     }
-    
-    // Check URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('experience');
   }
 
   /**
@@ -91,52 +103,57 @@ export class ExperienceMapper {
    * @param {boolean} [updateUrl=true] - Whether to update the URL
    */
   navigateToExperience(experienceType, updateUrl = true) {
-    const experienceTab = document.getElementById(this.experienceTabId);
-    const dropdown = document.getElementById(this.dropdownId);
-    
-    // If either element doesn't exist, we can't navigate
-    if (!experienceTab || !dropdown) {
-      console.error('Required elements for navigation not found');
-      return;
-    }
-
-    // Switch to Experience+ tab if not already active
-    if (experienceTab.getAttribute('aria-selected') !== 'true') {
-      experienceTab.click();
-    }
-
-    // Set dropdown value after a small delay to allow tab transition
-    setTimeout(() => {
-      dropdown.value = experienceType;
-      
-      // Manually trigger change event
-      const changeEvent = new Event('change', { bubbles: true });
-      dropdown.dispatchEvent(changeEvent);
-      
-      // Update URL if requested
-      if (updateUrl) {
-        const url = new URL(window.location);
-        url.searchParams.set('experience', experienceType);
-        window.history.pushState({}, '', url);
+    try {
+      if (!this.experienceTab || !this.experienceDropdown) {
+        console.error('Required elements for navigation not found');
+        return false;
       }
-      
-      // Scroll form into view
-      const formCard = document.querySelector('.booking-form-card');
-      if (formCard) {
-        formCard.scrollIntoView({ behavior: 'smooth' });
+
+      // Switch to Experience+ tab if not already active
+      if (this.experienceTab.getAttribute('aria-selected') !== 'true') {
+        this.experienceTab.click();
       }
-    }, 100);
+
+      // Set dropdown value after a small delay to allow tab transition
+      setTimeout(() => {
+        this.experienceDropdown.value = experienceType;
+        
+        // Manually trigger change event
+        const changeEvent = new Event('change', { bubbles: true });
+        this.experienceDropdown.dispatchEvent(changeEvent);
+        
+        // Update URL if requested
+        if (updateUrl) {
+          const url = new URL(window.location);
+          url.searchParams.set('experience', experienceType);
+          window.history.pushState({}, '', url);
+        }
+        
+        // Scroll form into view
+        const formCard = document.querySelector('.booking-form-card');
+        if (formCard) {
+          formCard.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+      
+      return true;
+    } catch (error) {
+      console.error('Error navigating to experience:', error);
+      return false;
+    }
   }
 
   /**
    * Initialize event listeners for navigation links
    */
   initNavigationListeners() {
-    const navLinks = document.querySelectorAll(this.navLinkSelector);
-    
-    navLinks.forEach(link => {
-      link.addEventListener('click', this.handleNavLinkClick);
-    });
+    try {
+      this.navLinks.forEach(link => {
+        link.addEventListener('click', this.handleNavLinkClick);
+      });
+    } catch (error) {
+      console.error('Error initializing navigation listeners:', error);
+    }
   }
 
   /**
@@ -144,17 +161,21 @@ export class ExperienceMapper {
    * @param {Event} e - The click event
    */
   handleNavLinkClick(e) {
-    // Prevent default navigation
-    e.preventDefault();
-    
-    const href = e.currentTarget.getAttribute('href');
-    const experienceValue = this.urlMappings[href];
-    
-    if (experienceValue) {
-      this.navigateToExperience(experienceValue);
-    } else {
-      // If it's not an experience link, navigate normally
-      window.location.href = href;
+    try {
+      // Prevent default navigation
+      e.preventDefault();
+      
+      const href = e.currentTarget.getAttribute('href');
+      const experienceValue = this.urlMappings[href];
+      
+      if (experienceValue) {
+        this.navigateToExperience(experienceValue);
+      } else {
+        // If it's not an experience link, navigate normally
+        window.location.href = href;
+      }
+    } catch (error) {
+      console.error('Error handling navigation link click:', error);
     }
   }
 
@@ -162,9 +183,14 @@ export class ExperienceMapper {
    * Initialize the experience dropdown change handler
    */
   initDropdownHandler() {
-    const dropdown = document.getElementById(this.dropdownId);
-    if (dropdown) {
-      dropdown.addEventListener('change', this.handleDropdownChange);
+    try {
+      if (this.experienceDropdown) {
+        this.experienceDropdown.addEventListener('change', this.handleDropdownChange);
+      } else {
+        console.warn('Experience dropdown not found during initialization');
+      }
+    } catch (error) {
+      console.error('Error initializing dropdown handler:', error);
     }
   }
 
@@ -173,8 +199,12 @@ export class ExperienceMapper {
    * @param {Event} e - The change event
    */
   handleDropdownChange(e) {
-    const selectedExperience = e.target.value;
-    this.setExperience(selectedExperience);
+    try {
+      const selectedExperience = e.target.value;
+      this.setExperience(selectedExperience);
+    } catch (error) {
+      console.error('Error handling dropdown change:', error);
+    }
   }
 
   /**
@@ -182,41 +212,49 @@ export class ExperienceMapper {
    * @param {string} experienceType - The experience type to set
    */
   setExperience(experienceType) {
-    // Hide all specific option containers
-    this.hideAllContainers();
-    
-    if (experienceType) {
-      // Show common fields for all experiences
-      this.showContainer('commonFields');
-      this.showContainer('optionsContainer');
-      this.showContainer('dateTimeContainer');
+    try {
+      // Hide all specific option containers
+      this.hideAllContainers();
       
-      // Show specific fields based on experience
-      switch (experienceType) {
-        case 'hourly_chauffeur':
-          this.showContainer('hourlyDescription');
-          this.showContainer('durationContainer');
-          break;
-          
-        case 'water_sky':
-          this.showContainer('waterSkyOptions');
-          this.showContainer('datePreferenceContainer');
-          break;
-          
-        case 'wynwood_night':
-          this.showContainer('wynwoodOptions');
-          this.showContainer('datePreferenceContainer');
-          break;
-          
-        case 'Dining Expiriences':
-        case 'Live Performances':
-        case 'Airport Pick up & drop off':
-          this.showContainer('datePreferenceContainer');
-          break;
+      if (experienceType) {
+        // Show common fields for all experiences
+        this.showContainer('commonFields');
+        this.showContainer('optionsContainer');
+        this.showContainer('dateTimeContainer');
+        
+        // Show specific fields based on experience
+        switch (experienceType) {
+          case 'hourly_chauffeur':
+            this.showContainer('hourlyDescription');
+            this.showContainer('durationContainer');
+            break;
+            
+          case 'water_sky':
+            this.showContainer('waterSkyOptions');
+            this.showContainer('datePreferenceContainer');
+            break;
+            
+          case 'wynwood_night':
+            this.showContainer('wynwoodOptions');
+            this.showContainer('datePreferenceContainer');
+            break;
+            
+          case 'Dining Expiriences':
+          case 'Live Performances':
+          case 'Airport Pick up & drop off':
+            this.showContainer('datePreferenceContainer');
+            break;
+            
+          default:
+            console.warn(`Unknown experience type: ${experienceType}`);
+            break;
+        }
+        
+        // Notify subscribers
+        this.notifyExperienceChange(experienceType);
       }
-      
-      // Notify subscribers
-      this.notifyExperienceChange(experienceType);
+    } catch (error) {
+      console.error('Error setting experience:', error);
     }
   }
 
@@ -224,12 +262,17 @@ export class ExperienceMapper {
    * Hide all experience-related containers
    */
   hideAllContainers() {
-    Object.values(this.containerSelectors).forEach(selector => {
-      const element = document.querySelector(selector);
-      if (element) {
-        element.classList.add('hidden');
-      }
-    });
+    try {
+      Object.values(this.containerSelectors).forEach(selector => {
+        const element = document.querySelector(selector);
+        if (element) {
+          // Using BEM utility for consistent state management
+          toggleVisibility(element, false);
+        }
+      });
+    } catch (error) {
+      console.error('Error hiding containers:', error);
+    }
   }
 
   /**
@@ -237,40 +280,22 @@ export class ExperienceMapper {
    * @param {string} containerKey - The key of the container to show
    */
   showContainer(containerKey) {
-    const selector = this.containerSelectors[containerKey];
-    if (selector) {
-      const element = document.querySelector(selector);
-      if (element) {
-        element.classList.remove('hidden');
-      }
-    }
-  }
-
-  /**
-   * Initialize tab switching logic
-   */
-  initTabSwitchingLogic() {
-    document.querySelectorAll(this.tabSelector).forEach(button => {
-      button.addEventListener('click', () => {
-        // Set aria-selected for all buttons
-        document.querySelectorAll(this.tabSelector).forEach(btn => {
-          btn.setAttribute('aria-selected', 'false');
-        });
-        button.setAttribute('aria-selected', 'true');
-        
-        // Hide all panels
-        document.querySelectorAll('.tab-panel').forEach(panel => {
-          panel.classList.add('hidden');
-        });
-        
-        // Show the target panel
-        const targetPanelId = button.getAttribute('data-tab-target');
-        const targetPanel = document.querySelector(targetPanelId);
-        if (targetPanel) {
-          targetPanel.classList.remove('hidden');
+    try {
+      const selector = this.containerSelectors[containerKey];
+      if (selector) {
+        const element = document.querySelector(selector);
+        if (element) {
+          // Using BEM utility for consistent state management
+          toggleVisibility(element, true);
+        } else {
+          console.warn(`Container element not found: ${selector}`);
         }
-      });
-    });
+      } else {
+        console.warn(`Container selector not defined for key: ${containerKey}`);
+      }
+    } catch (error) {
+      console.error(`Error showing container ${containerKey}:`, error);
+    }
   }
 
   /**
@@ -279,6 +304,11 @@ export class ExperienceMapper {
    * @returns {function(): void} Function to unsubscribe
    */
   onExperienceChange(callback) {
+    if (typeof callback !== 'function') {
+      console.error('Subscriber must be a function');
+      return () => {};
+    }
+    
     this.subscribers.push(callback);
     
     // Return unsubscribe function

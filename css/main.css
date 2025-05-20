@@ -1,0 +1,32 @@
+/*
+ * BEM NAMING CONVENTION
+ * --------------------
+ * Block:    .block-name
+ * Element:  .block-name__element-name
+ * Modifier: .block-name--modifier or .block-name__element--modifier
+ */
+
+/* Import the original styles first */
+@import 'original-styles.css';
+
+/* Then import BEM component styles which will override/extend original styles */
+@import 'components/_booking-form.css';
+@import 'components/_tab-navigation.css';
+@import 'components/_vehicle-selector.css';
+@import 'components/_experience-options.css';
+
+/* Remove the debug styles for now - they're causing visual problems */
+/* 
+[class*="booking-form__"] {
+  border: 1px dashed rgba(0, 0, 255, 0.2);
+}
+[class*="vehicle-selector__"] {
+  border: 1px dashed rgba(0, 255, 0, 0.2);
+}
+[class*="tab-navigation__"] {
+  border: 1px dashed rgba(255, 0, 0, 0.2);
+}
+[class*="experience-options__"] {
+  border: 1px dashed rgba(255, 165, 0, 0.2);
+}
+*/
