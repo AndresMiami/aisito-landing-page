@@ -126,22 +126,25 @@
           <div class="form-padding">
             
             <form action="#" method="POST" id="booking-form" class="space-y-4">
+              <!-- Wrap location fields in container for easier management -->
+              <div id="location-fields-container" class="space-y-4">
                 <!-- From Input -->
-                <div class="google-maps-container">
-                  <label for="from-location" class="location-label">From</label>
-                  <span class="location-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7z"></path>
-                    </svg>
-                  </span>
-                  <gmp-place-autocomplete id="from-location"
-                    address-filter="country:us"
-                    type-filter="establishment,geocode,airport,lodging,point_of_interest" 
-                    placeholder="Enter pickup location"
-                    required
-                    aria-describedby="from-location-error">
-                  </gmp-place-autocomplete>
+                <div class="relative">
+                  <div class="google-maps-container">
+                    <label for="from-location" class="location-label">Pickup Location</label>
+                    <span class="location-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                      </svg>
+                    </span>
+                    <gmp-place-autocomplete id="from-location" placeholder="Enter pickup location..."></gmp-place-autocomplete>
+                    <!-- Clear button will be added via JavaScript -->
+                  </div>
                   <span id="from-location-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                  
+                  <button type="button" id="get-location-button" class="current-location-btn">
+                    <!-- Icon and text added via JavaScript -->
+                  </button>
                 </div>
 
                 <!-- To Input -->
@@ -161,7 +164,7 @@
                   </gmp-place-autocomplete>
                   <span id="to-address-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                 </div>
-
+              </div>
                 
 
               <div class="tab-panels space-y-3 pt-2">
@@ -217,7 +220,7 @@
                                <p class="text-base font-medium text-gray-900">Luxury Sedan</p>
                                <div class="flex items-center space-x-3 text-xs text-gray-500 mt-1">
                                  <span class="flex items-center">
-                                   <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A9.978 9.978 0 0010 12c-2.31 0-4.438.784-6.131 2.1-.194.51-.02.979.406 1.393z" /></svg>
+                                   <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.412 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A9.978 9.978 0 0010 12c-2.31 0-4.438.784-6.131 2.1-.194.51-.02.979.406 1.393z" /></svg>
                                    <span class="font-medium">3</span>
                                  </span>
                                  <span class="flex items-center">
@@ -244,7 +247,7 @@
                                <p class="text-base font-medium text-gray-900">Premium SUV</p>
                                <div class="flex items-center space-x-3 text-xs text-gray-500 mt-1">
                                  <span class="flex items-center">
-                                   <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"> <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A9.978 9.978 0 0010 12c-2.31 0-4.438.784-6.131 2.1-.194.51-.02.979.406 1.393z" /> </svg>
+                                   <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"> <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.412 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A9.978 9.978 0 0010 12c-2.31 0-4.438.784-6.131 2.1-.194.51-.02.979.406 1.393z" /> </svg>
                                    <span class="font-medium">6</span>
                                  </span>
                                  <span class="flex items-center">
@@ -271,7 +274,7 @@
                                <p class="text-base font-medium text-gray-900">VIP Group Sprinter</p>
                                <div class="flex items-center space-x-3 text-xs text-gray-500 mt-1">
                                  <span class="flex items-center">
-                                   <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"> <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A9.978 9.978 0 0010 12c-2.31 0-4.438.784-6.131 2.1-.194.51-.02.979.406 1.393z" /> </svg>
+                                   <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"> <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.412 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A9.978 9.978 0 0010 12c-2.31 0-4.438.784-6.131 2.1-.194.51-.02.979.406 1.393z" /> </svg>
                                    <span class="font-medium">14</span>
                                  </span>
                                  <span class="flex items-center">
@@ -386,7 +389,7 @@
               </div>
 
               <div class="form-action-buttons">
-                <button type="button" id="reset-button" class="flex items-center">
+                <button type="button" id="reset-button" class="flex items-center text-gray-500 hover:text-[--color-teal] transition-colors duration-200 px-3 py-1.5 rounded-md hover:bg-gray-100">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
@@ -741,6 +744,17 @@
 
 .text-\[--color-blue-800\] {
   color: var(--color-blue-800);
+}
+
+/* Add color variable definitions if not defined elsewhere */
+:root {
+  --color-teal: #0d9488;
+  --color-gold: #d4a017;
+  --color-green-100: #dcfce7;
+  --color-green-800: #166534;
+  --color-blue-100: #dbeafe;
+  --color-blue-800: #1e40af;
+  --radius-lg: 0.5rem;
 }
 </style>
   </body>

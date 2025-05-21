@@ -1,113 +1,185 @@
-/* Google Maps PlaceAutocompleteElement Styling */
+/* Google Maps PlaceAutocomplete Component Styling */
 
-/* Container styling */
+/* Main container for the Google Maps PlaceAutocomplete element */
 .google-maps-container {
   position: relative;
   margin-bottom: 1rem;
-}
-
-/* Base styling for the web component */
-gmp-place-autocomplete {
-  display: block;
-  width: 100%;
-  border-radius: 0.75rem;
-  background-color: rgb(28 22 4 / 90%);
-}
-
-/* Style the shadow DOM input element */
-gmp-place-autocomplete::part(input) {
-  width: 100%;
-  border-radius: 0.75rem;
-  border: 0;
-  padding: 0.75rem 0.75rem 0.75rem 3rem;
-  color: white;
-  background-color: transparent !important; /* Force transparent background */
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  box-shadow: none !important; /* Remove any default box shadows */
-}
-
-/* Style the input on focus */
-gmp-place-autocomplete::part(input):focus {
-  outline: none;
-  box-shadow: 0 0 0 2px inset var(--color-teal, #14b8a6);
-  background-color: transparent !important;
-}
-
-/* Style the placeholder text */
-gmp-place-autocomplete::part(input)::placeholder {
-  color: #e5e7eb;
-  opacity: 1;
-}
-
-/* Google Maps dropdown styling */
-.pac-container {
-  border-radius: 0.5rem;
-  margin-top: 4px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  font-family: 'Inter', sans-serif;
-  z-index: 9999 !important;
+  border-radius: var(--radius-lg);
+  overflow: visible;
   background-color: white;
+  border: 1px solid rgba(209, 213, 219, 0.8);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
 }
 
-.pac-item {
-  padding: 8px 12px;
-  cursor: pointer;
-  border-top: 1px solid #e5e7eb;
+/* Ensure the component matches other input styling */
+.google-maps-container {
+  background-color: white;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.pac-item:first-child {
-  border-top: none;
+/* Create a styled floating label */
+.location-label {
+  position: absolute;
+  top: -0.75rem;
+  left: 0.75rem;
+  display: inline-block;
+  background-color: white;
+  padding: 0 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #4B5563;
+  border-radius: 4px;
+  z-index: 5;
+  transition: color 0.2s ease-in-out;
+  font-family: 'Inter', sans-serif;
 }
 
-.pac-item:hover {
-  background-color: #f3f4f6;
+/* Icon positioning and styling */
+.location-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-teal);
+  width: 1.25rem;
+  height: 1.25rem;
+  z-index: 10;
+  pointer-events: none;
 }
 
-.pac-item-selected {
-  background-color: #f0f9ff;
+/* Airport visual indicator styling */
+.google-maps-container.is-airport {
+  border-color: var(--color-blue-800);
+  background-color: var(--color-blue-100);
+  animation: soft-pulse 1.5s ease-in-out;
 }
 
-.pac-icon {
-  margin-right: 8px;
-}
-
-.pac-item-query {
-  font-size: 14px;
-  color: #111827;
-}
-
-.pac-matched {
+.google-maps-container.is-airport .location-label {
+  color: var(--color-blue-800);
   font-weight: 600;
 }
 
-.pac-item-selected .pac-item-query,
-.pac-item-selected .pac-matched {
-  color: var(--color-teal, #14b8a6);
+/* Enhanced focus state styling */
+.google-maps-container:focus-within {
+  border-color: var(--color-teal);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2);
 }
 
-/* Handle form label and icon positioning */
-.location-label {
-  position: absolute;
-  top: -0.5rem;
-  left: 0.5rem;
-  display: inline-block;
-  background-color: white;
-  padding: 0 0.25rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #6b7280;
-  z-index: 1;
+/* Target the actual gmp-place-autocomplete element */
+gmp-place-autocomplete {
+  display: block;
+  width: 100%;
+  padding-left: 2.5rem;
 }
 
-.location-icon {
+/* Valid state styling */
+.google-maps-container.is-valid {
+  border-color: var(--color-green-800);
+}
+
+.google-maps-container.is-valid .location-label {
+  color: var(--color-green-800);
+}
+
+/* Visual checkmark for valid input - subtle version */
+.google-maps-container.is-valid::after {
+  content: "✓";
   position: absolute;
+  right: 0.75rem;
   top: 50%;
-  left: 0.75rem;
-  height: 1rem;
-  width: 1rem;
   transform: translateY(-50%);
-  color: var(--color-teal, #14b8a6);
-  z-index: 1;
+  color: var(--color-green-800);
+  font-size: 1rem;
+  font-weight: bold;
+  opacity: 0.8;
+}
+
+/* Clear button styling */
+.location-clear-btn {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #6B7280;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 50%;
+  z-index: 10;
+  display: none;
+  font-size: 1.25rem;
+  line-height: 1;
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.google-maps-container.is-valid .location-clear-btn,
+.google-maps-container:focus-within .location-clear-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.location-clear-btn:hover {
+  background-color: #F3F4F6;
+  color: #1F2937;
+}
+
+/* Use current location button styling */
+.current-location-btn {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  color: var(--color-teal);
+  background: none;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  margin-top: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.current-location-btn:hover {
+  color: var(--color-gold);
+}
+
+.current-location-btn svg {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.25rem;
+}
+
+/* Subtle pulse animation */
+@keyframes soft-pulse {
+  0% { background-color: var(--color-blue-100); }
+  50% { background-color: rgba(219, 234, 254, 0.6); }
+  100% { background-color: var(--color-blue-100); }
+}
+
+/* Error animation for validation messages */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .location-label {
+    top: -0.625rem;
+    font-size: 0.7rem;
+  }
+  
+  .current-location-btn {
+    font-size: 0.75rem;
+  }
+  
+  .location-clear-btn {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
 }

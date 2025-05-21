@@ -1233,3 +1233,143 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Get all gmp-place-autocomplete elements
+  const placeElements = document.querySelectorAll('gmp-place-autocomplete');
+  
+  // Set up validation styling and clear buttons for each place element
+  placeElements.forEach(element => {
+    const container = element.closest('.google-maps-container');
+    
+    if (!container) return;
+    
+    // Create clear button for each input
+    const clearBtn = document.createElement('button');
+    clearBtn.type = 'button';
+    clearBtn.className = 'location-clear-btn';
+    clearBtn.innerHTML = '×';
+    clearBtn.setAttribute('aria-label', 'Clear location');
+    
+    // Add the clear button to the container
+    container.appendChild(clearBtn);
+    
+    // Add event listener to the clear button
+    clearBtn.addEventListener('click', () => {
+      // Clear the input - note this is a workaround since we can't directly access the shadow DOM input
+      // We set the element's value using the API method
+      element.value = '';
+      
+      // Dispatch an input event so our validation logic knows the field changed
+      const inputEvent = new Event('input', { bubbles: true });
+      element.dispatchEvent(inputEvent);
+      
+      // Remove any validation styling
+      container.classList.remove('is-valid');
+      container.classList.remove('is-airport');
+      
+      // Focus back on the input field
+      setTimeout(() => element.focus(), 10);
+    });
+    
+    // Add input validation visual cues
+    element.addEventListener('gmp-placechange', function() {
+      const place = element.getPlace();
+      
+      if (place && place.name) {
+        // Add visual indication that input is valid
+        container.classList.add('is-valid');
+        
+        // Special styling for airports
+        if (place.types && place.types.includes('airport')) {
+          container.classList.add('is-airport');
+        } else {
+          container.classList.remove('is-airport');
+        }
+      } else {
+        container.classList.remove('is-valid');
+        container.classList.remove('is-airport');
+      }
+    });
+  });
+  
+  // Add animation when errors are shown
+  const errorElements = document.querySelectorAll('[id$="-error"]');
+  errorElements.forEach(errorEl => {
+    const observer = new MutationObserver(mutations => {
+      mutations.forEach(mutation => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          if (!errorEl.classList.contains('hidden')) {
+            errorEl.style.animation = 'shake 0.5s ease-in-out';
+            setTimeout(() => { errorEl.style.animation = ''; }, 500);
+          }
+        }
+      });
+    });
+    
+    observer.observe(errorEl, { attributes: true });
+  });
+
+  // More specific handling for your "Get Current Location" button
+  const getLocationBtn = document.getElementById('get-location-button');
+  if (getLocationBtn) {
+    getLocationBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
+      </svg>
+      Use My Location
+    `;
+    
+    // Add proper ARIA attributes for accessibility
+    getLocationBtn.setAttribute('aria-label', 'Use my current location');
+    getLocationBtn.classList.add('current-location-btn');
+  }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Get references to tabs and location fields container
+  const onewayTab = document.getElementById('tab-button-oneway');
+  const experienceTab = document.getElementById('tab-button-experience-plus');
+  const locationFieldsContainer = document.getElementById('location-fields-container');
+  const toAddressContainer = document.querySelector('.google-maps-container:nth-child(2)');
+  
+  // Function to handle tab switching and field visibility
+  function handleTabSwitch(event) {
+    const targetTab = event.currentTarget.id;
+    
+    if (targetTab === 'tab-button-experience-plus') {
+      // Hide the "To" field when Experience+ tab is active
+      if (toAddressContainer) {
+        toAddressContainer.classList.add('hidden');
+      }
+      
+      // Add a class to adjust the layout for single input field
+      if (locationFieldsContainer) {
+        locationFieldsContainer.classList.add('experience-mode');
+      }
+    } else {
+      // Show the "To" field when One Way tab is active
+      if (toAddressContainer) {
+        toAddressContainer.classList.remove('hidden');
+      }
+      
+      // Remove the class for single input layout
+      if (locationFieldsContainer) {
+        locationFieldsContainer.classList.remove('experience-mode');
+      }
+    }
+  }
+  
+  // Add event listeners to tabs
+  if (onewayTab) onewayTab.addEventListener('click', handleTabSwitch);
+  if (experienceTab) experienceTab.addEventListener('click', handleTabSwitch);
+  
+  // Initialize based on default selected tab
+  if (onewayTab && onewayTab.getAttribute('aria-selected') === 'true') {
+    // Simulate a click on the one way tab
+    handleTabSwitch({ currentTarget: { id: 'tab-button-oneway' } });
+  } else if (experienceTab && experienceTab.getAttribute('aria-selected') === 'true') {
+    // Simulate a click on the experience tab
+    handleTabSwitch({ currentTarget: { id: 'tab-button-experience-plus' } });
+  }
+});
