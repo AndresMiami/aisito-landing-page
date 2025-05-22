@@ -45,11 +45,10 @@
           </button>
           <ul class="dropdown-menu">
             <li><a href="hourly.html" class="dropdown-item">Hourly Chauffeur</a></li>
-            <li><a href="yacht.html" class="dropdown-item">Yacht & Premier Suv</a></li>
-            <li><a href="dining.html" class="dropdown-item">Dining Experiences</a></li>
-            <li><a href="performances.html" class="dropdown-item">Live Performances</a></li>
-            <li><a href="wynwood.html" class="dropdown-item">Wynwood Art & Fun</a></li>
-            <li><a href="airport.html" class="dropdown-item">Airport Pick up & drop off</a></li>
+            <li><a href="yacht.html" class="dropdown-item">Yacht & boat</a></li>
+            <li><a href="dining.html" class="dropdown-item">Miami relocation</a></li>
+            <li><a href="wynwood.html" class="dropdown-item">Tours & Excursions</a></li>
+            <li><a href="airport.html" class="dropdown-item">Airport transfer</a></li>
 
           </ul>
         </li>
@@ -113,15 +112,15 @@
       <div class="booking-form-container">
         <div class="booking-form-card">
           <div id="tab-navigation" class="border-b border-gray-200">
-            <nav class="-mb-px flex w-full" aria-label="Tabs" role="tablist">
-              <button type="button" id="tab-button-oneway" data-tab-target="#panel-oneway" 
-                      class="tab-button" 
-                      role="tab" aria-selected="true" aria-controls="panel-oneway">One Way</button>
-              <button type="button" id="tab-button-experience-plus" data-tab-target="#panel-experience-plus" 
-                      class="tab-button" 
-                      role="tab" aria-selected="false" aria-controls="panel-experience-plus">Experience +</button>
-            </nav>
-          </div>
+  <nav class="-mb-px flex w-full" aria-label="Tabs" role="tablist">
+    <button type="button" id="tab-button-oneway" data-tab-target="#panel-oneway" 
+            class="tab-button" 
+            role="tab" aria-selected="true" aria-controls="panel-oneway">One Way</button>
+    <button type="button" id="tab-button-experience-plus" data-tab-target="#panel-experience-plus" 
+            class="tab-button" 
+            role="tab" aria-selected="false" aria-controls="panel-experience-plus">Experience +</button>
+  </nav>
+</div>
 
           <div class="form-padding">
             
@@ -131,7 +130,7 @@
                 <!-- From Input -->
                 <div class="relative">
                   <div class="google-maps-container">
-                    <label for="from-location" class="location-label">Pickup Location</label>
+                    <label for="from-location" class="location-label">Starting Location</label>
                     <span class="location-icon">
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
@@ -142,7 +141,7 @@
                   </div>
                   <span id="from-location-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                   
-                  <button type="button" id="get-location-button" class="current-location-btn">
+                 
                     <!-- Icon and text added via JavaScript -->
                   </button>
                 </div>
@@ -301,13 +300,11 @@
                      <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27Z"></path></svg></span>
                      <select name="experience-dropdown" id="experience-dropdown" required aria-describedby="experience-dropdown-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6">
                        <option value="">-- Choose Service --</option>
-                       <option value="hourly_chauffeur">Hourly Chauffeur</option>
-                       <option value="water_sky">Yacht & Premier Suv</option>
-                       <option value="Dining Expiriences">Dining Experiences</option>
-                       <option value="wynwood_night">Wynwood Art & Fun</option>
-                       <option value="Live Performances">Live Performances</option>
-                       <option value="Airport Pick up & drop off">Airport Pick up & drop off</option>
-                       
+<option value="hourly_chauffeur">Hourly Chauffeur</option>
+<option value="water_sky">Yacht & boat</option>
+<option value="miami_relocation">Miami relocation</option>
+<option value="tours_excursions">Tours & Excursions</option>
+<option value="airport_transfer">Airport transfer</option>
                      </select>
                      <span id="experience-dropdown-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                    </div>
@@ -341,39 +338,13 @@
                      <fieldset aria-labelledby="date-preference-label" aria-describedby="date_preference-error">
                        <legend class="sr-only">Select Preferred Timing</legend>
                        <div class="flex flex-wrap gap-x-4 gap-y-2">
-                         <div class="flex items-center"><input id="pref-asap" name="date_preference" type="radio" value="ASAP / Next Day" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-asap" class="ml-2 block text-sm text-gray-900">ASAP / Next Day</label></div>
+                         <div class="flex items-center"><input id="pref-asap" name="date_preference" type="radio" value="ASAP / Next Day" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-asap" class="ml-2 block text-sm text-gray-900">Today / Next Day</label></div>
                          <div class="flex items-center"><input id="pref-weekend" name="date_preference" type="radio" value="This Coming Weekend" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-weekend" class="ml-2 block text-sm text-gray-900">This Coming Weekend</label></div>
                          <div class="flex items-center"><input id="pref-weekday" name="date_preference" type="radio" value="Next Week (Mon-Fri)" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-weekday" class="ml-2 block text-sm text-gray-900">Next Week (Mon-Fri)</label></div>
                          <div class="flex items-center"><input id="pref-flexible" name="date_preference" type="radio" value="Flexible / Other Date" checked class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-flexible" class="ml-2 block text-sm text-gray-900">Flexible / Other Date</label></div>
                        </div>
                      </fieldset>
                      <span id="date_preference-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                   </div>
-                   <div id="common-experience-fields" class="hidden space-y-4 border-t border-gray-200 pt-4">
-                     <h5 class="text-sm font-semibold text-gray-700">Your Contact Details & Guests</h5>
-                     <div class="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2">
-                       <div class="relative">
-                         <label for="experience-name" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Your Name</label>
-                         <input type="text" name="name" id="experience-name" required aria-describedby="experience-name-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" />
-                         <span id="experience-name-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                       </div>
-                       <div class="relative">
-                         <label for="experience-guests" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Number of Guests</label>
-                         <input type="number" name="guests" id="experience-guests" required min="1" value="2" aria-describedby="experience-guests-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" />
-                         <span id="experience-guests-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                       </div>
-                       <div class="relative">
-                         <label for="experience-email" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Email</label>
-                         <input type="email" name="email" id="experience-email" required aria-describedby="experience-email-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" />
-                         <span id="experience-email-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                       </div>
-                       <div class="relative">
-                         <label for="experience-phone" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Phone</label>
-                         <input type="tel" name="phone" id="experience-phone" required aria-describedby="experience-phone-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" />
-                         <span id="experience-phone-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                       </div>
-                     </div>
-                     
                    </div>
                    <div id="experience-options-container" class="hidden space-y-4">
                      <div id="water-sky-options" class="hidden relative border-t border-gray-200 pt-4"></div>
@@ -382,8 +353,27 @@
                           Wynwood Art Tour
                         </h2>
                       </div>
-                      <div id="everglades-options" class="hidden relative border-t border-gray-200 pt-4"></div>
-                      <div id="keys-escape-options" class="hidden relative border-t border-gray-200 pt-4"></div>
+                      <div id="miami-relocation-options" class="hidden space-y-4 border-t border-gray-200 pt-4">
+  <div class="text-sm bg-gray-50 p-4 rounded-md border border-gray-200">
+    <h3 class="font-bold text-lg mb-2 text-black">Housing services</h3>
+    <p class="mb-3 text-black">Thinking of staying in Miami? There are options we provide our local knowledge To help you acomplish your goals. </p>
+    
+    
+      
+ 
+      
+      
+    
+      
+
+      
+      <div>
+        <label for="relocation-notes" class="block text-sm font-medium text-black mb-1">Brief Summary</summary></label>
+        <textarea id="relocation-notes" name="relocation_notes" rows="2" class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Here type when you are availabile to talk, and what you are trying to acomplish!"></textarea>
+      </div>
+    </div>
+    
+    
                     </div>
                 </div>
               </div>
@@ -582,10 +572,9 @@
     const urlToExperienceMap = {
       'hourly.html': 'hourly_chauffeur',
       'yacht.html': 'water_sky',
-      'dining.html': 'Dining Expiriences',
-      'performances.html': 'Live Performances',
-      'wynwood.html': 'wynwood_night',
-      'airport.html': 'Airport Pick up & drop off'
+      'dining.html': 'miami_relocation',
+      'wynwood.html': 'tours_excursions',
+      'airport.html': 'airport_transfer'
     };
     
     // 2. Get references to key elements
@@ -637,6 +626,7 @@
       document.getElementById('experience-options-container')?.classList.add('hidden');
       document.getElementById('water-sky-options')?.classList.add('hidden');
       document.getElementById('wynwood-night-options')?.classList.add('hidden');
+      document.getElementById('miami-relocation-options')?.classList.add('hidden');
       
       // Get the selected value
       const selectedExperience = experienceDropdown.value;
@@ -659,22 +649,19 @@
             document.getElementById('date-preference-container')?.classList.remove('hidden');
             break;
             
-          case 'wynwood_night':
+          case 'tours_excursions': // Updated value
             document.getElementById('wynwood-night-options')?.classList.remove('hidden');
             document.getElementById('date-preference-container')?.classList.remove('hidden');
             break;
             
-          case 'Dining Expiriences':
-            // Add dining-specific container display logic here
+          case 'miami_relocation': // Updated value
+            document.getElementById('miami-relocation-options')?.classList.remove('hidden');
             document.getElementById('date-preference-container')?.classList.remove('hidden');
+            // Update submit button text
+            document.querySelector('#submit-button .button-text').textContent = 'Request Relocation Consultation';
             break;
             
-          case 'Live Performances':
-            // Add performances-specific container display logic here
-            document.getElementById('date-preference-container')?.classList.remove('hidden');
-            break;
-            
-          case 'Airport Pick up & drop off':
+          case 'airport_transfer': // Updated value
             // Add airport-specific container display logic here
             document.getElementById('date-preference-container')?.classList.remove('hidden');
             break;
@@ -759,3 +746,4 @@
 </style>
   </body>
 </html>
+
