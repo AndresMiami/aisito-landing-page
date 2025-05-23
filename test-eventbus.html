@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventBus Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #f5f5f5; 
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+        }
+        .status { 
+            padding: 10px; 
+            margin: 10px 0; 
+            border-radius: 4px; 
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 EventBus Test Suite</h1>
+        <p>Testing the modular EventBus system independently.</p>
+        
+        <div id="status" class="status">
+            <strong>Status:</strong> <span id="status-text">Loading...</span>
+        </div>
+        
+        <h3>Console Output:</h3>
+        <p>Check your browser console (F12) for detailed test results.</p>
+        
+        <h3>Manual Testing:</h3>
+        <button onclick="runManualTest()">Run Manual Test</button>
+        <button onclick="testNamespaces()">Test Namespaces</button>
+        <button onclick="testDebounce()">Test Debounce</button>
+        
+        <div id="manual-results"></div>
+    </div>
+    
+    <script type="module">
+        import { testEventBus } from './src/core/EventBus.test.js';
+        import eventBus from './src/core/EventBus.js';
+        
+        // Update status
+        document.getElementById('status-text').textContent = 'Running tests...';
+        
+        // Run automated tests
+        try {
+            const result = testEventBus();
+            document.getElementById('status').className = 'status success';
+            document.getElementById('status-text').textContent = 'All tests passed! ✅';
+        } catch (error) {
+            document.getElementById('status').className = 'status error';
+            document.getElementById('status-text').textContent = `Tests failed: ${error.message}`;
+            console.error('Test error:', error);
+        }
+        
+        // Make available for manual testing
+        window.eventBus = eventBus;
+        window.testEventBus = testEventBus;
+        
+        // Manual test functions
+        window.runManualTest = function() {
+            const results = document.getElementById('manual-results');
+            results.innerHTML = '<h4>Manual Test Results:</h4>';
+            
+            let output = [];
+            
+            // Subscribe to test event
+            const unsubscribe = eventBus.subscribe('manual.test', (data) => {
+                output.push(`Received: ${JSON.stringify(data)}`);
+                updateResults();
+            });
+            
+            // Publish test events
+            eventBus.publish('manual.test', { message: 'Hello from manual test!' });
+            eventBus.publish('manual.test', { count: 42, success: true });
+            
+            function updateResults() {
+                results.innerHTML = '<h4>Manual Test Results:</h4><ul>' + 
+                    output.map(item => `<li>${item}</li>`).join('') + '</ul>';
+            }
+            
+            // Clean up after 2 seconds
+            setTimeout(() => {
+                unsubscribe();
+                output.push('✅ Manual test completed and cleaned up');
+                updateResults();
+            }, 2000);
+        };
+        
+        window.testNamespaces = function() {
+            const results = document.getElementById('manual-results');
+            results.innerHTML = '<h4>Namespace Test Results:</h4>';
+            
+            let output = [];
+            
+            // Subscribe to namespace
+            eventBus.subscribe('ui.*', (data) => {
+                output.push(`UI namespace received: ${data.action}`);
+                updateResults();
+            });
+            
+            // Publish different UI events
+            eventBus.publish('ui.button.click', { action: 'button clicked' });
+            eventBus.publish('ui.form.submit', { action: 'form submitted' });
+            eventBus.publish('ui.tab.switch', { action: 'tab switched' });
+            
+            function updateResults() {
+                results.innerHTML = '<h4>Namespace Test Results:</h4><ul>' + 
+                    output.map(item => `<li>${item}</li>`).join('') + '</ul>';
+            }
+        };
+        
+        window.testDebounce = function() {
+            const results = document.getElementById('manual-results');
+            results.innerHTML = '<h4>Debounce Test:</h4><p>Sending 5 rapid events, should only execute once...</p>';
+            
+            let executeCount = 0;
+            
+            eventBus.subscribe('debounce.test', () => {
+                executeCount++;
+                results.innerHTML = `<h4>Debounce Test:</h4><p>Executed ${executeCount} time(s) ✅</p>`;
+            });
+            
+            // Send 5 rapid debounced events
+            for (let i = 0; i < 5; i++) {
+                eventBus.debounce('debounce.test', {}, 100);
+            }
+        };
+        
+        console.log('✅ EventBus test page ready!');
+        console.log('Available functions: testEventBus(), runManualTest(), testNamespaces(), testDebounce()');
+    </script>
+</body>
+</html>

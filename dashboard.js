@@ -1148,7 +1148,8 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('duration-container')?.classList.add('hidden');
       document.getElementById('date-time-container-hourly')?.classList.add('hidden');
       document.getElementById('date-preference-container')?.classList.add('hidden');
-      document.getElementById('common-experience-fields')?.classList.add('hidden');
+      // REMOVE THIS LINE:
+      // document.getElementById('common-experience-fields')?.classList.add('hidden');
       document.getElementById('experience-options-container')?.classList.add('hidden');
       document.getElementById('water-sky-options')?.classList.add('hidden');
       document.getElementById('wynwood-night-options')?.classList.add('hidden');
@@ -1157,8 +1158,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const selectedExperience = experienceDropdown.value;
       
       if (selectedExperience) {
-        // Show common fields for all experiences
-        document.getElementById('common-experience-fields')?.classList.remove('hidden');
+        // REMOVE THIS LINE:
+        // document.getElementById('common-experience-fields')?.classList.remove('hidden');
         document.getElementById('experience-options-container')?.classList.remove('hidden');
         document.getElementById('date-time-container-hourly')?.classList.remove('hidden');
         

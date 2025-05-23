@@ -311,6 +311,13 @@
                    <div id="hourly-description" class="hidden text-sm text-gray-600 bg-gray-50 p-3 rounded-md border border-gray-200">
                      Ideal for business meetings, tourist visits, and multiple stop trips. Gives you flexibility and control over your schedule.
                    </div>
+                   <div id="tours-description" class="hidden text-sm text-gray-600 bg-gray-50 p-3 rounded-md border border-gray-200">
+  Experience Miami's vibrant culture with local expert guides. Perfect for art districts, historic sites, and hidden gems throughout the city.
+</div>
+
+<div id="airport-description" class="hidden text-sm text-gray-600 bg-gray-50 p-3 rounded-md border border-gray-200">
+  Stress-free transportation to and from all Miami airports. Enjoy reliable, punctual service with flight tracking and door-to-door convenience.
+</div>
                    <div id="duration-container" class="relative hidden">
                      <label for="duration-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Duration</label>
                      <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg></span>
@@ -406,165 +413,165 @@
     <!-- Add the following JS before the closing body tag -->
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        // Form elements
-        const fromLocation = document.getElementById('from-location');
-        const toAddress = document.getElementById('to-address');
-        const requestNowBtn = document.getElementById('request-now-button');
-        const bookLaterBtn = document.getElementById('book-later-button');
-        const pickupDate = document.getElementById('pickup-date-oneway');
-        const pickupTime = document.getElementById('pickup-time-oneway');
-        const scheduledBookingInputs = document.getElementById('scheduled-booking-inputs');
-        const vehicleSelection = document.getElementById('vehicle-selection-oneway');
-        const submitButton = document.getElementById('submit-button');
-        const resetButton = document.getElementById('reset-button');
-        
-        let bookingPreference = '';
-        
-        // Form validation state
-        const formState = {
-          fromValid: false,
-          toValid: false,
-          timePreferenceSelected: false,
-          dateTimeValid: false,
-          vehicleSelected: false
-        };
-        
-        // Check if form is ready to show vehicles
-        function checkShowVehicles() {
-          const { fromValid, toValid, timePreferenceSelected, dateTimeValid } = formState;
-          
-          if (fromValid && toValid && timePreferenceSelected) {
-            // If "Book Later" is selected, we also need date/time
-            if (bookingPreference === 'later' && !dateTimeValid) {
-              vehicleSelection.classList.remove('show');
-              return;
-            }
-            
-            // Show vehicles with animation
-            vehicleSelection.classList.add('show');
-          } else {
-            vehicleSelection.classList.remove('show');
-          }
-        }
-        
-        // Check if form is valid for submission
-        function checkFormValidity() {
-          const { fromValid, toValid, timePreferenceSelected, dateTimeValid, vehicleSelected } = formState;
-          
-          if (fromValid && toValid && timePreferenceSelected && vehicleSelected) {
-            if (bookingPreference === 'later' && !dateTimeValid) {
-              submitButton.disabled = true;
-              return;
-            }
-            
-            submitButton.disabled = false;
-          } else {
-            submitButton.disabled = true;
-          }
-        }
-        
-        // Event listeners for form fields
-        fromLocation.addEventListener('input', () => {
-          formState.fromValid = fromLocation.value.trim() !== '';
-          checkShowVehicles();
-          checkFormValidity();
-        });
-        
-        toAddress.addEventListener('input', () => {
-          formState.toValid = toAddress.value.trim() !== '';
-          checkShowVehicles();
-          checkFormValidity();
-        });
-        
-        // Request Now button
-        requestNowBtn.addEventListener('click', () => {
-          requestNowBtn.classList.add('selected');
-          bookLaterBtn.classList.remove('selected');
-          scheduledBookingInputs.classList.add('hidden');
-          
-          bookingPreference = 'now';
-          document.getElementById('booking-preference').value = 'now';
-          formState.timePreferenceSelected = true;
-          formState.dateTimeValid = true; // Not needed for "now"
-          
-          checkShowVehicles();
-          checkFormValidity();
-        });
-        
-        // Book Later button
-        bookLaterBtn.addEventListener('click', () => {
-          bookLaterBtn.classList.add('selected');
-          requestNowBtn.classList.remove('selected');
-          scheduledBookingInputs.classList.remove('hidden');
-          
-          bookingPreference = 'later';
-          document.getElementById('booking-preference').value = 'later';
-          formState.timePreferenceSelected = true;
-          
-          // Date/time need to be checked
-          formState.dateTimeValid = pickupDate.value.trim() !== '' && pickupTime.value.trim() !== '';
-          
-          checkShowVehicles();
-          checkFormValidity();
-        });
-        
-        // Date/time inputs for "Book Later"
-        pickupDate.addEventListener('change', () => {
-          formState.dateTimeValid = pickupDate.value.trim() !== '' && pickupTime.value.trim() !== '';
-          checkShowVehicles();
-          checkFormValidity();
-        });
-        
-        pickupTime.addEventListener('change', () => {
-          formState.dateTimeValid = pickupDate.value.trim() !== '' && pickupTime.value.trim() !== '';
-          checkShowVehicles();
-          checkFormValidity();
-        });
-        
-        // Vehicle selection
-        document.querySelectorAll('input[name="vehicle_type_oneway"]').forEach(radio => {
-          radio.addEventListener('change', () => {
-            formState.vehicleSelected = true;
-            checkFormValidity();
-          });
-        });
-        
-        // Reset button functionality
-        resetButton.addEventListener('click', () => {
-          // Reset form fields
-          document.getElementById('booking-form').reset();
-          
-          // Reset selection visuals
-          requestNowBtn.classList.remove('selected');
-          bookLaterBtn.classList.remove('selected');
-          document.querySelectorAll('.vehicle-card').forEach(card => {
-            card.classList.remove('selected');
-          });
-          
-          // Hide conditional elements
-          scheduledBookingInputs.classList.add('hidden');
-          vehicleSelection.classList.remove('show');
-          
-          // Reset form state
-          formState.fromValid = false;
-          formState.toValid = false;
-          formState.timePreferenceSelected = false;
-          formState.dateTimeValid = false;
-          formState.vehicleSelected = false;
-          bookingPreference = '';
-          
-          // Disable submit button
-          submitButton.disabled = true;
-        });
-        
-        // Add selected class to vehicle cards on click
-        document.querySelectorAll('.vehicle-card').forEach(card => {
-          card.addEventListener('click', () => {
-            document.querySelectorAll('.vehicle-card').forEach(c => c.classList.remove('selected'));
-            card.classList.add('selected');
-          });
-        });
-      });
+  // Form elements
+  const fromLocation = document.getElementById('from-location');
+  const toAddress = document.getElementById('to-address');
+  const requestNowBtn = document.getElementById('request-now-button');
+  const bookLaterBtn = document.getElementById('book-later-button');
+  const pickupDate = document.getElementById('pickup-date-oneway');
+  const pickupTime = document.getElementById('pickup-time-oneway');
+  const scheduledBookingInputs = document.getElementById('scheduled-booking-inputs');
+  const vehicleSelection = document.getElementById('vehicle-selection-oneway');
+  const submitButton = document.getElementById('submit-button');
+  const resetButton = document.getElementById('reset-button');
+  
+  let bookingPreference = '';
+  
+  // Form validation state
+  const formState = {
+    fromValid: false,
+    toValid: false,
+    timePreferenceSelected: false,
+    dateTimeValid: false,
+    vehicleSelected: false
+  };
+  
+  // Check if form is ready to show vehicles
+  function checkShowVehicles() {
+    const { fromValid, toValid, timePreferenceSelected, dateTimeValid } = formState;
+    
+    if (fromValid && toValid && timePreferenceSelected) {
+      // If "Book Later" is selected, we also need date/time
+      if (bookingPreference === 'later' && !dateTimeValid) {
+        vehicleSelection.classList.remove('show');
+        return;
+      }
+      
+      // Show vehicles with animation
+      vehicleSelection.classList.add('show');
+    } else {
+      vehicleSelection.classList.remove('show');
+    }
+  }
+  
+  // Check if form is valid for submission
+  function checkFormValidity() {
+    const { fromValid, toValid, timePreferenceSelected, dateTimeValid, vehicleSelected } = formState;
+    
+    if (fromValid && toValid && timePreferenceSelected && vehicleSelected) {
+      if (bookingPreference === 'later' && !dateTimeValid) {
+        submitButton.disabled = true;
+        return;
+      }
+      
+      submitButton.disabled = false;
+    } else {
+      submitButton.disabled = true;
+    }
+  }
+  
+  // Event listeners for form fields
+  fromLocation.addEventListener('input', () => {
+    formState.fromValid = fromLocation.value.trim() !== '';
+    checkShowVehicles();
+    checkFormValidity();
+  });
+  
+  toAddress.addEventListener('input', () => {
+    formState.toValid = toAddress.value.trim() !== '';
+    checkShowVehicles();
+    checkFormValidity();
+  });
+  
+  // Request Now button
+  requestNowBtn.addEventListener('click', () => {
+    requestNowBtn.classList.add('selected');
+    bookLaterBtn.classList.remove('selected');
+    scheduledBookingInputs.classList.add('hidden');
+    
+    bookingPreference = 'now';
+    document.getElementById('booking-preference').value = 'now';
+    formState.timePreferenceSelected = true;
+    formState.dateTimeValid = true; // Not needed for "now"
+    
+    checkShowVehicles();
+    checkFormValidity();
+  });
+  
+  // Book Later button
+  bookLaterBtn.addEventListener('click', () => {
+    bookLaterBtn.classList.add('selected');
+    requestNowBtn.classList.remove('selected');
+    scheduledBookingInputs.classList.remove('hidden');
+    
+    bookingPreference = 'later';
+    document.getElementById('booking-preference').value = 'later';
+    formState.timePreferenceSelected = true;
+    
+    // Date/time need to be checked
+    formState.dateTimeValid = pickupDate.value.trim() !== '' && pickupTime.value.trim() !== '';
+    
+    checkShowVehicles();
+    checkFormValidity();
+  });
+  
+  // Date/time inputs for "Book Later"
+  pickupDate.addEventListener('change', () => {
+    formState.dateTimeValid = pickupDate.value.trim() !== '' && pickupTime.value.trim() !== '';
+    checkShowVehicles();
+    checkFormValidity();
+  });
+  
+  pickupTime.addEventListener('change', () => {
+    formState.dateTimeValid = pickupDate.value.trim() !== '' && pickupTime.value.trim() !== '';
+    checkShowVehicles();
+    checkFormValidity();
+  });
+  
+  // Vehicle selection
+  document.querySelectorAll('input[name="vehicle_type_oneway"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      formState.vehicleSelected = true;
+      checkFormValidity();
+    });
+  });
+  
+  // Reset button functionality
+  resetButton.addEventListener('click', () => {
+    // Reset form fields
+    document.getElementById('booking-form').reset();
+    
+    // Reset selection visuals
+    requestNowBtn.classList.remove('selected');
+    bookLaterBtn.classList.remove('selected');
+    document.querySelectorAll('.vehicle-card').forEach(card => {
+      card.classList.remove('selected');
+    });
+    
+    // Hide conditional elements
+    scheduledBookingInputs.classList.add('hidden');
+    vehicleSelection.classList.remove('show');
+    
+    // Reset form state
+    formState.fromValid = false;
+    formState.toValid = false;
+    formState.timePreferenceSelected = false;
+    formState.dateTimeValid = false;
+    formState.vehicleSelected = false;
+    bookingPreference = '';
+    
+    // Disable submit button
+    submitButton.disabled = true;
+  });
+  
+  // Add selected class to vehicle cards on click
+  document.querySelectorAll('.vehicle-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.vehicle-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+    });
+  });
+});
     </script>
     <script>
   document.addEventListener('DOMContentLoaded', () => {
@@ -619,6 +626,8 @@
     experienceDropdown.addEventListener('change', () => {
       // Hide all specific option containers
       document.getElementById('hourly-description')?.classList.add('hidden');
+      document.getElementById('tours-description')?.classList.add('hidden'); // Make sure to hide tours description
+      document.getElementById('airport-description')?.classList.add('hidden'); // Make sure to hide airport description
       document.getElementById('duration-container')?.classList.add('hidden');
       document.getElementById('date-time-container-hourly')?.classList.add('hidden');
       document.getElementById('date-preference-container')?.classList.add('hidden');
@@ -635,35 +644,39 @@
         // Show common fields for all experiences
         document.getElementById('common-experience-fields')?.classList.remove('hidden');
         document.getElementById('experience-options-container')?.classList.remove('hidden');
-        document.getElementById('date-time-container-hourly')?.classList.remove('hidden');
         
         // Show specific fields based on experience
         switch (selectedExperience) {
           case 'hourly_chauffeur':
             document.getElementById('hourly-description')?.classList.remove('hidden');
             document.getElementById('duration-container')?.classList.remove('hidden');
+            document.getElementById('date-time-container-hourly')?.classList.add('hidden');
+            document.querySelector('#submit-button .button-text').textContent = 'Request Hourly Service';
             break;
             
           case 'water_sky':
             document.getElementById('water-sky-options')?.classList.remove('hidden');
             document.getElementById('date-preference-container')?.classList.remove('hidden');
+            document.querySelector('#submit-button .button-text').textContent = 'Book Water Experience';
             break;
             
-          case 'tours_excursions': // Updated value
+          case 'tours_excursions':
             document.getElementById('wynwood-night-options')?.classList.remove('hidden');
+            document.getElementById('tours-description')?.classList.remove('hidden');
             document.getElementById('date-preference-container')?.classList.remove('hidden');
+            document.querySelector('#submit-button .button-text').textContent = 'Book Tour Experience';
             break;
             
-          case 'miami_relocation': // Updated value
+          case 'airport_transfer':
+            document.getElementById('airport-description')?.classList.remove('hidden');
+            document.getElementById('date-preference-container')?.classList.remove('hidden');
+            document.querySelector('#submit-button .button-text').textContent = 'Book Airport Transfer';
+            break;
+          
+          case 'miami_relocation':
             document.getElementById('miami-relocation-options')?.classList.remove('hidden');
             document.getElementById('date-preference-container')?.classList.remove('hidden');
-            // Update submit button text
-            document.querySelector('#submit-button .button-text').textContent = 'Request Relocation Consultation';
-            break;
-            
-          case 'airport_transfer': // Updated value
-            // Add airport-specific container display logic here
-            document.getElementById('date-preference-container')?.classList.remove('hidden');
+            document.querySelector('#submit-button .button-text').textContent = 'Request Information';
             break;
         }
       }
@@ -688,7 +701,136 @@
         document.querySelector(targetPanelId)?.classList.remove('hidden');
       });
     });
+    
+    // Handle date preference radio buttons and date/time picker visibility
+    const datePreferenceRadios = document.querySelectorAll('input[name="date_preference"]');
+    const dateTimeContainer = document.getElementById('date-time-container-hourly');
+    
+    // Hide date picker by default
+    if (dateTimeContainer) {
+      dateTimeContainer.classList.add('hidden');
+    }
+    
+    // Function to toggle date/time visibility based on selection
+    function toggleDateTimeVisibility() {
+      const selectedValue = document.querySelector('input[name="date_preference"]:checked')?.value;
+      
+      if (dateTimeContainer) {
+        // Only show date/time picker for "Next Week" and "Flexible" options
+        if (selectedValue === 'Next Week (Mon-Fri)' || selectedValue === 'Flexible / Other Date') {
+          dateTimeContainer.classList.remove('hidden');
+        } else {
+          dateTimeContainer.classList.add('hidden');
+        }
+      }
+    }
+    
+    // Add event listeners to radio buttons
+    datePreferenceRadios.forEach(radio => {
+      radio.addEventListener('change', toggleDateTimeVisibility);
+    });
+      // Initialize visibility state on page load based on default selection
+    toggleDateTimeVisibility();
   });
+</script>
+
+<!-- Load the new modular architecture -->
+<script type="module" src="src/main.js"></script>
+
+<!-- Integration Script for New Architecture -->
+<script type="module">
+  // Only initialize when ?test=integration is in the URL
+  if (window.location.search.includes('test=integration')) {
+    console.log('🧪 Test Integration: Loading new modular architecture...');
+    
+    try {
+      // Create a container for the new architecture components
+      window.newArchitecture = {};
+        // Import core modules
+      const moduleImports = Promise.all([
+        import('./src/core/EventBus.js'),
+        import('./src/core/Bridge.js'),
+        import('./src/core/config.js'),
+        import('./src/core/DOMManager.js')
+      ]);
+      
+      moduleImports.then(([eventBusModule, bridgeModule, configModule, domManagerModule]) => {
+        // Store references in the newArchitecture object
+        const { default: eventBus } = eventBusModule;
+        const { initBridge } = bridgeModule;
+        const { default: config } = configModule;
+        const { DOMManager } = domManagerModule;
+        
+        // Make modules available for testing/debugging
+        window.newArchitecture = {
+          eventBus,
+          config,
+          domManager: null,
+          initialized: false
+        };
+        
+        // Add event logging middleware for debugging
+        eventBus.addMiddleware((eventType, data) => {
+          console.log(`🔔 Event: ${eventType}`, data);
+          return data;
+        });
+        
+        // Initialize the DOMManager
+        const domManager = new DOMManager(document, eventBus);
+        window.newArchitecture.domManager = domManager;
+        
+        // Initialize the bridge when DOM is ready
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', () => initializeArchitecture());
+        } else {
+          // DOM is already loaded
+          initializeArchitecture();
+        }
+        
+        function initializeArchitecture() {
+          // Initialize bridge to connect existing DOM to EventBus
+          initBridge(eventBus, document, config);
+          
+          // Mark as initialized
+          window.newArchitecture.initialized = true;
+          
+          // Publish initialization event
+          eventBus.publish('architecture.initialized', {
+            timestamp: Date.now(),
+            url: window.location.href
+          });
+          
+          // Run a simple test to verify integration
+          setTimeout(() => {
+            console.log('🧪 Running integration test...');
+            eventBus.publish('test.integration', { success: true });
+            
+            // Test subscribing to an event
+            const unsubscribe = eventBus.subscribe('test.response', (data) => {
+              console.log('✅ Integration test successful!', data);
+              unsubscribe(); // Clean up subscription
+            });
+            
+            // Simulate a response
+            setTimeout(() => {
+              eventBus.publish('test.response', { 
+                message: 'Integration working correctly',
+                timestamp: Date.now()
+              });
+            }, 100);
+          }, 500);
+          
+          console.log('✅ New modular architecture initialized successfully');
+          console.log('📖 Available as window.newArchitecture for testing');
+          console.log('📝 Try: window.newArchitecture.eventBus.publish("custom.event", {data: "test"})');
+        }
+      }).catch(error => {
+        console.error('❌ Failed to load modular architecture modules:', error);
+      });
+    } catch (error) {
+      console.error('❌ Error initializing modular architecture:', error);
+    }
+  }
 </script>
 
 <style>
