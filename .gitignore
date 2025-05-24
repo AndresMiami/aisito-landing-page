@@ -9,6 +9,7 @@ node_modules/
 
 # Build output folder
 dist/
+build/
 
 # Log files
 npm-debug.log*
@@ -19,3 +20,6 @@ yarn-error.log*
 .env
 .env.*
 !.env.example
+
+.DS_Store
+Thumbs.db

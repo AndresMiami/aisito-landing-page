@@ -38,9 +38,9 @@
 @import url('./components/_header.css');
 @import url('./components/_tabs.css');
 @import url('./components/_booking-form.css');
-@import url('./components/_vehicle-cards.css');
-@import url('./components/_buttons.css');
-@import url('./components/_vehicle-selector.css');
+@import './components/_vehicle-cards.css';
+@import './components/_vehicle-selector.css'; 
+@import './components/_buttons.css';
 @import url('./components/_google-maps.css');
 
 /* Global utility classes */

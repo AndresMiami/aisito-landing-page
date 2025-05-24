@@ -1,22 +1,28 @@
 /**
- * Manages tab navigation functionality
+ * Minimal TabNavigation Component - Compatible with SimpleBridge
+ * Designed for safe integration with existing dashboard functionality
  */
 export class TabNavigation {
   /**
-   * Creates a new TabNavigation instance
-   * @param {HTMLElement|string} container - The container element for tab buttons and panels
+   * Creates a new TabNavigation instance that works with SimpleBridge
    * @param {Object} options - Configuration options
-   * @param {string} [options.activeTabClass='tab-navigation__tab--active'] - Class for active tab
-   * @param {string} [options.activeTabPanelClass='tab-navigation__panel--active'] - Class for active panel
-   * @param {string} [options.tabSelector='.tab-navigation__tab'] - Selector for tab buttons
-   * @param {string} [options.panelSelector='.tab-navigation__panel'] - Selector for tab panels
-   * @param {Function} [options.onTabChange] - Callback when tab changes
+   * @param {HTMLElement} options.container - The container element for tabs
+   * @param {Function} options.eventBus - SimpleBridge eventBus for communication
+   * @param {string} [options.tabButtonSelector='.tab-button'] - Selector for tab buttons
+   * @param {string} [options.tabPanelSelector='.tab-panel'] - Selector for tab panels
    */
-  constructor(container, options = {}) {
-    // Handle string selector or DOM element
-    this.container = typeof container === 'string'
-      ? document.querySelector(container)
-      : container;
+  constructor(options = {}) {
+    this.container = options.container;
+    this.eventBus = options.eventBus;
+    this.tabButtonSelector = options.tabButtonSelector || '.tab-button';
+    this.tabPanelSelector = options.tabPanelSelector || '.tab-panel';
+    
+    // State tracking
+    this.currentTab = null;
+    this.previousTab = null;
+    this.isInitialized = false;
+    
+    console.log('🎯 TabNavigation: Minimal component created');
 
     // Validate container
     if (!this.container) {

@@ -13,9 +13,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/custom-places.css">
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAd_O4s_73E_A8rq7TGCHKVEBFHzNecAHM&libraries=places&v=beta" async defer></script>
-    <script type="module" src="dashboard.js"></script>
-    <script src="js/custom-places.js" defer></script>
+    <!-- Google Maps -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAd_O4s_73E_A8rq7TGCHKVEBFHzNecAHM&libraries=places&v=beta&loading=async"></script>
+
+<!-- Essential functions first - provides getElementRefs for SimpleBridge -->
+<script src="essential-functions.js"></script>
+
+<!-- Load your modular components -->
+<script type="module" src="dashboard.js"></script>
+<script type="module" src="simple-bridge.js"></script>
   </head>
   <body class="bg-gray-100" style="background-image: url('images/miami-skyline-abstract-form.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
     <header class="site-header">
@@ -125,85 +131,78 @@
           <div class="form-padding">
             
             <form action="#" method="POST" id="booking-form" class="space-y-4">
-              <!-- Wrap location fields in container for easier management -->
-              <div id="location-fields-container" class="space-y-4">
-                <!-- From Input -->
-                <div class="relative">
-                  <div class="google-maps-container">
-                    <label for="from-location" class="location-label">Starting Location</label>
-                    <span class="location-icon">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                      </svg>
-                    </span>
-                    <gmp-place-autocomplete id="from-location" placeholder="Enter pickup location..."></gmp-place-autocomplete>
-                    <!-- Clear button will be added via JavaScript -->
-                  </div>
-                  <span id="from-location-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                  
-                 
-                    <!-- Icon and text added via JavaScript -->
-                  </button>
-                </div>
-
-                <!-- To Input -->
-                <div class="google-maps-container">
-                  <label for="to-address" class="location-label">To</label>
-                  <span class="location-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7z"></path>
-                    </svg>
-                  </span>
-                  <gmp-place-autocomplete id="to-address"
-                    address-filter="country:us"
-                    type-filter="establishment,geocode,airport,lodging,point_of_interest,tourist_attraction" 
-                    placeholder="Enter drop-off location"
-                    required
-                    aria-describedby="to-address-error">
-                  </gmp-place-autocomplete>
-                  <span id="to-address-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                </div>
-              </div>
-                
-
               <div class="tab-panels space-y-3 pt-2">
                 <div id="panel-oneway" class="tab-panel space-y-3" role="tabpanel" tabindex="0" aria-labelledby="tab-button-oneway">
+                  <!-- ONE WAY TAB: Show both From and To locations -->
+                  <div id="location-fields-container-oneway" class="space-y-4">
+                    <!-- From Input -->
+                    <div class="relative">
+                      <div class="google-maps-container">
+                        <label for="from-location" class="location-label">Starting Location</label>
+                        <span class="location-icon">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                          </svg>
+                        </span>
+                        <gmp-place-autocomplete id="from-location" placeholder="Enter pickup location..."></gmp-place-autocomplete>
+                      </div>
+                      <span id="from-location-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                    </div>
+
+                    <!-- To Input -->
+                    <div class="google-maps-container">
+                      <label for="to-address" class="location-label">To</label>
+                      <span class="location-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7z"></path>
+                        </svg>
+                      </span>
+                      <gmp-place-autocomplete id="to-address"
+                        address-filter="country:us"
+                        type-filter="establishment,geocode,airport,lodging,point_of_interest,tourist_attraction" 
+                        placeholder="Enter drop-off location"
+                        required
+                        aria-describedby="to-address-error">
+                      </gmp-place-autocomplete>
+                      <span id="to-address-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                    </div>
+                  </div>
+
                   <div id="date-time-container-oneway" class="relative">
                     <input type="hidden" name="booking_preference" id="booking-preference" value="">
                     
                     <div class="button-container mb-4">
-  <button type="button" id="request-now-button" class="booking-time-button" id="request-now">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#1e3a8a" class="w-6 h-6">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-    <span class="text-lg font-bold">Request Now</span>
-  </button>
-  <button type="button" id="book-later-button" class="booking-time-button" id="book-for-later">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#1e3a8a" class="w-6 h-6">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 2 00-2-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-    </svg>
-    <span class="text-lg font-bold">Book for Later</span>
-  </button>
-</div>
-                     
+                      <button type="button" id="request-now-button" class="booking-time-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#1e3a8a" class="w-6 h-6">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span class="text-lg font-bold">Request Now</span>
+                      </button>
+                      <button type="button" id="book-later-button" class="booking-time-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#1e3a8a" class="w-6 h-6">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 2 00-2-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span class="text-lg font-bold">Book for Later</span>
+                      </button>
                     </div>
-                    <span id="booking-time-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                   </div>
+                  <span id="booking-time-error" class="mt-1 block text-xs text-red-600 hidden"></span>
 
                   <div id="scheduled-booking-inputs" class="hidden mt-4 space-y-4">
-                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
-                        <div>
-                           <label for="pickup-date-oneway" class="block text-xs font-medium text-gray-500 mb-0.5">Date</label>
-                           <input type="text" name="pickup-date-oneway" id="pickup-date-oneway" aria-describedby="pickup-date-oneway-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Date..." />
-                           <span id="pickup-date-oneway-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                        </div>
-                        <div>
-                           <label for="pickup-time-oneway" class="block text-xs font-medium text-gray-500 mb-0.5">Time</label>
-                           <input type="text" name="pickup-time-oneway" id="pickup-time-oneway" aria-describedby="pickup-time-oneway-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Time..." />
-                           <span id="pickup-time-oneway-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                        </div>
-                     </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
+                      <div>
+                         <label for="pickup-date-oneway" class="block text-xs font-medium text-gray-500 mb-0.5">Date</label>
+                         <input type="text" name="pickup-date-oneway" id="pickup-date-oneway" aria-describedby="pickup-date-oneway-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Date..." />
+                         <span id="pickup-date-oneway-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                      </div>
+                      <div>
+                         <label for="pickup-time-oneway" class="block text-xs font-medium text-gray-500 mb-0.5">Time</label>
+                         <input type="text" name="pickup-time-oneway" id="pickup-time-oneway" aria-describedby="pickup-time-oneway-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Time..." />
+                         <span id="pickup-time-oneway-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                      </div>
+                   </div>
                   </div>
+
                   <div id="vehicle-selection-oneway" class="vehicle-selection-container pt-4">
                     <h3 class="text-lg font-medium text-gray-900 mb-3">Select Your Vehicle</h3>
                     <fieldset aria-labelledby="vehicle-selection-oneway-label" aria-describedby="vehicle-type-oneway-error">
@@ -295,72 +294,90 @@
                   </div>
                   </div>
                 <div id="panel-experience-plus" class="tab-panel space-y-3 hidden" role="tabpanel" tabindex="0" aria-labelledby="tab-button-experience-plus">
-                   <div id="experience-dropdown-container" class="relative">
-                     <label for="experience-dropdown" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Select Service</label>
-                     <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27Z"></path></svg></span>
-                     <select name="experience-dropdown" id="experience-dropdown" required aria-describedby="experience-dropdown-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6">
-                       <option value="">-- Choose Service --</option>
+                  <!-- EXPERIENCE+ TAB: Show only Starting Location -->
+                  <div id="location-fields-container-experience" class="space-y-4">
+                    <!-- Starting Location Only -->
+                    <div class="relative">
+                      <div class="google-maps-container">
+                        <label for="from-location-exp" class="location-label">Starting Location</label>
+                        <span class="location-icon">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                          </svg>
+                        </span>
+                        <gmp-place-autocomplete id="from-location-exp" placeholder="Enter starting location..."></gmp-place-autocomplete>
+                      </div>
+                      <span id="from-location-exp-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                    </div>
+                  </div>
+
+                  <!-- Experience dropdown and other experience+ fields -->
+                  <div id="experience-dropdown-container" class="relative">
+                    <label for="experience-dropdown" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Select Service</label>
+                    <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27Z"></path></svg></span>
+                    <select name="experience-dropdown" id="experience-dropdown" required aria-describedby="experience-dropdown-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6">
+                      <option value="">-- Choose Service --</option>
 <option value="hourly_chauffeur">Hourly Chauffeur</option>
 <option value="water_sky">Yacht & boat</option>
 <option value="miami_relocation">Miami relocation</option>
 <option value="tours_excursions">Tours & Excursions</option>
 <option value="airport_transfer">Airport transfer</option>
-                     </select>
-                     <span id="experience-dropdown-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                   </div>
-                   <div id="hourly-description" class="hidden text-sm text-gray-600 bg-gray-50 p-3 rounded-md border border-gray-200">
-                     Ideal for business meetings, tourist visits, and multiple stop trips. Gives you flexibility and control over your schedule.
-                   </div>
-                   <div id="tours-description" class="hidden text-sm text-gray-600 bg-gray-50 p-3 rounded-md border border-gray-200">
+                    </select>
+                    <span id="experience-dropdown-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                  </div>
+                  <div id="hourly-description" class="hidden text-sm text-gray-600 bg-gray-50 p-3 rounded-md border border-gray-200">
+                    Ideal for business meetings, tourist visits, and multiple stop trips. Gives you flexibility and control over your schedule.
+                  </div>
+                  <div id="tours-description" class="hidden text-sm text-gray-600 bg-gray-50 p-3 rounded-md border border-gray-200">
   Experience Miami's vibrant culture with local expert guides. Perfect for art districts, historic sites, and hidden gems throughout the city.
 </div>
 
 <div id="airport-description" class="hidden text-sm text-gray-600 bg-gray-50 p-3 rounded-md border border-gray-200">
   Stress-free transportation to and from all Miami airports. Enjoy reliable, punctual service with flight tracking and door-to-door convenience.
 </div>
-                   <div id="duration-container" class="relative hidden">
-                     <label for="duration-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Duration</label>
-                     <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg></span>
-                     <select name="duration-hourly" id="duration-hourly" required aria-describedby="duration-hourly-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6">
-                       <option value="2">2 hours</option><option value="3">3 hours</option><option value="4">4 hours</option><option value="5">5 hours</option><option value="6">6 hours</option><option value="7">7 hours</option><option value="8">8 hours</option><option value="9">9 hours</option><option value="10">10 hours</option><option value="11">11 hours</option><option value="12">12 hours</option>
-                     </select>
-                     <span id="duration-hourly-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                   </div>
-                   <div id="date-time-container-hourly" class="relative hidden">
-                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
-                       <div>
-                         <label for="pickup-date-hourly" class="block text-xs font-medium text-gray-500 mb-0.5">Date</label>
-                         <input type="text" name="pickup-date-hourly" id="pickup-date-hourly" required aria-describedby="pickup-date-hourly-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Date..." />
-                         <span id="pickup-date-hourly-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                       </div>
-                       <div>
-                         <label for="pickup-time-hourly" id="pickup-time-label-hourly" class="block text-xs font-medium text-gray-500 mb-0.5">Start Time</label>
-                         <input type="text" name="pickup-time-hourly" id="pickup-time-hourly" required aria-describedby="pickup-time-hourly-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Start Time..." />
-                         <span id="pickup-time-hourly-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                       </div>
-                     </div>
-                   </div>
-                   <div id="date-preference-container" class="relative hidden pt-2">
-                     <label class="block text-sm font-medium text-black mb-1" id="date-preference-label">Preferred Timing</label>
-                     <fieldset aria-labelledby="date-preference-label" aria-describedby="date_preference-error">
-                       <legend class="sr-only">Select Preferred Timing</legend>
-                       <div class="flex flex-wrap gap-x-4 gap-y-2">
-                         <div class="flex items-center"><input id="pref-asap" name="date_preference" type="radio" value="ASAP / Next Day" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-asap" class="ml-2 block text-sm text-gray-900">Today / Next Day</label></div>
-                         <div class="flex items-center"><input id="pref-weekend" name="date_preference" type="radio" value="This Coming Weekend" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-weekend" class="ml-2 block text-sm text-gray-900">This Coming Weekend</label></div>
-                         <div class="flex items-center"><input id="pref-weekday" name="date_preference" type="radio" value="Next Week (Mon-Fri)" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-weekday" class="ml-2 block text-sm text-gray-900">Next Week (Mon-Fri)</label></div>
-                         <div class="flex items-center"><input id="pref-flexible" name="date_preference" type="radio" value="Flexible / Other Date" checked class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-flexible" class="ml-2 block text-sm text-gray-900">Flexible / Other Date</label></div>
-                       </div>
-                     </fieldset>
-                     <span id="date_preference-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                   </div>
-                   <div id="experience-options-container" class="hidden space-y-4">
-                     <div id="water-sky-options" class="hidden relative border-t border-gray-200 pt-4"></div>
-                      <div id="wynwood-night-options" class="hidden space-y-4 border-t border-gray-200 pt-4">
-                        <h2 class="text-2xl font-bold text-center" style="font-family: 'Permanent Marker', cursive; color: #ff4d4d;">
-                          Wynwood Art Tour
-                        </h2>
+                  <div id="duration-container" class="relative hidden">
+                    <label for="duration-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Duration</label>
+                    <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg></span>
+                    <select name="duration-hourly" id="duration-hourly" required aria-describedby="duration-hourly-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6">
+                      <option value="2">2 hours</option><option value="3">3 hours</option><option value="4">4 hours</option><option value="5">5 hours</option><option value="6">6 hours</option><option value="7">7 hours</option><option value="8">8 hours</option><option value="9">9 hours</option><option value="10">10 hours</option><option value="11">11 hours</option><option value="12">12 hours</option>
+                    </select>
+                    <span id="duration-hourly-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                  </div>
+                  <div id="date-time-container-hourly" class="relative hidden">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
+                      <div>
+                        <label for="pickup-date-hourly" class="block text-xs font-medium text-gray-500 mb-0.5">Date</label>
+                        <input type="text" name="pickup-date-hourly" id="pickup-date-hourly" required aria-describedby="pickup-date-hourly-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Date..." />
+                        <span id="pickup-date-hourly-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                       </div>
-                      <div id="miami-relocation-options" class="hidden space-y-4 border-t border-gray-200 pt-4">
+                      <div>
+                        <label for="pickup-time-hourly" id="pickup-time-label-hourly" class="block text-xs font-medium text-gray-500 mb-0.5">Start Time</label>
+                        <input type="text" name="pickup-time-hourly" id="pickup-time-hourly" required aria-describedby="pickup-time-hourly-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Start Time..." />
+                        <span id="pickup-time-hourly-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="date-preference-container" class="relative hidden pt-2">
+                    <label class="block text-sm font-medium text-black mb-1" id="date-preference-label">Preferred Timing</label>
+                    <fieldset aria-labelledby="date-preference-label" aria-describedby="date_preference-error">
+                      <legend class="sr-only">Select Preferred Timing</legend>
+                      <div class="flex flex-wrap gap-x-4 gap-y-2">
+                        <div class="flex items-center"><input id="pref-asap" name="date_preference" type="radio" value="ASAP / Next Day" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-asap" class="ml-2 block text-sm text-gray-900">Today / Next Day</label></div>
+                        <div class="flex items-center"><input id="pref-weekend" name="date_preference" type="radio" value="This Coming Weekend" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-weekend" class="ml-2 block text-sm text-gray-900">This Coming Weekend</label></div>
+                        <div class="flex items-center"><input id="pref-weekday" name="date_preference" type="radio" value="Next Week (Mon-Fri)" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-weekday" class="ml-2 block text-sm text-gray-900">Next Week (Mon-Fri)</label></div>
+                        <div class="flex items-center"><input id="pref-flexible" name="date_preference" type="radio" value="Flexible / Other Date" checked class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-flexible" class="ml-2 block text-sm text-gray-900">Flexible / Other Date</label></div>
+                      </div>
+                    </fieldset>
+                    <span id="date_preference-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                  </div>
+                  <div id="experience-options-container" class="hidden space-y-4">
+                    <div id="water-sky-options" class="hidden relative border-t border-gray-200 pt-4"></div>
+                     <div id="wynwood-night-options" class="hidden space-y-4 border-t border-gray-200 pt-4">
+                       <h2 class="text-2xl font-bold text-center" style="font-family: 'Permanent Marker', cursive; color: #ff4d4d;">
+                         Wynwood Art Tour
+                       </h2>
+                     </div>
+                     <div id="miami-relocation-options" class="hidden space-y-4 border-t border-gray-200 pt-4">
   <div class="text-sm bg-gray-50 p-4 rounded-md border border-gray-200">
     <h3 class="font-bold text-lg mb-2 text-black">Housing services</h3>
     <p class="mb-3 text-black">Thinking of staying in Miami? There are options we provide our local knowledge To help you acomplish your goals. </p>
@@ -408,484 +425,29 @@
           </div>
         </div>
       </div>
-    </main>
-
-    <!-- Add the following JS before the closing body tag -->
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-  // Form elements
-  const fromLocation = document.getElementById('from-location');
-  const toAddress = document.getElementById('to-address');
-  const requestNowBtn = document.getElementById('request-now-button');
-  const bookLaterBtn = document.getElementById('book-later-button');
-  const pickupDate = document.getElementById('pickup-date-oneway');
-  const pickupTime = document.getElementById('pickup-time-oneway');
-  const scheduledBookingInputs = document.getElementById('scheduled-booking-inputs');
-  const vehicleSelection = document.getElementById('vehicle-selection-oneway');
-  const submitButton = document.getElementById('submit-button');
-  const resetButton = document.getElementById('reset-button');
-  
-  let bookingPreference = '';
-  
-  // Form validation state
-  const formState = {
-    fromValid: false,
-    toValid: false,
-    timePreferenceSelected: false,
-    dateTimeValid: false,
-    vehicleSelected: false
-  };
-  
-  // Check if form is ready to show vehicles
-  function checkShowVehicles() {
-    const { fromValid, toValid, timePreferenceSelected, dateTimeValid } = formState;
-    
-    if (fromValid && toValid && timePreferenceSelected) {
-      // If "Book Later" is selected, we also need date/time
-      if (bookingPreference === 'later' && !dateTimeValid) {
-        vehicleSelection.classList.remove('show');
-        return;
-      }
-      
-      // Show vehicles with animation
-      vehicleSelection.classList.add('show');
-    } else {
-      vehicleSelection.classList.remove('show');
-    }
-  }
-  
-  // Check if form is valid for submission
-  function checkFormValidity() {
-    const { fromValid, toValid, timePreferenceSelected, dateTimeValid, vehicleSelected } = formState;
-    
-    if (fromValid && toValid && timePreferenceSelected && vehicleSelected) {
-      if (bookingPreference === 'later' && !dateTimeValid) {
-        submitButton.disabled = true;
-        return;
-      }
-      
-      submitButton.disabled = false;
-    } else {
-      submitButton.disabled = true;
-    }
-  }
-  
-  // Event listeners for form fields
-  fromLocation.addEventListener('input', () => {
-    formState.fromValid = fromLocation.value.trim() !== '';
-    checkShowVehicles();
-    checkFormValidity();
-  });
-  
-  toAddress.addEventListener('input', () => {
-    formState.toValid = toAddress.value.trim() !== '';
-    checkShowVehicles();
-    checkFormValidity();
-  });
-  
-  // Request Now button
-  requestNowBtn.addEventListener('click', () => {
-    requestNowBtn.classList.add('selected');
-    bookLaterBtn.classList.remove('selected');
-    scheduledBookingInputs.classList.add('hidden');
-    
-    bookingPreference = 'now';
-    document.getElementById('booking-preference').value = 'now';
-    formState.timePreferenceSelected = true;
-    formState.dateTimeValid = true; // Not needed for "now"
-    
-    checkShowVehicles();
-    checkFormValidity();
-  });
-  
-  // Book Later button
-  bookLaterBtn.addEventListener('click', () => {
-    bookLaterBtn.classList.add('selected');
-    requestNowBtn.classList.remove('selected');
-    scheduledBookingInputs.classList.remove('hidden');
-    
-    bookingPreference = 'later';
-    document.getElementById('booking-preference').value = 'later';
-    formState.timePreferenceSelected = true;
-    
-    // Date/time need to be checked
-    formState.dateTimeValid = pickupDate.value.trim() !== '' && pickupTime.value.trim() !== '';
-    
-    checkShowVehicles();
-    checkFormValidity();
-  });
-  
-  // Date/time inputs for "Book Later"
-  pickupDate.addEventListener('change', () => {
-    formState.dateTimeValid = pickupDate.value.trim() !== '' && pickupTime.value.trim() !== '';
-    checkShowVehicles();
-    checkFormValidity();
-  });
-  
-  pickupTime.addEventListener('change', () => {
-    formState.dateTimeValid = pickupDate.value.trim() !== '' && pickupTime.value.trim() !== '';
-    checkShowVehicles();
-    checkFormValidity();
-  });
-  
-  // Vehicle selection
-  document.querySelectorAll('input[name="vehicle_type_oneway"]').forEach(radio => {
-    radio.addEventListener('change', () => {
-      formState.vehicleSelected = true;
-      checkFormValidity();
-    });
-  });
-  
-  // Reset button functionality
-  resetButton.addEventListener('click', () => {
-    // Reset form fields
-    document.getElementById('booking-form').reset();
-    
-    // Reset selection visuals
-    requestNowBtn.classList.remove('selected');
-    bookLaterBtn.classList.remove('selected');
-    document.querySelectorAll('.vehicle-card').forEach(card => {
-      card.classList.remove('selected');
-    });
-    
-    // Hide conditional elements
-    scheduledBookingInputs.classList.add('hidden');
-    vehicleSelection.classList.remove('show');
-    
-    // Reset form state
-    formState.fromValid = false;
-    formState.toValid = false;
-    formState.timePreferenceSelected = false;
-    formState.dateTimeValid = false;
-    formState.vehicleSelected = false;
-    bookingPreference = '';
-    
-    // Disable submit button
-    submitButton.disabled = true;
-  });
-  
-  // Add selected class to vehicle cards on click
-  document.querySelectorAll('.vehicle-card').forEach(card => {
-    card.addEventListener('click', () => {
-      document.querySelectorAll('.vehicle-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-    });
-  });
-});
-    </script>
-    <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // 1. Create URL-to-Experience Mapping
-    const urlToExperienceMap = {
-      'hourly.html': 'hourly_chauffeur',
-      'yacht.html': 'water_sky',
-      'dining.html': 'miami_relocation',
-      'wynwood.html': 'tours_excursions',
-      'airport.html': 'airport_transfer'
-    };
-    
-    // 2. Get references to key elements
-    const experienceTab = document.getElementById('tab-button-experience-plus');
-    const experienceDropdown = document.getElementById('experience-dropdown');
-    const navLinks = document.querySelectorAll('.dropdown-menu .dropdown-item');
-    
-    // 3. Add click event listeners to all navigation links
-    navLinks.forEach(link => {
-      link.addEventListener('click', function(e) {
-        // Prevent default navigation
-        e.preventDefault();
-        
-        const href = this.getAttribute('href');
-        const experienceValue = urlToExperienceMap[href];
-        
-        if (experienceValue) {
-          // Switch to Experience+ tab if not already active
-          if (experienceTab.getAttribute('aria-selected') !== 'true') {
-            // Trigger a click on the Experience+ tab
-            experienceTab.click();
-          }
-          
-          // Wait for tab switch animation to complete
-          setTimeout(() => {
-            // Set the experience dropdown value to match the clicked link
-            experienceDropdown.value = experienceValue;
-            
-            // Manually trigger change event to activate related functionality
-            const changeEvent = new Event('change', { bubbles: true });
-            experienceDropdown.dispatchEvent(changeEvent);
-            
-            // Scroll the form into view
-            document.querySelector('.booking-form-card').scrollIntoView({ behavior: 'smooth' });
-          }, 100);
-        }
-      });
-    });
-    
-    // 4. Update existing experience dropdown change handler
-    // (assuming you already have one; we'll enhance it)
-    experienceDropdown.addEventListener('change', () => {
-      // Hide all specific option containers
-      document.getElementById('hourly-description')?.classList.add('hidden');
-      document.getElementById('tours-description')?.classList.add('hidden'); // Make sure to hide tours description
-      document.getElementById('airport-description')?.classList.add('hidden'); // Make sure to hide airport description
-      document.getElementById('duration-container')?.classList.add('hidden');
-      document.getElementById('date-time-container-hourly')?.classList.add('hidden');
-      document.getElementById('date-preference-container')?.classList.add('hidden');
-      document.getElementById('common-experience-fields')?.classList.add('hidden');
-      document.getElementById('experience-options-container')?.classList.add('hidden');
-      document.getElementById('water-sky-options')?.classList.add('hidden');
-      document.getElementById('wynwood-night-options')?.classList.add('hidden');
-      document.getElementById('miami-relocation-options')?.classList.add('hidden');
-      
-      // Get the selected value
-      const selectedExperience = experienceDropdown.value;
-      
-      if (selectedExperience) {
-        // Show common fields for all experiences
-        document.getElementById('common-experience-fields')?.classList.remove('hidden');
-        document.getElementById('experience-options-container')?.classList.remove('hidden');
-        
-        // Show specific fields based on experience
-        switch (selectedExperience) {
-          case 'hourly_chauffeur':
-            document.getElementById('hourly-description')?.classList.remove('hidden');
-            document.getElementById('duration-container')?.classList.remove('hidden');
-            document.getElementById('date-time-container-hourly')?.classList.add('hidden');
-            document.querySelector('#submit-button .button-text').textContent = 'Request Hourly Service';
-            break;
-            
-          case 'water_sky':
-            document.getElementById('water-sky-options')?.classList.remove('hidden');
-            document.getElementById('date-preference-container')?.classList.remove('hidden');
-            document.querySelector('#submit-button .button-text').textContent = 'Book Water Experience';
-            break;
-            
-          case 'tours_excursions':
-            document.getElementById('wynwood-night-options')?.classList.remove('hidden');
-            document.getElementById('tours-description')?.classList.remove('hidden');
-            document.getElementById('date-preference-container')?.classList.remove('hidden');
-            document.querySelector('#submit-button .button-text').textContent = 'Book Tour Experience';
-            break;
-            
-          case 'airport_transfer':
-            document.getElementById('airport-description')?.classList.remove('hidden');
-            document.getElementById('date-preference-container')?.classList.remove('hidden');
-            document.querySelector('#submit-button .button-text').textContent = 'Book Airport Transfer';
-            break;
-          
-          case 'miami_relocation':
-            document.getElementById('miami-relocation-options')?.classList.remove('hidden');
-            document.getElementById('date-preference-container')?.classList.remove('hidden');
-            document.querySelector('#submit-button .button-text').textContent = 'Request Information';
-            break;
-        }
-      }
-    });
-    
-    // 5. Add tab switching logic to maintain consistent state
-    document.querySelectorAll('.tab-button').forEach(button => {
-      button.addEventListener('click', function() {
-        // Set aria-selected for all buttons
-        document.querySelectorAll('.tab-button').forEach(btn => {
-          btn.setAttribute('aria-selected', 'false');
-        });
-        this.setAttribute('aria-selected', 'true');
-        
-        // Hide all panels
-        document.querySelectorAll('.tab-panel').forEach(panel => {
-          panel.classList.add('hidden');
-        });
-        
-        // Show the target panel
-        const targetPanelId = this.getAttribute('data-tab-target');
-        document.querySelector(targetPanelId)?.classList.remove('hidden');
-      });
-    });
-    
-    // Handle date preference radio buttons and date/time picker visibility
-    const datePreferenceRadios = document.querySelectorAll('input[name="date_preference"]');
-    const dateTimeContainer = document.getElementById('date-time-container-hourly');
-    
-    // Hide date picker by default
-    if (dateTimeContainer) {
-      dateTimeContainer.classList.add('hidden');
-    }
-    
-    // Function to toggle date/time visibility based on selection
-    function toggleDateTimeVisibility() {
-      const selectedValue = document.querySelector('input[name="date_preference"]:checked')?.value;
-      
-      if (dateTimeContainer) {
-        // Only show date/time picker for "Next Week" and "Flexible" options
-        if (selectedValue === 'Next Week (Mon-Fri)' || selectedValue === 'Flexible / Other Date') {
-          dateTimeContainer.classList.remove('hidden');
-        } else {
-          dateTimeContainer.classList.add('hidden');
-        }
-      }
-    }
-    
-    // Add event listeners to radio buttons
-    datePreferenceRadios.forEach(radio => {
-      radio.addEventListener('change', toggleDateTimeVisibility);
-    });
-      // Initialize visibility state on page load based on default selection
-    toggleDateTimeVisibility();
-  });
-</script>
-
-<!-- Load the new modular architecture -->
-<script type="module" src="src/main.js"></script>
-
-<!-- Integration Script for New Architecture -->
-<script type="module">
-  // Only initialize when ?test=integration is in the URL
-  if (window.location.search.includes('test=integration')) {
-    console.log('🧪 Test Integration: Loading new modular architecture...');
-    
-    try {
-      // Create a container for the new architecture components
-      window.newArchitecture = {};
-        // Import core modules
-      const moduleImports = Promise.all([
-        import('./src/core/EventBus.js'),
-        import('./src/core/Bridge.js'),
-        import('./src/core/config.js'),
-        import('./src/core/DOMManager.js')
-      ]);
-      
-      moduleImports.then(([eventBusModule, bridgeModule, configModule, domManagerModule]) => {
-        // Store references in the newArchitecture object
-        const { default: eventBus } = eventBusModule;
-        const { initBridge } = bridgeModule;
-        const { default: config } = configModule;
-        const { DOMManager } = domManagerModule;
-        
-        // Make modules available for testing/debugging
-        window.newArchitecture = {
-          eventBus,
-          config,
-          domManager: null,
-          initialized: false
-        };
-        
-        // Add event logging middleware for debugging
-        eventBus.addMiddleware((eventType, data) => {
-          console.log(`🔔 Event: ${eventType}`, data);
-          return data;
-        });
-        
-        // Initialize the DOMManager
-        const domManager = new DOMManager(document, eventBus);
-        window.newArchitecture.domManager = domManager;
-        
-        // Initialize the bridge when DOM is ready
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', () => initializeArchitecture());
-        } else {
-          // DOM is already loaded
-          initializeArchitecture();
-        }
-        
-        function initializeArchitecture() {
-          // Initialize bridge to connect existing DOM to EventBus
-          initBridge(eventBus, document, config);
-          
-          // Mark as initialized
-          window.newArchitecture.initialized = true;
-          
-          // Publish initialization event
-          eventBus.publish('architecture.initialized', {
-            timestamp: Date.now(),
-            url: window.location.href
-          });
-          
-          // Run a simple test to verify integration
-          setTimeout(() => {
-            console.log('🧪 Running integration test...');
-            eventBus.publish('test.integration', { success: true });
-            
-            // Test subscribing to an event
-            const unsubscribe = eventBus.subscribe('test.response', (data) => {
-              console.log('✅ Integration test successful!', data);
-              unsubscribe(); // Clean up subscription
-            });
-            
-            // Simulate a response
-            setTimeout(() => {
-              eventBus.publish('test.response', { 
-                message: 'Integration working correctly',
-                timestamp: Date.now()
-              });
-            }, 100);
-          }, 500);
-          
-          console.log('✅ New modular architecture initialized successfully');
-          console.log('📖 Available as window.newArchitecture for testing');
-          console.log('📝 Try: window.newArchitecture.eventBus.publish("custom.event", {data: "test"})');
-        }
-      }).catch(error => {
-        console.error('❌ Failed to load modular architecture modules:', error);
-      });
-    } catch (error) {
-      console.error('❌ Error initializing modular architecture:', error);
-    }
-  }
-</script>
-
-<style>
-/* Fix for CSS variable references in HTML */
-.text-\[--color-teal\] {
-  color: var(--color-teal);
-}
-
-.text-\[--color-gold\] {
-  color: var(--color-gold);
-}
-
-.ring-\[--color-teal\]:focus {
-  box-shadow: 0 0 0 2px var(--color-teal);
-}
-
-.ring-\[--color-gold\]:focus {
-  box-shadow: 0 0 0 2px var(--color-gold);
-}
-
-.focus\:ring-\[--color-teal\]:focus {
-  box-shadow: 0 0 0 2px var(--color-teal);
-}
-
-.focus\:ring-\[--color-gold\]:focus {
-  box-shadow: 0 0 0 2px var(--color-gold);
-}
-
-.bg-\[--color-green-100\] {
-  background-color: var(--color-green-100);
-}
-
-.text-\[--color-green-800\] {
-  color: var(--color-green-800);
-}
-
-.bg-\[--color-blue-100\] {
-  background-color: var(--color-blue-100);
-}
-
-.text-\[--color-blue-800\] {
-  color: var(--color-blue-800);
-}
-
-/* Add color variable definitions if not defined elsewhere */
-:root {
-  --color-teal: #0d9488;
-  --color-gold: #d4a017;
-  --color-green-100: #dcfce7;
-  --color-green-800: #166534;
-  --color-blue-100: #dbeafe;
-  --color-blue-800: #1e40af;
-  --radius-lg: 0.5rem;
-}
-</style>
+    </main>    
+<!-- COMMENT OUT OR REMOVE this debug section before pushing to production -->
+<!--
+<div style="position: fixed; top: 10px; right: 10px; background: white; padding: 10px; border: 1px solid #ccc; z-index: 9999;">
+  <h4>🔧 Debug Controls</h4>
+  <button onclick="forceLocationValidation('from-location', 'oneway', 'fromLocation')" 
+          style="display: block; margin: 5px 0; padding: 5px 10px; background: #10b981; color: white; border: none; border-radius: 4px;">
+    ✅ Force From Valid
+  </button>
+  <button onclick="forceLocationValidation('to-address', 'oneway', 'toAddress')" 
+          style="display: block; margin: 5px 0; padding: 5px 10px; background: #10b981; color: white; border: none; border-radius: 4px;">
+    ✅ Force To Valid
+  </button>
+  <button onclick="console.log('FormState:', window.formState)" 
+          style="display: block; margin: 5px 0; padding: 5px 10px; background: #3b82f6; color: white; border: none; border-radius: 4px;">
+    🔍 Check State
+  </button>
+  <button onclick="document.getElementById('vehicle-selection-oneway').classList.add('show')" 
+          style="display: block; margin: 5px 0; padding: 5px 10px; background: #059669; color: white; border: none; border-radius: 4px;">
+    ✨ Add SHOW Class
+  </button>
+</div>
+-->
   </body>
 </html>
 
