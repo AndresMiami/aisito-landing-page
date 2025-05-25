@@ -77,7 +77,10 @@ export const EVENTS = {
     MODAL_CLOSE: 'ui:modal:close',
     TAB_CHANGED: 'ui:tab:changed',
     FIELD_STYLED: 'ui:field:styled',
-    ERROR_SHOWN: 'ui:error:shown'
+    ERROR_SHOWN: 'ui:error:shown',
+    EXPERIENCE_UPDATED: 'ui:experience:updated',
+    EXPERIENCE_SELECTED: 'ui:experience:selected',
+    EXPERIENCE_RESET: 'ui:experience:reset'
   },
 
   // ⚙️ System Events

@@ -1,0 +1,65 @@
+/miami-ai-concierge/miami-ai-concierge/assets/css/components.css
+
+/* Components specific styles */
+
+/* Experience Selector Component */
+.experience-selector {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem 0;
+}
+
+.experience-selector label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.experience-selector select {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Booking Form Component */
+.booking-form {
+    background-color: #f9f9f9;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.booking-form input,
+.booking-form select {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Tab Navigation Component */
+.tab-navigation {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 1rem;
+}
+
+.tab-navigation button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.tab-navigation button.active {
+    background-color: #0056b3;
+}
+
+/* Error Handler Component */
+.error-message {
+    color: #ff5252;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}

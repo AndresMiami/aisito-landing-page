@@ -1,0 +1,24 @@
+import ComponentRegistry from './core/ComponentRegistry.js';
+import ExperienceSelector from './components/ExperienceSelector.js';
+
+// Register ExperienceSelector component
+ComponentRegistry.register(
+  'experience-selector',
+  ExperienceSelector,
+  [], // No dependencies for this component
+  {
+    // Default configuration
+    dropdownId: 'experience-dropdown',
+    animationDuration: 300,
+    submitButtonText: {
+      hourly_chauffeur: 'Request Hourly Service',
+      water_sky: 'Book Water Experience',
+      tours_excursions: 'Book Tour Experience',
+      airport_transfer: 'Book Airport Transfer',
+      miami_relocation: 'Request Information',
+      default: 'Submit Booking'
+    }
+  }
+);
+
+console.log('✅ ExperienceSelector registered with ComponentRegistry');

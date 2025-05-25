@@ -7,6 +7,7 @@
 import ComponentRegistry, { BaseComponent } from './core/ComponentRegistry.js';
 import DOMManager from './core/DOMManager.js';
 import EventDefinitions from './core/EventDefinitions.js';
+import ExperienceSelector from './components/ExperienceSelector.js';
 
 /**
  * Enhanced Booking Form Component with full EventBus integration
@@ -568,7 +569,7 @@ class ErrorHandlerComponent extends BaseComponent {
 ComponentRegistry.registerMany({
   'booking-form': {
     ComponentClass: BookingFormComponent,
-    dependencies: ['error-handler', 'tab-navigation'],
+    dependencies: ['error-handler', 'tab-navigation', 'experience-selector'],
     config: {
       validateOnChange: true,
       submitEndpoint: '/api/bookings',
@@ -591,6 +592,14 @@ ComponentRegistry.registerMany({
       globalErrorContainer: 'global-error-container',
       autoHide: true,
       hideTimeout: 5000
+    }
+  },
+  'experience-selector': {
+    ComponentClass: ExperienceSelector,
+    dependencies: [],
+    config: {
+      dropdownId: 'experience-dropdown',
+      animationDuration: 300
     }
   }
 });

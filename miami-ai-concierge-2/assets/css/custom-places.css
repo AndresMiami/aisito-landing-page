@@ -1,0 +1,40 @@
+/miami-ai-concierge/assets/css/custom-places.css
+/* Custom styles for the places integration in the Miami AI Concierge application */
+
+/* Style for the autocomplete dropdown */
+.places-autocomplete {
+    position: absolute;
+    z-index: 1000;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    width: 100%;
+}
+
+/* Style for individual suggestion items */
+.places-autocomplete .suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+}
+
+/* Highlight suggestion item on hover */
+.places-autocomplete .suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+
+/* Style for the input field */
+.places-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Error message styling */
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}
