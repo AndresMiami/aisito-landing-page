@@ -27,6 +27,7 @@ let processFormData, sendFormData;
 import eventBus from './src/core/EventBus.js';
 import { showGlobalError, clearGlobalError, emitError, emitClearError, emitGlobalError, emitClearAllErrors } from './errorHandling.js';
 import { forceLocationValidation } from './formValidation.js';
+import './validation-listeners.js'; // This will auto-initialize the validation listeners
 
 // Make forceLocationValidation available globally for debug controls
 window.forceLocationValidation = forceLocationValidation;

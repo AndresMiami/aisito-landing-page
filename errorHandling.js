@@ -3,6 +3,7 @@
 // form validation and submission errors on the dashboard page.
 
 import eventBus from './src/core/EventBus.js';
+import { ERROR_EVENTS, ERROR_SEVERITY } from './ErrorEvents.js';
 
 /**
  * Displays a validation or API error message below a specific form field.
@@ -184,71 +185,320 @@ function legacyClearAllErrors(elements) {
   });
 }
 
-// EventBus integration - New event-driven error handling
-eventBus.on('error:show', ({ fieldId, message, severity = 'error', source = 'unknown' }) => {
-  console.log(`EventBus: Showing ${severity} from ${source} for ${fieldId}: ${message}`);
+// Enhanced event emission function that prioritizes EventBus
+function emitEvent(eventName, data = {}) {
+  console.log(`📡 Emitting event: ${eventName}`, data);
   
-  // Get elements reference from global store
-  const elements = window.elementRefs || {};
-  showError(elements, fieldId, message);
+  // Primary: Use EventBus if available (preferred method)
+  if (window.eventBus && typeof window.eventBus.emit === 'function') {
+    window.eventBus.emit(eventName, data);
+  }
   
-  // Track error for analytics
-  eventBus.emit('analytics:track', {
-    event: 'error_shown',
-    properties: {
-      fieldId,
-      message,
-      severity,
-      source
-    }
-  });
-});
+  // Legacy: Emit via SimpleBridge if available (for backward compatibility)
+  if (window.SimpleBridge && typeof window.SimpleBridge.emit === 'function') {
+    window.SimpleBridge.emit(eventName, data);
+  }
+  
+  // Legacy: Also emit as custom DOM event (for backward compatibility)
+  const customEvent = new CustomEvent(eventName, { detail: data });
+  document.dispatchEvent(customEvent);
+}
 
-// Add event handler for clearing all errors
-eventBus.on('error:clear-all', ({ source = 'unknown' }) => {
-  console.log(`EventBus: Clearing all errors (source: ${source})`);
-  const elements = window.elementRefs || {};
-  clearAllErrors(elements);
-});
-
-// Add event handler for clearing a specific error
-eventBus.on('error:clear', ({ fieldId, source = 'unknown' }) => {
-  console.log(`EventBus: Clearing error for ${fieldId} (source: ${source})`);
-  clearError(fieldId);
-});
-
-// Export functions for EventBus-driven error handling
-export function emitError(fieldId, message, severity = 'error', source = 'manual') {
-  eventBus.emit('error:show', {
+// Enhanced emit functions with better error handling and logging
+export function emitError(fieldId, message, severity = ERROR_SEVERITY.ERROR, source = 'manual') {
+  const errorData = {
     fieldId,
     message,
     severity,
-    source
-  });
+    source,
+    timestamp: Date.now()
+  };
+  
+  console.log(`🚨 Emitting field error for ${fieldId}:`, errorData);
+  
+  try {
+    eventBus.emit(ERROR_EVENTS.SHOW, errorData);
+    
+    // Also emit as generic event for broader listening
+    emitEvent('error:field', errorData);
+    
+  } catch (error) {
+    console.error('Failed to emit error event:', error);
+    // Fallback to direct function call
+    const elements = window.elementRefs || {};
+    showError(elements, fieldId, message);
+  }
 }
 
 export function emitClearError(fieldId, source = 'manual') {
-  eventBus.emit('error:clear', {
+  const clearData = {
     fieldId,
-    source
-  });
+    source,
+    timestamp: Date.now()
+  };
+  
+  console.log(`🧹 Emitting clear error for ${fieldId}:`, clearData);
+  
+  try {
+    eventBus.emit(ERROR_EVENTS.CLEAR, clearData);
+    
+    // Also emit as generic event
+    emitEvent('error:field:cleared', clearData);
+    
+  } catch (error) {
+    console.error('Failed to emit clear error event:', error);
+    // Fallback to direct function call
+    clearError(fieldId);
+  }
 }
 
-export function emitGlobalError(message, severity = 'error', code = null, dismissable = true, source = 'manual') {
-  eventBus.emit('error:global', {
+export function emitGlobalError(message, severity = ERROR_SEVERITY.ERROR, code = null, dismissable = true, source = 'manual', duration = null) {
+  const globalErrorData = {
     message,
     severity,
     code,
     dismissable,
-    source
-  });
+    source,
+    duration,
+    timestamp: Date.now()
+  };
+  
+  console.log(`🌐 Emitting global error:`, globalErrorData);
+  
+  try {
+    eventBus.emit(ERROR_EVENTS.GLOBAL, globalErrorData);
+    
+    // Also emit as generic event
+    emitEvent('error:global', globalErrorData);
+    
+  } catch (error) {
+    console.error('Failed to emit global error event:', error);
+    // Fallback to console or alert
+    console.error(`Global Error [${severity}]: ${message}`);
+  }
 }
 
 export function emitClearAllErrors(source = 'manual') {
-  eventBus.emit('error:clear-all', {
-    source
-  });
+  const clearAllData = {
+    source,
+    timestamp: Date.now()
+  };
+  
+  console.log(`🧽 Emitting clear all errors:`, clearAllData);
+  
+  try {
+    eventBus.emit(ERROR_EVENTS.CLEAR_ALL, clearAllData);
+    
+    // Also emit as generic event
+    emitEvent('error:all:cleared', clearAllData);
+    
+  } catch (error) {
+    console.error('Failed to emit clear all errors event:', error);
+    // Fallback to direct function call
+    const elements = window.elementRefs || {};
+    clearAllErrors(elements);
+  }
 }
 
-// Legacy function exports (keeping for backward compatibility)
-export { showError, clearError, clearAllErrors };
+// Enhanced EventBus listeners with better error handling
+eventBus.on('error:show', ({ fieldId, message, severity = 'error', source = 'unknown' }) => {
+  console.log(`EventBus: Showing ${severity} error from ${source} for ${fieldId}: ${message}`);
+  
+  try {
+    // Get elements reference from global store
+    const elements = window.elementRefs || {};
+    showError(elements, fieldId, message);
+    
+    // Track error for analytics with enhanced data
+    eventBus.emit('analytics:track', {
+      event: 'error_shown',
+      properties: {
+        fieldId,
+        message,
+        severity,
+        source,
+        timestamp: Date.now(),
+        userAgent: navigator.userAgent,
+        url: window.location.href
+      }
+    });
+    
+    // Emit success confirmation
+    emitEvent('error:shown:confirmed', {
+      fieldId,
+      severity,
+      source
+    });
+    
+  } catch (error) {
+    console.error('Error handling error:show event:', error);
+    // Emit error event for this failure
+    emitEvent('error:handler:failed', {
+      originalEvent: 'error:show',
+      fieldId,
+      error: error.message
+    });
+  }
+});
+
+eventBus.on('error:clear', ({ fieldId, source = 'unknown' }) => {
+  console.log(`EventBus: Clearing error for ${fieldId} (source: ${source})`);
+  
+  try {
+    clearError(fieldId);
+    
+    // Emit confirmation
+    emitEvent('error:cleared:confirmed', {
+      fieldId,
+      source
+    });
+    
+  } catch (error) {
+    console.error('Error handling error:clear event:', error);
+  }
+});
+
+eventBus.on('error:clear-all', ({ source = 'unknown' }) => {
+  console.log(`EventBus: Clearing all errors (source: ${source})`);
+  
+  try {
+    const elements = window.elementRefs || {};
+    clearAllErrors(elements);
+    
+    // Emit confirmation
+    emitEvent('error:all:cleared:confirmed', {
+      source,
+      timestamp: Date.now()
+    });
+    
+  } catch (error) {
+    console.error('Error handling error:clear-all event:', error);
+  }
+});
+
+// Enhanced global error handler with UI implementation
+eventBus.on('error:global', ({ message, severity = 'error', code = null, dismissable = true, source = 'unknown', duration = null }) => {
+  console.log(`EventBus: Global ${severity} error from ${source}: ${message}`);
+  
+  try {
+    // Create or update global error display
+    showGlobalErrorUI(message, severity, code, dismissable, duration);
+    
+    // Track global error
+    eventBus.emit('analytics:track', {
+      event: 'global_error_shown',
+      properties: {
+        message,
+        severity,
+        code,
+        source,
+        timestamp: Date.now()
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error handling global error event:', error);
+    // Ultimate fallback
+    alert(`${severity.toUpperCase()}: ${message}`);
+  }
+});
+
+// Implementation for global error UI
+function showGlobalErrorUI(message, severity, code, dismissable, duration) {
+  // Find or create global error container
+  let errorContainer = document.getElementById('global-error-container');
+  if (!errorContainer) {
+    errorContainer = document.createElement('div');
+    errorContainer.id = 'global-error-container';
+    errorContainer.className = 'fixed top-4 right-4 z-50 max-w-md';
+    document.body.appendChild(errorContainer);
+  }
+  
+  // Create error element
+  const errorElement = document.createElement('div');
+  errorElement.className = `global-error mb-4 p-4 rounded-lg shadow-lg ${getSeverityClasses(severity)}`;
+  
+  // Add error content
+  errorElement.innerHTML = `
+    <div class="flex items-start">
+      <div class="flex-shrink-0">
+        ${getSeverityIcon(severity)}
+      </div>
+      <div class="ml-3 flex-1">
+        <p class="text-sm font-medium">${message}</p>
+        ${code ? `<p class="text-xs opacity-75 mt-1">Error Code: ${code}</p>` : ''}
+      </div>
+      ${dismissable ? `
+        <div class="ml-4 flex-shrink-0">
+          <button class="error-dismiss text-white hover:opacity-75 focus:outline-none" aria-label="Dismiss">
+            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </svg>
+          </button>
+        </div>
+      ` : ''}
+    </div>
+  `;
+  
+  // Add dismiss handler
+  if (dismissable) {
+    const dismissButton = errorElement.querySelector('.error-dismiss');
+    dismissButton.addEventListener('click', () => {
+      errorElement.remove();
+      emitEvent('error:global:dismissed', { code, severity });
+    });
+    
+    // Auto-dismiss if duration provided
+    if (duration) {
+      setTimeout(() => {
+        if (errorElement.parentNode) {
+          errorElement.remove();
+          emitEvent('error:global:auto-dismissed', { code, severity, duration });
+        }
+      }, duration);
+    }
+  }
+  
+  // Add to container
+  errorContainer.appendChild(errorElement);
+  
+  return errorElement;
+}
+
+// Helper functions for UI styling
+function getSeverityClasses(severity) {
+  switch (severity) {
+    case ERROR_SEVERITY.SUCCESS:
+      return 'bg-green-500 text-white';
+    case ERROR_SEVERITY.WARNING:
+      return 'bg-yellow-500 text-white';
+    case ERROR_SEVERITY.INFO:
+      return 'bg-blue-500 text-white';
+    case ERROR_SEVERITY.CRITICAL:
+      return 'bg-red-700 text-white';
+    default:
+      return 'bg-red-500 text-white';
+  }
+}
+
+function getSeverityIcon(severity) {
+  const iconClass = 'h-5 w-5';
+  switch (severity) {
+    case ERROR_SEVERITY.SUCCESS:
+      return `<svg class="${iconClass}" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>`;
+    case ERROR_SEVERITY.WARNING:
+      return `<svg class="${iconClass}" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>`;
+    case ERROR_SEVERITY.INFO:
+      return `<svg class="${iconClass}" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>`;
+    default:
+      return `<svg class="${iconClass}" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>`;
+  }
+}
+
+// Initialize error handling system
+console.log('🚨 Error handling system initialized with enhanced EventBus integration');
+
+// Export the enhanced emitEvent function
+export { emitEvent };
+
+// ...existing exports...
