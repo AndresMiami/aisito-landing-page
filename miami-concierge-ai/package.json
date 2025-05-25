@@ -1,0 +1,30 @@
+{
+  "name": "miami-concierge-ai",
+  "version": "1.0.0",
+  "description": "A sophisticated booking system for luxury transportation services in Miami, featuring intelligent Google Places integration and seamless user experience.",
+  "main": "src/core/index.js",
+  "scripts": {
+    "test": "jest",
+    "dev": "webpack serve --mode development",
+    "build": "webpack --mode production"
+  },
+  "keywords": [
+    "miami",
+    "concierge",
+    "booking",
+    "transportation",
+    "luxury"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "flatpickr": "^4.6.9",
+    "tailwindcss": "^2.2.19"
+  },
+  "devDependencies": {
+    "jest": "^27.0.6",
+    "webpack": "^5.64.4",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^3.11.2"
+  }
+}

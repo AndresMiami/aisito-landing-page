@@ -1,5 +1,6 @@
 // dashboard.js
-console.log("🚀 Dashboard.js module loading..."); // Added debug log
+console.log("🚀 Dashboard.js module loading...");
+console.log("🧪 Testing: Module execution at", new Date().toISOString());
 
 // This script handles the dynamic behavior and form submissions
 // for the luxury vehicle booking dashboard page, including tab switching,
@@ -19,9 +20,16 @@ let tabNavigationInstance = null;
 
 // Import other dependencies
 let initAutocomplete, getCurrentLocation;
-let showError, clearError, clearAllErrors;
+let showError, clearError, clearAllErrors, emitError, emitClearError, emitGlobalError, emitClearAllErrors;
 let validateForm;
 let processFormData, sendFormData;
+
+import eventBus from './src/core/EventBus.js';
+import { showGlobalError, clearGlobalError, emitError, emitClearError, emitGlobalError, emitClearAllErrors } from './errorHandling.js';
+import { forceLocationValidation } from './formValidation.js';
+
+// Make forceLocationValidation available globally for debug controls
+window.forceLocationValidation = forceLocationValidation;
 
 // Enhanced import function
 async function importDependencies() {
@@ -214,6 +222,237 @@ async function initializeDashboard() {
   }
 }
 
+// Update your location validation functions to use EventBus
+function handlePlaceSelection(autocomplete, fieldId) {
+  const place = autocomplete.getPlace();
+  
+  if (!place.place_id) {
+    eventBus.emit('location:selected', {
+      fieldId,
+      place,
+      isValid: false
+    });
+    return false;
+  }
+  
+  if (!place.geometry) {
+    emitError(fieldId, 'Selected location details are incomplete. Please try another location.', 'error', 'google-maps');
+    return false;
+  }
+  
+  // Location is valid
+  eventBus.emit('location:selected', {
+    fieldId,
+    place,
+    isValid: true
+  });
+  
+  return true;
+}
+
+// Update your vehicle selection handlers
+function handleVehicleSelection(vehicleType, tabType) {
+  console.log(`Vehicle selected: ${vehicleType} for ${tabType}`);
+  
+  // Emit vehicle selection event
+  eventBus.emit('vehicle:selected', {
+    vehicleType,
+    tabType
+  });
+  
+  // Also emit field change for real-time validation
+  eventBus.emit('form:field:changed', {
+    fieldId: `vehicle_type_${tabType}`,
+    value: vehicleType,
+    rules: ['vehicleSelected'],
+    params: { vehicleSelected: [`vehicle_type_${tabType}`] }
+  });
+}
+
+// Update your form submission handler
+async function handleFormSubmission(event) {
+  event.preventDefault();
+  
+  console.log('🚀 Form submission started');
+  
+  // Clear any previous global errors
+  emitClearAllErrors('form-submission');
+  
+  // Validate the form using EventBus
+  const isValid = eventBus.emit('form:validate', {
+    formId: 'booking-form',
+    source: 'form-submission'
+  });
+  
+  if (!isValid) {
+    emitGlobalError(
+      'Please correct the errors below before submitting',
+      'warning',
+      'FORM002',
+      true,
+      'form-submission'
+    );
+    return;
+  }
+  
+  // Continue with form submission...
+  try {
+    // Your existing form submission logic
+    console.log('✅ Form is valid, proceeding with submission');
+    
+    // Show success message
+    emitGlobalError(
+      'Form submitted successfully! We\'ll be in touch soon.',
+      'success',
+      'FORM003',
+      true,
+      'form-submission'
+    );
+    
+  } catch (error) {
+    console.error('Form submission error:', error);
+    emitGlobalError(
+      'There was an error submitting your form. Please try again.',
+      'error',
+      'FORM004',
+      true,
+      'form-submission'
+    );
+  }
+}
+
+// Add real-time validation to input fields
+function setupRealtimeValidation() {
+  // Location fields
+  const locationFields = ['from-location', 'to-address', 'from-location-exp'];
+  locationFields.forEach(fieldId => {
+    const field = document.getElementById(fieldId);
+    if (field) {
+      field.addEventListener('input', (e) => {
+        eventBus.emit('form:field:changed', {
+          fieldId,
+          value: e.target.value,
+          rules: ['required', 'locationSelected'],
+          params: { locationSelected: [fieldId] }
+        });
+      });
+    }
+  });
+  
+  // Experience dropdown
+  const experienceDropdown = document.getElementById('experience-dropdown');
+  if (experienceDropdown) {
+    experienceDropdown.addEventListener('change', (e) => {
+      eventBus.emit('form:field:changed', {
+        fieldId: 'experience-dropdown',
+        value: e.target.value,
+        rules: ['required']
+      });
+    });
+  }
+  
+  // Vehicle radio buttons
+  const vehicleRadios = document.querySelectorAll('input[name^="vehicle_type_"]');
+  vehicleRadios.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      if (e.target.checked) {
+        const tabType = e.target.name.replace('vehicle_type_', '');
+        handleVehicleSelection(e.target.value, tabType);
+      }
+    });
+  });
+}
+
+// Add this new function to handle vehicle visibility
+function checkVehicleVisibility() {
+  const fromLocation = document.getElementById('from-location');
+  const toAddress = document.getElementById('to-address');
+  const vehicleContainer = document.getElementById('vehicle-selection-oneway');
+  
+  if (!vehicleContainer) return;
+  
+  const fromValid = fromLocation && fromLocation.value.trim() !== '';
+  const toValid = toAddress && toAddress.value.trim() !== '';
+  const bookingTimeSelected = document.querySelector('.booking-time-button.selected');
+  
+  const shouldShow = fromValid && toValid && bookingTimeSelected;
+  
+  if (shouldShow && vehicleContainer.classList.contains('hidden')) {
+    // Show vehicle container
+    vehicleContainer.classList.remove('hidden');
+    setTimeout(() => {
+      vehicleContainer.classList.add('show');
+    }, 50);
+    console.log('✅ Vehicle container shown');
+  } else if (!shouldShow && !vehicleContainer.classList.contains('hidden')) {
+    // Hide vehicle container
+    vehicleContainer.classList.remove('show');
+    vehicleContainer.classList.add('hiding');
+    setTimeout(() => {
+      vehicleContainer.classList.add('hidden');
+      vehicleContainer.classList.remove('hiding');
+    }, 400);
+    console.log('❌ Vehicle container hidden');
+  }
+}
+
+// Add event listeners to trigger vehicle visibility checks
+function setupVehicleVisibilityChecks() {
+  const fromLocation = document.getElementById('from-location');
+  const toAddress = document.getElementById('to-address');
+  const bookingButtons = document.querySelectorAll('.booking-time-button');
+  
+  [fromLocation, toAddress].forEach(field => {
+    if (field) {
+      field.addEventListener('input', checkVehicleVisibility);
+      field.addEventListener('change', checkVehicleVisibility);
+    }
+  });
+  
+  bookingButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Add selection state
+      document.querySelectorAll('.booking-time-button').forEach(btn => {
+        btn.classList.remove('selected');
+      });
+      button.classList.add('selected');
+      
+      // Check vehicle visibility
+      setTimeout(checkVehicleVisibility, 100);
+    });
+  });
+}
+
+// Initialize the validation system when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('🚀 Dashboard: DOM ready - initializing all features...');
+  
+  try {
+    // 1. Initialize reset functionality
+    initializeResetButton();
+    
+    // 2. Set up real-time validation
+    setupRealtimeValidation();
+    
+    // 3. Set up vehicle visibility checks
+    setupVehicleVisibilityChecks();
+    
+    // 4. Add form submission handler
+    const form = document.getElementById('booking-form');
+    if (form) {
+      form.addEventListener('submit', handleFormSubmission);
+    }
+    
+    // 5. Initialize dashboard components
+    initializeDashboard();
+    
+    console.log('✅ Dashboard: All features initialized successfully');
+    
+  } catch (error) {
+    console.error('❌ Dashboard: Initialization error:', error);
+  }
+});
+
 // Initialize when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initializeDashboard);
@@ -228,5 +467,322 @@ window.dashboardModuleFunctions = {
   initializeFallbackTabs,
   initializeDashboard
 };
+
+// Replace the existing initializeResetButton function
+function initializeResetButton() {
+  console.log('🔄 Dashboard: Initializing reset functionality...');
+  
+  const resetButton = document.getElementById('reset-button');
+  
+  if (!resetButton) {
+    console.warn('⚠️ Dashboard: Reset button not found');
+    return;
+  }
+
+  // Remove any existing event listeners
+  resetButton.replaceWith(resetButton.cloneNode(true));
+  const newResetButton = document.getElementById('reset-button');
+  
+  newResetButton.addEventListener('click', async (e) => {
+    e.preventDefault();
+    console.log('🧹 Reset button clicked');
+    
+    try {
+      // Emit reset started event
+      if (window.eventBus) {
+        window.eventBus.emit('form:reset:started', {
+          timestamp: Date.now(),
+          source: 'reset-button'
+        });
+      }
+      
+      // 1. Add reset animation to button
+      newResetButton.classList.add('resetting');
+      
+      // 2. Clear all errors first
+      if (window.eventBus) {
+        emitClearAllErrors('reset-workflow');
+      } else {
+        // Fallback: clear errors manually
+        document.querySelectorAll('[id$="-error"]').forEach(errorEl => {
+          errorEl.classList.add('hidden');
+          errorEl.textContent = '';
+        });
+      }
+      
+      // 3. Animate vehicle container out if visible
+      const vehicleContainer = document.getElementById('vehicle-selection-oneway');
+      const vehicleCards = document.querySelectorAll('.vehicle-card');
+      
+      if (vehicleContainer && !vehicleContainer.classList.contains('hidden')) {
+        console.log('🚗 Hiding vehicle selection');
+        
+        // Animate vehicle cards
+        vehicleCards.forEach((card, index) => {
+          setTimeout(() => {
+            card.classList.add('resetting');
+          }, index * 50);
+        });
+        
+        // Slide up container
+        setTimeout(() => {
+          vehicleContainer.classList.add('hiding');
+          vehicleContainer.classList.remove('show');
+        }, 200);
+        
+        // Hide completely after animation
+        setTimeout(() => {
+          vehicleContainer.classList.add('hidden');
+          vehicleContainer.classList.remove('hiding');
+          vehicleCards.forEach(card => {
+            card.classList.remove('resetting');
+          });
+        }, 1200);
+      }
+      
+      // 4. Animate form fields
+      const formFields = document.querySelectorAll('input:not([type="radio"]), select, textarea');
+      formFields.forEach((field, index) => {
+        setTimeout(() => {
+          field.classList.add('form-field-resetting');
+        }, index * 30);
+      });
+      
+      // 5. Animate booking time buttons
+      const bookingButtons = document.querySelectorAll('.booking-time-button.selected');
+      bookingButtons.forEach(button => {
+        button.classList.add('deselecting');
+        button.classList.remove('selected');
+      });
+      
+      // 6. Reset form data after animations start
+      setTimeout(() => {
+        resetFormData();
+      }, 300);
+      
+      // 7. Clean up animations and show success
+      setTimeout(() => {
+        // Remove reset button animation
+        newResetButton.classList.remove('resetting');
+        
+        // Remove form field animations
+        formFields.forEach(field => {
+          field.classList.remove('form-field-resetting');
+        });
+        
+        // Remove button animations
+        document.querySelectorAll('.booking-time-button').forEach(button => {
+          button.classList.remove('deselecting', 'selected');
+        });
+        
+        // Reset form state
+        if (window.formState) {
+          window.formState.oneway = {
+            fromLocation: false,
+            toAddress: false,
+            bookingTime: false,
+            vehicleType: false
+          };
+          window.formState.experiencePlus = {
+            fromLocation: false,
+            experienceType: false,
+            dateTime: false
+          };
+        }
+        
+        // Emit reset completed event
+        if (window.eventBus) {
+          window.eventBus.emit('form:reset:completed', {
+            timestamp: Date.now(),
+            source: 'reset-button'
+          });
+          
+          // Show success message
+          emitGlobalError(
+            'Form has been reset successfully!',
+            'success',
+            'RESET001',
+            true,
+            'reset-workflow'
+          );
+        }
+        
+        console.log('✅ Reset workflow completed');
+        
+      }, 1500);
+      
+    } catch (error) {
+      console.error('❌ Reset error:', error);
+      
+      // Remove button animation on error
+      newResetButton.classList.remove('resetting');
+      
+      if (window.eventBus) {
+        emitGlobalError(
+          'Reset failed. Please refresh the page.',
+          'error',
+          'RESET_ERROR',
+          true,
+          'reset-error'
+        );
+      }
+    }
+  });
+  
+  console.log('✅ Reset button initialized successfully');
+}
+
+// Update resetFormData function
+function resetFormData() {
+  console.log('🧹 Resetting form data...');
+  
+  try {
+    const form = document.getElementById('booking-form');
+    if (form) {
+      // Reset standard form inputs
+      form.reset();
+      
+      // Clear Google Places inputs specifically
+      const placesInputs = [
+        'from-location',
+        'to-address', 
+        'from-location-exp'
+      ];
+      
+      placesInputs.forEach(inputId => {
+        const element = document.getElementById(inputId);
+        if (element) {
+          element.value = '';
+          if (element.place) {
+            element.place = null;
+          }
+          // Clear any custom properties
+          element.removeAttribute('data-place-selected');
+        }
+      });
+      
+      // Uncheck all radio buttons
+      document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
+        radio.checked = false;
+        radio.setAttribute('aria-checked', 'false');
+      });
+      
+      // Reset vehicle cards
+      document.querySelectorAll('.vehicle-card').forEach(card => {
+        card.classList.remove('selected');
+        card.setAttribute('aria-selected', 'false');
+      });
+      
+      // Reset dropdowns to first option
+      document.querySelectorAll('select').forEach(select => {
+        select.selectedIndex = 0;
+      });
+      
+      // Hide conditional sections
+      const sectionsToHide = [
+        'scheduled-booking-inputs',
+        'duration-container',
+        'date-time-container-hourly',
+        'date-preference-container',
+        'experience-options-container',
+        'hourly-description',
+        'tours-description',
+        'airport-description'
+      ];
+      
+      sectionsToHide.forEach(sectionId => {
+        const section = document.getElementById(sectionId);
+        if (section) {
+          section.classList.add('hidden');
+        }
+      });
+      
+      // Reset to first tab (One Way)
+      const firstTab = document.getElementById('tab-button-oneway');
+      const firstPanel = document.getElementById('panel-oneway');
+      const secondTab = document.getElementById('tab-button-experience-plus');
+      const secondPanel = document.getElementById('panel-experience-plus');
+      
+      if (firstTab && firstPanel && secondTab && secondPanel) {
+        firstTab.setAttribute('aria-selected', 'true');
+        firstTab.classList.add('active-tab');
+        firstPanel.classList.remove('hidden');
+        
+        secondTab.setAttribute('aria-selected', 'false');
+        secondTab.classList.remove('active-tab');
+        secondPanel.classList.add('hidden');
+      }
+      
+      // Disable submit button
+      const submitButton = document.getElementById('submit-button');
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.setAttribute('aria-disabled', 'true');
+      }
+    }
+    
+    // Emit form data reset event
+    if (window.eventBus) {
+      window.eventBus.emit('form:data:reset', {
+        timestamp: Date.now(),
+        source: 'reset-workflow'
+      });
+    }
+    
+  } catch (error) {
+    console.error('❌ Error resetting form data:', error);
+  }
+}
+
+// Update the DOM ready handler to ensure proper initialization
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('🚀 Dashboard: DOM ready - initializing all features...');
+  
+  try {
+    // 1. Initialize reset functionality FIRST
+    initializeResetButton();
+    
+    // 2. Set up real-time validation
+    setupRealtimeValidation();
+    
+    // 3. Set up vehicle visibility checks
+    setupVehicleVisibilityChecks();
+    
+    // 4. Add form submission handler
+    const form = document.getElementById('booking-form');
+    if (form) {
+      form.addEventListener('submit', handleFormSubmission);
+    }
+    
+    // 5. Initialize dashboard components
+    initializeDashboard();
+    
+    console.log('✅ Dashboard: All features initialized successfully');
+    
+  } catch (error) {
+    console.error('❌ Dashboard: Initialization error:', error);
+  }
+});
+
+// Add EventBus listeners for reset workflow
+eventBus.on('form:reset:started', ({ timestamp, source }) => {
+  console.log(`🧹 EventBus: Form reset started from ${source} at ${new Date(timestamp).toLocaleTimeString()}`);
+});
+
+eventBus.on('form:reset:completed', ({ timestamp, source }) => {
+  console.log(`✅ EventBus: Form reset completed from ${source} at ${new Date(timestamp).toLocaleTimeString()}`);
+  
+  // Trigger form validation checks after reset
+  setTimeout(() => {
+    eventBus.emit('form:validate', {
+      formId: 'booking-form',
+      source: 'post-reset-validation'
+    });
+  }, 500);
+});
+
+eventBus.on('form:data:reset', ({ timestamp, source }) => {
+  console.log(`🔄 EventBus: Form data reset from ${source} at ${new Date(timestamp).toLocaleTimeString()}`);
+});
 
 console.log("✅ Dashboard.js module loaded successfully");

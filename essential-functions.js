@@ -1071,75 +1071,138 @@ function initializeTabSwitching() {
 
 // Reset form functionality
 function initializeResetButton() {
-  console.log('🔄 Initializing reset functionality...');
+  console.log('🔄 Essential Functions: Reset disabled - using Dashboard.js reset');
   
-  const refs = getElementRefs();
+  // Check if dashboard.js already handled reset
+  if (window.dashboardResetInitialized) {
+    console.log('✅ Reset already handled by dashboard.js');
+    return;
+  }
   
-  if (refs.resetButton) {
-    refs.resetButton.addEventListener('click', () => {
-      console.log('🔄 Resetting form...');
+  // Your existing essential-functions reset code here...
+  // Only runs if dashboard.js didn't handle it
+}
+
+// Enhanced reset function with smooth animations
+function resetFormWithAnimation() {
+  console.log('🧹 Starting animated form reset...');
+  
+  return new Promise((resolve) => {
+    // Step 1: Reset form state first
+    window.formState = {
+      oneway: {
+        fromLocation: false,
+        toAddress: false,
+        bookingTime: false,
+        vehicleType: false
+      },
+      experienceplus: {
+        fromLocation: false,
+        serviceType: false,
+        duration: false,
+        bookingTime: false
+      }
+    };
+    
+    // Step 2: Hide vehicle selection with animation
+    const vehicleContainer = document.getElementById('vehicle-selection-oneway');
+    if (vehicleContainer && !vehicleContainer.classList.contains('hidden')) {
+      console.log('🎬 Starting vehicle container hide animation...');
       
-      // Reset form state
-      formState = {
-        isValidating: false,
-        oneway: {
-          fromLocation: false,
-          toAddress: false,
-          bookingTime: false,
-          vehicleType: false
-        },
-        experiencePlus: {
-          fromLocation: false,
-          experienceType: false,
-          dateTime: false
-        }
-      };
+      // Add the hiding animation class
+      vehicleContainer.classList.add('hiding');
       
-      // Reset form elements
-      refs.bookingForm?.reset();
+      // Wait for animation to complete, then actually hide
+      setTimeout(() => {
+        vehicleContainer.classList.add('hidden');
+        vehicleContainer.classList.remove('hiding', 'show');
+        console.log('✅ Vehicle container hidden with animation');
+      }, 1200); // Match your CSS transition duration
+    }
+    
+    // Step 3: Reset form fields with animation
+    const form = document.getElementById('booking-form');
+    if (form) {
+      const formElements = form.querySelectorAll('input, select, textarea');
       
-      // Clear location inputs
-      if (refs.fromLocation) refs.fromLocation.value = '';
-      if (refs.toAddress) refs.toAddress.value = '';
-      if (refs.fromLocationExp) refs.fromLocationExp.value = '';
-      
-      // Reset booking preference
-      if (refs.bookingPreference) refs.bookingPreference.value = '';
-      refs.scheduledBookingInputs?.classList.add('hidden');
-      
-      // Reset button states
-      refs.requestNowButton?.classList.remove('active');
-      refs.bookLaterButton?.classList.remove('active');
-      
-      // Reset vehicle selection
-      const vehicleCards = document.querySelectorAll('label[for^="vehicle-"]');
-      vehicleCards.forEach(card => card.classList.remove('selected'));
-      
-      // Hide containers
-      refs.vehicleSelectionOneway?.classList.add('hidden');
-      refs.durationContainer?.classList.add('hidden');
-      refs.dateTimeContainerHourly?.classList.add('hidden');
-      refs.datePreferenceContainer?.classList.add('hidden');
-      
-      // Reset descriptions
-      Object.values(refs.descriptions).forEach(desc => {
-        desc?.classList.add('hidden');
+      formElements.forEach((element, index) => {
+        setTimeout(() => {
+          // Add reset animation class
+          element.classList.add('form-field-resetting');
+          
+          // Reset the field value
+          if (element.type === 'radio' || element.type === 'checkbox') {
+            element.checked = false;
+          } else {
+            element.value = '';
+          }
+          
+          // Remove selected classes
+          element.classList.remove('selected', 'error');
+          
+          // Remove animation class after animation completes
+          setTimeout(() => {
+            element.classList.remove('form-field-resetting');
+          }, 300);
+        }, index * 50); // Staggered animation
       });
-      
-      // Reset experience options
-      Object.values(refs.experienceOptions).forEach(container => {
-        container?.classList.add('hidden');
-      });
-      
-      // Reset submit button text
-      const buttonText = refs.submitButton?.querySelector('.button-text');
-      if (buttonText) buttonText.textContent = 'Continue';
-      
-      emitEvent('form:reset', {});
-      checkFormValidity();
-      
-      console.log('✅ Form reset complete');
+    }
+    
+    // Step 4: Reset booking time buttons with animation
+    const requestNowBtn = document.getElementById('request-now-button');
+    const bookLaterBtn = document.getElementById('book-later-button');
+    
+    [requestNowBtn, bookLaterBtn].forEach(btn => {
+      if (btn && btn.classList.contains('selected')) {
+        btn.classList.add('deselecting');
+        setTimeout(() => {
+          btn.classList.remove('selected', 'deselecting');
+        }, 400);
+      }
     });
+    
+    // Step 5: Hide scheduled inputs with animation
+    const scheduledInputs = document.getElementById('scheduled-booking-inputs');
+    if (scheduledInputs && !scheduledInputs.classList.contains('hidden')) {
+      scheduledInputs.classList.add('hidden');
+    }
+    
+    // Step 6: Reset booking preference
+    const bookingPrefInput = document.getElementById('booking-preference');
+    if (bookingPrefInput) {
+      bookingPrefInput.value = '';
+    }
+    
+    // Emit reset events
+    emitEvent('form:reset', {});
+    
+    // Complete after all animations
+    setTimeout(() => {
+      console.log('✅ Animated form reset complete');
+      resolve();
+    }, 1500);
+  });
+}
+
+// Update your existing reset function to use the animated version
+async function resetForm() {
+  console.log('🔄 Resetting form...');
+  
+  try {
+    // Use the animated reset
+    await resetFormWithAnimation();
+    
+    // Trigger validation updates
+    synchronizeFormStates();
+    const refs = getElementRefs();
+    checkOneWayFormValidity(refs);
+    checkVehicleSelectionVisibility(refs);
+    
+    emitEvent('form:validation-changed', { isValid: false, tab: 'oneway' });
+    
+    console.log('✅ Form reset complete');
+  } catch (error) {
+    console.error('❌ Form reset error:', error);
   }
 }
 
@@ -1631,131 +1694,100 @@ function forceFromLocationValidation() {
   console.log('✅ Simple validation set up for all elements');
 }
 
-// ADD this function at the end of your file
+// Update this function:
 
-// Critical fix for synchronizing form states
-function synchronizeFormStates() {
-  console.log('🔄 Synchronizing form states...');
+function checkVehicleSelectionVisibility(refs) {
+  const result = {
+    fromLocation: window.formState.oneway.fromLocation,
+    toAddress: window.formState.oneway.toAddress,
+    bookingTime: window.formState.oneway.bookingTime,
+    shouldShow: window.formState.oneway.fromLocation && window.formState.oneway.toAddress && window.formState.oneway.bookingTime
+  };
   
-  // Check if we have both global and local formStates
-  if (window.formState && formState) {
-    // Update the local formState from global window.formState
-    if (window.formState.oneway && formState.oneway) {
-      formState.oneway.fromLocation = window.formState.oneway.fromLocation || formState.oneway.fromLocation;
-      formState.oneway.toAddress = window.formState.oneway.toAddress || formState.oneway.toAddress;
-    }
-    
-    // Update global formState from local formState
-    if (!window.formState.oneway) window.formState.oneway = {};
-    window.formState.oneway.fromLocation = formState.oneway.fromLocation;
-    window.formState.oneway.toAddress = formState.oneway.toAddress;
-    window.formState.oneway.bookingTime = formState.oneway.bookingTime;
-    window.formState.oneway.vehicleType = formState.oneway.vehicleType;
-    
-    console.log('✅ Form states synchronized:', {
-      global: window.formState,
-      local: formState
-    });
-  }
-}
-
-// Update checkFormValidity to ensure synchronization
-function checkFormValidity() {
-  // First synchronize the form states
-  if (typeof synchronizeFormStates === 'function') {
-    synchronizeFormStates();
-  }
+  console.log('🚗 Vehicle selection visibility check:', result);
   
-  const refs = getElementRefs();
-  const activeTab = document.querySelector('.tab-panel:not(.hidden)');
-  const isOnewayTab = activeTab?.id === 'panel-oneway';
+  const vehicleContainer = document.getElementById('vehicle-selection-oneway');
   
-  let isValid = false;
-  
-  // Ensure local values are synced with global values
-  if (window.formState && window.formState.oneway) {
-    formState.oneway.fromLocation = window.formState.oneway.fromLocation || formState.oneway.fromLocation;
-    formState.oneway.toAddress = window.formState.oneway.toAddress || formState.oneway.toAddress;
-  }
-  
-  if (isOnewayTab) {
-    isValid = formState.oneway.fromLocation && 
-              formState.oneway.toAddress && 
-              formState.oneway.bookingTime && 
-              formState.oneway.vehicleType;
-    
-    console.log('✅ One-way form validity check:', {
-      fromLocation: formState.oneway.fromLocation,
-      toAddress: formState.oneway.toAddress,
-      bookingTime: formState.oneway.bookingTime,
-      vehicleType: formState.oneway.vehicleType,
-      isValid
-    });
-  } else {
-    // Experience+ validation
-    isValid = formState.experiencePlus.fromLocation && 
-              formState.experiencePlus.experienceType && 
-              formState.experiencePlus.dateTime;
-    
-    console.log('✅ Experience+ form validity check:', {
-      fromLocation: formState.experiencePlus.fromLocation,
-      experienceType: formState.experiencePlus.experienceType,
-      dateTime: formState.experiencePlus.dateTime,
-      isValid
-    });
-  }
-  
-  // Update submit button
-  if (refs.submitButton) {
-    refs.submitButton.disabled = !isValid;
-    refs.submitButton.setAttribute('aria-disabled', !isValid);
-    
-    if (isValid) {
-      refs.submitButton.classList.add('enabled');
-      refs.submitButton.removeAttribute('title');
-    } else {
-      refs.submitButton.classList.remove('enabled');
-      refs.submitButton.setAttribute('title', 'Complete all required fields to enable submission');
-    }
-  }
-  
-  // Show vehicles if conditions met
-  checkShowVehicles();
-  
-  emitEvent('form:validation-changed', { isValid, tab: isOnewayTab ? 'oneway' : 'experience-plus' });
-}
-
-// Update checkShowVehicles to use sync
-function checkShowVehicles() {
-  const refs = getElementRefs();
-  const activeTab = document.querySelector('.tab-panel:not(.hidden)');
-  const isOnewayTab = activeTab?.id === 'panel-oneway';
-  
-  // Use the global formState values for consistency
-  const globalState = window.formState || {};
-  
-  if (isOnewayTab && refs.vehicleSelectionOneway) {
-    const shouldShow = (globalState.oneway?.fromLocation || formState.oneway?.fromLocation) && 
-                     (globalState.oneway?.toAddress || formState.oneway?.toAddress) && 
-                     (formState.oneway?.bookingTime || globalState.oneway?.bookingTime);
-    
-    console.log('🚗 Vehicle selection visibility check:', {
-      fromLocation: globalState.oneway?.fromLocation || formState.oneway?.fromLocation,
-      toAddress: globalState.oneway?.toAddress || formState.oneway?.toAddress,
-      bookingTime: formState.oneway?.bookingTime || globalState.oneway?.bookingTime,
-      shouldShow
-    });
-    
-    if (shouldShow) {
-      refs.vehicleSelectionOneway.classList.remove('hidden');
-      // THIS is the critical line you need to add:
-      refs.vehicleSelectionOneway.classList.add('show'); 
+  if (vehicleContainer) {
+    if (result.shouldShow) {
+      // Show with animation
+      if (vehicleContainer.classList.contains('hidden')) {
+        vehicleContainer.classList.remove('hidden');
+        // Small delay to ensure the element is rendered before adding show class
+        setTimeout(() => {
+          vehicleContainer.classList.add('show');
+        }, 50);
+      }
       console.log('✅ Vehicle selection shown');
     } else {
-      refs.vehicleSelectionOneway.classList.add('hidden');
-      // Also remove the show class when hiding
-      refs.vehicleSelectionOneway.classList.remove('show');
+      // Hide with animation (only if not already being reset)
+      if (!vehicleContainer.classList.contains('hiding') && !vehicleContainer.classList.contains('hidden')) {
+        vehicleContainer.classList.remove('show');
+        vehicleContainer.classList.add('hiding');
+        setTimeout(() => {
+          vehicleContainer.classList.add('hidden');
+          vehicleContainer.classList.remove('hiding');
+        }, 1200);
+      }
       console.log('❌ Vehicle selection hidden');
     }
   }
+  
+  return result;
+}
+
+// Add this fallback reset function at the end of the file
+
+// Fallback reset functionality if modules fail
+function initializeFallbackReset() {
+  const resetButton = document.getElementById('reset-button');
+  if (!resetButton) return;
+  
+  // Remove existing listeners
+  resetButton.replaceWith(resetButton.cloneNode(true));
+  const newResetButton = document.getElementById('reset-button');
+  
+  newResetButton.addEventListener('click', () => {
+    console.log('🧹 Fallback reset activated');
+    
+    // Simple form reset
+    const form = document.getElementById('booking-form');
+    if (form) {
+      form.reset();
+    }
+    
+    // Hide vehicle selection
+    const vehicleContainer = document.getElementById('vehicle-selection-oneway');
+    if (vehicleContainer) {
+      vehicleContainer.classList.add('hidden');
+      vehicleContainer.classList.remove('show');
+    }
+    
+    // Clear error messages
+    document.querySelectorAll('[id$="-error"]').forEach(errorEl => {
+      errorEl.classList.add('hidden');
+      errorEl.textContent = '';
+    });
+    
+    console.log('✅ Fallback reset completed');
+  });
+}
+
+// Initialize fallback if needed
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      if (!window.dashboardResetInitialized) {
+        console.log('🔄 Initializing fallback reset...');
+        initializeFallbackReset();
+      }
+    }, 2000);
+  });
+} else {
+  setTimeout(() => {
+    if (!window.dashboardResetInitialized) {
+      console.log('🔄 Initializing fallback reset...');
+      initializeFallbackReset();
+    }
+  }, 2000);
 }

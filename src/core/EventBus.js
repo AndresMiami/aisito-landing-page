@@ -30,15 +30,24 @@ class EventBus {
       });
     }
   }
-
-  unsubscribe(eventName, callback) {
-    if (this.events[eventName]) {
-      this.events[eventName] = this.events[eventName].filter(cb => cb !== callback);
-    }
-  }
 }
 
-// Create and export a global instance
+// Create an instance and export it as default
 const eventBus = new EventBus();
 
+// Add compatibility methods for essential-functions.js
+eventBus.on = eventBus.subscribe;
+eventBus.emit = eventBus.publish;
+eventBus.off = function(eventName, callback) {
+  if (this.events[eventName]) {
+    this.events[eventName] = this.events[eventName].filter(cb => cb !== callback);
+  }
+};
+
 export default eventBus;
+
+// Add global fallback for non-module usage
+if (typeof window !== 'undefined') {
+  window.eventBus = eventBus;
+  window.EventBus = EventBus;
+}

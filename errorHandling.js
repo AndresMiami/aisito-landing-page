@@ -2,6 +2,8 @@
 // This module contains functions specifically for handling and displaying
 // form validation and submission errors on the dashboard page.
 
+import eventBus from './src/core/EventBus.js';
+
 /**
  * Displays a validation or API error message below a specific form field.
  * Also applies visual styling and ARIA attributes for accessibility.
@@ -118,7 +120,7 @@ export function clearError(fieldId) {
  *
  * @param {object} elements - Object containing references to DOM elements (from getElementRefs).
  */
-function clearAllErrors(elements) {
+export function clearAllErrors(elements) {
     // Find all elements within the booking form with an ID ending in '-error' (convention for error spans)
     const errorSpans = elements.bookingForm?.querySelectorAll('[id$="-error"]');
     // For each identified error span, clear its text content and hide it
@@ -140,6 +142,113 @@ function clearAllErrors(elements) {
     clearError('booking-time'); // Clear errors for the booking time button group
 }
 
-// Export the clearAllErrors function as well, as it's used outside this module (e.g., in validateForm)
-export { clearAllErrors };
+// Original functions - keeping for backward compatibility
+function legacyShowError(elements, fieldId, message) {
+  const field = elements[fieldId];
+  const errorElement = elements[`${fieldId}Error`];
+  
+  if (field && errorElement) {
+    field.classList.add('error');
+    field.setAttribute('aria-invalid', 'true');
+    errorElement.textContent = message;
+    errorElement.classList.remove('hidden');
+    
+    // Auto-focus the field for better UX
+    if (field.focus) {
+      field.focus();
+    }
+  }
+}
 
+function legacyClearError(fieldId) {
+  const field = document.getElementById(fieldId);
+  const errorElement = document.getElementById(`${fieldId}-error`);
+  
+  if (field) {
+    field.classList.remove('error');
+    field.setAttribute('aria-invalid', 'false');
+  }
+  
+  if (errorElement) {
+    errorElement.textContent = '';
+    errorElement.classList.add('hidden');
+  }
+}
+
+function legacyClearAllErrors(elements) {
+  Object.keys(elements).forEach(key => {
+    if (key.endsWith('Error')) {
+      const fieldId = key.replace('Error', '');
+      legacyClearError(fieldId);
+    }
+  });
+}
+
+// EventBus integration - New event-driven error handling
+eventBus.on('error:show', ({ fieldId, message, severity = 'error', source = 'unknown' }) => {
+  console.log(`EventBus: Showing ${severity} from ${source} for ${fieldId}: ${message}`);
+  
+  // Get elements reference from global store
+  const elements = window.elementRefs || {};
+  showError(elements, fieldId, message);
+  
+  // Track error for analytics
+  eventBus.emit('analytics:track', {
+    event: 'error_shown',
+    properties: {
+      fieldId,
+      message,
+      severity,
+      source
+    }
+  });
+});
+
+// Add event handler for clearing all errors
+eventBus.on('error:clear-all', ({ source = 'unknown' }) => {
+  console.log(`EventBus: Clearing all errors (source: ${source})`);
+  const elements = window.elementRefs || {};
+  clearAllErrors(elements);
+});
+
+// Add event handler for clearing a specific error
+eventBus.on('error:clear', ({ fieldId, source = 'unknown' }) => {
+  console.log(`EventBus: Clearing error for ${fieldId} (source: ${source})`);
+  clearError(fieldId);
+});
+
+// Export functions for EventBus-driven error handling
+export function emitError(fieldId, message, severity = 'error', source = 'manual') {
+  eventBus.emit('error:show', {
+    fieldId,
+    message,
+    severity,
+    source
+  });
+}
+
+export function emitClearError(fieldId, source = 'manual') {
+  eventBus.emit('error:clear', {
+    fieldId,
+    source
+  });
+}
+
+export function emitGlobalError(message, severity = 'error', code = null, dismissable = true, source = 'manual') {
+  eventBus.emit('error:global', {
+    message,
+    severity,
+    code,
+    dismissable,
+    source
+  });
+}
+
+export function emitClearAllErrors(source = 'manual') {
+  eventBus.emit('error:clear-all', {
+    source
+  });
+}
+
+// Legacy function exports (keeping for backward compatibility)
+export { showError, clearError, clearAllErrors };

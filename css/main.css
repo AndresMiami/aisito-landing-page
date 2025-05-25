@@ -27,21 +27,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
 
-/* Import base styles - with proper relative paths */
+/* Import base styles - FIXED: consistent URL imports */
 @import url('./_variables.css');
 @import url('./_reset.css');
 @import url('./_typography.css');
 @import url('./_layout.css');
 @import url('./_animations.css');
 
-/* Import component styles - with proper relative paths */
+/* Import component styles - FIXED: consistent URL imports */
 @import url('./components/_header.css');
 @import url('./components/_tabs.css');
 @import url('./components/_booking-form.css');
-@import './components/_vehicle-cards.css';
-@import './components/_vehicle-selector.css'; 
-@import './components/_buttons.css';
+@import url('./components/_vehicle-cards.css');
+@import url('./components/_vehicle-selector.css'); 
+@import url('./components/_buttons.css');
 @import url('./components/_google-maps.css');
+
+/* Import global error styles - FIXED: add proper path */
+@import url('./global-errors.css');
 
 /* Global utility classes */
 .hidden { 

@@ -16,12 +16,20 @@
     <!-- Google Maps -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAd_O4s_73E_A8rq7TGCHKVEBFHzNecAHM&libraries=places&v=beta&loading=async"></script>
 
-<!-- Essential functions first - provides getElementRefs for SimpleBridge -->
-<script src="essential-functions.js"></script>
-
-<!-- Load your modular components -->
-<script type="module" src="dashboard.js"></script>
-<script type="module" src="simple-bridge.js"></script>
+<!-- Fix the EventBus path -->
+<script type="module">
+  import eventBus from './src/core/EventBus.js';
+  window.eventBus = eventBus;
+  window.EventBus = eventBus.constructor;
+  console.log('✅ EventBus loaded as module and made global');
+</script>
+  
+  <!-- Essential functions first -->
+  <script src="essential-functions.js"></script>
+  
+  <!-- Load your modular components -->
+  <script type="module" src="dashboard.js"></script>
+  <script type="module" src="simple-bridge.js"></script>
   </head>
   <body class="bg-gray-100" style="background-image: url('images/miami-skyline-abstract-form.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
     <header class="site-header">
@@ -450,4 +458,5 @@
 -->
   </body>
 </html>
+
 

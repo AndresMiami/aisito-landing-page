@@ -1,3 +1,20 @@
+/* Reset button enhanced state */
+#reset-button {
+  transition: all 0.2s ease;
+}
+
+#reset-button:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+#reset-button.resetting {
+  background-color: #dc2626;
+  color: white;
+  transform: scale(0.95);
+  transition: all 0.2s ease;
+}
+
 /* Vehicle selection container animation */
 .vehicle-selection-container {
   max-height: 0;
@@ -17,6 +34,88 @@
   margin-top: 1rem;
 }
 
+/* Vehicle selection container hiding animation */
+.vehicle-selection-container.hiding {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-20px);
+  margin-top: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  transition: max-height 1.15s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.72s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.86s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Vehicle card animations */
+.vehicle-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Vehicle card reset animations */
+.vehicle-card.resetting {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Form field reset animations */
+.form-field-resetting {
+  transition: all 0.3s ease;
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+/* Button selection reset animation */
+.booking-time-button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.booking-time-button.selected {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Booking time button deselection animation */
+.booking-time-button.deselecting {
+  animation: deselectButton 0.4s ease-in-out;
+}
+
+@keyframes deselectButton {
+  0% { 
+    transform: translateY(-2px) scale(1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  50% { 
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  100% { 
+    transform: translateY(0) scale(1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+}
+
+/* Scheduled booking inputs hide animation */
+#scheduled-booking-inputs {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 1;
+  max-height: 200px;
+  overflow: hidden;
+}
+
+#scheduled-booking-inputs.hidden {
+  opacity: 0;
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Existing animations */
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
