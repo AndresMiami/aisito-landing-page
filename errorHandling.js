@@ -1,6 +1,8 @@
-// errorHandling.js
-// This module contains functions specifically for handling and displaying
-// form validation and submission errors on the dashboard page.
+/**
+ * errorHandling.js - Enhanced error handling with DOMManager integration
+ * This module contains functions specifically for handling and displaying
+ * form validation and submission errors on the dashboard page.
+ */
 
 import eventBus from './src/core/EventBus.js';
 import { ERROR_EVENTS, ERROR_SEVERITY } from './ErrorEvents.js';
@@ -22,26 +24,27 @@ export function showError(elements, fieldId, message) {
   const errorSpan = DOMManager.getElementById(`${fieldId}-error`);
   const inputElement = DOMManager.getElementById(fieldId);
   
-  // Set error message
+  // Set error message and show error span
   if (errorSpan) {
     DOMManager.setText(errorSpan, message);
     DOMManager.removeClass(errorSpan, 'hidden');
     DOMManager.addClass(errorSpan, 'visible');
   }
   
-  // Add error styling to input
+  // Add error styling to input using DOMManager
   if (inputElement) {
     DOMManager.addClass(inputElement, 'border-red-500');
     DOMManager.addClass(inputElement, 'ring-red-500');
     DOMManager.setAttribute(inputElement, 'aria-invalid', 'true');
   }
   
-  // Emit error event
+  // Emit error event using EventDefinitions
   if (window.eventBus) {
     window.eventBus.emit(EventDefinitions.EVENTS.ERROR.SHOWN_CONFIRMED, {
       fieldId,
       message,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      source: 'showError'
     });
   }
 }
@@ -54,94 +57,240 @@ export function showError(elements, fieldId, message) {
 export function clearError(fieldId) {
   console.log(`✨ Clearing error for ${fieldId}`);
   
+  // Use DOMManager for all DOM operations
   const errorSpan = DOMManager.getElementById(`${fieldId}-error`);
   const inputElement = DOMManager.getElementById(fieldId);
   
+  // Clear error message and hide error span
   if (errorSpan) {
     DOMManager.setText(errorSpan, '');
     DOMManager.addClass(errorSpan, 'hidden');
     DOMManager.removeClass(errorSpan, 'visible');
   }
   
+  // Remove error styling from input using DOMManager
   if (inputElement) {
     DOMManager.removeClass(inputElement, 'border-red-500');
     DOMManager.removeClass(inputElement, 'ring-red-500');
     DOMManager.removeAttribute(inputElement, 'aria-invalid');
   }
+  
+  // Emit error cleared event
+  if (window.eventBus) {
+    window.eventBus.emit(EventDefinitions.EVENTS.ERROR.CLEARED, {
+      fieldId,
+      timestamp: Date.now(),
+      source: 'clearError'
+    });
+  }
 }
 
 /**
  * Clears all validation and form-related error messages, visual styling, and ARIA attributes
- * across the entire form.
+ * across the entire form using DOMManager for better performance and maintainability.
  *
  * @param {object} elements - Object containing references to DOM elements (from getElementRefs).
  */
 export function clearAllErrors(elements) {
-    // Find all elements within the booking form with an ID ending in '-error' (convention for error spans)
-    const errorSpans = elements.bookingForm?.querySelectorAll('[id$="-error"]');
-    // For each identified error span, clear its text content and hide it
-    errorSpans?.forEach(span => { span.textContent = ''; span.classList.add('hidden'); });
-
-    // Find all elements within the booking form that have error styling classes (ring-red-500 or border-red-500)
-    const errorInputs = elements.bookingForm?.querySelectorAll('.ring-red-500, .border-red-500');
-    // For each identified element with error styling, remove the styling classes
-    errorInputs?.forEach(el => el.classList.remove('ring-red-500', 'ring-1', 'rounded-md', 'p-1', 'border-red-500')); // Include removal for button/fieldset styling
-
-    // Find all elements within the booking form with the ARIA invalid attribute
-    elements.bookingForm?.querySelectorAll('[aria-invalid="true"]').forEach(el => el.removeAttribute('aria-invalid'));
-    // Find all fieldset elements within the booking form with the ARIA describedby attribute (used for radio groups)
-    elements.bookingForm?.querySelectorAll('fieldset[aria-describedby]').forEach(el => el.removeAttribute('aria-describedby'));
-
-    // Explicitly call clearError for specific known error indicators that might not be caught by the general selectors
-    clearError('submit-button'); // Clear any error message specifically for the submit button
-    clearError('vehicle_type_oneway'); // Clear errors for the vehicle type fieldset/group
-    clearError('booking-time'); // Clear errors for the booking time button group
+  // Get the booking form using DOMManager
+  const bookingForm = elements.bookingForm || DOMManager.getElementById('booking-form');
+  
+  if (!bookingForm) {
+    console.warn('Booking form not found for clearing errors');
+    return;
+  }
+  
+  // Find all error spans within the form using DOMManager
+  const errorSpans = DOMManager.getElements('[id$="-error"]');
+  errorSpans.forEach(span => {
+    // Only process spans within the booking form
+    if (bookingForm.contains(span)) {
+      DOMManager.setText(span, '');
+      DOMManager.addClass(span, 'hidden');
+      DOMManager.removeClass(span, 'visible');
+    }
+  });
+  
+  // Find all elements with error styling classes using DOMManager
+  const errorInputs = DOMManager.getElements('.ring-red-500, .border-red-500');
+  errorInputs.forEach(el => {
+    // Only process elements within the booking form
+    if (bookingForm.contains(el)) {
+      DOMManager.removeClass(el, 'ring-red-500');
+      DOMManager.removeClass(el, 'ring-1');
+      DOMManager.removeClass(el, 'rounded-md');
+      DOMManager.removeClass(el, 'p-1');
+      DOMManager.removeClass(el, 'border-red-500');
+    }
+  });
+  
+  // Find all elements with aria-invalid attribute using DOMManager
+  const invalidElements = DOMManager.getElements('[aria-invalid="true"]');
+  invalidElements.forEach(el => {
+    if (bookingForm.contains(el)) {
+      DOMManager.removeAttribute(el, 'aria-invalid');
+    }
+  });
+  
+  // Find all fieldset elements with aria-describedby attribute using DOMManager
+  const fieldsets = DOMManager.getElements('fieldset[aria-describedby]');
+  fieldsets.forEach(el => {
+    if (bookingForm.contains(el)) {
+      DOMManager.removeAttribute(el, 'aria-describedby');
+    }
+  });
+  
+  // Explicitly clear specific known error indicators
+  clearError('submit-button');
+  clearError('vehicle_type_oneway');
+  clearError('booking-time');
+  
+  // Emit all errors cleared event
+  if (window.eventBus) {
+    window.eventBus.emit(EventDefinitions.EVENTS.ERROR.ALL_CLEARED, {
+      timestamp: Date.now(),
+      source: 'clearAllErrors'
+    });
+  }
 }
 
-// Original functions - keeping for backward compatibility
+/**
+ * Enhanced error display function with DOMManager integration
+ * @param {string} fieldId - Field ID
+ * @param {string} message - Error message
+ * @param {string} severity - Error severity level
+ */
+export function displayFieldError(fieldId, message, severity = ERROR_SEVERITY.ERROR) {
+  // Get field and error elements using DOMManager
+  const field = DOMManager.getElementById(fieldId);
+  const errorElement = DOMManager.getElementById(`${fieldId}-error`);
+  
+  if (!field) {
+    console.warn(`Field ${fieldId} not found for error display`);
+    return;
+  }
+  
+  // Create error element if it doesn't exist
+  let errorEl = errorElement;
+  if (!errorEl) {
+    errorEl = DOMManager.createErrorElement(message, severity);
+    errorEl.id = `${fieldId}-error`;
+    
+    // Insert after the field
+    const parent = field.parentElement;
+    if (parent) {
+      DOMManager.appendChild(parent, errorEl);
+    }
+  } else {
+    // Update existing error element
+    DOMManager.setText(errorEl, message);
+    DOMManager.removeClass(errorEl, 'hidden');
+  }
+  
+  // Apply error styling to field using DOMManager
+  DOMManager.addClass(field, 'error');
+  DOMManager.addClass(field, 'border-red-500');
+  DOMManager.setAttribute(field, 'aria-invalid', 'true');
+  DOMManager.setAttribute(field, 'aria-describedby', `${fieldId}-error`);
+  
+  // Focus field for better UX
+  if (field.focus && typeof field.focus === 'function') {
+    field.focus();
+  }
+  
+  // Emit error shown event
+  if (window.eventBus) {
+    window.eventBus.emit(EventDefinitions.EVENTS.ERROR.SHOW, {
+      fieldId,
+      message,
+      severity,
+      timestamp: Date.now(),
+      source: 'displayFieldError'
+    });
+  }
+}
+
+/**
+ * Enhanced error clearing function with DOMManager integration
+ * @param {string} fieldId - Field ID
+ */
+export function clearFieldError(fieldId) {
+  // Get field and error elements using DOMManager
+  const field = DOMManager.getElementById(fieldId);
+  const errorElement = DOMManager.getElementById(`${fieldId}-error`);
+  
+  if (field) {
+    // Remove error styling using DOMManager
+    DOMManager.removeClass(field, 'error');
+    DOMManager.removeClass(field, 'border-red-500');
+    DOMManager.removeClass(field, 'ring-red-500');
+    DOMManager.setAttribute(field, 'aria-invalid', 'false');
+    DOMManager.removeAttribute(field, 'aria-describedby');
+  }
+  
+  if (errorElement) {
+    // Clear and hide error element using DOMManager
+    DOMManager.setText(errorElement, '');
+    DOMManager.addClass(errorElement, 'hidden');
+  }
+  
+  // Emit error cleared event
+  if (window.eventBus) {
+    window.eventBus.emit(EventDefinitions.EVENTS.ERROR.CLEAR, {
+      fieldId,
+      timestamp: Date.now(),
+      source: 'clearFieldError'
+    });
+  }
+}
+
+// Legacy functions - keeping for backward compatibility but updating to use DOMManager
 function legacyShowError(elements, fieldId, message) {
-  const field = elements[fieldId];
-  const errorElement = elements[`${fieldId}Error`];
+  const field = elements[fieldId] || DOMManager.getElementById(fieldId);
+  const errorElement = elements[`${fieldId}Error`] || DOMManager.getElementById(`${fieldId}-error`);
   
   if (field && errorElement) {
-    field.classList.add('error');
-    field.setAttribute('aria-invalid', 'true');
-    errorElement.textContent = message;
-    errorElement.classList.remove('hidden');
+    DOMManager.addClass(field, 'error');
+    DOMManager.setAttribute(field, 'aria-invalid', 'true');
+    DOMManager.setText(errorElement, message);
+    DOMManager.removeClass(errorElement, 'hidden');
     
     // Auto-focus the field for better UX
-    if (field.focus) {
+    if (field.focus && typeof field.focus === 'function') {
       field.focus();
     }
   }
 }
 
 function legacyClearError(fieldId) {
-  const field = document.getElementById(fieldId);
-  const errorElement = document.getElementById(`${fieldId}-error`);
+  const field = DOMManager.getElementById(fieldId);
+  const errorElement = DOMManager.getElementById(`${fieldId}-error`);
   
   if (field) {
-    field.classList.remove('error');
-    field.setAttribute('aria-invalid', 'false');
+    DOMManager.removeClass(field, 'error');
+    DOMManager.setAttribute(field, 'aria-invalid', 'false');
   }
   
   if (errorElement) {
-    errorElement.textContent = '';
-    errorElement.classList.add('hidden');
+    DOMManager.setText(errorElement, '');
+    DOMManager.addClass(errorElement, 'hidden');
   }
 }
 
 function legacyClearAllErrors(elements) {
-  Object.keys(elements).forEach(key => {
-    if (key.endsWith('Error')) {
-      const fieldId = key.replace('Error', '');
-      legacyClearError(fieldId);
+  // Use DOMManager to get all form fields
+  const formFields = DOMManager.getFormFields();
+  
+  Object.keys(formFields).forEach(key => {
+    const field = formFields[key];
+    if (field && field.id) {
+      legacyClearError(field.id);
     }
   });
 }
 
 // Enhanced event emission function that prioritizes EventBus
-function emitEvent(eventName, data = {}) {
+export function emitEvent(eventName, data = {}) {
   console.log(`📡 Emitting event: ${eventName}`, data);
   
   // Primary: Use EventBus if available (preferred method)
@@ -155,8 +304,12 @@ function emitEvent(eventName, data = {}) {
   }
   
   // Legacy: Also emit as custom DOM event (for backward compatibility)
-  const customEvent = new CustomEvent(eventName, { detail: data });
-  document.dispatchEvent(customEvent);
+  try {
+    const customEvent = new CustomEvent(eventName, { detail: data });
+    document.dispatchEvent(customEvent);
+  } catch (error) {
+    console.warn('Could not emit custom DOM event:', error);
+  }
 }
 
 // Enhanced emit functions with better error handling and logging
@@ -179,7 +332,7 @@ export function emitError(fieldId, message, severity = ERROR_SEVERITY.ERROR, sou
     
   } catch (error) {
     console.error('Failed to emit error event:', error);
-    // Fallback to direct function call
+    // Fallback to direct function call using DOMManager
     const elements = window.elementRefs || {};
     showError(elements, fieldId, message);
   }
@@ -202,7 +355,7 @@ export function emitClearError(fieldId, source = 'manual') {
     
   } catch (error) {
     console.error('Failed to emit clear error event:', error);
-    // Fallback to direct function call
+    // Fallback to direct function call using DOMManager
     clearError(fieldId);
   }
 }
@@ -249,18 +402,18 @@ export function emitClearAllErrors(source = 'manual') {
     
   } catch (error) {
     console.error('Failed to emit clear all errors event:', error);
-    // Fallback to direct function call
+    // Fallback to direct function call using DOMManager
     const elements = window.elementRefs || {};
     clearAllErrors(elements);
   }
 }
 
-// Enhanced EventBus listeners with better error handling
+// Enhanced EventBus listeners with DOMManager integration
 eventBus.on('error:show', ({ fieldId, message, severity = 'error', source = 'unknown' }) => {
   console.log(`EventBus: Showing ${severity} error from ${source} for ${fieldId}: ${message}`);
   
   try {
-    // Get elements reference from global store
+    // Get elements reference from global store or use DOMManager
     const elements = window.elementRefs || {};
     showError(elements, fieldId, message);
     
@@ -285,8 +438,6 @@ eventBus.on('error:clear', ({ fieldId, source = 'manual' }) => {
   console.log(`EventBus: Clearing error for ${fieldId} from ${source}`);
   
   try {
-    // Get elements reference from global store
-    const elements = window.elementRefs || {};
     clearError(fieldId);
     
   } catch (error) {
@@ -297,32 +448,89 @@ eventBus.on('error:clear', ({ fieldId, source = 'manual' }) => {
 eventBus.on('error:global', ({ message, severity, code, dismissable, source, duration }) => {
   console.log(`EventBus: Global error [${severity}] - ${message}`);
   
-  // Here you can also trigger a global error display logic, if any
-  // For example, showing a toast notification or a modal
+  // Enhanced global error handling with DOMManager
+  try {
+    // Create or update global error display
+    let globalErrorContainer = DOMManager.getElementById('global-error-container');
+    
+    if (!globalErrorContainer) {
+      globalErrorContainer = DOMManager.createElement('div', {
+        id: 'global-error-container',
+        class: 'fixed top-4 right-4 z-50 max-w-md'
+      });
+      DOMManager.appendChild('body', globalErrorContainer);
+    }
+    
+    // Create error notification element
+    const errorNotification = DOMManager.createElement('div', {
+      class: `alert alert-${severity} mb-2 p-4 rounded-lg shadow-lg`,
+      role: 'alert'
+    });
+    
+    DOMManager.setText(errorNotification, message);
+    DOMManager.appendChild(globalErrorContainer, errorNotification);
+    
+    // Auto-dismiss if duration is specified
+    if (duration && dismissable) {
+      setTimeout(() => {
+        DOMManager.removeElement(errorNotification, true);
+      }, duration);
+    }
+    
+  } catch (error) {
+    console.error('Error in global error display:', error);
+    // Fallback to console
+    console.error(`Global Error [${severity}]: ${message}`);
+  }
 });
 
 eventBus.on('error:all:cleared', ({ source }) => {
   console.log(`EventBus: All errors cleared by ${source}`);
   
-  // Here you can trigger a logic to hide any global error display, if needed
+  try {
+    // Clear global error container if it exists
+    const globalErrorContainer = DOMManager.getElementById('global-error-container');
+    if (globalErrorContainer) {
+      DOMManager.setHTML(globalErrorContainer, '');
+    }
+    
+  } catch (error) {
+    console.error('Error in error:all:cleared listener:', error);
+  }
 });
 
-// Immediately Invoked Function Expression (IIFE) to initialize error handling state
-(function initErrorHandling() {
-  console.log('Initializing error handling state');
+// Initialize error handling with DOMManager
+function initErrorHandling() {
+  console.log('🚨 Initializing enhanced error handling with DOMManager');
   
-  // Predefine some common error messages for demonstration
-  const predefinedErrors = {
-    email: 'Please enter a valid email address.',
-    password: 'Password must be at least 6 characters.',
-    'submit-button': 'Please accept the terms and conditions.'
-  };
+  // Ensure DOMManager is available
+  if (!DOMManager) {
+    console.error('DOMManager not available - error handling may not work properly');
+    return;
+  }
   
-  // Simulate showing predefined errors for demonstration
-  Object.keys(predefinedErrors).forEach(fieldId => {
-    const message = predefinedErrors[fieldId];
-    showError(window.elementRefs, fieldId, message);
-  });
-})();
+  // Set up global error container
+  let globalErrorContainer = DOMManager.getElementById('global-error-container');
+  if (!globalErrorContainer) {
+    globalErrorContainer = DOMManager.createElement('div', {
+      id: 'global-error-container',
+      class: 'fixed top-4 right-4 z-50 max-w-md'
+    });
+    DOMManager.appendChild('body', globalErrorContainer);
+  }
+  
+  console.log('✅ Enhanced error handling initialized with DOMManager');
+}
 
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initErrorHandling);
+} else {
+  initErrorHandling();
+}
+
+// Export legacy functions for backward compatibility
+export { legacyShowError, legacyClearError, legacyClearAllErrors };
+
+console.log("🚨 Enhanced Error Handling module loaded with DOMManager integration");
 //# sourceMappingURL=errorHandling.js.map

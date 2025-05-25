@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Booking - I ❤️ Miami Concierge</title>
     <link rel="stylesheet" href="css/main.css">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Replace this CDN link -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- With a proper production build or local file -->
+<link rel="stylesheet" href="css/tailwind.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -682,6 +686,226 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 </script>
+<!-- Add missing event handlers before the existing script -->
+<script type="module">
+  import EventDefinitions from './core/EventDefinitions.js';
+  
+  // Define missing event handler functions
+  function handleFieldChange(data) {
+    console.log('📝 Field changed:', data);
+    
+    // Update UI based on field changes
+    if (data.fieldId && data.newValue !== undefined) {
+      // Trigger validation if needed
+      if (window.validateField) {
+        window.validateField(data.fieldId, data.newValue);
+      }
+    }
+  }
+  
+  function handleSubmissionStart(data) {
+    console.log('🚀 Form submission started:', data);
+    
+    // Show loading state
+    const submitButton = document.getElementById('submit-button');
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.setAttribute('aria-busy', 'true');
+      
+      // Add spinner
+      const spinner = submitButton.querySelector('.spinner');
+      if (spinner) {
+        spinner.classList.remove('hidden');
+      }
+      
+      // Update button text
+      const buttonText = submitButton.querySelector('.button-text');
+      if (buttonText) {
+        buttonText.textContent = 'Processing...';
+      }
+    }
+  }
+  
+  function handleSubmissionSuccess(data) {
+    console.log('✅ Form submission succeeded:', data);
+    
+    // Hide form and show confirmation
+    const form = document.getElementById('booking-form');
+    const confirmation = document.getElementById('confirmation-message');
+    
+    if (form) form.style.display = 'none';
+    if (confirmation) {
+      confirmation.classList.remove('hidden');
+      confirmation.classList.add('block');
+    }
+    
+    // Reset submit button
+    const submitButton = document.getElementById('submit-button');
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.setAttribute('aria-busy', 'false');
+      
+      const spinner = submitButton.querySelector('.spinner');
+      if (spinner) spinner.classList.add('hidden');
+      
+      const buttonText = submitButton.querySelector('.button-text');
+      if (buttonText) buttonText.textContent = 'Continue';
+    }
+  }
+  
+  function handleErrorShow(data) {
+    console.log('🚨 Error shown:', data);
+    
+    // Use error handling module if available
+    if (window.errorHandling && window.errorHandling.showError) {
+      const elements = window.elementRefs || {};
+      window.errorHandling.showError(elements, data.fieldId, data.message);
+    } else {
+      // Fallback error display
+      const errorElement = document.getElementById(`${data.fieldId}-error`);
+      if (errorElement) {
+        errorElement.textContent = data.message;
+        errorElement.classList.remove('hidden');
+      }
+    }
+  }
+  
+  function handleErrorClear(data) {
+    console.log('✨ Error cleared:', data);
+    
+    // Use error handling module if available
+    if (window.errorHandling && window.errorHandling.clearError) {
+      window.errorHandling.clearError(data.fieldId);
+    } else {
+      // Fallback error clearing
+      const errorElement = document.getElementById(`${data.fieldId}-error`);
+      if (errorElement) {
+        errorElement.textContent = '';
+        errorElement.classList.add('hidden');
+      }
+    }
+  }
+  
+  function handleLocationSelected(data) {
+    console.log('📍 Location selected:', data);
+    
+    // Update form state if needed
+    if (window.formState && data.fieldId) {
+      const tab = data.tab || 'oneway';
+      const fieldKey = data.fieldId.includes('from') ? 'fromLocation' : 'toAddress';
+      
+      if (window.formState[tab]) {
+        window.formState[tab][fieldKey] = true;
+      }
+    }
+    
+    // Trigger validation
+    if (window.validateFormState) {
+      window.validateFormState();
+    }
+  }
+  
+  function handleLocationValidation(data) {
+    console.log('🔍 Location validation required:', data);
+    
+    // Trigger location validation logic
+    if (data.fieldId && window.validateLocationField) {
+      window.validateLocationField(data.fieldId);
+    }
+  }
+  
+  function handleAnalyticsTrack(data) {
+    console.log('📊 Analytics track:', data);
+    
+    // Send to analytics service
+    if (window.gtag) {
+      window.gtag('event', data.event, {
+        event_category: data.category || 'form',
+        event_label: data.label,
+        value: data.value,
+        custom_map: data.properties
+      });
+    }
+    
+    // Also log for debugging
+    if (window.location.hostname === 'localhost') {
+      console.log('📊 Analytics Event:', data);
+    }
+  }
+  
+  // Make handlers available globally
+  window.handleFieldChange = handleFieldChange;
+  window.handleSubmissionStart = handleSubmissionStart;
+  window.handleSubmissionSuccess = handleSubmissionSuccess;
+  window.handleErrorShow = handleErrorShow;
+  window.handleErrorClear = handleErrorClear;
+  window.handleLocationSelected = handleLocationSelected;
+  window.handleLocationValidation = handleLocationValidation;
+  window.handleAnalyticsTrack = handleAnalyticsTrack;
+  
+  // Update event listeners setup function
+  function setupEventListeners() {
+    console.log('🎯 Setting up Miami Concierge event listeners...');
+    
+    // Check if EventBus is available
+    if (!window.eventBus) {
+      console.warn('⚠️ EventBus not available, skipping event listener setup');
+      return;
+    }
+    
+    try {
+      // Form events
+      eventBus.on(EventDefinitions.EVENTS.FORM.FIELD_CHANGED, handleFieldChange);
+      eventBus.on(EventDefinitions.EVENTS.FORM.SUBMISSION_STARTED, handleSubmissionStart);
+      eventBus.on(EventDefinitions.EVENTS.FORM.SUBMISSION_SUCCEEDED, handleSubmissionSuccess);
+      
+      // Error events
+      eventBus.on(EventDefinitions.EVENTS.ERROR.SHOW, handleErrorShow);
+      eventBus.on(EventDefinitions.EVENTS.ERROR.CLEAR, handleErrorClear);
+      
+      // Map events
+      eventBus.on(EventDefinitions.EVENTS.MAP.LOCATION_SELECTED, handleLocationSelected);
+      eventBus.on(EventDefinitions.EVENTS.LOCATION.VALIDATION_REQUIRED, handleLocationValidation);
+      
+      // Analytics events
+      eventBus.on(EventDefinitions.EVENTS.ANALYTICS.TRACK, handleAnalyticsTrack);
+      
+      console.log('✅ Event listeners set up successfully');
+      
+    } catch (error) {
+      console.error('❌ Error setting up event listeners:', error);
+    }
+  }
+  
+  // Update initialization
+  document.addEventListener('DOMContentLoaded', () => {
+    setupEventListeners();
+    
+    // Log available events for debugging
+    if (EventDefinitions.getAllEvents) {
+      console.log('🎯 Miami Concierge Events Loaded:', EventDefinitions.getAllEvents().length);
+    }
+    
+    // Emit system ready event
+    if (window.eventBus) {
+      eventBus.emit(EventDefinitions.EVENTS.SYSTEM.READY, {
+        timestamp: Date.now(),
+        version: '1.0.0',
+        handlers: [
+          'handleFieldChange',
+          'handleSubmissionStart', 
+          'handleSubmissionSuccess',
+          'handleErrorShow',
+          'handleErrorClear',
+          'handleLocationSelected',
+          'handleLocationValidation',
+          'handleAnalyticsTrack'
+        ]
+      });
+    }
+  });
+</script>
+<script type="module" src="dashboard-components.js"></script>
   </body>
 </html>
 

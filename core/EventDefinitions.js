@@ -16,7 +16,8 @@ export const EVENTS = {
     GLOBAL: 'error:global',
     GLOBAL_CLEAR: 'error:global-clear',
     SHOWN_CONFIRMED: 'error:shown:confirmed',
-    CLEARED_CONFIRMED: 'error:cleared:confirmed'
+    CLEARED_CONFIRMED: 'error:cleared:confirmed',
+    COMPONENT_ERROR: 'error:component'
   },
 
   // 📝 Form Events
@@ -83,6 +84,12 @@ export const EVENTS = {
   SYSTEM: {
     INITIALIZED: 'system:initialized',
     READY: 'system:ready',
+    COMPONENT_REGISTERED: 'system:component:registered',
+    COMPONENT_INITIALIZED: 'system:component:initialized',
+    COMPONENT_DESTROYED: 'system:component:destroyed',
+    COMPONENT_RECOVERED: 'system:component:recovered',
+    COMPONENTS_INITIALIZED: 'system:components:initialized',
+    COMPONENTS_DESTROYED: 'system:components:destroyed',
     ERROR: 'system:error',
     DEBUG_ENABLED: 'system:debug:enabled',
     DEBUG_DISABLED: 'system:debug:disabled'

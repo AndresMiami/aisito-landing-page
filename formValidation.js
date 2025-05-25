@@ -1,417 +1,527 @@
-// formValidation.js
-// This module contains the logic for validating the booking form.
+/**
+ * formValidation.js - Enhanced form validation with DOMManager integration
+ * This module handles form field validation using centralized DOM operations
+ * and event-driven architecture for better maintainability.
+ */
 
-// Import error handling functions needed for displaying validation errors.
-import { showError, clearAllErrors } from './errorHandling.js';
+import DOMManager from './core/DOMManager.js';
 import eventBus from './src/core/EventBus.js';
-
-// Create a validation rules registry
-const validationRules = {
-  required: {
-    validator: (value) => value !== undefined && value !== null && value.toString().trim() !== '',
-    message: 'This field is required'
-  },
-  email: {
-    validator: (value) => !value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
-    message: 'Please enter a valid email address'
-  },
-  phone: {
-    validator: (value) => !value || /^\+?[\d\s()-]{10,20}$/.test(value),
-    message: 'Please enter a valid phone number'
-  },
-  minLength: {
-    validator: (value, length) => !value || value.length >= length,
-    message: (length) => `Must be at least ${length} characters`
-  },
-  locationSelected: {
-    validator: (value, field) => {
-      // Check if the location field has a valid place selected
-      const fieldElement = document.getElementById(field || 'from-location');
-      return fieldElement && fieldElement.value && fieldElement.value.trim() !== '';
-    },
-    message: 'Please select a location from the dropdown suggestions'
-  },
-  vehicleSelected: {
-    validator: (value, vehicleName) => {
-      // Check if a vehicle radio button is selected
-      const selectedVehicle = document.querySelector(`input[name="${vehicleName || 'vehicle_type_oneway'}"]:checked`);
-      return !!selectedVehicle;
-    },
-    message: 'Please select a vehicle type'
-  }
-};
-
-// Global form state to track validation status
-window.formState = {
-  oneway: {
-    fromLocation: false,
-    toAddress: false,
-    bookingTime: false,
-    pickupDate: false,
-    pickupTime: false,
-    vehicleType: false
-  },
-  experiencePlus: {
-    fromLocation: false,
-    experienceType: false,
-    datePreference: false,
-    guestInfo: false
-  }
-};
+import EventDefinitions from './core/EventDefinitions.js';
+import { ERROR_SEVERITY } from './ErrorEvents.js';
 
 /**
- * Validates the form based on the currently active tab and the inputs within that tab.
- * Displays user-friendly error messages next to invalid fields and logs validation failures.
- *
- * @param {object} elements - Object containing references to DOM elements (from getElementRefs).
- * @returns {boolean} - true if the form is valid, false otherwise.
+ * Validate a single form field with DOMManager integration
+ * @param {string} fieldId - Field ID to validate
+ * @param {string} value - Field value to validate
+ * @param {Object} validationRules - Validation rules for the field
+ * @returns {boolean} Validation result
  */
-export function validateForm(elements) {
-    // Clear previous errors
-    eventBus.emit('error:clear-all', { source: 'validation' });
-    
-    let isValid = true;
-    
-    // Get the active tab
-    const activeTabButton = document.querySelector('.tab-button[aria-selected="true"]');
-    const activePanelId = activeTabButton?.getAttribute('aria-controls');
-    
-    console.log('Active panel:', activePanelId);
-    
-    // Collect all fields that need validation based on the active panel
-    const fieldsToValidate = getFieldsToValidate(elements, activePanelId);
-    
-    console.log('Fields to validate:', fieldsToValidate);
-    
-    // Validate each field
-    Object.entries(fieldsToValidate).forEach(([fieldId, config]) => {
-      const fieldElement = elements[fieldId] || document.getElementById(fieldId);
-      const value = fieldElement?.value || '';
-      
-      console.log(`Validating field: ${fieldId}, value: "${value}"`);
-      
-      // Validate the field
-      const fieldValid = validateField(fieldId, value, config.rules, config.params);
-      
-      if (!fieldValid.isValid) {
-        isValid = false;
-        console.log(`❌ Field ${fieldId} validation failed:`, fieldValid.errors);
-        
-        // Emit error event
-        eventBus.emit('error:show', {
-          fieldId,
-          message: fieldValid.errors[0],
-          severity: 'error',
-          source: 'validation'
-        });
-        
-        // Update form state
-        updateFormState(fieldId, false);
-      } else {
-        console.log(`✅ Field ${fieldId} validation passed`);
-        
-        // Clear any existing errors
-        eventBus.emit('error:clear', { fieldId, source: 'validation' });
-        
-        // Update form state
-        updateFormState(fieldId, true);
-      }
-    });
-    
-    // Emit form validated event
-    eventBus.emit('form:validated', {
-      formId,
-      isValid,
-      source: 'validateForm',
-      fieldsValidated: Object.keys(fieldsToValidate)
-    });
-    
-    console.log(`🚌 Form validation complete. Valid: ${isValid}`);
-    return isValid;
-}
-
-// Helper function to get fields that need validation based on active panel
-function getFieldsToValidate(elements, activePanelId) {
-  const fields = {};
+export function validateField(fieldId, value, validationRules = {}) {
+  console.log(`🔍 Validating field: ${fieldId} with value: ${value}`);
   
-  if (activePanelId === 'panel-oneway') {
-    // One-Way tab fields
-    fields['from-location'] = { 
-      rules: ['required', 'locationSelected'],
-      params: { locationSelected: ['from-location'] }
-    };
-    
-    fields['to-address'] = { 
-      rules: ['required', 'locationSelected'],
-      params: { locationSelected: ['to-address'] }
-    };
-    
-    // Check if booking time is selected
-    const bookingPref = document.getElementById('booking-preference')?.value;
-    if (bookingPref === 'Scheduled') {
-      fields['pickup-date-oneway'] = { rules: ['required'] };
-      fields['pickup-time-oneway'] = { rules: ['required'] };
-    }
-    
-    // Vehicle selection validation
-    fields['vehicle_type_oneway'] = { 
-      rules: ['vehicleSelected'],
-      params: { vehicleSelected: ['vehicle_type_oneway'] }
-    };
-  } 
-  else if (activePanelId === 'panel-experience-plus') {
-    // Experience+ tab fields
-    fields['from-location-exp'] = { 
-      rules: ['required', 'locationSelected'],
-      params: { locationSelected: ['from-location-exp'] }
-    };
-    
-    fields['experience-dropdown'] = { rules: ['required'] };
-    
-    // Add service-specific validation based on selected experience
-    const selectedService = document.getElementById('experience-dropdown')?.value;
-    
-    if (selectedService === 'hourly_chauffeur') {
-      fields['duration-hourly'] = { rules: ['required'] };
-      fields['pickup-date-hourly'] = { rules: ['required'] };
-      fields['pickup-time-hourly'] = { rules: ['required'] };
-    } else if (selectedService && selectedService !== '') {
-      // Date preference for curated experiences
-      fields['date_preference'] = { rules: ['required'] };
+  // Get field using DOMManager
+  const field = DOMManager.getElementById(fieldId);
+  if (!field) {
+    console.warn(`Field ${fieldId} not found for validation`);
+    return false;
+  }
+  
+  let isValid = true;
+  let errorMessage = '';
+  const errors = [];
+  
+  // Required field validation
+  if (validationRules.required && (!value || value.trim() === '')) {
+    isValid = false;
+    errorMessage = validationRules.requiredMessage || `${getFieldLabel(fieldId)} is required`;
+    errors.push({ rule: 'required', message: errorMessage });
+  }
+  
+  // Length validation
+  if (value && validationRules.minLength && value.length < validationRules.minLength) {
+    isValid = false;
+    errorMessage = validationRules.minLengthMessage || `${getFieldLabel(fieldId)} must be at least ${validationRules.minLength} characters`;
+    errors.push({ rule: 'minLength', message: errorMessage });
+  }
+  
+  if (value && validationRules.maxLength && value.length > validationRules.maxLength) {
+    isValid = false;
+    errorMessage = validationRules.maxLengthMessage || `${getFieldLabel(fieldId)} must not exceed ${validationRules.maxLength} characters`;
+    errors.push({ rule: 'maxLength', message: errorMessage });
+  }
+  
+  // Email validation
+  if (value && validationRules.email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) {
+      isValid = false;
+      errorMessage = validationRules.emailMessage || 'Please enter a valid email address';
+      errors.push({ rule: 'email', message: errorMessage });
     }
   }
   
-  return fields;
+  // Phone validation
+  if (value && validationRules.phone) {
+    const phoneRegex = /^[\+]?[\d\s\-\(\)]{10,}$/;
+    if (!phoneRegex.test(value)) {
+      isValid = false;
+      errorMessage = validationRules.phoneMessage || 'Please enter a valid phone number';
+      errors.push({ rule: 'phone', message: errorMessage });
+    }
+  }
+  
+  // Custom validation function
+  if (value && validationRules.custom && typeof validationRules.custom === 'function') {
+    const customResult = validationRules.custom(value);
+    if (!customResult.isValid) {
+      isValid = false;
+      errorMessage = customResult.message || 'Custom validation failed';
+      errors.push({ rule: 'custom', message: errorMessage });
+    }
+  }
+  
+  // Create validation payload using EventDefinitions
+  const validationResult = EventDefinitions.createValidationPayload(
+    fieldId,
+    isValid,
+    errors,
+    'form-validation'
+  );
+  
+  // Emit validation result event
+  eventBus.emit(EventDefinitions.EVENTS.VALIDATION.FIELD_VALIDATED, validationResult);
+  
+  // Update field UI based on validation result
+  if (!isValid) {
+    // Add error styling using DOMManager
+    DOMManager.addClass(field, 'border-red-500');
+    DOMManager.addClass(field, 'ring-red-500');
+    DOMManager.setAttribute(field, 'aria-invalid', 'true');
+    
+    // Emit error show event
+    eventBus.emit(EventDefinitions.EVENTS.ERROR.SHOW, {
+      fieldId,
+      message: errorMessage,
+      severity: ERROR_SEVERITY.ERROR,
+      timestamp: Date.now(),
+      source: 'field-validation'
+    });
+  } else {
+    // Remove error styling using DOMManager
+    DOMManager.removeClass(field, 'border-red-500');
+    DOMManager.removeClass(field, 'ring-red-500');
+    DOMManager.removeAttribute(field, 'aria-invalid');
+    
+    // Emit error clear event
+    eventBus.emit(EventDefinitions.EVENTS.ERROR.CLEAR, {
+      fieldId,
+      timestamp: Date.now(),
+      source: 'field-validation'
+    });
+  }
+  
+  return isValid;
 }
 
-// Function to validate a single field
-function validateField(fieldId, value, rules = [], params = {}) {
-  const result = {
-    isValid: true,
-    errors: [],
-    warnings: []
-  };
+/**
+ * Validate entire form with DOMManager integration
+ * @param {string} formId - Form ID to validate
+ * @param {Object} validationConfig - Validation configuration object
+ * @returns {boolean} Overall form validation result
+ */
+export function validateForm(formId, validationConfig = {}) {
+  console.log(`📋 Validating form: ${formId}`);
   
-  // Process each validation rule
-  for (const rule of rules) {
-    let ruleName = rule;
-    let ruleParams = [];
-    
-    // Handle rules with parameters (e.g., minLength:3)
-    if (rule.includes(':')) {
-      const [name, ...paramsList] = rule.split(':');
-      ruleName = name;
-      ruleParams = paramsList;
-    }
-    
-    // Use params object if available
-    if (params[ruleName]) {
-      ruleParams = params[ruleName];
-    }
-    
-    // Get the validation rule
-    const validationRule = validationRules[ruleName];
-    if (!validationRule) {
-      console.warn(`Unknown validation rule: ${ruleName}`);
-      continue;
-    }
-    
-    // Apply the validation rule
-    const isValid = validationRule.validator(value, ...ruleParams);
-    if (!isValid) {
-      result.isValid = false;
+  // Get form using DOMManager
+  const form = DOMManager.getElementById(formId);
+  if (!form) {
+    console.error(`Form ${formId} not found for validation`);
+    return false;
+  }
+  
+  // Get all form fields using DOMManager
+  const fields = DOMManager.getElements('input, select, textarea', form);
+  let isValid = true;
+  let errors = [];
+  let validatedFields = [];
+  
+  // Validate each field
+  fields.forEach(field => {
+    if (field.id && validationConfig[field.id]) {
+      const fieldValue = DOMManager.getValue(field);
+      const fieldValid = validateField(field.id, fieldValue, validationConfig[field.id]);
       
-      // Get the error message (handle both function and string messages)
-      const message = typeof validationRule.message === 'function' 
-        ? validationRule.message(...ruleParams)
-        : validationRule.message;
-        
-      result.errors.push(message);
-      break; // Stop on first error
+      validatedFields.push({
+        fieldId: field.id,
+        isValid: fieldValid,
+        value: fieldValue
+      });
+      
+      if (!fieldValid) {
+        errors.push(field.id);
+      }
+      isValid = isValid && fieldValid;
     }
+  });
+  
+  // Emit form validation event
+  eventBus.emit(EventDefinitions.EVENTS.FORM.VALIDATED, {
+    formId,
+    isValid,
+    errors,
+    validatedFields,
+    timestamp: Date.now()
+  });
+  
+  // Update submit button state using DOMManager
+  const submitButtons = DOMManager.getElements('button[type="submit"]', form);
+  submitButtons.forEach(button => {
+    DOMManager.setButtonLoading(button, false); // Ensure not in loading state
+    button.disabled = !isValid;
+    
+    // Add visual feedback
+    if (isValid) {
+      DOMManager.removeClass(button, 'opacity-50');
+      DOMManager.removeClass(button, 'cursor-not-allowed');
+    } else {
+      DOMManager.addClass(button, 'opacity-50');
+      DOMManager.addClass(button, 'cursor-not-allowed');
+    }
+  });
+  
+  // Emit form ready/not ready events
+  if (isValid) {
+    eventBus.emit(EventDefinitions.EVENTS.FORM.READY_TO_SUBMIT, {
+      formId,
+      timestamp: Date.now()
+    });
+  } else {
+    eventBus.emit(EventDefinitions.EVENTS.FORM.NOT_READY_TO_SUBMIT, {
+      formId,
+      errors,
+      timestamp: Date.now()
+    });
+  }
+  
+  return isValid;
+}
+
+/**
+ * Validate specific field types with Miami Concierge business rules
+ * @param {string} fieldId - Field ID
+ * @param {string} value - Field value
+ * @param {string} fieldType - Type of field (location, vehicle, etc.)
+ * @returns {Object} Validation result object
+ */
+export function validateMiamiField(fieldId, value, fieldType) {
+  console.log(`🏖️ Validating Miami field: ${fieldId} (${fieldType})`);
+  
+  const field = DOMManager.getElementById(fieldId);
+  if (!field) {
+    return { isValid: false, message: 'Field not found' };
+  }
+  
+  let result = { isValid: true, message: '' };
+  
+  switch (fieldType) {
+    case 'location':
+      result = validateLocationField(value);
+      break;
+    case 'vehicle':
+      result = validateVehicleSelection(value);
+      break;
+    case 'datetime':
+      result = validateDateTimeField(value);
+      break;
+    case 'passenger_count':
+      result = validatePassengerCount(value);
+      break;
+    case 'duration':
+      result = validateDuration(value);
+      break;
+    default:
+      result = { isValid: true, message: '' };
+  }
+  
+  // Apply validation result using DOMManager
+  if (!result.isValid) {
+    DOMManager.addClass(field, 'border-red-500');
+    DOMManager.setAttribute(field, 'aria-invalid', 'true');
+    
+    // Show error message
+    eventBus.emit(EventDefinitions.EVENTS.ERROR.SHOW, {
+      fieldId,
+      message: result.message,
+      severity: ERROR_SEVERITY.ERROR,
+      timestamp: Date.now(),
+      source: 'miami-field-validation'
+    });
+  } else {
+    DOMManager.removeClass(field, 'border-red-500');
+    DOMManager.removeAttribute(field, 'aria-invalid');
+    
+    // Clear any existing errors
+    eventBus.emit(EventDefinitions.EVENTS.ERROR.CLEAR, {
+      fieldId,
+      timestamp: Date.now(),
+      source: 'miami-field-validation'
+    });
   }
   
   return result;
 }
 
-// Helper function to update form state
-function updateFormState(fieldId, isValid) {
-  if (!window.formState) return;
+/**
+ * Real-time validation setup for form fields
+ * @param {string} formId - Form ID to set up validation for
+ * @param {Object} validationConfig - Validation configuration
+ */
+export function setupRealTimeValidation(formId, validationConfig) {
+  console.log(`⚡ Setting up real-time validation for form: ${formId}`);
   
-  // Map field IDs to form state properties
-  const fieldMapping = {
-    'from-location': ['oneway', 'fromLocation'],
-    'from-location-exp': ['experiencePlus', 'fromLocation'],
-    'to-address': ['oneway', 'toAddress'],
-    'pickup-date-oneway': ['oneway', 'pickupDate'],
-    'pickup-time-oneway': ['oneway', 'pickupTime'],
-    'vehicle_type_oneway': ['oneway', 'vehicleType'],
-    'experience-dropdown': ['experiencePlus', 'experienceType'],
-    'date_preference': ['experiencePlus', 'datePreference']
-  };
-  
-  const mapping = fieldMapping[fieldId];
-  if (mapping) {
-    const [tabType, stateKey] = mapping;
-    if (window.formState[tabType]) {
-      window.formState[tabType][stateKey] = isValid;
-    }
-  }
-}
-
-// Debug function to force validation (for your debug controls)
-export function forceLocationValidation(fieldId, tabType, stateKey) {
-  console.log(`🔧 Debug: Force validating ${fieldId} in ${tabType}.${stateKey}`);
-  
-  // Clear any existing error
-  eventBus.emit('error:clear', { fieldId, source: 'debug' });
-  
-  // Mark as valid in form state
-  if (window.formState && window.formState[tabType]) {
-    window.formState[tabType][stateKey] = true;
-  }
-  
-  // Show success feedback
-  eventBus.emit('error:global', {
-    message: `${fieldId} marked as valid for testing`,
-    severity: 'success',
-    code: 'DEBUG001',
-    dismissable: true,
-    source: 'debug'
-  });
-  
-  // Also emit validation success event
-  eventBus.emit('form:field:validated', {
-    formId: 'booking-form',
-    fieldId,
-    value: 'debug-value',
-    isValid: true,
-    errors: [],
-    warnings: [],
-    source: 'debug'
-  });
-}
-
-// Register event listeners for validation events
-eventBus.on('form:field:validate', ({ formId, fieldId, value, rules = [], params = {}, silent = false }) => {
-  console.log(`🚌 EventBus: Validating field ${fieldId} in form ${formId}`);
-  
-  // Validate the field
-  const result = validateField(fieldId, value, rules, params);
-  
-  // Emit the validated event
-  eventBus.emit('form:field:validated', {
-    formId,
-    fieldId,
-    value,
-    isValid: result.isValid,
-    errors: result.errors,
-    warnings: result.warnings,
-    source: 'eventbus-validation'
-  });
-  
-  // Show/clear error if not silent
-  if (!silent) {
-    if (!result.isValid) {
-      eventBus.emit('error:show', {
-        fieldId,
-        message: result.errors[0],
-        severity: 'error',
-        source: 'validation'
-      });
-    } else {
-      eventBus.emit('error:clear', { fieldId, source: 'validation' });
-    }
-  }
-  
-  // Update form state
-  updateFormState(fieldId, result.isValid);
-});
-
-eventBus.on('form:validate', ({ formId, source = 'unknown', options = {} }) => {
-  console.log(`🚌 EventBus: Validating form ${formId} from ${source}`);
-  
-  // Get form elements
-  const form = document.getElementById(formId);
+  const form = DOMManager.getElementById(formId);
   if (!form) {
-    console.error(`Form with ID ${formId} not found`);
-    eventBus.emit('error:global', {
-      message: `Form with ID ${formId} not found`,
-      severity: 'error',
-      code: 'FORM001',
-      source: 'validation'
-    });
-    return false;
+    console.error(`Form ${formId} not found for real-time validation setup`);
+    return;
   }
   
-  // Create elements object similar to what validateForm expects
-  const elements = {
-    bookingForm: form,
-    tabNavigationContainer: document.querySelector('#tab-navigation'),
-    // Add other elements as needed from window.elementRefs
-    ...window.elementRefs
-  };
-  
-  // Use the original validateForm for backward compatibility
-  const isValid = validateForm(elements);
-  
-  return isValid;
-});
-
-// Register custom validation rule
-eventBus.on('validation:rule:register', ({ name, validator, errorMessage }) => {
-  console.log(`🚌 EventBus: Registering validation rule ${name}`);
-  
-  validationRules[name] = {
-    validator,
-    message: errorMessage
-  };
-});
-
-// Event listener for real-time field validation
-eventBus.on('form:field:changed', ({ fieldId, value, rules = [], params = {} }) => {
-  console.log(`🚌 EventBus: Field ${fieldId} changed, validating...`);
-  
-  // Validate the field in real-time
-  eventBus.emit('form:field:validate', {
-    formId: 'booking-form',
-    fieldId,
-    value,
-    rules,
-    params,
-    silent: false
+  // Set up event listeners for each field using DOMManager
+  Object.keys(validationConfig).forEach(fieldId => {
+    const field = DOMManager.getElementById(fieldId);
+    if (field) {
+      // Add input event listener for real-time validation
+      DOMManager.addEventListener(field, 'input', (event) => {
+        const value = DOMManager.getValue(field);
+        validateField(fieldId, value, validationConfig[fieldId]);
+      });
+      
+      // Add blur event listener for complete validation
+      DOMManager.addEventListener(field, 'blur', (event) => {
+        const value = DOMManager.getValue(field);
+        validateField(fieldId, value, validationConfig[fieldId]);
+        
+        // Trigger form-level validation after field validation
+        setTimeout(() => {
+          validateForm(formId, validationConfig);
+        }, 50);
+      });
+    }
   });
-});
-
-// Enhanced validation for location fields
-eventBus.on('location:selected', ({ fieldId, place, isValid }) => {
-  console.log(`🚌 EventBus: Location selected for ${fieldId}:`, place);
   
-  if (isValid) {
-    eventBus.emit('error:clear', { fieldId, source: 'location-validation' });
-    updateFormState(fieldId, true);
-  } else {
-    eventBus.emit('error:show', {
-      fieldId,
-      message: 'Please select a valid location from the dropdown',
-      severity: 'warning',
-      source: 'location-validation'
-    });
-    updateFormState(fieldId, false);
+  // Set up form submit validation
+  DOMManager.addEventListener(form, 'submit', (event) => {
+    const isValid = validateForm(formId, validationConfig);
+    if (!isValid) {
+      event.preventDefault();
+      event.stopPropagation();
+      
+      // Emit form submission blocked event
+      eventBus.emit(EventDefinitions.EVENTS.FORM.SUBMISSION_BLOCKED, {
+        formId,
+        reason: 'validation_failed',
+        timestamp: Date.now()
+      });
+    }
+  });
+  
+  console.log('✅ Real-time validation setup complete');
+}
+
+// Helper functions
+
+/**
+ * Get field label for error messages
+ * @param {string} fieldId - Field ID
+ * @returns {string} Field label
+ */
+function getFieldLabel(fieldId) {
+  const field = DOMManager.getElementById(fieldId);
+  if (!field) return fieldId;
+  
+  // Try to find associated label
+  const label = DOMManager.getElement(`label[for="${fieldId}"]`);
+  if (label) {
+    return DOMManager.getText(label).replace('*', '').trim();
   }
+  
+  // Fallback to field name or placeholder
+  return field.getAttribute('data-label') || 
+         field.getAttribute('placeholder') || 
+         fieldId.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+
+/**
+ * Validate location field (Miami-specific)
+ * @param {string} value - Location value
+ * @returns {Object} Validation result
+ */
+function validateLocationField(value) {
+  if (!value || value.trim() === '') {
+    return { isValid: false, message: 'Location is required' };
+  }
+  
+  if (value.length < 3) {
+    return { isValid: false, message: 'Please enter a more specific location' };
+  }
+  
+  // Miami-specific location validation could be added here
+  return { isValid: true, message: '' };
+}
+
+/**
+ * Validate vehicle selection
+ * @param {string} value - Vehicle type value
+ * @returns {Object} Validation result
+ */
+function validateVehicleSelection(value) {
+  const validVehicles = ['sedan', 'suv', 'luxury', 'van', 'limo'];
+  
+  if (!value) {
+    return { isValid: false, message: 'Please select a vehicle type' };
+  }
+  
+  if (!validVehicles.includes(value)) {
+    return { isValid: false, message: 'Please select a valid vehicle type' };
+  }
+  
+  return { isValid: true, message: '' };
+}
+
+/**
+ * Validate date/time field
+ * @param {string} value - DateTime value
+ * @returns {Object} Validation result
+ */
+function validateDateTimeField(value) {
+  if (!value) {
+    return { isValid: false, message: 'Date and time are required' };
+  }
+  
+  const selectedDate = new Date(value);
+  const now = new Date();
+  
+  if (selectedDate <= now) {
+    return { isValid: false, message: 'Please select a future date and time' };
+  }
+  
+  // Check if date is too far in the future (e.g., 1 year)
+  const oneYearFromNow = new Date();
+  oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+  
+  if (selectedDate > oneYearFromNow) {
+    return { isValid: false, message: 'Please select a date within the next year' };
+  }
+  
+  return { isValid: true, message: '' };
+}
+
+/**
+ * Validate passenger count
+ * @param {string} value - Passenger count value
+ * @returns {Object} Validation result
+ */
+function validatePassengerCount(value) {
+  const count = parseInt(value);
+  
+  if (isNaN(count) || count < 1) {
+    return { isValid: false, message: 'Please enter a valid number of passengers' };
+  }
+  
+  if (count > 20) {
+    return { isValid: false, message: 'For groups larger than 20, please contact us directly' };
+  }
+  
+  return { isValid: true, message: '' };
+}
+
+/**
+ * Validate duration for hourly services
+ * @param {string} value - Duration value
+ * @returns {Object} Validation result
+ */
+function validateDuration(value) {
+  const duration = parseInt(value);
+  
+  if (isNaN(duration) || duration < 1) {
+    return { isValid: false, message: 'Please select a valid duration' };
+  }
+  
+  if (duration > 12) {
+    return { isValid: false, message: 'For services longer than 12 hours, please contact us directly' };
+  }
+  
+  return { isValid: true, message: '' };
+}
+
+// Event listeners for validation events
+eventBus.on(EventDefinitions.EVENTS.VALIDATION.FIELD_VALIDATED, (data) => {
+  console.log(`✅ Field validation completed for ${data.fieldId}:`, data);
 });
 
-// Enhanced validation for vehicle selection
-eventBus.on('vehicle:selected', ({ vehicleType, tabType }) => {
-  console.log(`🚌 EventBus: Vehicle selected: ${vehicleType} in ${tabType}`);
-  
-  const fieldId = `vehicle_type_${tabType}`;
-  eventBus.emit('error:clear', { fieldId, source: 'vehicle-validation' });
-  updateFormState(fieldId, true);
+eventBus.on(EventDefinitions.EVENTS.FORM.VALIDATED, (data) => {
+  console.log(`📝 Form validation completed for ${data.formId}:`, data);
 });
 
 // Initialize validation system
-console.log('🚌 EventBus: Form validation module initialized');
+function initValidationSystem() {
+  console.log('🔍 Initializing Miami Concierge validation system with DOMManager');
+  
+  // Ensure DOMManager is available
+  if (!DOMManager) {
+    console.error('DOMManager not available - validation may not work properly');
+    return;
+  }
+  
+  // Set up global validation event listeners
+  console.log('✅ Validation system initialized with DOMManager');
+}
 
-// Export functions for backward compatibility
-export { validationRules, updateFormState };
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initValidationSystem);
+} else {
+  initValidationSystem();
+}
+
+// Export validation configuration for common Miami Concierge fields
+export const MIAMI_VALIDATION_CONFIG = {
+  'from-location': {
+    required: true,
+    minLength: 3,
+    requiredMessage: 'Pickup location is required',
+    minLengthMessage: 'Please enter a more specific pickup location'
+  },
+  'to-address': {
+    required: true,
+    minLength: 3,
+    requiredMessage: 'Destination is required',
+    minLengthMessage: 'Please enter a more specific destination'
+  },
+  'passenger-count': {
+    required: true,
+    custom: (value) => {
+      const count = parseInt(value);
+      if (isNaN(count) || count < 1) {
+        return { isValid: false, message: 'Please enter a valid number of passengers' };
+      }
+      if (count > 20) {
+        return { isValid: false, message: 'For groups larger than 20, please contact us directly' };
+      }
+      return { isValid: true };
+    }
+  },
+  'contact-email': {
+    required: true,
+    email: true,
+    requiredMessage: 'Email address is required',
+    emailMessage: 'Please enter a valid email address'
+  },
+  'contact-phone': {
+    required: true,
+    phone: true,
+    requiredMessage: 'Phone number is required',
+    phoneMessage: 'Please enter a valid phone number'
+  }
+};
+
+console.log("🔍 Enhanced Form Validation module loaded with DOMManager integration");

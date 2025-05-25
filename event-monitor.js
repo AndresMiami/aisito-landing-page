@@ -714,8 +714,13 @@ function showSettings() {
  * @returns {string} Category name
  */
 function getEventCategory(eventName) {
-  if (eventName.startsWith('error:')) return 'error';
+  // Add safety check
+  if (!eventName || typeof eventName !== 'string') {
+    return 'unknown';
+  }
+  
   if (eventName.startsWith('form:')) return 'form';
+  if (eventName.startsWith('error:')) return 'error';
   if (eventName.startsWith('map:')) return 'map';
   if (eventName.startsWith('analytics:')) return 'analytics';
   if (eventName.startsWith('system:')) return 'system';
