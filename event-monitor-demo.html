@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Monitor Demo - Miami AI Concierge</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: white;
+    }
+    
+    h1 {
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 2.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .demo-section {
+      margin-bottom: 30px;
+      padding: 20px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    .demo-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    button {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      background-color: #2196f3;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      font-size: 14px;
+      box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+    }
+    
+    button:hover {
+      background-color: #1976d2;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+    }
+    
+    .error-btn {
+      background-color: #f44336;
+      box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+    }
+    
+    .error-btn:hover {
+      background-color: #d32f2f;
+      box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
+    }
+    
+    .form-btn {
+      background-color: #4caf50;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+    
+    .form-btn:hover {
+      background-color: #388e3c;
+      box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+    }
+    
+    .map-btn {
+      background-color: #ff9800;
+      box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+    }
+    
+    .map-btn:hover {
+      background-color: #f57c00;
+      box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+    }
+    
+    .monitor-btn {
+      background-color: #9c27b0;
+      box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
+    }
+    
+    .monitor-btn:hover {
+      background-color: #7b1fa2;
+      box-shadow: 0 6px 20px rgba(156, 39, 176, 0.4);
+    }
+    
+    .success-btn {
+      background-color: #00bcd4;
+      box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
+    }
+    
+    .success-btn:hover {
+      background-color: #0097a7;
+      box-shadow: 0 6px 20px rgba(0, 188, 212, 0.4);
+    }
+    
+    .status {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+    }
+    
+    h2 {
+      margin-bottom: 10px;
+      color: #fff;
+    }
+    
+    p {
+      margin-bottom: 15px;
+      opacity: 0.9;
+    }
+    
+    .miami-logo {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 1.2rem;
+    }
+    
+    .miami-logo .heart {
+      color: #ff4757;
+      font-size: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="miami-logo">
+    I <span class="heart">❤️</span> Miami AI Concierge - Event Monitor Demo
+  </div>
+  
+  <h1>🔍 Event Monitor Testing</h1>
+  
+  <div class="demo-section">
+    <h2>📡 Event Monitor Controls</h2>
+    <p>Initialize and control the event monitoring dashboard:</p>
+    <div class="demo-buttons">
+      <button id="init-monitor" class="monitor-btn">🚀 Initialize Monitor</button>
+      <button id="show-monitor" class="monitor-btn">👁️ Show Monitor</button>
+      <button id="hide-monitor" class="monitor-btn">🙈 Hide Monitor</button>
+      <button id="toggle-monitor" class="monitor-btn">🔄 Toggle Monitor</button>
+      <button id="clear-monitor" class="monitor-btn">🧹 Clear Events</button>
+    </div>
+    <div id="monitor-status" class="status">Monitor not initialized</div>
+  </div>
+  
+  <div class="demo-section">
+    <h2>🚨 Error Events</h2>
+    <p>Test different types of error events:</p>
+    <div class="demo-buttons">
+      <button class="error-btn" id="emit-field-error">Field Error</button>
+      <button class="error-btn" id="emit-global-error">Global Error</button>
+      <button class="error-btn" id="emit-critical-error">Critical Error</button>
+      <button class="success-btn" id="clear-errors">Clear All Errors</button>
+    </div>
+  </div>
+  
+  <div class="demo-section">
+    <h2>📝 Form Events</h2>
+    <p>Simulate form submission lifecycle events:</p>
+    <div class="demo-buttons">
+      <button class="form-btn" id="form-start">Start Submission</button>
+      <button class="form-btn" id="form-processing">Processing Data</button>
+      <button class="form-btn" id="form-success">Submission Success</button>
+      <button class="form-btn" id="form-fail">Submission Failed</button>
+      <button class="form-btn" id="form-reset">Reset Form</button>
+    </div>
+  </div>
+  
+  <div class="demo-section">
+    <h2>🗺️ Map Events</h2>
+    <p>Test Google Maps integration events:</p>
+    <div class="demo-buttons">
+      <button class="map-btn" id="map-location">Location Selected</button>
+      <button class="map-btn" id="map-geocode">Geocoding Result</button>
+      <button class="map-btn" id="map-error">Map Error</button>
+      <button class="map-btn" id="map-current">Current Location</button>
+    </div>
+  </div>
+  
+  <div class="demo-section">
+    <h2>⚙️ System Events</h2>
+    <p>Generate system and custom events:</p>
+    <div class="demo-buttons">
+      <button id="system-init">System Init</button>
+      <button id="analytics-track">Analytics Event</button>
+      <button id="custom-event">Custom Event</button>
+      <button id="rapid-events">Rapid Fire Events</button>
+    </div>
+  </div>
+
+  <!-- Load EventBus and dependencies -->
+  <script type="module">
+    // Import EventBus first
+    import eventBus from './src/core/EventBus.js';
+    
+    // Make EventBus globally available
+    window.eventBus = eventBus;
+    console.log('✅ EventBus loaded for demo');
+    
+    // Import event definitions
+    import { ERROR_EVENTS, ERROR_SEVERITY } from './ErrorEvents.js';
+    import { FORM_EVENTS } from './src/core/FormEvents.js';
+    import { MAP_EVENTS } from './MapEvents.js';
+    
+    // Import and initialize event monitor
+    import { initEventMonitor } from './event-monitor.js';
+    
+    let monitor = null;
+    const statusElement = document.getElementById('monitor-status');
+    
+    // Update status display
+    function updateStatus(message) {
+      statusElement.textContent = message;
+      console.log('Status:', message);
+    }
+    
+    // Monitor Controls
+    document.getElementById('init-monitor').addEventListener('click', () => {
+      try {
+        monitor = initEventMonitor();
+        updateStatus('✅ Event monitor initialized and ready');
+        window.eventMonitor = monitor; // Make globally accessible
+      } catch (error) {
+        updateStatus('❌ Failed to initialize monitor: ' + error.message);
+        console.error('Monitor init error:', error);
+      }
+    });
+    
+    document.getElementById('show-monitor').addEventListener('click', () => {
+      if (monitor) {
+        monitor.show();
+        updateStatus('👁️ Monitor dashboard shown');
+      } else {
+        updateStatus('⚠️ Initialize monitor first');
+      }
+    });
+    
+    document.getElementById('hide-monitor').addEventListener('click', () => {
+      if (monitor) {
+        monitor.hide();
+        updateStatus('🙈 Monitor dashboard hidden');
+      } else {
+        updateStatus('⚠️ Initialize monitor first');
+      }
+    });
+    
+    document.getElementById('toggle-monitor').addEventListener('click', () => {
+      if (monitor) {
+        monitor.toggle();
+        updateStatus('🔄 Monitor dashboard toggled');
+      } else {
+        updateStatus('⚠️ Initialize monitor first');
+      }
+    });
+    
+    document.getElementById('clear-monitor').addEventListener('click', () => {
+      if (monitor) {
+        monitor.clear();
+        updateStatus('🧹 Event history cleared');
+      } else {
+        updateStatus('⚠️ Initialize monitor first');
+      }
+    });
+    
+    // Error Events
+    document.getElementById('emit-field-error').addEventListener('click', () => {
+      eventBus.emit(ERROR_EVENTS.SHOW, {
+        fieldId: 'from-location',
+        message: 'Please enter a valid pickup location',
+        severity: ERROR_SEVERITY.ERROR,
+        source: 'demo-validation'
+      });
+      updateStatus('🚨 Field error event emitted');
+    });
+    
+    document.getElementById('emit-global-error').addEventListener('click', () => {
+      eventBus.emit(ERROR_EVENTS.GLOBAL, {
+        message: 'Unable to connect to booking service. Please try again.',
+        severity: ERROR_SEVERITY.WARNING,
+        code: 'SERVICE_UNAVAILABLE',
+        source: 'demo-service'
+      });
+      updateStatus('🌐 Global error event emitted');
+    });
+    
+    document.getElementById('emit-critical-error').addEventListener('click', () => {
+      eventBus.emit(ERROR_EVENTS.GLOBAL, {
+        message: 'Critical system error detected!',
+        severity: ERROR_SEVERITY.CRITICAL,
+        code: 'SYSTEM_FAILURE',
+        source: 'demo-system'
+      });
+      updateStatus('💥 Critical error event emitted');
+    });
+    
+    document.getElementById('clear-errors').addEventListener('click', () => {
+      eventBus.emit(ERROR_EVENTS.CLEAR_ALL, {
+        source: 'demo-clear'
+      });
+      updateStatus('✨ All errors cleared');
+    });
+    
+    // Form Events
+    document.getElementById('form-start').addEventListener('click', () => {
+      eventBus.emit(FORM_EVENTS.SUBMISSION_STARTED, {
+        data: { service: 'One Way', from: 'Miami Beach', to: 'Downtown Miami' },
+        timestamp: Date.now()
+      });
+      updateStatus('📝 Form submission started');
+    });
+    
+    document.getElementById('form-processing').addEventListener('click', () => {
+      eventBus.emit(FORM_EVENTS.DATA_PROCESSED, {
+        status: 'validating',
+        fields: ['from-location', 'to-address', 'vehicle-type'],
+        timestamp: Date.now()
+      });
+      updateStatus('⚙️ Form data processing');
+    });
+    
+    document.getElementById('form-success').addEventListener('click', () => {
+      eventBus.emit(FORM_EVENTS.SUBMISSION_SUCCEEDED, {
+        data: { confirmationId: 'MIA-' + Date.now() },
+        timestamp: Date.now()
+      });
+      updateStatus('✅ Form submission succeeded');
+    });
+    
+    document.getElementById('form-fail').addEventListener('click', () => {
+      eventBus.emit(FORM_EVENTS.SUBMISSION_FAILED, {
+        error: 'Network timeout',
+        code: 'NETWORK_ERROR',
+        timestamp: Date.now()
+      });
+      updateStatus('❌ Form submission failed');
+    });
+    
+    document.getElementById('form-reset').addEventListener('click', () => {
+      eventBus.emit(FORM_EVENTS.FORM_RESET, {
+        timestamp: Date.now(),
+        source: 'demo-reset'
+      });
+      updateStatus('🔄 Form reset event emitted');
+    });
+    
+    // Map Events
+    document.getElementById('map-location').addEventListener('click', () => {
+      eventBus.emit(MAP_EVENTS.LOCATION_SELECTED, {
+        placeId: 'ChIJEcHIDqKw2YgRZU-t3XHylv8',
+        address: 'South Beach, Miami Beach, FL, USA',
+        coordinates: { lat: 25.7823, lng: -80.1319 },
+        fieldId: 'from-location',
+        source: 'demo-places'
+      });
+      updateStatus('📍 Map location selected');
+    });
+    
+    document.getElementById('map-geocode').addEventListener('click', () => {
+      eventBus.emit(MAP_EVENTS.GEOCODING_SUCCESS, {
+        query: 'Miami International Airport',
+        result: {
+          address: 'Miami International Airport, Miami, FL 33126, USA',
+          coordinates: { lat: 25.7932, lng: -80.2906 }
+        },
+        timestamp: Date.now()
+      });
+      updateStatus('🌍 Geocoding result received');
+    });
+    
+    document.getElementById('map-error').addEventListener('click', () => {
+      eventBus.emit(MAP_EVENTS.ERROR, {
+        error: 'OVER_QUERY_LIMIT',
+        message: 'Google Maps API quota exceeded',
+        fieldId: 'to-address',
+        timestamp: Date.now()
+      });
+      updateStatus('🗺️ Map error occurred');
+    });
+    
+    document.getElementById('map-current').addEventListener('click', () => {
+      eventBus.emit(MAP_EVENTS.USER_LOCATION_SUCCESS, {
+        coordinates: { lat: 25.7617, lng: -80.1918 },
+        accuracy: 50,
+        address: 'Downtown Miami, FL, USA',
+        timestamp: Date.now()
+      });
+      updateStatus('📱 Current location detected');
+    });
+    
+    // System Events
+    document.getElementById('system-init').addEventListener('click', () => {
+      eventBus.emit('system:initialization:complete', {
+        modules: ['EventBus', 'FormValidation', 'MapIntegration'],
+        timestamp: Date.now(),
+        version: '1.0.0'
+      });
+      updateStatus('⚙️ System initialization event');
+    });
+    
+    document.getElementById('analytics-track').addEventListener('click', () => {
+      eventBus.emit('analytics:track', {
+        event: 'page_view',
+        properties: {
+          page: 'booking_dashboard',
+          source: 'demo',
+          user_agent: navigator.userAgent
+        },
+        timestamp: Date.now()
+      });
+      updateStatus('📊 Analytics event tracked');
+    });
+    
+    document.getElementById('custom-event').addEventListener('click', () => {
+      eventBus.emit('miami:concierge:demo', {
+        message: 'Welcome to Miami! 🏖️',
+        weather: 'Sunny and 85°F',
+        recommendations: ['South Beach', 'Art Deco District', 'Little Havana'],
+        timestamp: Date.now()
+      });
+      updateStatus('🏖️ Custom Miami event emitted');
+    });
+    
+    document.getElementById('rapid-events').addEventListener('click', () => {
+      let count = 0;
+      const interval = setInterval(() => {
+        eventBus.emit(`rapid:event:${count}`, {
+          sequence: count,
+          message: `Rapid fire event #${count}`,
+          timestamp: Date.now()
+        });
+        count++;
+        
+        if (count >= 10) {
+          clearInterval(interval);
+          updateStatus('💨 Rapid fire events completed (10 events)');
+        }
+      }, 200);
+      
+      updateStatus('💨 Firing rapid events...');
+    });
+    
+    // Auto-initialize monitor after a short delay
+    setTimeout(() => {
+      monitor = initEventMonitor();
+      updateStatus('✅ Event monitor auto-initialized');
+      window.eventMonitor = monitor;
+    }, 1000);
+    
+    // Emit a welcome event
+    setTimeout(() => {
+      eventBus.emit('demo:welcome', {
+        message: 'Welcome to the Miami AI Concierge Event Monitor Demo!',
+        features: ['Real-time event tracking', 'Categorized display', 'Event filtering', 'Export capabilities'],
+        timestamp: Date.now()
+      });
+    }, 2000);
+  </script>
+</body>
+</html>

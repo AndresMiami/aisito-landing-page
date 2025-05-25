@@ -25,9 +25,11 @@ let validateForm;
 let processFormData, sendFormData;
 
 import eventBus from './src/core/EventBus.js';
+import { FORM_EVENTS, createSubmissionData, createSubmissionError } from './src/core/FormEvents.js';
 import { showGlobalError, clearGlobalError, emitError, emitClearError, emitGlobalError, emitClearAllErrors } from './errorHandling.js';
 import { forceLocationValidation } from './formValidation.js';
 import './validation-listeners.js'; // This will auto-initialize the validation listeners
+import './maps.js';
 
 // Make forceLocationValidation available globally for debug controls
 window.forceLocationValidation = forceLocationValidation;
@@ -276,49 +278,61 @@ async function handleFormSubmission(event) {
   
   console.log('🚀 Form submission started');
   
-  // Clear any previous global errors
-  emitClearAllErrors('form-submission');
+  // Get form elements
+  const elements = {
+    bookingForm: document.getElementById('booking-form'),
+    tabNavigationContainer: document.getElementById('tab-navigation'),
+    serviceDropdown: document.getElementById('experience-dropdown'),
+    submitButton: document.getElementById('submit-button'),
+    confirmationMessage: document.getElementById('confirmation-message')
+  };
   
-  // Validate the form using EventBus
-  const isValid = eventBus.emit('form:validate', {
-    formId: 'booking-form',
-    source: 'form-submission'
-  });
+  // Process form data using the new module
+  const formData = processFormData(elements);
   
-  if (!isValid) {
-    emitGlobalError(
-      'Please correct the errors below before submitting',
-      'warning',
-      'FORM002',
-      true,
-      'form-submission'
-    );
+  if (!formData) {
+    console.log('❌ Form validation failed');
     return;
   }
   
-  // Continue with form submission...
-  try {
-    // Your existing form submission logic
-    console.log('✅ Form is valid, proceeding with submission');
-    
-    // Show success message
-    emitGlobalError(
-      'Form submitted successfully! We\'ll be in touch soon.',
-      'success',
-      'FORM003',
-      true,
-      'form-submission'
-    );
-    
-  } catch (error) {
-    console.error('Form submission error:', error);
-    emitGlobalError(
-      'There was an error submitting your form. Please try again.',
-      'error',
-      'FORM004',
-      true,
-      'form-submission'
-    );
+  // Send form data using the new module
+  const config = {
+    FORM_ENDPOINT: 'YOUR_FORMSPREE_ENDPOINT' // Replace with your actual endpoint
+  };
+  
+  sendFormData(formData, elements, config);
+}
+
+// Update your vehicle visibility functions
+function checkVehicleVisibility() {
+  const fromLocation = document.getElementById('from-location');
+  const toAddress = document.getElementById('to-address');
+  const vehicleContainer = document.getElementById('vehicle-selection-oneway');
+  
+  if (!vehicleContainer) return;
+  
+  const fromValid = fromLocation && fromLocation.value.trim() !== '';
+  const toValid = toAddress && toAddress.value.trim() !== '';
+  const bookingTimeSelected = document.querySelector('.booking-time-button.selected');
+  
+  const shouldShow = fromValid && toValid && bookingTimeSelected;
+  
+  if (shouldShow && vehicleContainer.classList.contains('hidden')) {
+    // Show vehicle container
+    vehicleContainer.classList.remove('hidden');
+    setTimeout(() => {
+      vehicleContainer.classList.add('show');
+    }, 50);
+    console.log('✅ Vehicle container shown');
+  } else if (!shouldShow && !vehicleContainer.classList.contains('hidden')) {
+    // Hide vehicle container
+    vehicleContainer.classList.remove('show');
+    vehicleContainer.classList.add('hiding');
+    setTimeout(() => {
+      vehicleContainer.classList.add('hidden');
+      vehicleContainer.classList.remove('hiding');
+    }, 400);
+    console.log('❌ Vehicle container hidden');
   }
 }
 
@@ -362,39 +376,6 @@ function setupRealtimeValidation() {
       }
     });
   });
-}
-
-// Add this new function to handle vehicle visibility
-function checkVehicleVisibility() {
-  const fromLocation = document.getElementById('from-location');
-  const toAddress = document.getElementById('to-address');
-  const vehicleContainer = document.getElementById('vehicle-selection-oneway');
-  
-  if (!vehicleContainer) return;
-  
-  const fromValid = fromLocation && fromLocation.value.trim() !== '';
-  const toValid = toAddress && toAddress.value.trim() !== '';
-  const bookingTimeSelected = document.querySelector('.booking-time-button.selected');
-  
-  const shouldShow = fromValid && toValid && bookingTimeSelected;
-  
-  if (shouldShow && vehicleContainer.classList.contains('hidden')) {
-    // Show vehicle container
-    vehicleContainer.classList.remove('hidden');
-    setTimeout(() => {
-      vehicleContainer.classList.add('show');
-    }, 50);
-    console.log('✅ Vehicle container shown');
-  } else if (!shouldShow && !vehicleContainer.classList.contains('hidden')) {
-    // Hide vehicle container
-    vehicleContainer.classList.remove('show');
-    vehicleContainer.classList.add('hiding');
-    setTimeout(() => {
-      vehicleContainer.classList.add('hidden');
-      vehicleContainer.classList.remove('hiding');
-    }, 400);
-    console.log('❌ Vehicle container hidden');
-  }
 }
 
 // Add event listeners to trigger vehicle visibility checks
@@ -447,6 +428,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // 5. Initialize dashboard components
     initializeDashboard();
     
+    // Initialize maps for location fields
+    if (typeof initAutocomplete !== 'undefined') {
+      initAutocomplete(['from-location', 'to-address', 'from-location-exp']);
+    }
+    
     console.log('✅ Dashboard: All features initialized successfully');
     
   } catch (error) {
@@ -489,13 +475,11 @@ function initializeResetButton() {
     console.log('🧹 Reset button clicked');
     
     try {
-      // Emit reset started event
-      if (window.eventBus) {
-        window.eventBus.emit('form:reset:started', {
-          timestamp: Date.now(),
-          source: 'reset-button'
-        });
-      }
+      // Emit reset started event using FormEvents
+      eventBus.emit(FORM_EVENTS.FORM_RESET, {
+        timestamp: Date.now(),
+        source: 'reset-button'
+      });
       
       // 1. Add reset animation to button
       newResetButton.classList.add('resetting');
@@ -618,15 +602,12 @@ function initializeResetButton() {
       // Remove button animation on error
       newResetButton.classList.remove('resetting');
       
-      if (window.eventBus) {
-        emitGlobalError(
-          'Reset failed. Please refresh the page.',
-          'error',
-          'RESET_ERROR',
-          true,
-          'reset-error'
-        );
-      }
+      eventBus.emit(FORM_EVENTS.SUBMISSION_FAILED, createSubmissionError(
+        'Reset failed. Please refresh the page.',
+        'RESET_ERROR',
+        { error: error.message },
+        'reset-error'
+      ));
     }
   });
   
@@ -758,6 +739,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // 5. Initialize dashboard components
     initializeDashboard();
     
+    // Initialize maps for location fields
+    if (typeof initAutocomplete !== 'undefined') {
+      initAutocomplete(['from-location', 'to-address', 'from-location-exp']);
+    }
+    
     console.log('✅ Dashboard: All features initialized successfully');
     
   } catch (error) {
@@ -784,6 +770,16 @@ eventBus.on('form:reset:completed', ({ timestamp, source }) => {
 
 eventBus.on('form:data:reset', ({ timestamp, source }) => {
   console.log(`🔄 EventBus: Form data reset from ${source} at ${new Date(timestamp).toLocaleTimeString()}`);
+});
+
+// Test event emissions
+eventBus.emit('map:user-location:requested', { fieldId: 'from-location', timestamp: Date.now() });
+
+// Listen to all map events for debugging
+Object.values(MAP_EVENTS).forEach(eventName => {
+  eventBus.on(eventName, (data) => {
+    console.log(`🗺️ Map Event: ${eventName}`, data);
+  });
 });
 
 console.log("✅ Dashboard.js module loaded successfully");

@@ -1,0 +1,1130 @@
+// Remove debug statements before deployment
+// Minify CSS and JavaScript
+// Enable production EventBus mode
+
+// Additional comprehensive tests based on EventBus Integration Manual Testing Checklist
+
+async function runEventBusIntegrationTests() {
+  log('🚌 Running EventBus integration tests...');
+  
+  // Test for EventBus presence and structure
+  const eventBusElements = diagramDoc.querySelectorAll('.event-bus');
+  assert(eventBusElements.length > 0, 'EventBus components are present in diagrams');
+  
+  // Test event flow representations
+  const eventLabels = diagramDoc.querySelectorAll('.event-label');
+  eventLabels.forEach((label, index) => {
+    const eventText = label.textContent.trim();
+    assert(eventText.includes(':'), `Event label ${index + 1} follows event naming convention (contains ':')`);
+  });
+  
+  // Test sequence diagrams contain EventBus interactions
+  const sequenceDiagrams = diagramDoc.querySelectorAll('.sequence-diagram');
+  sequenceDiagrams.forEach((diagram, index) => {
+    const content = diagram.textContent;
+    assert(content.includes('EventBus'), `Sequence diagram ${index + 1} includes EventBus interactions`);
+    assert(content.includes('emit('), `Sequence diagram ${index + 1} shows event emission`);
+  });
+  
+  log('🚌 EventBus integration tests completed');
+}
+
+async function runErrorHandlingVisualizationTests() {
+  log('🚨 Running error handling visualization tests...');
+  
+  // Test error handling diagram exists
+  const errorDiagram = diagramDoc.querySelector('#error-handling');
+  assert(errorDiagram, 'Error handling diagram section exists');
+  
+  // Test error components are properly styled
+  const errorComponents = diagramDoc.querySelectorAll('.component.error');
+  if (errorComponents.length > 0) {
+    errorComponents.forEach((component, index) => {
+      const styles = diagramWindow.getComputedStyle(component);
+      assert(styles.borderColor.includes('244') || styles.borderColor.includes('rgb(244'), 
+             `Error component ${index + 1} has red border color`);
+    });
+  }
+  
+  // Test error sequence diagram shows proper error flow
+  const errorSequence = errorDiagram?.querySelector('.sequence-diagram');
+  if (errorSequence) {
+    const content = errorSequence.textContent;
+    assert(content.includes('error'), 'Error sequence diagram contains error events');
+    assert(content.includes('showError') || content.includes('displayError'), 
+           'Error sequence shows error display methods');
+    assert(content.includes('hideError') || content.includes('clearError'), 
+           'Error sequence shows error clearing methods');
+  }
+  
+  // Test error legend item
+  const errorLegendColor = diagramDoc.querySelector('.error-color');
+  assert(errorLegendColor, 'Error legend color indicator exists');
+  
+  log('🚨 Error handling visualization tests completed');
+}
+
+async function runFormValidationVisualizationTests() {
+  log('✅ Running form validation visualization tests...');
+  
+  // Test validation flow diagram exists
+  const validationDiagram = diagramDoc.querySelector('#validation-flow');
+  assert(validationDiagram, 'Validation flow diagram section exists');
+  
+  // Test form components are properly styled
+  const formComponents = diagramDoc.querySelectorAll('.component.form');
+  if (formComponents.length > 0) {
+    formComponents.forEach((component, index) => {
+      const styles = diagramWindow.getComputedStyle(component);
+      assert(styles.borderColor.includes('76') || styles.borderColor.includes('rgb(76'), 
+             `Form component ${index + 1} has green border color`);
+    });
+  }
+  
+  // Test validation sequence shows field validation
+  const validationSequence = validationDiagram?.querySelector('.sequence-diagram');
+  if (validationSequence) {
+    const content = validationSequence.textContent;
+    assert(content.includes('validation') || content.includes('validated'), 
+           'Validation sequence contains validation events');
+    assert(content.includes('field') || content.includes('FormField'), 
+           'Validation sequence shows field-level validation');
+  }
+  
+  // Test form legend item
+  const formLegendColor = diagramDoc.querySelector('.form-color');
+  assert(formLegendColor, 'Form legend color indicator exists');
+  
+  log('✅ Form validation visualization tests completed');
+}
+
+async function runMapsIntegrationVisualizationTests() {
+  log('🗺️ Running maps integration visualization tests...');
+  
+  // Test location selection diagram exists
+  const locationDiagram = diagramDoc.querySelector('#location-selection');
+  assert(locationDiagram, 'Location selection diagram section exists');
+  
+  // Test map components are properly styled
+  const mapComponents = diagramDoc.querySelectorAll('.component.map');
+  if (mapComponents.length > 0) {
+    mapComponents.forEach((component, index) => {
+      const styles = diagramWindow.getComputedStyle(component);
+      assert(styles.borderColor.includes('33') || styles.borderColor.includes('rgb(33'), 
+             `Map component ${index + 1} has blue border color`);
+    });
+  }
+  
+  // Test location sequence shows Google Places integration
+  const locationSequence = locationDiagram?.querySelector('.sequence-diagram');
+  if (locationSequence) {
+    const content = locationSequence.textContent;
+    assert(content.includes('GooglePlaces') || content.includes('Places'), 
+           'Location sequence includes Google Places API');
+    assert(content.includes('autocomplete') || content.includes('Autocomplete'), 
+           'Location sequence shows autocomplete functionality');
+    assert(content.includes('location') || content.includes('Location'), 
+           'Location sequence contains location events');
+  }
+  
+  // Test map legend item
+  const mapLegendColor = diagramDoc.querySelector('.map-color');
+  assert(mapLegendColor, 'Map legend color indicator exists');
+  
+  log('🗺️ Maps integration visualization tests completed');
+}
+
+async function runFormSubmissionVisualizationTests() {
+  log('📝 Running form submission visualization tests...');
+  
+  // Test form submission diagram exists
+  const submissionDiagram = diagramDoc.querySelector('#form-submission');
+  assert(submissionDiagram, 'Form submission diagram section exists');
+  
+  // Test submission sequence shows loading states
+  const submissionSequence = submissionDiagram?.querySelector('.sequence-diagram');
+  if (submissionSequence) {
+    const content = submissionSequence.textContent;
+    assert(content.includes('loading') || content.includes('Loading'), 
+           'Submission sequence shows loading states');
+    assert(content.includes('submit') || content.includes('Submit'), 
+           'Submission sequence shows submit action');
+    assert(content.includes('Server') || content.includes('POST'), 
+           'Submission sequence shows server interaction');
+    assert(content.includes('succeeded') || content.includes('success'), 
+           'Submission sequence shows success handling');
+  }
+  
+  // Test flow description includes all submission steps
+  const flowDescription = submissionDiagram?.querySelector('.flow-description');
+  if (flowDescription) {
+    const steps = flowDescription.querySelectorAll('.step');
+    assert(steps.length >= 5, 'Form submission has comprehensive step description');
+    
+    const allStepsText = Array.from(steps).map(step => step.textContent).join(' ');
+    assert(allStepsText.includes('submit'), 'Steps include submit action');
+    assert(allStepsText.includes('loading') || allStepsText.includes('process'), 
+           'Steps include loading/processing');
+    assert(allStepsText.includes('success') || allStepsText.includes('error'), 
+           'Steps include result handling');
+  }
+  
+  log('📝 Form submission visualization tests completed');
+}
+
+async function runAnalyticsVisualizationTests() {
+  log('📊 Running analytics visualization tests...');
+  
+  // Test analytics components are properly styled
+  const analyticsComponents = diagramDoc.querySelectorAll('.component.analytics');
+  if (analyticsComponents.length > 0) {
+    analyticsComponents.forEach((component, index) => {
+      const styles = diagramWindow.getComputedStyle(component);
+      assert(styles.borderColor.includes('156') || styles.borderColor.includes('rgb(156'), 
+             `Analytics component ${index + 1} has purple border color`);
+    });
+  }
+  
+  // Test analytics events in sequence diagrams
+  const allSequenceDiagrams = diagramDoc.querySelectorAll('.sequence-diagram');
+  let analyticsEventFound = false;
+  allSequenceDiagrams.forEach(diagram => {
+    const content = diagram.textContent;
+    if (content.includes('Analytics') || content.includes('track(')) {
+      analyticsEventFound = true;
+    }
+  });
+  assert(analyticsEventFound, 'At least one sequence diagram includes analytics tracking');
+  
+  // Test analytics legend item
+  const analyticsLegendColor = diagramDoc.querySelector('.analytics-color');
+  assert(analyticsLegendColor, 'Analytics legend color indicator exists');
+  
+  log('📊 Analytics visualization tests completed');
+}
+
+async function runEventMonitoringVisualizationTests() {
+  log('🔍 Running event monitoring visualization tests...');
+  
+  // Test that sequence diagrams show event monitoring
+  const sequenceDiagrams = diagramDoc.querySelectorAll('.sequence-diagram');
+  let monitoringFound = false;
+  sequenceDiagrams.forEach(diagram => {
+    const content = diagram.textContent;
+    if (content.includes('EventMonitor') || content.includes('logEvent')) {
+      monitoringFound = true;
+    }
+  });
+  assert(monitoringFound, 'Event monitoring is represented in sequence diagrams', true);
+  
+  // Test event labels show monitoring events
+  const eventLabels = diagramDoc.querySelectorAll('.event-label');
+  let monitoringLabelFound = false;
+  eventLabels.forEach(label => {
+    if (label.textContent.includes('monitor') || label.textContent.includes('log')) {
+      monitoringLabelFound = true;
+    }
+  });
+  assert(monitoringLabelFound, 'Event monitoring labels are present', true);
+  
+  log('🔍 Event monitoring visualization tests completed');
+}
+
+async function runCrossComponentIntegrationTests() {
+  log('🔗 Running cross-component integration visualization tests...');
+  
+  // Test that diagrams show component interactions
+  const componentRows = diagramDoc.querySelectorAll('.component-row');
+  assert(componentRows.length > 0, 'Component rows show component relationships');
+  
+  // Test arrows connect components
+  const arrows = diagramDoc.querySelectorAll('.arrow');
+  assert(arrows.length > 0, 'Arrows show data flow between components');
+  
+  // Test event bus is positioned centrally
+  const eventBuses = diagramDoc.querySelectorAll('.event-bus');
+  eventBuses.forEach((bus, index) => {
+    const styles = diagramWindow.getComputedStyle(bus);
+    assert(styles.textAlign === 'center', `EventBus ${index + 1} is centered`);
+    assert(parseInt(styles.width) > 200, `EventBus ${index + 1} has substantial width`);
+  });
+  
+  // Test multiple component types are shown
+  const componentTypes = [
+    diagramDoc.querySelectorAll('.component.error').length,
+    diagramDoc.querySelectorAll('.component.form').length,
+    diagramDoc.querySelectorAll('.component.map').length,
+    diagramDoc.querySelectorAll('.component.analytics').length
+  ];
+  const typesWithComponents = componentTypes.filter(count => count > 0).length;
+  assert(typesWithComponents >= 2, 'Multiple component types are visualized for integration');
+  
+  log('🔗 Cross-component integration visualization tests completed');
+}
+
+async function runEventFlowAccuracyTests() {
+  log('🔄 Running event flow accuracy tests...');
+  
+  // Test event naming conventions
+  const eventLabels = diagramDoc.querySelectorAll('.event-label');
+  eventLabels.forEach((label, index) => {
+    const eventName = label.textContent.trim();
+    const hasValidFormat = eventName.match(/^[a-z]+:[a-z\-:]+$/);
+    assert(hasValidFormat || eventName.includes('('), 
+           `Event ${index + 1} follows naming convention or is a method call`);
+  });
+  
+  // Test sequence diagrams follow proper format
+  const sequenceDiagrams = diagramDoc.querySelectorAll('.sequence-diagram');
+  sequenceDiagrams.forEach((diagram, index) => {
+    const content = diagram.textContent;
+    const hasArrows = content.includes('→') || content.includes('->');
+    assert(hasArrows, `Sequence diagram ${index + 1} uses proper arrow notation`);
+    
+    const hasMethodCalls = content.includes('(') && content.includes(')');
+    assert(hasMethodCalls, `Sequence diagram ${index + 1} shows method calls`);
+  });
+  
+  // Test bidirectional event flows
+  const allSequenceContent = Array.from(diagramDoc.querySelectorAll('.sequence-diagram'))
+    .map(d => d.textContent).join(' ');
+  assert(allSequenceContent.includes('emit('), 'Event emission is shown');
+  assert(allSequenceContent.includes('EventBus'), 'EventBus is central to flows');
+  
+  log('🔄 Event flow accuracy tests completed');
+}
+
+async function runDiagramNavigationTests() {
+  log('🧭 Running diagram navigation tests...');
+  
+  // Test all tabs have corresponding diagrams
+  const tabs = diagramDoc.querySelectorAll('.tab');
+  tabs.forEach((tab, index) => {
+    const targetId = tab.dataset.target;
+    const targetDiagram = diagramDoc.querySelector(`#${targetId}`);
+    assert(targetDiagram, `Tab ${index + 1} has corresponding diagram (${targetId})`);
+    assert(targetDiagram.classList.contains('diagram'), 
+           `Target element for tab ${index + 1} is a diagram`);
+  });
+  
+  // Test diagram content completeness
+  const diagrams = diagramDoc.querySelectorAll('.diagram');
+  diagrams.forEach((diagram, index) => {
+    const hasDescription = diagram.querySelector('.flow-description');
+    const hasSequence = diagram.querySelector('.sequence-diagram');
+    const hasEventFlow = diagram.querySelector('.event-flow');
+    
+    assert(hasDescription, `Diagram ${index + 1} has flow description`);
+    assert(hasSequence, `Diagram ${index + 1} has sequence diagram`);
+    
+    if (hasDescription) {
+      const steps = hasDescription.querySelectorAll('.step');
+      assert(steps.length >= 3, `Diagram ${index + 1} has detailed steps (${steps.length})`);
+    }
+  });
+  
+  // Test active state management
+  const activeTabs = diagramDoc.querySelectorAll('.tab.active');
+  const activeDiagrams = diagramDoc.querySelectorAll('.diagram.active');
+  assert(activeTabs.length === 1, 'Exactly one tab is active');
+  assert(activeDiagrams.length === 1, 'Exactly one diagram is active');
+  
+  if (activeTabs.length === 1 && activeDiagrams.length === 1) {
+    const activeTab = activeTabs[0];
+    const activeDiagram = activeDiagrams[0];
+    assert(activeDiagram.id === activeTab.dataset.target, 
+           'Active tab corresponds to active diagram');
+  }
+  
+  log('🧭 Diagram navigation tests completed');
+}
+
+async function runVisualizationQualityTests() {
+  log('🎨 Running visualization quality tests...');
+  
+  // Test color consistency
+  const legendItems = diagramDoc.querySelectorAll('.legend-item');
+  assert(legendItems.length >= 4, 'Legend has all component types');
+  
+  // Test gradient consistency
+  const elementsWithGradients = diagramDoc.querySelectorAll(
+    '.component, .event-bus, .legend-color'
+  );
+  let gradientCount = 0;
+  elementsWithGradients.forEach(element => {
+    const styles = diagramWindow.getComputedStyle(element);
+    if (styles.background.includes('linear-gradient') || styles.background.includes('gradient')) {
+      gradientCount++;
+    }
+  });
+  assert(gradientCount > 0, 'Elements use gradient styling for visual appeal');
+  
+  // Test shadow effects
+  const componentsWithShadows = diagramDoc.querySelectorAll('.component, .event-bus');
+  let shadowCount = 0;
+  componentsWithShadows.forEach(element => {
+    const styles = diagramWindow.getComputedStyle(element);
+    if (styles.boxShadow && styles.boxShadow !== 'none') {
+      shadowCount++;
+    }
+  });
+  assert(shadowCount > 0, 'Components use shadow effects for depth');
+  
+  // Test hover effect transitions
+  const interactiveElements = diagramDoc.querySelectorAll('.component, .tab');
+  let transitionCount = 0;
+  interactiveElements.forEach(element => {
+    const styles = diagramWindow.getComputedStyle(element);
+    if (styles.transition && styles.transition !== 'none') {
+      transitionCount++;
+    }
+  });
+  assert(transitionCount > 0, 'Interactive elements have smooth transitions');
+  
+  log('🎨 Visualization quality tests completed');
+}
+
+async function runContentAccuracyTests() {
+  log('📖 Running content accuracy tests...');
+  
+  // Test Miami branding
+  const miamiLogo = diagramDoc.querySelector('.miami-logo');
+  if (miamiLogo) {
+    const logoText = miamiLogo.textContent;
+    assert(logoText.includes('Miami'), 'Logo contains Miami branding');
+    assert(logoText.includes('❤️') || logoText.includes('♥'), 'Logo contains heart emoji');
+    assert(logoText.includes('AI') || logoText.includes('Concierge'), 'Logo mentions AI Concierge');
+  }
+  
+  // Test technical accuracy of events
+  const eventNames = Array.from(diagramDoc.querySelectorAll('.event-label'))
+    .map(label => label.textContent.trim());
+  
+  // Common event patterns
+  const validEventPatterns = [
+    'form:', 'map:', 'error:', 'validation:', 'loading:', 'submission:',
+    'location:', 'field:', 'analytics:'
+  ];
+  
+  let validEventCount = 0;
+  eventNames.forEach(eventName => {
+    const isValid = validEventPatterns.some(pattern => eventName.includes(pattern));
+    if (isValid) validEventCount++;
+  });
+  
+  assert(validEventCount > 0, 'Events follow domain-specific naming patterns');
+  
+  // Test sequence diagram technical accuracy
+  const sequences = Array.from(diagramDoc.querySelectorAll('.sequence-diagram'))
+    .map(seq => seq.textContent);
+  
+  sequences.forEach((sequence, index) => {
+    assert(sequence.includes('→') || sequence.includes('->'), 
+           `Sequence ${index + 1} uses proper UML notation`);
+    assert(sequence.includes(':') || sequence.includes('('), 
+           `Sequence ${index + 1} shows method calls or events`);
+  });
+  
+  log('📖 Content accuracy tests completed');
+}
+
+// Complete the missing functionality and add performance tests
+
+// Add performance testing integration
+async function runPerformanceTests() {
+  log('⚡ Running EventBus performance tests...');
+  
+  // Check if EventBus is available for performance testing
+  const eventBus = diagramWindow?.eventBus || window.eventBus;
+  if (!eventBus) {
+    log('⚠️ EventBus not available for performance testing', 'warning');
+    return;
+  }
+  
+  const EVENTS_PER_BATCH = 50;
+  const BATCHES = 5;
+  
+  // Event types to test
+  const eventTypes = [
+    'error:show',
+    'form:field:validated',
+    'map:location:selected',
+    'analytics:track',
+    'test:performance'
+  ];
+  
+  // Sample data for events
+  const sampleData = {
+    'error:show': {
+      fieldId: 'perf-test-field',
+      message: 'Performance test error',
+      severity: 'error',
+      source: 'performance-test'
+    },
+    'form:field:validated': {
+      fieldId: 'perf-test-field',
+      isValid: true,
+      value: 'performance-test-value',
+      source: 'performance-test'
+    },
+    'map:location:selected': {
+      placeId: 'perf-test-place-id',
+      address: 'Performance Test Street, Miami, FL',
+      coordinates: { lat: 25.7617, lng: -80.1918 },
+      fieldId: 'from-location',
+      source: 'performance-test'
+    },
+    'analytics:track': {
+      event: 'performance_test',
+      properties: { test: true },
+      source: 'performance-test'
+    },
+    'test:performance': {
+      timestamp: Date.now(),
+      batchId: 0,
+      eventId: 0,
+      source: 'performance-test'
+    }
+  };
+  
+  let totalTime = 0;
+  let totalEvents = 0;
+  
+  for (let batch = 0; batch < BATCHES; batch++) {
+    const startTime = performance.now();
+    
+    for (let i = 0; i < EVENTS_PER_BATCH; i++) {
+      const eventType = eventTypes[Math.floor(Math.random() * eventTypes.length)];
+      const data = { ...sampleData[eventType], batchId: batch, eventId: i };
+      
+      try {
+        eventBus.emit(eventType, data);
+        totalEvents++;
+      } catch (error) {
+        log(`❌ Error emitting ${eventType}: ${error.message}`, 'error');
+      }
+    }
+    
+    const endTime = performance.now();
+    totalTime += (endTime - startTime);
+    
+    // Small delay between batches
+    await sleep(10);
+  }
+  
+  const avgTimePerEvent = totalTime / totalEvents;
+  const eventsPerSecond = 1000 / avgTimePerEvent;
+  
+  assert(totalEvents === EVENTS_PER_BATCH * BATCHES, 
+         `All ${EVENTS_PER_BATCH * BATCHES} events were emitted successfully`);
+  assert(avgTimePerEvent < 1, 
+         `Average time per event (${avgTimePerEvent.toFixed(3)}ms) is under 1ms`);
+  assert(eventsPerSecond > 100, 
+         `EventBus handles ${Math.round(eventsPerSecond)} events/second (target: >100)`, 
+         eventsPerSecond > 50);
+  
+  log(`📊 Performance: ${totalEvents} events in ${totalTime.toFixed(2)}ms`);
+  log(`📊 Average: ${avgTimePerEvent.toFixed(3)}ms per event`);
+  log(`📊 Throughput: ${Math.round(eventsPerSecond)} events/second`);
+  
+  log('⚡ EventBus performance tests completed');
+}
+
+// Add memory usage tests
+async function runMemoryTests() {
+  log('🧠 Running memory usage tests...');
+  
+  if (!performance.memory) {
+    log('⚠️ Memory API not available', 'warning');
+    return;
+  }
+  
+  const initialMemory = performance.memory.usedJSHeapSize;
+  
+  // Test for memory leaks in event listeners
+  const eventBus = diagramWindow?.eventBus || window.eventBus;
+  if (eventBus) {
+    const listeners = [];
+    
+    // Add many listeners
+    for (let i = 0; i < 100; i++) {
+      const listener = () => {};
+      eventBus.on('test:memory', listener);
+      listeners.push(listener);
+    }
+    
+    // Emit events
+    for (let i = 0; i < 100; i++) {
+      eventBus.emit('test:memory', { test: i });
+    }
+    
+    // Remove listeners
+    listeners.forEach(listener => {
+      eventBus.off('test:memory', listener);
+    });
+    
+    // Force garbage collection if available
+    if (window.gc) {
+      window.gc();
+    }
+    
+    const finalMemory = performance.memory.usedJSHeapSize;
+    const memoryDiff = finalMemory - initialMemory;
+    
+    assert(memoryDiff < 1000000, // Less than 1MB increase
+           `Memory usage increase (${Math.round(memoryDiff / 1024)}KB) is reasonable`);
+    
+    log(`🧠 Memory usage: ${Math.round(memoryDiff / 1024)}KB increase`);
+  }
+  
+  log('🧠 Memory usage tests completed');
+}
+
+// Add load testing for high event volumes
+async function runLoadTests() {
+  log('🏋️ Running load tests...');
+  
+  const eventBus = diagramWindow?.eventBus || window.eventBus;
+  if (!eventBus) {
+    log('⚠️ EventBus not available for load testing', 'warning');
+    return;
+  }
+  
+  const HIGH_VOLUME = 1000;
+  let eventsReceived = 0;
+  let errors = 0;
+  
+  // Set up listener
+  const loadTestListener = (data) => {
+    eventsReceived++;
+    if (data.error) errors++;
+  };
+  
+  eventBus.on('test:load', loadTestListener);
+  
+  const startTime = performance.now();
+  
+  // Emit high volume of events rapidly
+  for (let i = 0; i < HIGH_VOLUME; i++) {
+    try {
+      eventBus.emit('test:load', { 
+        id: i, 
+        timestamp: Date.now(),
+        error: i % 100 === 0 // Introduce some error events
+      });
+    } catch (error) {
+      errors++;
+    }
+  }
+  
+  // Wait for processing
+  await sleep(100);
+  
+  const endTime = performance.now();
+  const duration = endTime - startTime;
+  
+  eventBus.off('test:load', loadTestListener);
+  
+  assert(eventsReceived >= HIGH_VOLUME * 0.95, 
+         `At least 95% of events were processed (${eventsReceived}/${HIGH_VOLUME})`);
+  assert(duration < 1000, 
+         `Load test completed in reasonable time (${duration.toFixed(2)}ms)`);
+  assert(errors <= HIGH_VOLUME * 0.01, 
+         `Error rate is acceptable (${errors}/${HIGH_VOLUME})`);
+  
+  log(`🏋️ Load test: ${eventsReceived}/${HIGH_VOLUME} events in ${duration.toFixed(2)}ms`);
+  log('🏋️ Load tests completed');
+}
+
+// Add stress testing
+async function runStressTests() {
+  log('💪 Running stress tests...');
+  
+  const eventBus = diagramWindow?.eventBus || window.eventBus;
+  if (!eventBus) {
+    log('⚠️ EventBus not available for stress testing', 'warning');
+    return;
+  }
+  
+  // Test with many event types and listeners
+  const eventTypes = [];
+  const listeners = [];
+  
+  // Create 50 different event types
+  for (let i = 0; i < 50; i++) {
+    eventTypes.push(`stress:test:${i}`);
+  }
+  
+  // Add multiple listeners for each event type
+  eventTypes.forEach(eventType => {
+    for (let j = 0; j < 5; j++) {
+      const listener = () => {};
+      eventBus.on(eventType, listener);
+      listeners.push({ eventType, listener });
+    }
+  });
+  
+  const startTime = performance.now();
+  
+  // Emit events rapidly
+  for (let round = 0; round < 10; round++) {
+    eventTypes.forEach(eventType => {
+      eventBus.emit(eventType, { round, timestamp: Date.now() });
+    });
+  }
+  
+  const endTime = performance.now();
+  const duration = endTime - startTime;
+  
+  // Clean up listeners
+  listeners.forEach(({ eventType, listener }) => {
+    eventBus.off(eventType, listener);
+  });
+  
+  assert(duration < 2000, 
+         `Stress test completed in reasonable time (${duration.toFixed(2)}ms)`);
+  
+  log(`💪 Stress test: ${eventTypes.length * 10} events with ${listeners.length} listeners in ${duration.toFixed(2)}ms`);
+  log('💪 Stress tests completed');
+}
+
+// Update the main test runner to include new tests
+async function runAllTests() {
+  log('🚀 Starting comprehensive test suite...');
+  clearResults();
+  
+  if (!diagramDoc) {
+    log('❌ Cannot run tests: Diagram not loaded', 'error');
+    return;
+  }
+  
+  await runDOMTests();
+  await sleep(300);
+  await runStyleTests();
+  await sleep(300);
+  await runInteractionTests();
+  await sleep(300);
+  await runAccessibilityTests();
+  await sleep(300);
+  
+  // New comprehensive tests
+  await runEventBusIntegrationTests();
+  await sleep(300);
+  await runErrorHandlingVisualizationTests();
+  await sleep(300);
+  await runFormValidationVisualizationTests();
+  await sleep(300);
+  await runMapsIntegrationVisualizationTests();
+  await sleep(300);
+  await runFormSubmissionVisualizationTests();
+  await sleep(300);
+  await runAnalyticsVisualizationTests();
+  await sleep(300);
+  await runEventMonitoringVisualizationTests();
+  await sleep(300);
+  await runCrossComponentIntegrationTests();
+  await sleep(300);
+  await runEventFlowAccuracyTests();
+  await sleep(300);
+  await runDiagramNavigationTests();
+  await sleep(300);
+  await runVisualizationQualityTests();
+  await sleep(300);
+  await runContentAccuracyTests();
+  
+  log('🏁 All tests completed!');
+  
+  // Final summary
+  const successRate = ((testResults.passed / testResults.total) * 100).toFixed(1);
+  log(`📊 Final Results: ${successRate}% success rate`);
+  
+  if (testResults.failed === 0) {
+    log('🎉 Perfect score! All tests passed!', 'success');
+  } else if (successRate >= 90) {
+    log('🌟 Excellent! Minor issues detected.', 'success');
+  } else if (successRate >= 75) {
+    log('✅ Good! Some improvements recommended.', 'warning');
+  } else {
+    log('⚠️ Needs attention! Multiple issues detected.', 'error');
+  }
+}
+
+// Add individual test runner buttons
+function addTestButton(container, text, onclick) {
+  const button = document.createElement('button');
+  button.className = 'test-button';
+  button.textContent = text;
+  button.onclick = onclick;
+  container.appendChild(button);
+}
+
+// Initialize additional test buttons
+document.addEventListener('DOMContentLoaded', () => {
+  const container = document.querySelector('.test-container');
+  const controlsHeader = container.querySelector('h2');
+  
+  // Add new test buttons after existing ones
+  addTestButton(container, '🚌 EventBus Tests', runEventBusIntegrationTests);
+  addTestButton(container, '🚨 Error Handling Tests', runErrorHandlingVisualizationTests);
+  addTestButton(container, '📝 Form Tests', runFormValidationVisualizationTests);
+  addTestButton(container, '🗺️ Maps Tests', runMapsIntegrationVisualizationTests);
+  addTestButton(container, '📊 Analytics Tests', runAnalyticsVisualizationTests);
+  addTestButton(container, '🔄 Flow Accuracy Tests', runEventFlowAccuracyTests);
+  addTestButton(container, '🧭 Navigation Tests', runDiagramNavigationTests);
+  addTestButton(container, '🎨 Quality Tests', runVisualizationQualityTests);
+  addTestButton(container, '📖 Content Tests', runContentAccuracyTests);
+});
+
+// Add event throttling for high-frequency events
+// Implement lazy loading for non-critical components
+// Use service workers for offline functionality
+
+// Add performance testing integration
+async function runPerformanceTests() {
+  log('⚡ Running EventBus performance tests...');
+  
+  // Check if EventBus is available for performance testing
+  const eventBus = diagramWindow?.eventBus || window.eventBus;
+  if (!eventBus) {
+    log('⚠️ EventBus not available for performance testing', 'warning');
+    return;
+  }
+  
+  const EVENTS_PER_BATCH = 50;
+  const BATCHES = 5;
+  
+  // Event types to test
+  const eventTypes = [
+    'error:show',
+    'form:field:validated',
+    'map:location:selected',
+    'analytics:track',
+    'test:performance'
+  ];
+  
+  // Sample data for events
+  const sampleData = {
+    'error:show': {
+      fieldId: 'perf-test-field',
+      message: 'Performance test error',
+      severity: 'error',
+      source: 'performance-test'
+    },
+    'form:field:validated': {
+      fieldId: 'perf-test-field',
+      isValid: true,
+      value: 'performance-test-value',
+      source: 'performance-test'
+    },
+    'map:location:selected': {
+      placeId: 'perf-test-place-id',
+      address: 'Performance Test Street, Miami, FL',
+      coordinates: { lat: 25.7617, lng: -80.1918 },
+      fieldId: 'from-location',
+      source: 'performance-test'
+    },
+    'analytics:track': {
+      event: 'performance_test',
+      properties: { test: true },
+      source: 'performance-test'
+    },
+    'test:performance': {
+      timestamp: Date.now(),
+      batchId: 0,
+      eventId: 0,
+      source: 'performance-test'
+    }
+  };
+  
+  let totalTime = 0;
+  let totalEvents = 0;
+  
+  for (let batch = 0; batch < BATCHES; batch++) {
+    const startTime = performance.now();
+    
+    for (let i = 0; i < EVENTS_PER_BATCH; i++) {
+      const eventType = eventTypes[Math.floor(Math.random() * eventTypes.length)];
+      const data = { ...sampleData[eventType], batchId: batch, eventId: i };
+      
+      try {
+        eventBus.emit(eventType, data);
+        totalEvents++;
+      } catch (error) {
+        log(`❌ Error emitting ${eventType}: ${error.message}`, 'error');
+      }
+    }
+    
+    const endTime = performance.now();
+    totalTime += (endTime - startTime);
+    
+    // Small delay between batches
+    await sleep(10);
+  }
+  
+  const avgTimePerEvent = totalTime / totalEvents;
+  const eventsPerSecond = 1000 / avgTimePerEvent;
+  
+  assert(totalEvents === EVENTS_PER_BATCH * BATCHES, 
+         `All ${EVENTS_PER_BATCH * BATCHES} events were emitted successfully`);
+  assert(avgTimePerEvent < 1, 
+         `Average time per event (${avgTimePerEvent.toFixed(3)}ms) is under 1ms`);
+  assert(eventsPerSecond > 100, 
+         `EventBus handles ${Math.round(eventsPerSecond)} events/second (target: >100)`, 
+         eventsPerSecond > 50);
+  
+  log(`📊 Performance: ${totalEvents} events in ${totalTime.toFixed(2)}ms`);
+  log(`📊 Average: ${avgTimePerEvent.toFixed(3)}ms per event`);
+  log(`📊 Throughput: ${Math.round(eventsPerSecond)} events/second`);
+  
+  log('⚡ EventBus performance tests completed');
+}
+
+// Add memory usage tests
+async function runMemoryTests() {
+  log('🧠 Running memory usage tests...');
+  
+  if (!performance.memory) {
+    log('⚠️ Memory API not available', 'warning');
+    return;
+  }
+  
+  const initialMemory = performance.memory.usedJSHeapSize;
+  
+  // Test for memory leaks in event listeners
+  const eventBus = diagramWindow?.eventBus || window.eventBus;
+  if (eventBus) {
+    const listeners = [];
+    
+    // Add many listeners
+    for (let i = 0; i < 100; i++) {
+      const listener = () => {};
+      eventBus.on('test:memory', listener);
+      listeners.push(listener);
+    }
+    
+    // Emit events
+    for (let i = 0; i < 100; i++) {
+      eventBus.emit('test:memory', { test: i });
+    }
+    
+    // Remove listeners
+    listeners.forEach(listener => {
+      eventBus.off('test:memory', listener);
+    });
+    
+    // Force garbage collection if available
+    if (window.gc) {
+      window.gc();
+    }
+    
+    const finalMemory = performance.memory.usedJSHeapSize;
+    const memoryDiff = finalMemory - initialMemory;
+    
+    assert(memoryDiff < 1000000, // Less than 1MB increase
+           `Memory usage increase (${Math.round(memoryDiff / 1024)}KB) is reasonable`);
+    
+    log(`🧠 Memory usage: ${Math.round(memoryDiff / 1024)}KB increase`);
+  }
+  
+  log('🧠 Memory usage tests completed');
+}
+
+// Add load testing for high event volumes
+async function runLoadTests() {
+  log('🏋️ Running load tests...');
+  
+  const eventBus = diagramWindow?.eventBus || window.eventBus;
+  if (!eventBus) {
+    log('⚠️ EventBus not available for load testing', 'warning');
+    return;
+  }
+  
+  const HIGH_VOLUME = 1000;
+  let eventsReceived = 0;
+  let errors = 0;
+  
+  // Set up listener
+  const loadTestListener = (data) => {
+    eventsReceived++;
+    if (data.error) errors++;
+  };
+  
+  eventBus.on('test:load', loadTestListener);
+  
+  const startTime = performance.now();
+  
+  // Emit high volume of events rapidly
+  for (let i = 0; i < HIGH_VOLUME; i++) {
+    try {
+      eventBus.emit('test:load', { 
+        id: i, 
+        timestamp: Date.now(),
+        error: i % 100 === 0 // Introduce some error events
+      });
+    } catch (error) {
+      errors++;
+    }
+  }
+  
+  // Wait for processing
+  await sleep(100);
+  
+  const endTime = performance.now();
+  const duration = endTime - startTime;
+  
+  eventBus.off('test:load', loadTestListener);
+  
+  assert(eventsReceived >= HIGH_VOLUME * 0.95, 
+         `At least 95% of events were processed (${eventsReceived}/${HIGH_VOLUME})`);
+  assert(duration < 1000, 
+         `Load test completed in reasonable time (${duration.toFixed(2)}ms)`);
+  assert(errors <= HIGH_VOLUME * 0.01, 
+         `Error rate is acceptable (${errors}/${HIGH_VOLUME})`);
+  
+  log(`🏋️ Load test: ${eventsReceived}/${HIGH_VOLUME} events in ${duration.toFixed(2)}ms`);
+  log('🏋️ Load tests completed');
+}
+
+// Add stress testing
+async function runStressTests() {
+  log('💪 Running stress tests...');
+  
+  const eventBus = diagramWindow?.eventBus || window.eventBus;
+  if (!eventBus) {
+    log('⚠️ EventBus not available for stress testing', 'warning');
+    return;
+  }
+  
+  // Test with many event types and listeners
+  const eventTypes = [];
+  const listeners = [];
+  
+  // Create 50 different event types
+  for (let i = 0; i < 50; i++) {
+    eventTypes.push(`stress:test:${i}`);
+  }
+  
+  // Add multiple listeners for each event type
+  eventTypes.forEach(eventType => {
+    for (let j = 0; j < 5; j++) {
+      const listener = () => {};
+      eventBus.on(eventType, listener);
+      listeners.push({ eventType, listener });
+    }
+  });
+  
+  const startTime = performance.now();
+  
+  // Emit events rapidly
+  for (let round = 0; round < 10; round++) {
+    eventTypes.forEach(eventType => {
+      eventBus.emit(eventType, { round, timestamp: Date.now() });
+    });
+  }
+  
+  const endTime = performance.now();
+  const duration = endTime - startTime;
+  
+  // Clean up listeners
+  listeners.forEach(({ eventType, listener }) => {
+    eventBus.off(eventType, listener);
+  });
+  
+  assert(duration < 2000, 
+         `Stress test completed in reasonable time (${duration.toFixed(2)}ms)`);
+  
+  log(`💪 Stress test: ${eventTypes.length * 10} events with ${listeners.length} listeners in ${duration.toFixed(2)}ms`);
+  log('💪 Stress tests completed');
+}
+
+// Update the runAllTests function to include performance tests
+const originalRunAllTests = runAllTests;
+runAllTests = async function() {
+  await originalRunAllTests();
+  
+  // Add performance testing suite
+  await sleep(300);
+  await runPerformanceTests();
+  await sleep(300);
+  await runMemoryTests();
+  await sleep(300);
+  await runLoadTests();
+  await sleep(300);
+  await runStressTests();
+  
+  // Final comprehensive summary
+  const finalSuccessRate = ((testResults.passed / testResults.total) * 100).toFixed(1);
+  log(`\n🏆 COMPREHENSIVE TEST SUITE COMPLETE`);
+  log(`📊 Total Tests: ${testResults.total}`);
+  log(`✅ Passed: ${testResults.passed}`);
+  log(`❌ Failed: ${testResults.failed}`);
+  log(`⚠️ Warnings: ${testResults.warnings}`);
+  log(`📈 Success Rate: ${finalSuccessRate}%`);
+  
+  if (testResults.failed === 0 && finalSuccessRate >= 95) {
+    log(`\n🎉 EXCELLENT! Your event flow diagram is production-ready!`, 'success');
+  } else if (finalSuccessRate >= 85) {
+    log(`\n🌟 GOOD! Minor improvements recommended.`, 'success');
+  } else if (finalSuccessRate >= 70) {
+    log(`\n⚠️ FAIR! Several issues need attention.`, 'warning');
+  } else {
+    log(`\n🔧 NEEDS WORK! Multiple critical issues detected.`, 'error');
+  }
+};
+
+// Add individual performance test buttons
+document.addEventListener('DOMContentLoaded', () => {
+  const container = document.querySelector('.test-container');
+  
+  // Add performance test buttons
+  addTestButton(container, '⚡ Performance Tests', runPerformanceTests);
+  addTestButton(container, '🧠 Memory Tests', runMemoryTests);
+  addTestButton(container, '🏋️ Load Tests', runLoadTests);
+  addTestButton(container, '💪 Stress Tests', runStressTests);
+  
+  // Add a comprehensive test button
+  const comprehensiveButton = document.createElement('button');
+  comprehensiveButton.className = 'test-button';
+  comprehensiveButton.style.backgroundColor = '#28a745';
+  comprehensiveButton.style.fontWeight = 'bold';
+  comprehensiveButton.textContent = '🚀 Run FULL Test Suite';
+  comprehensiveButton.onclick = runAllTests;
+  container.appendChild(comprehensiveButton);
+});
+
+// Add test result export functionality
+function exportTestResults() {
+  const results = {
+    timestamp: new Date().toISOString(),
+    summary: {
+      total: testResults.total,
+      passed: testResults.passed,
+      failed: testResults.failed,
+      warnings: testResults.warnings,
+      successRate: ((testResults.passed / testResults.total) * 100).toFixed(1)
+    },
+    output: document.getElementById('test-output').textContent,
+    userAgent: navigator.userAgent,
+    url: window.location.href
+  };
+  
+  const blob = new Blob([JSON.stringify(results, null, 2)], 
+                       { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `event-flow-diagram-test-results-${Date.now()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  
+  log('📁 Test results exported successfully', 'success');
+}
+
+// Add export button
+document.addEventListener('DOMContentLoaded', () => {
+  const container = document.querySelector('.test-container');
+  addTestButton(container, '📁 Export Results', exportTestResults);
+});
