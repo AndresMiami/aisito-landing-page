@@ -612,6 +612,76 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 </script>
+<script type="module">
+  // Import centralized event definitions
+  import EventDefinitions from './core/EventDefinitions.js';
+  
+  // Make available globally
+  window.MiamiEvents = EventDefinitions;
+  
+  // Update existing event emitters to use centralized definitions
+  function updateFormSubmission() {
+    // OLD: eventBus.emit('form:submission:started', data);
+    // NEW:
+    eventBus.emit(EventDefinitions.EVENTS.FORM.SUBMISSION_STARTED, 
+      EventDefinitions.createFormPayload(data, 'submission'));
+  }
+  
+  function updateErrorHandling() {
+    // OLD: eventBus.emit('error:show', {fieldId: 'email', message: 'Invalid email'});
+    // NEW:
+    eventBus.emit(EventDefinitions.EVENTS.ERROR.SHOW, 
+      EventDefinitions.createFieldError('email', 'Invalid email'));
+  }
+  
+  function updateLocationSelection() {
+    // OLD: eventBus.emit('map:location:selected', locationData);
+    // NEW:
+    eventBus.emit(EventDefinitions.EVENTS.MAP.LOCATION_SELECTED, 
+      EventDefinitions.createLocationPayload(locationData));
+  }
+  
+  function updateAnalyticsTracking() {
+    // OLD: eventBus.emit('analytics:track', {event: 'form_submitted'});
+    // NEW:
+    eventBus.emit(EventDefinitions.EVENTS.ANALYTICS.TRACK, 
+      EventDefinitions.createAnalyticsPayload('form_submitted'));
+  }
+  
+  // Update event listeners to use centralized definitions
+  function setupEventListeners() {
+    // Form events
+    eventBus.on(EventDefinitions.EVENTS.FORM.FIELD_CHANGED, handleFieldChange);
+    eventBus.on(EventDefinitions.EVENTS.FORM.SUBMISSION_STARTED, handleSubmissionStart);
+    eventBus.on(EventDefinitions.EVENTS.FORM.SUBMISSION_SUCCEEDED, handleSubmissionSuccess);
+    
+    // Error events
+    eventBus.on(EventDefinitions.EVENTS.ERROR.SHOW, handleErrorShow);
+    eventBus.on(EventDefinitions.EVENTS.ERROR.CLEAR, handleErrorClear);
+    
+    // Map events
+    eventBus.on(EventDefinitions.EVENTS.MAP.LOCATION_SELECTED, handleLocationSelected);
+    eventBus.on(EventDefinitions.EVENTS.LOCATION.VALIDATION_REQUIRED, handleLocationValidation);
+    
+    // Analytics events
+    eventBus.on(EventDefinitions.EVENTS.ANALYTICS.TRACK, handleAnalyticsTrack);
+  }
+  
+  // Initialize with centralized events
+  document.addEventListener('DOMContentLoaded', () => {
+    setupEventListeners();
+    
+    // Log available events for debugging
+    console.log('🎯 Miami Concierge Events Loaded:', EventDefinitions.getAllEvents().length);
+    
+    // Emit system ready event
+    eventBus.emit(EventDefinitions.EVENTS.SYSTEM.READY, {
+      timestamp: Date.now(),
+      version: '1.0.0',
+      eventCount: EventDefinitions.getAllEvents().length
+    });
+  });
+</script>
   </body>
 </html>
 

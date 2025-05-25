@@ -775,6 +775,80 @@ document.addEventListener('DOMContentLoaded', () => {
   addTestButton(container, '📖 Content Tests', runContentAccuracyTests);
 });
 
+// Add this at the top of your test file
+
+<script type="module">
+  // Import centralized event definitions for testing
+  import EventDefinitions from './core/EventDefinitions.js';
+  
+  // Make available globally for tests
+  window.MiamiEvents = EventDefinitions;
+  
+  // Add EventDefinitions validation tests
+  async function runEventDefinitionsTests() {
+    log('📋 Running EventDefinitions validation tests...');
+    
+    // Test 1: All events follow naming convention
+    const allEvents = EventDefinitions.getAllEvents();
+    let validNamingCount = 0;
+    
+    allEvents.forEach(eventName => {
+      if (/^[a-z]+:[a-z\-:]+$/.test(eventName)) {
+        validNamingCount++;
+      } else {
+        log(`❌ Invalid event name: ${eventName}`, 'error');
+      }
+    });
+    
+    assert(validNamingCount === allEvents.length, 
+           `All ${allEvents.length} events follow naming convention`);
+    
+    // Test 2: No duplicate events
+    const uniqueEvents = new Set(allEvents);
+    assert(uniqueEvents.size === allEvents.length, 
+           'No duplicate event names found');
+    
+    // Test 3: All categories are populated
+    const categories = Object.keys(EventDefinitions.EVENTS);
+    categories.forEach(category => {
+      const categoryEvents = Object.values(EventDefinitions.EVENTS[category]);
+      assert(categoryEvents.length > 0, 
+             `Category ${category} has events defined`);
+    });
+    
+    // Test 4: Helper functions work
+    const testError = EventDefinitions.createFieldError('test-field', 'Test message');
+    assert(testError.fieldId === 'test-field', 'createFieldError helper works');
+    assert(testError.message === 'Test message', 'Error message is correct');
+    assert(testError.source === 'miami-concierge', 'Error source is set');
+    
+    // Test 5: Miami-specific payloads
+    const servicePayload = EventDefinitions.createMiamiServicePayload(
+      'one-way', 
+      'Miami Beach', 
+      'Downtown Miami'
+    );
+    assert(servicePayload.city === 'Miami', 'Miami service payload includes city');
+    assert(servicePayload.fromLocation === 'Miami Beach', 'From location is set');
+    
+    log('✅ EventDefinitions validation tests completed');
+  }
+  
+  // Add to the main test runner
+  const originalRunAllTests = window.runAllTests;
+  window.runAllTests = async function() {
+    await originalRunAllTests();
+    await sleep(300);
+    await runEventDefinitionsTests();
+  };
+  
+  // Add individual test button
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.querySelector('.test-container');
+    addTestButton(container, '📋 EventDefinitions Tests', runEventDefinitionsTests);
+  });
+</script>
+
 // Add event throttling for high-frequency events
 // Implement lazy loading for non-critical components
 // Use service workers for offline functionality

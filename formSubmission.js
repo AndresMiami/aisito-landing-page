@@ -9,6 +9,8 @@ import eventBus from './src/core/EventBus.js';
 import { FORM_EVENTS, createSubmissionData, createSubmissionError } from './src/core/FormEvents.js';
 import { ERROR_EVENTS, ERROR_SEVERITY } from './ErrorEvents.js';
 import { emitError, emitClearError, emitGlobalError } from './errorHandling.js';
+import DOMManager from './core/DOMManager.js';
+import EventDefinitions from './core/EventDefinitions.js';
 
 /**
  * Gathers and structures the form data into a JavaScript object suitable for submission.
@@ -18,133 +20,24 @@ import { emitError, emitClearError, emitGlobalError } from './errorHandling.js';
  * @returns {object} - A data object containing the collected form data
  */
 export function processFormData(elements) {
-    console.log('📋 Processing form data...');
+    console.log('📋 Processing form data with DOMManager...');
     
-    // Emit event that form data processing has started
-    eventBus.emit(FORM_EVENTS.DATA_PROCESSED, {
-        status: 'started',
-        timestamp: Date.now()
-    });
+    // Get form fields using DOMManager
+    const formFields = DOMManager.getFormFields();
     
-    // Ensure the bookingForm element exists before creating FormData
-    if (!elements.bookingForm) {
-        const error = 'Booking form element not found. Cannot process form data.';
-        console.error(error);
-        
-        // Emit error events
-        eventBus.emit(FORM_EVENTS.DATA_INVALID, {
-            error,
-            timestamp: Date.now()
-        });
-        
-        eventBus.emit(ERROR_EVENTS.GLOBAL, {
-            message: 'Could not process form: Form element not found',
-            severity: ERROR_SEVERITY.ERROR,
-            code: 'FORM_NOT_FOUND',
-            source: 'form-submission'
-        });
-        
-        return {}; // Return an empty object
-    }
-
-    const formData = new FormData(elements.bookingForm);
-    let serviceType = '';
-    
-    // Find the currently active tab button element
-    const activeTabButton = elements.tabNavigationContainer?.querySelector('.active-tab');
-    const activePanelId = activeTabButton ? activeTabButton.getAttribute('data-tab-target') : null;
-
-    // Start building the data object with the 'From' location
     const dataObject = {
-        'from-location': formData.get('from-location')?.trim(),
+        'from-location': DOMManager.getValue(formFields.fromLocation),
+        'to-address': DOMManager.getValue(formFields.toAddress),
+        'experience': DOMManager.getValue(formFields.experienceDropdown)
     };
-
-    // Add data specific to the One-Way tab if it's the active panel
-    if (activePanelId === '#panel-oneway') {
-        serviceType = 'One Way';
-        dataObject.service_type = serviceType;
-        dataObject['to-address'] = formData.get('to-address')?.trim();
-        dataObject.vehicle_type = formData.get('vehicle_type_oneway');
-
-        // Add booking preference and conditional date/time
-        dataObject.booking_preference = formData.get('booking_preference');
-        if (dataObject.booking_preference === 'Scheduled') {
-            dataObject['pickup-date'] = formData.get('pickup-date-oneway');
-            dataObject['pickup-time'] = formData.get('pickup-time-oneway');
-        }
-    } else if (activePanelId === '#panel-experience-plus') {
-        // Data processing for Experience+ tab
-        const selectedServiceValue = elements.serviceDropdown.value;
-        if (selectedServiceValue === 'hourly_chauffeur') {
-            serviceType = 'Hourly';
-            dataObject.service_type = serviceType;
-            dataObject.experience_name = "Hourly Chauffeur";
-            dataObject['duration-hourly'] = formData.get('duration-hourly');
-            dataObject['pickup-date'] = formData.get('pickup-date-hourly');
-            dataObject['pickup-time'] = formData.get('pickup-time-hourly');
-        } else if (selectedServiceValue) {
-            serviceType = 'Experience';
-            dataObject.service_type = serviceType;
-            dataObject.experience_name = elements.serviceDropdown.options[elements.serviceDropdown.selectedIndex].text;
-            dataObject.date_preference = formData.get('date_preference');
-            dataObject.name = formData.get('name')?.trim();
-            dataObject.guests = formData.get('guests');
-            dataObject.email = formData.get('email')?.trim();
-            dataObject.phone = formData.get('phone')?.trim();
-
-            // Add data specific to the Wynwood Night experience
-            if (selectedServiceValue === 'wynwood_night') {
-                dataObject.motivation = formData.get('motivation');
-                dataObject.dinner_style_preference = formData.get('dinner_style_preference');
-                if (formData.get('dinner_style_preference') === 'Other') {
-                    dataObject.other_restaurant_request = formData.get('other_restaurant_request')?.trim();
-                }
-                dataObject.lounge_interest = formData.get('lounge_interest');
-            }
-        }
-    }
-
-    // Clean up the data object by removing empty values
-    Object.keys(dataObject).forEach(key => {
-        if (dataObject[key] === null || dataObject[key] === undefined || dataObject[key] === '') {
-            if (key === 'other_restaurant_request' && dataObject.dinner_style_preference !== 'Other') {
-                delete dataObject[key];
-            } else if (key !== 'other_restaurant_request') {
-                delete dataObject[key];
-            }
-        }
-    });
-
-    // Validate required fields based on service type
-    const validationResult = validateFormData(dataObject, serviceType);
-    if (!validationResult.isValid) {
-        // Emit data invalid event with validation errors
-        eventBus.emit(FORM_EVENTS.DATA_INVALID, {
-            errors: validationResult.errors,
-            data: dataObject,
-            serviceType,
-            timestamp: Date.now()
-        });
-        
-        // Show validation errors
-        validationResult.errors.forEach(error => {
-            emitError(error.field, error.message, ERROR_SEVERITY.ERROR, 'form-validation');
-        });
-        
-        return null; // Return null to indicate invalid data
-    }
-
-    // Create submission data object
-    const submissionData = createSubmissionData(dataObject, serviceType);
     
-    // Emit event that form data processing is complete
-    eventBus.emit(FORM_EVENTS.DATA_PROCESSED, {
-        status: 'completed',
-        data: submissionData,
-        timestamp: Date.now()
+    // Clean up empty values
+    Object.keys(dataObject).forEach(key => {
+        if (!dataObject[key] || dataObject[key].trim() === '') {
+            delete dataObject[key];
+        }
     });
-
-    console.log("📋 Final Data Object for Submission:", dataObject);
+    
     return dataObject;
 }
 
@@ -458,27 +351,8 @@ function handleFailedSubmission(elements, status, data = {}) {
  * @param {HTMLElement} button - Button element
  * @param {boolean} isLoading - Whether button is in loading state
  */
-function setButtonLoadingState(button, isLoading) {
-    if (!button) return;
-    
-    const spinner = button.querySelector('.spinner') || button.querySelector('.loading-spinner');
-    const text = button.querySelector('.button-text') || button.querySelector('.text');
-    
-    button.disabled = isLoading;
-    
-    if (spinner) {
-        spinner.classList.toggle('hidden', !isLoading);
-    }
-    
-    if (text) {
-        text.classList.toggle('hidden', isLoading);
-    }
-    
-    if (isLoading) {
-        button.setAttribute('aria-busy', 'true');
-    } else {
-        button.removeAttribute('aria-busy');
-    }
+export function setButtonLoadingState(button, isLoading) {
+    return DOMManager.setButtonLoading(button, isLoading, 'Submitting...');
 }
 
 /**

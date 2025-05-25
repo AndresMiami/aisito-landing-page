@@ -696,5 +696,90 @@
       });
     });
   </script>
+
+  <!-- Add this script section before the closing </body> tag -->
+  <script type="module">
+  // Import the centralized event definitions
+  import EventDefinitions from './core/EventDefinitions.js';
+  
+  // Make events available globally for the diagram
+  window.MiamiEvents = EventDefinitions;
+  
+  // Update the diagram with actual event names from definitions
+  function updateDiagramWithRealEvents() {
+    const eventLabels = document.querySelectorAll('.event-label');
+    
+    // Update event labels with real event names from EventDefinitions
+    const eventMappings = {
+      'form:submission:started': EventDefinitions.EVENTS.FORM.SUBMISSION_STARTED,
+      'form:data:processed': EventDefinitions.EVENTS.FORM.DATA_PROCESSED,
+      'form:loading:started': EventDefinitions.EVENTS.FORM.LOADING_STARTED,
+      'form:submission:succeeded': EventDefinitions.EVENTS.FORM.SUBMISSION_SUCCEEDED,
+      'error:show': EventDefinitions.EVENTS.ERROR.SHOW,
+      'form:loading:ended': EventDefinitions.EVENTS.FORM.LOADING_ENDED,
+      'analytics:track': EventDefinitions.EVENTS.ANALYTICS.TRACK,
+      'map:autocomplete:initialized': EventDefinitions.EVENTS.MAP.AUTOCOMPLETE_INITIALIZED,
+      'map:places:suggestions': EventDefinitions.EVENTS.MAP.PLACES_SUGGESTIONS,
+      'map:location:selected': EventDefinitions.EVENTS.MAP.LOCATION_SELECTED,
+      'location:validation-required': EventDefinitions.EVENTS.LOCATION.VALIDATION_REQUIRED,
+      'form:field:updated': EventDefinitions.EVENTS.FORM.FIELD_CHANGED,
+      'error:clear': EventDefinitions.EVENTS.ERROR.CLEAR,
+      'analytics:location-selected': EventDefinitions.EVENTS.ANALYTICS.LOCATION_SELECTED
+    };
+    
+    eventLabels.forEach(label => {
+      const currentText = label.textContent;
+      if (eventMappings[currentText]) {
+        label.textContent = eventMappings[currentText];
+        label.title = `Defined in EventDefinitions.js`;
+      }
+    });
+    
+    console.log('✅ Event flow diagram updated with centralized event definitions');
+  }
+  
+  // Update sequence diagrams with real event names
+  function updateSequenceDiagrams() {
+    const sequenceDiagrams = document.querySelectorAll('.sequence-diagram');
+    
+    sequenceDiagrams.forEach(diagram => {
+      let content = diagram.innerHTML;
+      
+      // Replace with actual event names
+      content = content.replace(/emit\('([^']+)'/g, (match, eventName) => {
+        // Find the corresponding event in our definitions
+        for (const category of Object.values(EventDefinitions.EVENTS)) {
+          for (const definedEvent of Object.values(category)) {
+            if (eventName === definedEvent || eventName.includes(definedEvent.split(':')[1])) {
+              return `emit('${definedEvent}'`;
+            }
+          }
+        }
+        return match; // Return original if no match found
+      });
+      
+      diagram.innerHTML = content;
+    });
+    
+    console.log('✅ Sequence diagrams updated with centralized event definitions');
+  }
+  
+  // Initialize when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    updateDiagramWithRealEvents();
+    updateSequenceDiagrams();
+    
+    // Add event definition validation
+    const allEvents = EventDefinitions.getAllEvents();
+    console.log(`📊 Total events defined: ${allEvents.length}`);
+    console.log('🎯 Event categories:', Object.keys(EventDefinitions.EVENTS));
+  });
+  
+  // Add debugging helper
+  window.debugEvents = () => {
+    console.log('🔍 Miami Concierge Event Definitions:');
+    console.table(EventDefinitions.getAllEvents());
+  };
+</script>
 </body>
 </html>
