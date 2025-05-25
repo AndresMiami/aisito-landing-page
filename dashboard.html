@@ -544,75 +544,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 </script>
-  <!-- Add the event monitor after your other modules -->
+<!-- Load core modules first -->
+<script type="module" src="./core/EventBus.js"></script>
+<script type="module" src="./core/EventDefinitions.js"></script>
+<script type="module" src="./core/DOMManager.js"></script>
+<script type="module" src="./core/ComponentRegistry.js"></script>
+
+<!-- Load enhanced components -->
+<script type="module" src="./dashboard-components.js"></script>
+
+<!-- Initialize event monitoring -->
 <script type="module">
   import { initEventMonitor } from './event-monitor.js';
   
-  // Initialize event monitor when DOM is ready
   document.addEventListener('DOMContentLoaded', () => {
-    // Only enable in development
-    const isDevelopment = window.location.hostname === 'localhost' || 
-                         window.location.hostname === '127.0.0.1' ||
-                         window.location.search.includes('debug=true');
-    
-    if (isDevelopment) {
-      try {
-        const monitor = initEventMonitor();
-        
-        // Make it globally accessible for debugging
-        window.eventMonitor = monitor;
-        
-        console.log('🔍 Event monitor initialized - use window.eventMonitor to control');
-        console.log('Available commands:');
-        console.log('  window.eventMonitor.show() - Show dashboard');
-        console.log('  window.eventMonitor.hide() - Hide dashboard');
-        console.log('  window.eventMonitor.toggle() - Toggle expanded/collapsed');
-        console.log('  window.eventMonitor.clear() - Clear event history');
-        
-        // Add keyboard shortcuts
-        document.addEventListener('keydown', (event) => {
-          // Toggle monitor with Ctrl+Shift+E
-          if (event.ctrlKey && event.shiftKey && event.key === 'E') {
-            event.preventDefault();
-            monitor.toggle();
-            console.log('🔍 Event monitor toggled via keyboard shortcut');
-          }
-          
-          // Clear events with Ctrl+Shift+C
-          if (event.ctrlKey && event.shiftKey && event.key === 'C') {
-            event.preventDefault();
-            monitor.clear();
-            console.log('🧹 Event history cleared via keyboard shortcut');
-          }
-        });
-        
-        // Auto-show monitor after 2 seconds for easy debugging
-        setTimeout(() => {
-          monitor.show();
-          console.log('🔍 Event monitor auto-displayed for debugging');
-          
-          // Emit a welcome event to test the monitor
-          window.eventBus?.emit('system:monitor:initialized', {
-            timestamp: Date.now(),
-            environment: 'development',
-            features: ['real-time monitoring', 'event filtering', 'export capability']
-          });
-        }, 2000);
-        
-        // Test event emissions for demo
-        setTimeout(() => {
-          window.eventBus?.emit('demo:welcome', {
-            message: 'Welcome to Miami AI Concierge!',
-            location: 'Miami, FL',
-            timestamp: Date.now()
-          });
-        }, 3000);
-        
-      } catch (error) {
-        console.error('Failed to initialize event monitor:', error);
-      }
-    } else {
-      console.log('🔍 Event monitor disabled in production');
+    if (window.location.hostname === 'localhost' || window.location.search.includes('debug=true')) {
+      initEventMonitor();
     }
   });
 </script>
@@ -905,7 +852,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 </script>
-<script type="module" src="dashboard-components.js"></script>
   </body>
 </html>
 

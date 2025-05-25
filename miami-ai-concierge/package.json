@@ -1,0 +1,41 @@
+{
+  "name": "miami-ai-concierge",
+  "version": "1.0.0",
+  "description": "An intelligent booking platform for Miami transportation and luxury experiences.",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "jest",
+    "build": "webpack --mode production",
+    "dev": "webpack serve --mode development"
+  },
+  "keywords": [
+    "Miami",
+    "AI",
+    "Concierge",
+    "Booking",
+    "Transportation",
+    "Luxury"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "flatpickr": "^4.6.9",
+    "google-maps-react": "^2.0.6"
+  },
+  "devDependencies": {
+    "jest": "^26.6.0",
+    "webpack": "^5.24.4",
+    "webpack-cli": "^4.5.0",
+    "webpack-dev-server": "^3.11.2"
+  },
+  "homepage": "https://github.com/yourusername/miami-ai-concierge",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/miami-ai-concierge.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/miami-ai-concierge/issues"
+  }
+}

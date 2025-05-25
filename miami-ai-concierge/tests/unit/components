@@ -1,0 +1,121 @@
+// This file contains unit tests for the BookingFormComponent, TabNavigationComponent, ErrorHandlerComponent, LocationAutocompleteComponent, and VehicleSelectorComponent.
+// Each test suite will verify the functionality and integration of the components with the EventBus architecture.
+
+import { BookingFormComponent } from '../../../src/components/BookingForm';
+import { TabNavigationComponent } from '../../../src/components/TabNavigation';
+import { ErrorHandlerComponent } from '../../../src/components/ErrorHandler';
+import { LocationAutocompleteComponent } from '../../../src/components/LocationAutocomplete';
+import { VehicleSelectorComponent } from '../../../src/components/VehicleSelector';
+import EventBus from '../../../src/core/EventBus';
+import EventDefinitions from '../../../src/core/EventDefinitions';
+
+describe('BookingFormComponent', () => {
+    let bookingForm;
+
+    beforeEach(() => {
+        bookingForm = new BookingFormComponent();
+        bookingForm.onInitialize();
+    });
+
+    afterEach(() => {
+        bookingForm.onDestroy();
+    });
+
+    test('should initialize correctly', () => {
+        expect(bookingForm).toBeDefined();
+        expect(bookingForm.form).toBeTruthy();
+    });
+
+    test('should emit submission event on form submit', () => {
+        const submitEvent = jest.fn();
+        EventBus.on(EventDefinitions.EVENTS.FORM.SUBMISSION_STARTED, submitEvent);
+        
+        bookingForm.handleSubmit({ preventDefault: () => {} });
+        
+        expect(submitEvent).toHaveBeenCalled();
+    });
+});
+
+describe('TabNavigationComponent', () => {
+    let tabNavigation;
+
+    beforeEach(() => {
+        tabNavigation = new TabNavigationComponent();
+        tabNavigation.onInitialize();
+    });
+
+    afterEach(() => {
+        tabNavigation.onDestroy();
+    });
+
+    test('should switch tabs correctly', () => {
+        const switchTabEvent = jest.fn();
+        EventBus.on(EventDefinitions.EVENTS.UI.TAB_CHANGED, switchTabEvent);
+        
+        tabNavigation.switchTab(tabNavigation.tabButtons[0]);
+        
+        expect(switchTabEvent).toHaveBeenCalled();
+    });
+});
+
+describe('ErrorHandlerComponent', () => {
+    let errorHandler;
+
+    beforeEach(() => {
+        errorHandler = new ErrorHandlerComponent();
+        errorHandler.onInitialize();
+    });
+
+    afterEach(() => {
+        errorHandler.onDestroy();
+    });
+
+    test('should show error message', () => {
+        const errorMessage = 'Test error';
+        const showErrorEvent = jest.fn();
+        EventBus.on(EventDefinitions.EVENTS.ERROR.SHOW, showErrorEvent);
+        
+        errorHandler.handleShowError({ message: errorMessage });
+        
+        expect(showErrorEvent).toHaveBeenCalledWith({ message: errorMessage });
+    });
+});
+
+describe('LocationAutocompleteComponent', () => {
+    let locationAutocomplete;
+
+    beforeEach(() => {
+        locationAutocomplete = new LocationAutocompleteComponent();
+        locationAutocomplete.onInitialize();
+    });
+
+    afterEach(() => {
+        locationAutocomplete.onDestroy();
+    });
+
+    test('should initialize Google Maps API', () => {
+        expect(locationAutocomplete.map).toBeDefined();
+    });
+});
+
+describe('VehicleSelectorComponent', () => {
+    let vehicleSelector;
+
+    beforeEach(() => {
+        vehicleSelector = new VehicleSelectorComponent();
+        vehicleSelector.onInitialize();
+    });
+
+    afterEach(() => {
+        vehicleSelector.onDestroy();
+    });
+
+    test('should select vehicle correctly', () => {
+        const selectVehicleEvent = jest.fn();
+        EventBus.on(EventDefinitions.EVENTS.UI.FIELD_STYLED, selectVehicleEvent);
+        
+        vehicleSelector.selectVehicle(vehicleSelector.vehicles[0]);
+        
+        expect(selectVehicleEvent).toHaveBeenCalled();
+    });
+});
