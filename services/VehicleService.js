@@ -77,7 +77,18 @@ class VehicleService {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       
-      return await response.json();
+      const result = await response.json();
+      
+      // AFTER: Standardized vehicle events
+      eventBus.emit(EventDefinitions.EVENTS.VEHICLE.AVAILABILITY_CHECKED, 
+        EventDefinitions.createVehiclePayload({
+          vehicleId,
+          available: result.available,
+          context
+        })
+      );
+      
+      return result;
       
     } catch (error) {
       console.error('VehicleService: Failed to check availability:', error);

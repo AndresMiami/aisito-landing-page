@@ -30,18 +30,20 @@ export function initAutocomplete() {
   // Listen for place selection
   autocomplete.addListener('place_changed', () => {
     const place = autocomplete.getPlace();
-    if (!place.geometry) {
-      console.warn("No geometry information for this place");
-      return;
-    }
     
-    // Update form with place data if needed
-    console.log('Selected place:', place);
-    
-    // Clear any existing errors
-    if (window.clearError) {
-      window.clearError('pickupLocation');
-    }
+    // Emit standardized event
+    eventBus.emit(EventDefinitions.EVENTS.LOCATION.SELECTED, 
+      EventDefinitions.createLocationPayload({
+        placeId: place.place_id,
+        address: place.formatted_address,
+        coordinates: {
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng()
+        },
+        fieldId: 'from-location',
+        source: 'google-places-autocomplete'
+      })
+    );
   });
 }
 

@@ -2058,3 +2058,22 @@ function mapValidationFieldToElementId(validationField) {
   
   return fieldMapping[validationField] || validationField;
 }
+
+// Replace existing event emissions with EventDefinitions
+eventBus.emit(EventDefinitions.EVENTS.SYSTEM.INITIALIZATION_STARTED, {
+  module: 'dashboard',
+  timestamp: Date.now()
+});
+
+// Update all form field listeners
+function setupFormFieldListeners() {
+  const formFields = DOMManager.getFormFields();
+  
+  Object.entries(formFields).forEach(([fieldId, field]) => {
+    DOMManager.addEventListener(field, 'input', (event) => {
+      eventBus.emit(EventDefinitions.EVENTS.FORM.FIELD_CHANGED,
+        EventDefinitions.createFormPayload(fieldId, event.target.value)
+      );
+    });
+  });
+}

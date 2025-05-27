@@ -170,30 +170,16 @@ export class TabNavigationComponent extends BaseComponent {
    * @param {Element} clickedButton - The button that was clicked (optional)
    */
   switchTab(tabId, clickedButton = null) {
-    console.log(`🔄 Switching tab from "${this.state.currentTab}" to "${tabId}"`);
+    const previousTab = this.state.activeTab;
+    this.state.activeTab = tabId;
     
-    // Store previous tab
-    this.state.previousTab = this.state.currentTab;
-    this.state.currentTab = tabId;
-    
-    // Update button states using DOMManager
-    this.updateButtonStates(clickedButton || this.findButtonForTab(tabId));
-    
-    // Update panel visibility using DOMManager
-    this.updatePanelVisibility(tabId);
-    
-    // Save state if enabled
-    if (this.config.saveState) {
-      this.saveTabState();
-    }
-    
-    // Emit tab switch complete event
-    this.eventBus.emit(EventDefinitions.EVENTS.UI.TAB_SWITCHED, 
-      EventDefinitions.createUIPayload({
-        action: 'tab-switched',
+    // Emit standardized tab change event
+    this.eventBus.emit(EventDefinitions.EVENTS.UI.TAB_CHANGED, 
+      EventDefinitions.createUIPayload('tab-changed', {
+        previousTab,
         currentTab: tabId,
-        previousTab: this.state.previousTab,
-        component: this.componentId
+        button: clickedButton?.id,
+        source: 'tab-navigation-component'
       })
     );
   }

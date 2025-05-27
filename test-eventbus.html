@@ -99,6 +99,21 @@
             }, 2000);
         };
         
+        // Update test functions to use EventDefinitions
+        window.runManualTest = function() {
+          // Test standardized events
+          eventBus.publish(EventDefinitions.EVENTS.FORM.FIELD_CHANGED, 
+            EventDefinitions.createFormPayload('test-field', 'test-value')
+          );
+          
+          eventBus.publish(EventDefinitions.EVENTS.UI.TAB_CHANGED,
+            EventDefinitions.createUIPayload('tab-changed', {
+              previousTab: 'oneway',
+              currentTab: 'roundtrip'
+            })
+          );
+        };
+        
         window.testNamespaces = function() {
             const results = document.getElementById('manual-results');
             results.innerHTML = '<h4>Namespace Test Results:</h4>';

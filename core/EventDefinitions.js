@@ -559,3 +559,9 @@ export default {
 };
 
 console.log('🎯 Domain-organized EventDefinitions loaded with backward compatibility');
+
+// Ensure all system events use EventDefinitions
+this.eventBus.emit(EventDefinitions.EVENTS.SYSTEM.COMPONENT_INITIALIZED, {
+  componentId: id,
+  timestamp: Date.now()
+});

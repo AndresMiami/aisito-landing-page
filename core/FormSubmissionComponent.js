@@ -120,65 +120,32 @@ export class FormSubmissionComponent extends BaseComponent {
    * @param {Object} data - Submission event data
    */
   async processFormSubmission(data = {}) {
-    if (this.state.isSubmitting) {
-      console.warn('⚠️ Form submission already in progress');
-      return;
-    }
-    
-    console.log('🔄 Processing form submission...', data);
+    // Emit submission started
+    this.eventBus.emit(EventDefinitions.EVENTS.FORM.SUBMISSION_STARTED,
+      EventDefinitions.createFormPayload('booking-form', null, {
+        source: 'form-submission-component',
+        formData: data
+      })
+    );
     
     try {
-      // Set submitting state
-      this.state.isSubmitting = true;
-      this.state.submitAttempts++;
+      const result = await this.submitFormData(formData);
       
-      // Emit submission started event
-      this.eventBus.emit(EventDefinitions.EVENTS.FORM.SUBMISSION_STARTED, 
-        EventDefinitions.createFormPayload(this.config.formId, null, {
-          source: data.source || 'manual',
-          attempt: this.state.submitAttempts,
-          component: this.componentId
+      // Emit success
+      this.eventBus.emit(EventDefinitions.EVENTS.FORM.SUBMISSION_SUCCEEDED,
+        EventDefinitions.createFormPayload('booking-form', null, {
+          result,
+          submissionId: result.id
         })
       );
-      
-      // Show loading state
-      this.setLoadingState(true);
-      
-      // Collect form data
-      const formData = this.collectFormData();
-      this.state.formData = formData;
-      
-      // Emit data collected event
-      this.eventBus.emit(EventDefinitions.EVENTS.FORM.DATA_PROCESSED, {
-        formId: this.config.formId,
-        data: formData,
-        fieldCount: Object.keys(formData).length,
-        timestamp: Date.now()
-      });
-      
-      // Validate form data if enabled
-      if (this.config.validateBeforeSubmit) {
-        const validationResult = this.validateFormData(formData);
-        
-        if (!validationResult.isValid) {
-          this.handleValidationFailure(validationResult);
-          return;
-        }
-      }
-      
-      // Submit form data
-      const submissionResult = await this.submitFormData(formData);
-      
-      // Handle successful submission
-      this.handleSubmissionSuccess(submissionResult);
-      
     } catch (error) {
-      // Handle submission failure
-      this.handleSubmissionFailure(error);
-    } finally {
-      // Reset submitting state
-      this.state.isSubmitting = false;
-      this.setLoadingState(false);
+      // Emit failure
+      this.eventBus.emit(EventDefinitions.EVENTS.FORM.SUBMISSION_FAILED,
+        EventDefinitions.createFormPayload('booking-form', null, {
+          error: error.message,
+          errorCode: error.code
+        })
+      );
     }
   }
   
