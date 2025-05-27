@@ -33,7 +33,17 @@ export const EVENTS = {
     LOADING_ENDED: 'form:loading:ended',
     DATA_PROCESSED: 'form:data:processed',
     READY_TO_SUBMIT: 'form:ready-to-submit',
-    NOT_READY_TO_SUBMIT: 'form:not-ready-to-submit'
+    NOT_READY_TO_SUBMIT: 'form:not-ready-to-submit',
+
+    // Enhanced field events
+    FIELD_VALIDATION_REQUESTED: 'form:field:validation-requested', 
+    FIELD_VALIDATION_RESULT: 'form:field:validation-result',
+    FIELD_ERROR_CLEARED: 'form:field:error-cleared',
+    DROPDOWN_CHANGED: 'form:dropdown:changed',
+    RADIO_SELECTED: 'form:radio:selected',
+    CHECKBOX_CHANGED: 'form:checkbox:changed',
+    STATE_CHANGED: 'form:state:changed',
+    VALIDATION_COMPLETED: 'form:validation:completed'
   },
 
   // 🚗 Booking Domain - Transportation booking lifecycle
@@ -104,7 +114,10 @@ export const EVENTS = {
     DISTANCE_CALCULATED: 'location:distance:calculated',
     
     // Field updates
-    FIELD_UPDATED: 'location:field:updated'
+    FIELD_UPDATED: 'location:field:updated',
+
+    // Input change event
+    INPUT_CHANGED: 'location:input:changed'
   },
 
   // 💰 Payment Domain - Payment processing and billing
@@ -219,7 +232,10 @@ export const EVENTS = {
     // Experience selector
     EXPERIENCE_UPDATED: 'ui:experience:updated',
     EXPERIENCE_SELECTED: 'ui:experience:selected',
-    EXPERIENCE_RESET: 'ui:experience:reset'
+    EXPERIENCE_RESET: 'ui:experience:reset',
+
+    // Field UI update event
+    FIELD_UI_UPDATED: 'ui:field:updated'
   },
 
   // 📊 Analytics Domain - Tracking and monitoring
