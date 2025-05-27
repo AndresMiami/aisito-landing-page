@@ -604,6 +604,28 @@ ComponentRegistry.registerMany({
   }
 });
 
+import { VehicleSelectionComponent } from './components/VehicleSelectionComponent.js';
+
+// Register the orchestrated component
+ComponentRegistry.register('vehicle-selection', VehicleSelectionComponent, [], {
+  containerId: 'vehicle-selection-oneway',
+  enablePricing: true,
+  enableAvailabilityCheck: true
+});
+
+// For tab-specific vehicle selectors
+ComponentRegistry.register('vehicle-selection-oneway', VehicleSelectionComponent, [], {
+  containerId: 'vehicle-selection-oneway'
+});
+
+ComponentRegistry.register('vehicle-selection-roundtrip', VehicleSelectionComponent, [], {
+  containerId: 'vehicle-selection-roundtrip'
+});
+
+ComponentRegistry.register('vehicle-selection-hourly', VehicleSelectionComponent, [], {
+  containerId: 'vehicle-selection-hourly'
+});
+
 // Initialize all components when DOM is ready
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('🚀 Initializing Miami Concierge components...');

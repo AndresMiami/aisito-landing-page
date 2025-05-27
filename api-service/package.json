@@ -1,0 +1,28 @@
+{
+  "name": "api-service",
+  "version": "1.0.0",
+  "description": "Centralized API service for handling booking-related API calls in the Miami AI Concierge project.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node src/index.js",
+    "build": "webpack --config webpack.config.js"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "dotenv": "^10.0.0"
+  },
+  "devDependencies": {
+    "jest": "^27.0.6",
+    "babel-jest": "^27.0.6",
+    "babel-preset-env": "^1.7.0"
+  },
+  "keywords": [
+    "api",
+    "booking",
+    "concierge",
+    "miami"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
