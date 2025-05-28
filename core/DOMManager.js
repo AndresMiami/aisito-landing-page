@@ -712,6 +712,32 @@ class DOMManager {
       'aria-live': 'polite'
     }, message);
   }
+  
+  /**
+   * Get text content of an element with event integration
+   * @param {string|Element} element - Element ID, selector, or DOM element
+   * @returns {string} Element text content or empty string if not found
+   */
+  static getText(element) {
+    const el = this._resolveElement(element);
+    
+    if (el) {
+      const text = el.textContent || el.innerText || '';
+      
+      // Emit event for event-based architecture
+      if (window.eventBus && text) {
+        window.eventBus.emit('dom:text-accessed', {
+          elementId: el.id || 'unknown',
+          text: text.trim(),
+          timestamp: Date.now(),
+          source: 'DOMManager.getText'
+        });
+      }
+      
+      return text.trim();
+    }
+    return '';
+  }
 }
 
 // Export for both module and global usage

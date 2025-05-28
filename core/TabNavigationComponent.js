@@ -14,7 +14,7 @@ export class TabNavigationComponent extends BaseComponent {
       containerSelector: '#tab-navigation',
       tabButtonSelector: '.tab-button', 
       tabPanelSelector: '.tab-panel',
-      defaultTab: 'oneway',
+      defaultTab: 'panel-oneway',  // ✅ Matches HTML panel ID
       animateTransitions: true,
       saveState: true,
       ...options.config
@@ -25,7 +25,8 @@ export class TabNavigationComponent extends BaseComponent {
       previousTab: null,
       isInitialized: false,
       tabButtons: [],
-      tabPanels: []
+      tabPanels: [],
+      tabs: new Map() // Initialize tabs as a Map
     };
     
     // Bind methods to preserve context
@@ -69,6 +70,9 @@ export class TabNavigationComponent extends BaseComponent {
     }
     
     console.log(`✅ Found ${this.state.tabButtons.length} tabs and ${this.state.tabPanels.length} panels`);
+    
+    // Initialize tabs map
+    this.initializeTabs();
     
     // Set up event listeners
     this.setupEventListeners();
@@ -170,6 +174,24 @@ export class TabNavigationComponent extends BaseComponent {
    * @param {Element} clickedButton - The button that was clicked (optional)
    */
   switchTab(tabId, clickedButton = null) {
+    // Add normalization to handle both "oneway" and "#oneway" formats
+    const normalizedTabId = tabId.replace(/^#/, '');
+    
+    // Check if tab exists in collection
+    if (!this.state.tabs.has(normalizedTabId)) {
+      console.log(`Tab "${tabId}" not found`, {
+        availableTabs: Array.from(this.state.tabs.keys())
+      });
+      
+      // Try to find a close match or default to first tab
+      let fallbackTab = this.config.defaultTab || Array.from(this.state.tabs.keys())[0];
+      if (fallbackTab) {
+        console.log(`Falling back to "${fallbackTab}" tab`);
+        return this.switchTab(fallbackTab, clickedButton);
+      }
+      return false;
+    }
+    
     const previousTab = this.state.activeTab;
     this.state.activeTab = tabId;
     
@@ -362,6 +384,37 @@ export class TabNavigationComponent extends BaseComponent {
       console.warn('Failed to load tab state:', error);
       return null;
     }
+  }
+  
+  /**
+   * Initialize tabs map for internal state management
+   */
+  initializeTabs() {
+    // Build tabs map
+    this.state.tabButtons.forEach(button => {  // FIXED: use this.state.tabButtons instead of this.tabButtons
+      // Get the target attribute and normalize it (remove # if present)
+      const targetAttr = button.getAttribute('data-tab-target');
+      const tabId = targetAttr?.startsWith('#') ? 
+        targetAttr.substring(1) : // Remove the # if it exists
+        targetAttr;
+      
+      const tabLabel = button.textContent?.trim() || '';
+      
+      if (tabId) {
+        // Store panel with and without # prefix for flexibility
+        const panel = document.querySelector(targetAttr) || document.getElementById(tabId);
+        
+        this.state.tabs.set(tabId, {
+          id: tabId,
+          button,
+          panel: panel,
+          label: tabLabel,
+          isActive: false
+        });
+      }
+    });
+    
+    console.log(`Initialized ${this.state.tabs.size} tabs`);
   }
   
   // Public API methods

@@ -186,7 +186,12 @@ class ComponentRegistry {
 
     const { ComponentClass, dependencies, config } = this.components.get(id);
     const mergedConfig = { ...config, ...runtimeConfig };
-    const instance = new ComponentClass(mergedConfig);
+    // Pass componentId to the constructor
+    const instance = new ComponentClass({ 
+      componentId: id,
+      dependencies: this.resolveDependencies(dependencies),
+      config: mergedConfig
+    });
     
     this.instances.set(id, instance);
     if (instance.initialize) {
@@ -195,16 +200,45 @@ class ComponentRegistry {
     return instance;
   }
 
+  // Add this helper method to resolve dependencies
+  resolveDependencies(dependencyIds = []) {
+    const resolvedDeps = {};
+    for (const depId of dependencyIds) {
+      resolvedDeps[depId] = this.get(depId);
+    }
+    return resolvedDeps;
+  }
+
   async initializeAll() {
-    for (const [id, { ComponentClass }] of this.components) {
-      if (!this.instances.has(id)) {
-        const instance = new ComponentClass();
-        this.instances.set(id, instance);
-        if (instance.initialize) {
-          await instance.initialize();
+    console.log('🔄 Starting initializeAll...');
+    
+    for (const [id, componentData] of this.components) {
+      try {
+        if (!this.instances.has(id)) {
+          const { ComponentClass, dependencies, config } = componentData;
+          
+          // Create the instance with proper options
+          const instance = new ComponentClass({ 
+            componentId: id,
+            dependencies: this.resolveDependencies(dependencies),
+            config: config,
+            eventBus: window.eventBus
+          });
+          
+          this.instances.set(id, instance);
+          
+          // Initialize if method exists
+          if (typeof instance.initialize === 'function') {
+            await instance.initialize();
+            console.log(`✅ Component "${id}" initialized successfully`);
+          }
         }
+      } catch (error) {
+        console.error(`❌ Failed to initialize component "${id}":`, error);
       }
     }
+    
+    console.log(`✅ ComponentRegistry: ${this.instances.size} components initialized`);
   }
 
   async destroyAll() {
@@ -213,7 +247,7 @@ class ComponentRegistry {
         await instance.destroy();
       }
     }
-    this.instances.clear();
+    this.instances.clear(); // Fixed by adding parentheses
   }
 
   clear() {

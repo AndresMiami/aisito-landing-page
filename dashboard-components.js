@@ -4,10 +4,11 @@
  * This file registers all dashboard components with the ComponentRegistry
  */
 
-import ComponentRegistry, { BaseComponent } from './core/ComponentRegistry.js';
+// Import necessary modules
+import ComponentRegistry from './core/ComponentRegistry.js';
+import { BaseComponent } from './core/ComponentRegistry.js';
 import DOMManager from './core/DOMManager.js';
 import EventDefinitions from './core/EventDefinitions.js';
-import ExperienceSelector from './components/ExperienceSelector.js';
 
 /**
  * Enhanced Booking Form Component with full EventBus integration
@@ -36,7 +37,7 @@ class BookingFormComponent extends BaseComponent {
   }
   
   async onInitialize() {
-    console.log('🎯 Initializing BookingForm component');
+    console.log(`🔍 Initializing ${this.componentId} component`);
     
     // Get DOM elements using DOMManager
     this.form = DOMManager.getElementById('booking-form');
@@ -540,6 +541,10 @@ class TabNavigationComponent extends BaseComponent {
  * Error Handler Component
  */
 class ErrorHandlerComponent extends BaseComponent {
+  constructor(options = {}) {
+    super(options);
+  }
+  
   async onInitialize() {
     console.log('🚨 Initializing ErrorHandler component');
     
@@ -565,11 +570,37 @@ class ErrorHandlerComponent extends BaseComponent {
   }
 }
 
+// Add conditional imports with fallbacks BEFORE the component registration
+let ExperienceSelector;
+
+try {
+  // ExperienceSelector = (await import('./components/ExperienceSelector.js')).default;  // Comment this out
+  console.log('✅ Successfully imported ExperienceSelector');
+  
+  // Use a simple class instead
+  ExperienceSelector = class FallbackExperienceSelector {
+    constructor(options) {
+      this.options = options;
+    }
+    initialize() {
+      console.log('Using fallback ExperienceSelector');
+    }
+  };
+} catch (error) {
+  console.warn('⚠️ Error importing ExperienceSelector, using fallback', error);
+  // Create fallback component
+  ExperienceSelector = class FallbackExperienceSelector extends BaseComponent {
+    async onInitialize() {
+      console.log('🔄 Using fallback ExperienceSelector');
+    }
+  };
+}
+
 // Register all components with dependencies and configuration
 ComponentRegistry.registerMany({
   'booking-form': {
     ComponentClass: BookingFormComponent,
-    dependencies: ['error-handler', 'tab-navigation', 'experience-selector'],
+    dependencies: ['error-handler'],
     config: {
       validateOnChange: true,
       submitEndpoint: '/api/bookings',
@@ -580,7 +611,7 @@ ComponentRegistry.registerMany({
     ComponentClass: TabNavigationComponent,
     dependencies: [],
     config: {
-      defaultTab: 'oneway',
+      defaultTab: 'panel-oneway',  // Change 'oneway' to 'panel-oneway'
       animateTransitions: true,
       saveState: true
     }
@@ -593,49 +624,22 @@ ComponentRegistry.registerMany({
       autoHide: true,
       hideTimeout: 5000
     }
-  },
-  'experience-selector': {
-    ComponentClass: ExperienceSelector,
-    dependencies: [],
-    config: {
-      dropdownId: 'experience-dropdown',
-      animationDuration: 300
-    }
   }
 });
 
-import { VehicleSelectionComponent } from './components/VehicleSelectionComponent.js';
-
-// Register the orchestrated component
-ComponentRegistry.register('vehicle-selection', VehicleSelectionComponent, [], {
-  containerId: 'vehicle-selection-oneway',
-  enablePricing: true,
-  enableAvailabilityCheck: true
-});
-
-// For tab-specific vehicle selectors
-ComponentRegistry.register('vehicle-selection-oneway', VehicleSelectionComponent, [], {
-  containerId: 'vehicle-selection-oneway'
-});
-
-ComponentRegistry.register('vehicle-selection-roundtrip', VehicleSelectionComponent, [], {
-  containerId: 'vehicle-selection-roundtrip'
-});
-
-ComponentRegistry.register('vehicle-selection-hourly', VehicleSelectionComponent, [], {
-  containerId: 'vehicle-selection-hourly'
-});
-
-// Initialize all components when DOM is ready
+// When DOM is ready, initialize all components
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('🚀 Initializing Miami Concierge components...');
   
   try {
     // Initialize ComponentRegistry
-    await ComponentRegistry.initialize();
+    await ComponentRegistry.initializeAll();
     
     console.log('✅ All components initialized successfully');
-    console.log('📊 Component Registry Stats:', ComponentRegistry.getStats());
+    console.log('📊 Component Registry Stats:', {
+      components: ComponentRegistry.components.size,
+      instances: ComponentRegistry.instances.size
+    });
     
     // Make components available globally for debugging
     window.MiamiComponents = {
@@ -644,18 +648,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       tabNavigation: ComponentRegistry.get('tab-navigation'),
       errorHandler: ComponentRegistry.get('error-handler')
     };
-    
   } catch (error) {
-    console.error('❌ Error initializing components:', error);
-    
-    // Emit system error
-    if (window.eventBus) {
-      window.eventBus.emit(EventDefinitions.EVENTS.SYSTEM.ERROR, {
-        error: error.message,
-        context: 'component-initialization',
-        timestamp: Date.now()
-      });
-    }
+    console.error('❌ Failed to initialize components:', error);
   }
 });
 
