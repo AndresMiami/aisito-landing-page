@@ -1,24 +1,159 @@
-import { BaseComponent } from './BaseComponent.js';
-import EventBus from './EventBus.js';
-import DOMManager from './DOMManager.js';
+/**
+ * ComponentRegistry.js - Component registration and management for Miami Concierge
+ * 
+ * This module provides a centralized registry for all components in the application,
+ * allowing for lifecycle management, dependency injection, and event coordination.
+ * 
+ * Features:
+ * - Component lifecycle management (init, destroy)
+ * - Dependency injection and resolution
+ * - Event coordination between components
+ * - Lazy loading and instantiation
+ * - Error handling and recovery
+ * 
+ * Usage:
+ * import ComponentRegistry from './core/ComponentRegistry.js';
+ * 
+ * // Register a component
+ * ComponentRegistry.register('booking-form', BookingFormComponent);
+ * 
+ * // Get a component instance
+ * const bookingForm = ComponentRegistry.get('booking-form');
+ */
+
+import eventBus from '../eventBus.js';
+import EventDefinitions from './EventDefinitions.js';
 
 /**
- * Component Registry class for managing all application components
+ * Base Component class that all components should extend
+ */
+export class BaseComponent {
+  constructor(options = {}) {
+    this.componentId = options.componentId || 'unknown';
+    this.dependencies = options.dependencies || {};
+    this.eventBus = options.eventBus || eventBus;
+    this.config = options.config || {};
+    this.isInitialized = false;
+    this.isDestroyed = false;
+    
+    // Bind lifecycle methods
+    this.initialize = this.initialize.bind(this);
+    this.destroy = this.destroy.bind(this);
+    this.onError = this.onError.bind(this);
+  }
+  
+  /**
+   * Initialize the component - override in subclasses
+   */
+  async initialize() {
+    if (this.isInitialized) {
+      console.warn(`Component ${this.componentId} is already initialized`);
+      return;
+    }
+    
+    try {
+      console.log(`🔧 Initializing component: ${this.componentId}`);
+      
+      // Override this method in subclasses
+      await this.onInitialize();
+      
+      this.isInitialized = true;
+      
+      // Emit initialization event
+      this.eventBus.emit(EventDefinitions.EVENTS.SYSTEM.COMPONENT_INITIALIZED, {
+        componentId: this.componentId,
+        timestamp: Date.now()
+      });
+      
+    } catch (error) {
+      console.error(`❌ Error initializing component ${this.componentId}:`, error);
+      this.onError(error, 'initialization');
+    }
+  }
+  
+  /**
+   * Override this method in subclasses for initialization logic
+   */
+  async onInitialize() {
+    // Implementation in subclasses
+  }
+  
+  /**
+   * Destroy the component - cleanup resources
+   */
+  async destroy() {
+    if (this.isDestroyed) {
+      console.warn(`Component ${this.componentId} is already destroyed`);
+      return;
+    }
+    
+    try {
+      console.log(`🗑️ Destroying component: ${this.componentId}`);
+      
+      // Override this method in subclasses
+      await this.onDestroy();
+      
+      this.isDestroyed = true;
+      this.isInitialized = false;
+      
+      // Emit destruction event
+      this.eventBus.emit(EventDefinitions.EVENTS.SYSTEM.COMPONENT_DESTROYED, {
+        componentId: this.componentId,
+        timestamp: Date.now()
+      });
+      
+    } catch (error) {
+      console.error(`❌ Error destroying component ${this.componentId}:`, error);
+      this.onError(error, 'destruction');
+    }
+  }
+  
+  /**
+   * Override this method in subclasses for cleanup logic
+   */
+  async onDestroy() {
+    // Implementation in subclasses
+  }
+  
+  /**
+   * Error handler - override in subclasses for custom error handling
+   */
+  onError(error, context = 'unknown') {
+    console.error(`Component ${this.componentId} error in ${context}:`, error);
+    
+    // Emit error event
+    this.eventBus.emit(EventDefinitions.EVENTS.ERROR.COMPONENT_ERROR, {
+      componentId: this.componentId,
+      error: error.message,
+      context,
+      timestamp: Date.now()
+    });
+  }
+  
+  /**
+   * Get a dependency by ID
+   */
+  getDependency(id) {
+    return this.dependencies[id] || null;
+  }
+  
+  /**
+   * Check if component is ready (initialized and not destroyed)
+   */
+  isReady() {
+    return this.isInitialized && !this.isDestroyed;
+  }
+}
+
+/**
+ * Component Registry for managing application components
  */
 class ComponentRegistry {
   constructor() {
     this.components = new Map();
-    this.instances = new Map(); // Add instances map for singleton pattern
+    this.instances = new Map();
   }
 
-  /**
-   * Register a component with the registry
-   * @param {string} id - Unique component identifier
-   * @param {Class} ComponentClass - Component constructor
-   * @param {Array<string>} dependencies - IDs of components this component depends on
-   * @param {Object} config - Default configuration for the component
-   * @returns {boolean} - Success status
-   */
   register(id, ComponentClass, dependencies = [], config = {}) {
     if (this.components.has(id)) {
       console.warn(`Component with ID "${id}" is already registered.`);
@@ -29,11 +164,6 @@ class ComponentRegistry {
     return true;
   }
 
-  /**
-   * Register multiple components at once
-   * @param {Object} componentsMap - Map of component IDs to component data
-   * @returns {number} - Number of successfully registered components
-   */
   registerMany(componentsMap) {
     let count = 0;
     for (const [id, componentData] of Object.entries(componentsMap)) {
@@ -44,19 +174,12 @@ class ComponentRegistry {
     return count;
   }
 
-  /**
-   * Get a component instance by ID
-   * @param {string} id - Component ID
-   * @param {Object} runtimeConfig - Runtime configuration to merge with default config
-   * @returns {Object|null} - Component instance or null if not found
-   */
   get(id, runtimeConfig = {}) {
     if (!this.components.has(id)) {
       console.warn(`Component with ID "${id}" is not registered.`);
       return null;
     }
 
-    // Return existing instance if already created (singleton pattern)
     if (this.instances.has(id)) {
       return this.instances.get(id);
     }
@@ -65,28 +188,25 @@ class ComponentRegistry {
     const mergedConfig = { ...config, ...runtimeConfig };
     const instance = new ComponentClass(mergedConfig);
     
-    // Store instance for singleton pattern
     this.instances.set(id, instance);
-    instance.initialize();
+    if (instance.initialize) {
+      instance.initialize();
+    }
     return instance;
   }
 
-  /**
-   * Initialize all registered components
-   */
   async initializeAll() {
     for (const [id, { ComponentClass }] of this.components) {
       if (!this.instances.has(id)) {
         const instance = new ComponentClass();
         this.instances.set(id, instance);
-        await instance.initialize();
+        if (instance.initialize) {
+          await instance.initialize();
+        }
       }
     }
   }
 
-  /**
-   * Destroy all registered components
-   */
   async destroyAll() {
     for (const [id, instance] of this.instances) {
       if (instance && typeof instance.destroy === 'function') {
@@ -96,9 +216,6 @@ class ComponentRegistry {
     this.instances.clear();
   }
 
-  /**
-   * Clear all components and instances
-   */
   clear() {
     this.instances.clear();
     this.components.clear();
@@ -109,8 +226,5 @@ class ComponentRegistry {
 // Create singleton instance
 const registry = new ComponentRegistry();
 
-// Export ONLY the registry singleton (remove duplicate BaseComponent export)
+// ONLY export the registry (remove duplicate BaseComponent export)
 export default registry;
-
-// REMOVED: export { BaseComponent }; - This was causing the duplicate export error
-// BaseComponent should be imported directly from './BaseComponent.js' where needed

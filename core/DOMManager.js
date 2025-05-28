@@ -79,6 +79,22 @@ class DOMManager {
   static getElements(selector) {
     return document.querySelectorAll(selector);
   }
+
+  /**
+   * Get multiple elements by selector (querySelectorAll wrapper)
+   * @param {string} selector - CSS selector
+   * @param {Element} context - Optional context element (defaults to document)
+   * @returns {NodeList} Collection of DOM elements with error handling
+   */
+  static querySelectorAll(selector, context = document) {
+    try {
+      console.log(`🔍 DOMManager.querySelectorAll: "${selector}"`);
+      return context.querySelectorAll(selector);
+    } catch (error) {
+      console.error(`❌ DOMManager.querySelectorAll error for "${selector}":`, error);
+      return { length: 0, [Symbol.iterator]: () => [][Symbol.iterator]() };
+    }
+  }
   
   /**
    * Get element by ID with caching
