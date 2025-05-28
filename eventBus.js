@@ -21,13 +21,4 @@ if (typeof window !== 'undefined') {
   window.EventBus = eventBus.constructor;
 }
 
-// In your maps integration
-import { MAP_EVENTS, createLocationObject } from './eventBus.js';
-
-// In your form validation
-import { FORM_EVENTS, createFormValidationObject } from './eventBus.js';
-
-// In your UI components
-import { UI_EVENTS, createTabChangeObject } from './eventBus.js';
-
 console.log('📡 EventBus integration hub loaded with all event definitions');

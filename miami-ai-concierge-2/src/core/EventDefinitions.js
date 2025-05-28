@@ -25,6 +25,32 @@ export const EVENTS = {
     LOADING_ENDED: 'form:loading:ended',
     DATA_PROCESSED: 'form:data:processed'
   },
+  BOOKING: {
+    REQUESTED: 'booking:requested',
+    INITIATED: 'booking:initiated',
+    CONFIRMED: 'booking:confirmed',
+    CANCELED: 'booking:canceled',
+    UPDATED: 'booking:updated',
+    COMPLETED: 'booking:completed',
+    DETAILS_LOADED: 'booking:details:loaded',
+    PREFERENCES_SET: 'booking:preferences:set',
+    SPECIAL_REQUESTS_ADDED: 'booking:special-requests:added',
+    PRICE_CALCULATED: 'booking:price:calculated',
+    AVAILABILITY_CHECKED: 'booking:availability:checked',
+    AVAILABILITY_CONFIRMED: 'booking:availability:confirmed',
+    EXPERIENCE_SELECTED: 'booking:experience:selected',
+    EXPERIENCE_CONFIGURED: 'booking:experience:configured'
+  },
+  VEHICLE: {
+    SELECTED: 'vehicle:selected',
+    DESELECTED: 'vehicle:deselected',
+    OPTIONS_LOADED: 'vehicle:options:loaded',
+    AVAILABILITY_CHECKED: 'vehicle:availability:checked',
+    PRICE_CALCULATED: 'vehicle:price:calculated',
+    CAPACITY_VALIDATED: 'vehicle:capacity:validated',
+    FEATURES_DISPLAYED: 'vehicle:features:displayed',
+    TYPE_CHANGED: 'vehicle:type:changed'
+  },
   MAP: {
     AUTOCOMPLETE_INITIALIZED: 'map:autocomplete:initialized',
     PLACES_SUGGESTIONS: 'map:places:suggestions',
@@ -73,3 +99,22 @@ export const EVENTS = {
     DEBUG_DISABLED: 'system:debug:disabled'
   }
 };
+
+// ONLY ONE DECLARATION OF EACH - Remove any duplicates around line 352
+export const FORM_EVENTS = EVENTS.FORM;
+export const BOOKING_EVENTS = EVENTS.BOOKING;
+export const VEHICLE_EVENTS = EVENTS.VEHICLE;
+export const MAP_EVENTS = EVENTS.MAP;
+export const ANALYTICS_EVENTS = EVENTS.ANALYTICS;
+export const LOCATION_EVENTS = EVENTS.LOCATION;
+export const UI_EVENTS = EVENTS.UI;
+export const SYSTEM_EVENTS = EVENTS.SYSTEM;
+export const ERROR_EVENTS = EVENTS.ERROR;
+
+// Default export
+export default EVENTS;
+
+// REMOVE ANY DUPLICATE DECLARATIONS LIKE THESE (if they exist around line 352):
+// export const BOOKING_EVENTS = { ... }; // DELETE THIS
+// const BOOKING_EVENTS = { ... }; // DELETE THIS
+// export { BOOKING_EVENTS }; // DELETE THIS IF IT'S A DUPLICATE

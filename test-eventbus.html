@@ -46,10 +46,9 @@
         
         <div id="manual-results"></div>
     </div>
-    
-    <script type="module">
+      <script type="module">
         import { testEventBus } from './src/core/EventBus.test.js';
-        import eventBus from './src/core/EventBus.js';
+        import eventBus from './eventBus.js';
         
         // Update status
         document.getElementById('status-text').textContent = 'Running tests...';

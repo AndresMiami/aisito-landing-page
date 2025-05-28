@@ -16,8 +16,8 @@
 
 import { BaseComponent, ComponentRegistry } from './ComponentRegistry.js';
 import DOMManager from './DOMManager.js';
-import eventBus from '../src/core/EventBus.js';
-import EventDefinitions from '../src/core/EventDefinitions.js';
+import eventBus from '../eventBus.js';
+import EventDefinitions from './EventDefinitions.js';
 
 // Component imports with graceful fallbacks
 let TabNavigationComponent, FormSubmissionComponent, VehicleSelectionComponent;

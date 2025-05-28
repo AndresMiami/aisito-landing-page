@@ -2,7 +2,7 @@
  * Bridge - Connects existing code with the new event-driven architecture
  * Provides compatibility functions for gradual migration
  */
-import eventBus from './EventBus.js';
+import eventBus from '../../eventBus.js';
 
 // Map DOM events to EventBus events for gradual migration
 export function connectDOMToEventBus(element, domEvent, eventBusEvent, dataTransformer = null) {

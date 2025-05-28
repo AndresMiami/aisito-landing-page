@@ -8,6 +8,7 @@ import DOMManager from './DOMManager.js';
 class ComponentRegistry {
   constructor() {
     this.components = new Map();
+    this.instances = new Map(); // Add instances map for singleton pattern
   }
 
   /**
@@ -24,6 +25,7 @@ class ComponentRegistry {
       return false;
     }
     this.components.set(id, { ComponentClass, dependencies, config });
+    console.log(`Component "${id}" registered successfully.`);
     return true;
   }
 
@@ -49,14 +51,22 @@ class ComponentRegistry {
    * @returns {Object|null} - Component instance or null if not found
    */
   get(id, runtimeConfig = {}) {
-    const componentData = this.components.get(id);
-    if (!componentData) {
-      console.warn(`Component with ID "${id}" not found.`);
+    if (!this.components.has(id)) {
+      console.warn(`Component with ID "${id}" is not registered.`);
       return null;
     }
-    const { ComponentClass, config } = componentData;
+
+    // Return existing instance if already created (singleton pattern)
+    if (this.instances.has(id)) {
+      return this.instances.get(id);
+    }
+
+    const { ComponentClass, dependencies, config } = this.components.get(id);
     const mergedConfig = { ...config, ...runtimeConfig };
     const instance = new ComponentClass(mergedConfig);
+    
+    // Store instance for singleton pattern
+    this.instances.set(id, instance);
     instance.initialize();
     return instance;
   }
@@ -66,8 +76,11 @@ class ComponentRegistry {
    */
   async initializeAll() {
     for (const [id, { ComponentClass }] of this.components) {
-      const instance = new ComponentClass();
-      await instance.initialize();
+      if (!this.instances.has(id)) {
+        const instance = new ComponentClass();
+        this.instances.set(id, instance);
+        await instance.initialize();
+      }
     }
   }
 
@@ -75,15 +88,29 @@ class ComponentRegistry {
    * Destroy all registered components
    */
   async destroyAll() {
-    for (const [id, { ComponentClass }] of this.components) {
-      const instance = new ComponentClass();
-      await instance.destroy();
+    for (const [id, instance] of this.instances) {
+      if (instance && typeof instance.destroy === 'function') {
+        await instance.destroy();
+      }
     }
+    this.instances.clear();
+  }
+
+  /**
+   * Clear all components and instances
+   */
+  clear() {
+    this.instances.clear();
+    this.components.clear();
+    console.log('Component registry cleared.');
   }
 }
 
 // Create singleton instance
 const registry = new ComponentRegistry();
 
-// Export the registry singleton and BaseComponent class
+// Export ONLY the registry singleton (remove duplicate BaseComponent export)
 export default registry;
+
+// REMOVED: export { BaseComponent }; - This was causing the duplicate export error
+// BaseComponent should be imported directly from './BaseComponent.js' where needed

@@ -2,7 +2,7 @@
  * ModuleLoader - Handles the dynamic loading and initialization of modules
  * with dependency resolution, startup sequence management, and error handling
  */
-import eventBus from './EventBus.js';
+import eventBus from '../../eventBus.js';
 
 export class ModuleLoader {
   constructor() {

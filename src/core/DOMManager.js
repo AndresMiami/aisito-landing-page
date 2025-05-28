@@ -2,7 +2,7 @@
  * DOMManager - Provides utilities for DOM manipulation and event binding
  * with EventBus integration for component communication
  */
-import eventBus from './EventBus.js';
+import eventBus from '../../eventBus.js';
 
 export class DOMManager {
   constructor(document, eventBusInstance = eventBus) {

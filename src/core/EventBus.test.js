@@ -1,4 +1,4 @@
-import eventBus from './EventBus.js';
+import eventBus from '../../eventBus.js';
 
 /**
  * Test functions for the EventBus

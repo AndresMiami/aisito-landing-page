@@ -205,9 +205,8 @@
   </div>
 
   <!-- Load EventBus and dependencies -->
-  <script type="module">
-    // Import EventBus first
-    import eventBus from './src/core/EventBus.js';
+  <script type="module">    // Import EventBus first
+    import eventBus from './eventBus.js';
     
     // Make EventBus globally available
     window.eventBus = eventBus;
@@ -215,7 +214,7 @@
     
     // Import event definitions
     import { ERROR_EVENTS, ERROR_SEVERITY } from './ErrorEvents.js';
-    import { FORM_EVENTS } from './src/core/FormEvents.js';
+    import { FORM_EVENTS } from './FormEvents.js';
     import { MAP_EVENTS } from './MapEvents.js';
     
     // Import and initialize event monitor

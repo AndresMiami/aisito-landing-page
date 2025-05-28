@@ -6,7 +6,7 @@
  * feedback and form state management.
  */
 
-import eventBus from './src/core/EventBus.js';
+import eventBus from './eventBus.js';
 import { ERROR_EVENTS, ERROR_SEVERITY } from './ErrorEvents.js';
 import { emitError, emitClearError, emitGlobalError, emitEvent } from './errorHandling.js';
 

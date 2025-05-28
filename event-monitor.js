@@ -5,9 +5,9 @@
  * through the EventBus system in real-time, with filtering and inspection capabilities.
  */
 
-import eventBus from './src/core/EventBus.js';
+import eventBus from './eventBus.js';
 import { ERROR_EVENTS } from './ErrorEvents.js';
-import { FORM_EVENTS } from './src/core/FormEvents.js';
+import { FORM_EVENTS } from './FormEvents.js';
 import { MAP_EVENTS } from './MapEvents.js';
 
 // Configuration
