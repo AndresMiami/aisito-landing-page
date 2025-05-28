@@ -1,5 +1,3 @@
-import { BOOKING_EVENTS } from './core/EventDefinitions.js';
-
 /**
  * EventDefinitions.js - Domain-Organized Event Definitions for Miami AI Concierge
  */
