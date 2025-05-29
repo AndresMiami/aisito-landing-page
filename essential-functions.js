@@ -908,24 +908,33 @@ function checkFormValidity() {
   }
   
   if (isOnewayTab) {
-    isValid = formState.oneway.fromLocation && 
-              formState.oneway.toAddress && 
+    // ENHANCED: Use address content tracking for validation consistency
+    // This ensures addresses preserved in session history will validate
+    const hasAddressContent = window.addressChangeTracker?.hasRequiredOnewayAddresses() || false;
+    
+    isValid = (hasAddressContent || (formState.oneway.fromLocation && formState.oneway.toAddress)) && 
               formState.oneway.bookingTime && 
               formState.oneway.vehicleType;
     
-    console.log('✅ One-way form validity check:', {
-      fromLocation: formState.oneway.fromLocation,
-      toAddress: formState.oneway.toAddress,
+    console.log('✅ One-way form validity check (Address Content Aware):', {
+      formFromLocation: formState.oneway.fromLocation,
+      formToAddress: formState.oneway.toAddress,
       bookingTime: formState.oneway.bookingTime,
       vehicleType: formState.oneway.vehicleType,
+      addressContentOK: hasAddressContent,
+      sessionFromLocation: window.addressChangeTracker?.sessionValidated.fromLocation,
+      sessionToAddress: window.addressChangeTracker?.sessionValidated.toAddress,
       isValid
     });
   } else {
     // Experience+ validation - FIXED: Proper state sync
     const expState = formState.experienceplus || {};
     
-    // FIXED: Properly check both local and global state (like one-way tab)
-    const hasLocation = expState.fromLocation || 
+    // ENHANCED: Check both form state and address content tracking for validation consistency
+    const hasAddressContent = window.addressChangeTracker?.hasRequiredExpAddress() || false;
+    
+    const hasLocation = hasAddressContent || 
+                       expState.fromLocation || 
                        (window.formState && window.formState.experienceplus && window.formState.experienceplus.fromLocation);
     
     const hasExperience = expState.experienceType || 
@@ -984,11 +993,13 @@ function checkFormValidity() {
     
     isValid = hasLocation && finalHasExperience && hasDateTime;
     
-    console.log('✅ Experience+ form validity check:', {
+    console.log('✅ Experience+ form validity check (Address Content Aware):', {
       fromLocation: hasLocation,
       experienceType: finalHasExperience,
       dateTime: hasDateTime,
       selectedExperience: selectedExperience,
+      addressContentOK: hasAddressContent,
+      sessionFromLocation: window.addressChangeTracker?.sessionValidated.fromLocationExp,
       isValid,
       localState: expState,
       globalState: window.formState?.experienceplus
