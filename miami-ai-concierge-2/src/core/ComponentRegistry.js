@@ -186,7 +186,8 @@ class ComponentRegistry {
 
     const { ComponentClass, dependencies, config } = this.components.get(id);
     const mergedConfig = { ...config, ...runtimeConfig };
-    const instance = new ComponentClass(mergedConfig);
+    // Ensure componentId is passed here
+    const instance = new ComponentClass({ componentId: id });
     
     this.instances.set(id, instance);
     if (instance.initialize) {
@@ -195,16 +196,37 @@ class ComponentRegistry {
     return instance;
   }
 
-  async initializeAll() {
+async initializeAll() {
+    console.log('🔄 Starting initializeAll...');
+    console.log('📋 Components registered:', Array.from(this.components.keys()));
+    
     for (const [id, { ComponentClass }] of this.components) {
+      console.log(`🔧 Processing component: ${id}`);
+      
       if (!this.instances.has(id)) {
-        const instance = new ComponentClass();
-        this.instances.set(id, instance);
-        if (instance.initialize) {
-          await instance.initialize();
+        try {
+          console.log(`📦 Creating instance for: ${id}`);
+          const instance = new ComponentClass({ componentId: id });
+          
+          console.log(`💾 Storing instance for: ${id}`);
+          this.instances.set(id, instance);
+          
+          if (instance.initialize) {
+            console.log(`⚡ Calling initialize for: ${id}`);
+            await instance.initialize();
+            console.log(`✅ Completed initialize for: ${id}`);
+          } else {
+            console.log(`⚠️ No initialize method for: ${id}`);
+          }
+        } catch (error) {
+          console.error(`❌ Error initializing ${id}:`, error);
+          throw error;
         }
+      } else {
+        console.log(`♻️ Instance already exists for: ${id}`);
       }
     }
+    console.log('✅ Finished initializeAll');
   }
 
   async destroyAll() {
@@ -228,3 +250,54 @@ const registry = new ComponentRegistry();
 
 // ONLY export the registry (remove duplicate BaseComponent export)
 export default registry;
+
+document.addEventListener('DOMContentLoaded', async () => {
+  console.log('🚀 Initializing Miami Concierge components...');
+  
+  try {
+    // Initialize ComponentRegistry
+    await ComponentRegistry.initializeAll(); // This was likely called as initialize()
+    
+    console.log('✅ All components initialized successfully');
+    console.log('📊 Component Registry Stats:', ComponentRegistry.getStats());
+    
+    // Make components available globally for debugging
+    window.MiamiComponents = {
+      registry: ComponentRegistry,
+      bookingForm: ComponentRegistry.get('booking-form'),
+      tabNavigation: ComponentRegistry.get('tab-navigation'),
+      errorHandler: ComponentRegistry.get('error-handler')
+    };
+  } catch (error) {
+    console.error('❌ Error initializing components:', error);
+  }
+
+  // Add conditional imports with fallbacks
+  let ExperienceSelector, VehicleSelectionComponent;
+
+  try {
+    ExperienceSelector = (await import('./components/ExperienceSelector.js')).default;
+    console.log('✅ Successfully imported ExperienceSelector');
+  } catch (error) {
+    console.warn('⚠️ Error importing ExperienceSelector, using fallback', error);
+    // Create fallback component
+    ExperienceSelector = class FallbackExperienceSelector extends BaseComponent {
+      async onInitialize() {
+        console.log('🔄 Using fallback ExperienceSelector');
+      }
+    };
+  }
+
+  try {
+    VehicleSelectionComponent = (await import('./components/VehicleSelectionComponent.js')).VehicleSelectionComponent;
+    console.log('✅ Successfully imported VehicleSelectionComponent');
+  } catch (error) {
+    console.warn('⚠️ Error importing VehicleSelectionComponent, using fallback', error);
+    // Create fallback component
+    VehicleSelectionComponent = class FallbackVehicleSelectionComponent extends BaseComponent {
+      async onInitialize() {
+        console.log('🔄 Using fallback VehicleSelectionComponent');
+      }
+    };
+  }
+});

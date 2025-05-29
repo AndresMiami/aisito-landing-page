@@ -22,31 +22,166 @@ if (!window.formState) {
   console.log('🔧 Initialized global formState:', window.formState);
 }
 
+// Initialize address change tracking
+window.addressChangeTracker = {
+  fromLocationContent: '',
+  toAddressContent: '',
+  fromLocationExpContent: '',
+  hasFromLocationContent: false,
+  hasToAddressContent: false,
+  hasFromLocationExpContent: false,
+  
+  // NEW: Session-level validation history (persists through resets)
+  sessionValidated: {
+    fromLocation: false,
+    toAddress: false,
+    fromLocationExp: false
+  },
+  
+  // Track actual content changes (not just validation)
+  updateFromLocation: function(content) {
+    const newContent = (content || '').trim();
+    if (newContent !== this.fromLocationContent) {
+      this.fromLocationContent = newContent;
+      this.hasFromLocationContent = newContent.length > 0;
+      
+      // Mark as validated in this session if content is substantial
+      if (newContent.length > 0) {
+        this.sessionValidated.fromLocation = true;
+      }
+      
+      console.log('📍 From location content changed:', { 
+        content: newContent, 
+        hasContent: this.hasFromLocationContent,
+        sessionValidated: this.sessionValidated.fromLocation
+      });
+      return true; // Content actually changed
+    }
+    return false; // No change
+  },
+  
+  updateToAddress: function(content) {
+    const newContent = (content || '').trim();
+    if (newContent !== this.toAddressContent) {
+      this.toAddressContent = newContent;
+      this.hasToAddressContent = newContent.length > 0;
+      
+      // Mark as validated in this session if content is substantial
+      if (newContent.length > 0) {
+        this.sessionValidated.toAddress = true;
+      }
+      
+      console.log('📍 To address content changed:', { 
+        content: newContent, 
+        hasContent: this.hasToAddressContent,
+        sessionValidated: this.sessionValidated.toAddress
+      });
+      return true; // Content actually changed
+    }
+    return false; // No change
+  },
+  
+  updateFromLocationExp: function(content) {
+    const newContent = (content || '').trim();
+    if (newContent !== this.fromLocationExpContent) {
+      this.fromLocationExpContent = newContent;
+      this.hasFromLocationExpContent = newContent.length > 0;
+      
+      // Mark as validated in this session if content is substantial
+      if (newContent.length > 0) {
+        this.sessionValidated.fromLocationExp = true;
+      }
+      
+      console.log('📍 Experience+ location content changed:', { 
+        content: newContent, 
+        hasContent: this.hasFromLocationExpContent,
+        sessionValidated: this.sessionValidated.fromLocationExp
+      });
+      return true; // Content actually changed
+    }
+    return false; // No change
+  },
+  
+  // Check if we have both required addresses for one-way (including session history)
+  hasRequiredOnewayAddresses: function() {
+    // Either current content OR session validation counts
+    const hasFrom = this.hasFromLocationContent || this.sessionValidated.fromLocation;
+    const hasTo = this.hasToAddressContent || this.sessionValidated.toAddress;
+    return hasFrom && hasTo;
+  },
+  
+  // Check if we have required address for experience+ (including session history)
+  hasRequiredExpAddress: function() {
+    return this.hasFromLocationExpContent || this.sessionValidated.fromLocationExp;
+  },
+  
+  // Reset current state but preserve session validation history
+  reset: function() {
+    this.fromLocationContent = '';
+    this.toAddressContent = '';
+    this.fromLocationExpContent = '';
+    this.hasFromLocationContent = false;
+    this.hasToAddressContent = false;
+    this.hasFromLocationExpContent = false;
+    
+    // DON'T reset sessionValidated - this persists through form resets
+    console.log('🔄 Address change tracker reset (session history preserved):', {
+      sessionValidated: this.sessionValidated
+    });
+  },
+  
+  // Full reset (for new session/page reload)
+  fullReset: function() {
+    this.reset();
+    this.sessionValidated = {
+      fromLocation: false,
+      toAddress: false,
+      fromLocationExp: false
+    };
+    console.log('🔄 Full address tracker reset (including session history)');
+  }
+};
+
 // Force validation function for closed Shadow DOM elements
 window.forceLocationValidation = function(elementId, stateType, stateKey) {
   console.log(`🔧 FORCE VALIDATING: ${elementId} -> ${stateType}.${stateKey}`);
   
-  // Ensure formState exists and is properly structured
-  if (!window.formState) window.formState = {};
-  if (!window.formState[stateType]) window.formState[stateType] = {};
-  
-  // Force set to valid
-  window.formState[stateType][stateKey] = true;
-  console.log(`✅ FORCED: formState.${stateType}.${stateKey} = true`);
-  
-  // Trigger validation update
-  if (typeof emitEvent === 'function') {
-    emitEvent('form:field-changed', { field: `${stateType}-${stateKey}-forced` });
+  // Force update form state
+  if (window.formState && window.formState[stateType]) {
+    window.formState[stateType][stateKey] = true;
+  }
+  if (typeof formState !== 'undefined' && formState[stateType]) {
+    formState[stateType][stateKey] = true;
   }
   
-  // Trigger form validation
+  console.log(`✅ FORCED: formState.${stateType}.${stateKey} = true`);
+  
+  // Update address change tracker and mark session validation
+  if (elementId === 'from-location') {
+    window.addressChangeTracker?.updateFromLocation('Previously validated address');
+    // ALSO mark as session validated for persistence through resets
+    if (window.addressChangeTracker) {
+      window.addressChangeTracker.sessionValidated.fromLocation = true;
+    }
+    console.log('📍 Address tracker updated: from-location marked as having content + session validated');
+  } else if (elementId === 'to-address') {
+    window.addressChangeTracker?.updateToAddress('Previously validated address');
+    if (window.addressChangeTracker) {
+      window.addressChangeTracker.sessionValidated.toAddress = true;
+    }
+    console.log('📍 Address tracker updated: to-address marked as having content + session validated');
+  } else if (elementId === 'from-location-exp') {
+    window.addressChangeTracker?.updateFromLocationExp('Previously validated address');
+    if (window.addressChangeTracker) {
+      window.addressChangeTracker.sessionValidated.fromLocationExp = true;
+    }
+    console.log('📍 Address tracker updated: from-location-exp marked as having content + session validated');
+  }
+  
+  emitEvent('form:field-changed', { field: `${stateType}-${stateKey}-forced` });
+  
   setTimeout(() => {
-    if (typeof checkOneWayFormValidity === 'function') {
-      checkOneWayFormValidity();
-    }
-    if (typeof checkExperiencePlusFormValidity === 'function') {
-      checkExperiencePlusFormValidity();
-    }
+    checkFormValidity();
   }, 100);
   
   console.log('🎯 Force validation complete');
@@ -716,31 +851,37 @@ function checkShowVehicles() {
   const activeTab = document.querySelector('.tab-panel:not(.hidden)');
   const isOnewayTab = activeTab?.id === 'panel-oneway';
   
-  // Use the global formState values for consistency
-  const globalState = window.formState || {};
-  
   if (isOnewayTab && refs.vehicleSelectionOneway) {
-    const shouldShow = (globalState.oneway?.fromLocation || formState.oneway?.fromLocation) && 
-                     (globalState.oneway?.toAddress || formState.oneway?.toAddress) && 
-                     (formState.oneway?.bookingTime || globalState.oneway?.bookingTime);
+    const hasBookingTime = formState.oneway?.bookingTime || window.formState?.oneway?.bookingTime;
     
-    console.log('🚗 Vehicle selection visibility check:', {
-      fromLocation: globalState.oneway?.fromLocation || formState.oneway?.fromLocation,
-      toAddress: globalState.oneway?.toAddress || formState.oneway?.toAddress,
-      bookingTime: formState.oneway?.bookingTime || globalState.oneway?.bookingTime,
-      shouldShow
+    // ENHANCED: Use address content tracking instead of validation state
+    // This bypasses the Shadow DOM validation issue
+    const hasAddressContent = window.addressChangeTracker?.hasRequiredOnewayAddresses() || false;
+    
+    // Show vehicles when:
+    // 1. Booking time is selected AND
+    // 2. Address content exists (even if validation state is lost due to Shadow DOM)
+    const shouldShow = hasBookingTime && hasAddressContent;
+    
+    console.log('🚗 Vehicle selection visibility check (Address Content Aware):', {
+      bookingTime: hasBookingTime,
+      hasAddressContent: hasAddressContent,
+      fromContent: window.addressChangeTracker?.hasFromLocationContent,
+      toContent: window.addressChangeTracker?.hasToAddressContent,
+      shouldShow: shouldShow,
+      strategy: 'Address content tracking (Shadow DOM bypass)'
     });
     
     if (shouldShow) {
       refs.vehicleSelectionOneway.classList.remove('hidden');
-      // THIS is the critical line you need to add:
       refs.vehicleSelectionOneway.classList.add('show'); 
-      console.log('✅ Vehicle selection shown');
+      console.log('✅ Vehicle selection shown (address content + booking time)');
     } else {
       refs.vehicleSelectionOneway.classList.add('hidden');
-      // Also remove the show class when hiding
       refs.vehicleSelectionOneway.classList.remove('show');
-      console.log('❌ Vehicle selection hidden');
+      console.log('❌ Vehicle selection hidden', {
+        reason: !hasBookingTime ? 'No booking time' : 'No address content'
+      });
     }
   }
 }
@@ -762,6 +903,8 @@ function checkFormValidity() {
   if (window.formState && window.formState.oneway) {
     formState.oneway.fromLocation = window.formState.oneway.fromLocation || formState.oneway.fromLocation;
     formState.oneway.toAddress = window.formState.oneway.toAddress || formState.oneway.toAddress;
+    formState.oneway.bookingTime = window.formState.oneway.bookingTime || formState.oneway.bookingTime;
+    formState.oneway.vehicleType = window.formState.oneway.vehicleType || formState.oneway.vehicleType;
   }
   
   if (isOnewayTab) {
@@ -778,37 +921,109 @@ function checkFormValidity() {
       isValid
     });
   } else {
-    // Experience+ validation
-    isValid = formState.experiencePlus.fromLocation && 
-              formState.experiencePlus.experienceType && 
-              formState.experiencePlus.dateTime;
+    // Experience+ validation - FIXED: Proper state sync
+    const expState = formState.experienceplus || {};
+    
+    // FIXED: Properly check both local and global state (like one-way tab)
+    const hasLocation = expState.fromLocation || 
+                       (window.formState && window.formState.experienceplus && window.formState.experienceplus.fromLocation);
+    
+    const hasExperience = expState.experienceType || 
+                         (window.formState && window.formState.experienceplus && window.formState.experienceplus.experienceType);
+    
+    // Enhanced date/time validation based on experience type
+    let hasDateTime = false;
+    
+    // Get current experience selection
+    const experienceDropdown = document.getElementById('experience-dropdown');
+    const selectedExperience = experienceDropdown?.value || '';
+    
+    // FIXED: If experience is selected but experienceType is false, force update
+    if (selectedExperience && !hasExperience) {
+      expState.experienceType = true;
+      if (window.formState && window.formState.experienceplus) {
+        window.formState.experienceplus.experienceType = true;
+      }
+      console.log('🔧 FIXED: Force-updated experienceType to true for:', selectedExperience);
+    }
+    
+    if (selectedExperience === 'hourly_chauffeur') {
+      // For hourly chauffeur, check both date and time inputs
+      const dateInput = document.querySelector('input[name="pickup-date-hourly"]') || refs.pickupDateHourly;
+      const timeInput = document.querySelector('input[name="pickup-time-hourly"]') || refs.pickupTimeHourly;
+      hasDateTime = dateInput?.value && timeInput?.value;
+      console.log('📅 Hourly chauffeur date/time check:', {
+        date: dateInput?.value,
+        time: timeInput?.value,
+        hasDateTime
+      });
+    } else if (selectedExperience) {
+      // For other experiences, check date preference radio selection
+      const datePreferenceRadios = document.querySelectorAll('input[name="date_preference"]:checked');
+      hasDateTime = datePreferenceRadios.length > 0;
+      console.log('📅 Experience date preference check:', {
+        experience: selectedExperience,
+        checkedRadios: datePreferenceRadios.length,
+        hasDateTime
+      });
+    }
+    
+    // Update both local and global experienceplus state
+    expState.dateTime = hasDateTime;
+    expState.fromLocation = hasLocation;
+    expState.experienceType = hasExperience || (selectedExperience?.length > 0); // Force true if experience selected
+    
+    if (window.formState && window.formState.experienceplus) {
+      window.formState.experienceplus.dateTime = hasDateTime;
+      window.formState.experienceplus.fromLocation = hasLocation;
+      window.formState.experienceplus.experienceType = expState.experienceType;
+    }
+    
+    // Re-check hasExperience after potential fix
+    const finalHasExperience = expState.experienceType;
+    
+    isValid = hasLocation && finalHasExperience && hasDateTime;
     
     console.log('✅ Experience+ form validity check:', {
-      fromLocation: formState.experiencePlus.fromLocation,
-      experienceType: formState.experiencePlus.experienceType,
-      dateTime: formState.experiencePlus.dateTime,
-      isValid
+      fromLocation: hasLocation,
+      experienceType: finalHasExperience,
+      dateTime: hasDateTime,
+      selectedExperience: selectedExperience,
+      isValid,
+      localState: expState,
+      globalState: window.formState?.experienceplus
     });
   }
   
-  // Update submit button
+  // Update submit button with proper class management
   if (refs.submitButton) {
     refs.submitButton.disabled = !isValid;
     refs.submitButton.setAttribute('aria-disabled', !isValid);
     
     if (isValid) {
       refs.submitButton.classList.add('enabled');
+      refs.submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
       refs.submitButton.removeAttribute('title');
+      console.log('🟢 Submit button ENABLED');
     } else {
       refs.submitButton.classList.remove('enabled');
+      refs.submitButton.classList.add('opacity-50', 'cursor-not-allowed');
       refs.submitButton.setAttribute('title', 'Complete all required fields to enable submission');
+      console.log('🔴 Submit button DISABLED');
     }
   }
   
   // Show vehicles if conditions met
-  checkShowVehicles();
+  if (typeof checkShowVehicles === 'function') {
+    checkShowVehicles();
+  }
   
-  emitEvent('form:validation-changed', { isValid, tab: isOnewayTab ? 'oneway' : 'experience-plus' });
+  // Emit validation change event
+  emitEvent('form:validation-changed', { 
+    isValid, 
+    tab: isOnewayTab ? 'oneway' : 'experience-plus',
+    timestamp: Date.now()
+  });
 }
 
 // Experience+ Tab Functionality
@@ -823,8 +1038,21 @@ function initializeExperiencePlusTab() {
       const selectedValue = e.target.value;
       console.log('🎯 Experience selected:', selectedValue);
       
-      // Update form state with null check
-      formState.experiencePlus.experienceType = (selectedValue?.length || 0) > 0;
+      // FIXED: Update form state with consistent naming
+      formState.experienceplus = formState.experienceplus || {};
+      formState.experienceplus.experienceType = (selectedValue?.length || 0) > 0;
+      
+      // Also update global state
+      if (window.formState && window.formState.experienceplus) {
+        window.formState.experienceplus.experienceType = formState.experienceplus.experienceType;
+      }
+      
+      console.log('🔄 Experience+ form state updated:', {
+        experienceType: formState.experienceplus.experienceType,
+        selectedValue: selectedValue,
+        localState: formState.experienceplus,
+        globalState: window.formState?.experienceplus
+      });
       
       // Show/hide containers based on selection
       handleExperienceSelection(selectedValue);
@@ -1071,16 +1299,41 @@ function initializeTabSwitching() {
 
 // Reset form functionality
 function initializeResetButton() {
-  console.log('🔄 Essential Functions: Reset disabled - using Dashboard.js reset');
-  
-  // Check if dashboard.js already handled reset
+  // Check if dashboard reset is already initialized
   if (window.dashboardResetInitialized) {
-    console.log('✅ Reset already handled by dashboard.js');
+    console.log('✅ Reset already handled by dashboard.js - skipping fallback');
     return;
   }
   
-  // Your existing essential-functions reset code here...
-  // Only runs if dashboard.js didn't handle it
+  // Wait to see if dashboard initializes reset functionality
+  setTimeout(() => {
+    if (window.dashboardResetInitialized) {
+      console.log('🔄 Essential Functions: Reset handled by Dashboard.js');
+      return;
+    }
+    
+    // Only initialize fallback if dashboard didn't handle it
+    console.log('🧹 Fallback reset activated - dashboard reset not found');
+    const resetButton = document.getElementById('reset-button');
+    if (resetButton) {
+      resetButton.addEventListener('click', function(event) {
+        event.preventDefault();
+        console.log('🔄 Fallback reset button clicked');
+        
+        // Call the main reset function if available
+        if (typeof performFormReset === 'function') {
+          performFormReset();
+        } else {
+          // Basic fallback reset
+          const form = document.getElementById('booking-form');
+          if (form) {
+            form.reset();
+          }
+        }
+      });
+      console.log('✅ Fallback reset functionality initialized');
+    }
+  }, 3000); // Wait 3 seconds for dashboard to initialize
 }
 
 // Enhanced reset function with smooth animations
@@ -1232,6 +1485,24 @@ function handleUrlExperienceSelection() {
   }
 }
 
+// Add this helper function for debugging (around line 1900):
+window.debugUpdateAddressTracker = function() {
+  // If locations were previously validated, mark them in the tracker
+  if (formState.oneway.fromLocation && window.addressChangeTracker) {
+    window.addressChangeTracker.updateFromLocation('Previously validated location');
+    console.log('🔧 DEBUG: Manually updated from-location tracker');
+  }
+  if (formState.oneway.toAddress && window.addressChangeTracker) {
+    window.addressChangeTracker.updateToAddress('Previously validated location');
+    console.log('🔧 DEBUG: Manually updated to-address tracker');
+  }
+  
+  // Trigger vehicle check
+  setTimeout(() => {
+    checkShowVehicles();
+  }, 100);
+};
+
 // Utility function to safely query elements with logging
 function safeQuerySelector(selector, context = document) {
   try {
@@ -1287,6 +1558,72 @@ onDOMReady(() => {
   
   console.log('✅ Essential functions ready - Enhanced from-location validation enabled');
 });
+
+// Enhance the setupGooglePlacesAutocomplete function (around line 483) to include address tracking:
+function setupGooglePlacesAutocomplete(elementId, stateType, stateKey) {
+  const element = document.getElementById(elementId);
+  if (!element) {
+    console.warn(`❌ Element not found: ${elementId}`);
+    return;
+  }
+
+  console.log(`🔧 Setting up gmp-place-autocomplete for ${elementId}`);
+
+  // Monitor for place changes
+  element.addEventListener('gmp-placechange', (event) => {
+    const place = event.target.place;
+    const displayName = place?.displayName || place?.name || '';
+    console.log(`📍 Place selected for ${elementId}:`, displayName);
+    
+    // ENHANCED: Track content change when place is selected
+    if (displayName) {
+      if (elementId === 'from-location') {
+        window.addressChangeTracker?.updateFromLocation(displayName);
+      } else if (elementId === 'to-address') {
+        window.addressChangeTracker?.updateToAddress(displayName);
+      } else if (elementId === 'from-location-exp') {
+        window.addressChangeTracker?.updateFromLocationExp(displayName);
+      }
+      
+      // Update form state
+      if (window.formState && window.formState[stateType]) {
+        window.formState[stateType][stateKey] = true;
+      }
+      if (typeof formState !== 'undefined' && formState[stateType]) {
+        formState[stateType][stateKey] = true;
+      }
+      
+      emitEvent('form:field-changed', {
+        field: `${stateType}-${stateKey}`,
+        method: 'Google Places selection',
+        data: {
+          place: displayName,
+          placeId: place.id,
+          elementId: elementId
+        }
+      });
+      
+      setTimeout(() => {
+        checkFormValidity();
+      }, 500);
+    }
+  });
+
+  // Enhanced input monitoring
+  element.addEventListener('input', (event) => {
+    const value = event.target.value || '';
+    console.log(`✏️ Manual input in ${elementId}:`, value);
+    
+    // Track content change for manual input too
+    if (elementId === 'from-location') {
+      window.addressChangeTracker?.updateFromLocation(value);
+    } else if (elementId === 'to-address') {
+      window.addressChangeTracker?.updateToAddress(value);
+    } else if (elementId === 'from-location-exp') {
+      window.addressChangeTracker?.updateFromLocationExp(value);
+    }
+  });
+}
 
 // Export for module usage
 if (typeof module !== 'undefined' && module.exports) {
