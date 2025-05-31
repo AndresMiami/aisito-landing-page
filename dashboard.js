@@ -541,22 +541,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 /**
  * Element Inspector Functionality
  * Allows clicking on elements to get their IDs and controller information
- * Only available in development environments
  */
 function initializeElementInspector() {
-  // Check if we're in a development environment
+  console.log('🔍 Initializing Element Inspector...');
+  
+  // Check if we're in a development environment - must match the check in HTML
   const isDevelopment = window.location.hostname === 'localhost' || 
                         window.location.hostname === '127.0.0.1' ||
                         window.location.hostname.includes('192.168.') ||
                         window.location.hostname.includes('.local') ||
                         window.location.search.includes('debug=true');
-  
-  if (!isDevelopment) {
-    console.log('🔍 Element Inspector disabled in production environment');
-    return;
-  }
-  
-  console.log('🔍 Initializing Element Inspector...');
   
   const inspectorToggle = document.getElementById('inspector-toggle');
   if (!inspectorToggle) {
@@ -564,11 +558,16 @@ function initializeElementInspector() {
     return;
   }
   
+  // Only initialize the inspector in development environments
+  if (!isDevelopment) {
+    console.log('🔍 Element Inspector disabled in production environment');
+    return;
+  }
+  
   let isInspectorActive = false;
   let hoveredElement = null;
   let originalOutline = '';
-  
-  // Style for the inspector toggle button
+    // Style for the inspector toggle button
   inspectorToggle.style.position = 'fixed';
   inspectorToggle.style.bottom = '20px';
   inspectorToggle.style.right = '20px';
@@ -582,6 +581,7 @@ function initializeElementInspector() {
   inspectorToggle.style.fontSize = '18px';
   inspectorToggle.style.cursor = 'pointer';
   inspectorToggle.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+  inspectorToggle.style.display = 'block'; // Make visible in dev mode
   
   // Add tooltip
   inspectorToggle.title = 'Click to inspect elements';
@@ -666,8 +666,7 @@ function initializeElementInspector() {
     
     return false;
   }, true);
-  
-  // Add keyboard shortcut (Alt+I)
+    // Add keyboard shortcut (Alt+I) - only in development
   document.addEventListener('keydown', function(e) {
     if (e.altKey && e.key === 'i') {
       e.preventDefault();
