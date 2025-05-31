@@ -5,6 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Booking - I ❤️ Miami Concierge</title>
     <link rel="stylesheet" href="css/main.css">
+    <!-- Development/Production Environment Styles -->
+    <style>
+      /* Hide dev-only elements by default (for production) */
+      .dev-only {
+        display: none !important;
+      }
+    </style>
+    <!-- Script to detect development environment and show dev tools if needed -->
+    <script>
+      // Check if we're in a development environment
+      const isDevelopment = window.location.hostname === 'localhost' || 
+                           window.location.hostname === '127.0.0.1' ||
+                           window.location.hostname.includes('192.168.') ||
+                           window.location.hostname.includes('.local') ||
+                           window.location.search.includes('debug=true');
+      
+      // If in development, add a class to the HTML element and enable dev-only elements
+      if (isDevelopment) {
+        document.documentElement.classList.add('development');
+        // Add a style tag to show dev-only elements in development
+        const style = document.createElement('style');
+        style.textContent = '.dev-only { display: initial !important; }';
+        document.head.appendChild(style);
+        console.log('🔧 Development environment detected - Debug tools enabled');
+      } else {
+        document.documentElement.classList.add('production');
+        console.log('🚀 Production environment detected - Debug tools disabled');
+      }
+    </script>
     <!-- Replace this CDN link -->
      <!-- TODO: Consolidate Tailwind CSS - currently using both CDN and local file 
      Need to rebuild local file with all required components before removing CDN -->
@@ -59,8 +88,7 @@
   </head>
   <body class="bg-gray-100" style="background-image: url('images/miami-skyline-abstract-form.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
     <header class="site-header">
-  <div class="header-container">
-    <!-- Logo -->
+  <div class="header-container">    <!-- Logo -->
     <a href="index.html" class="site-logo">
       I ❤️ <span class="brand-gradient-text">Miami</span>
     </a>
@@ -84,11 +112,9 @@
             </svg>
           </button>
           <ul class="dropdown-menu">
-            <li><a href="hourly.html" class="dropdown-item">Hourly Chauffeur</a></li>
             <li><a href="yacht.html" class="dropdown-item">Yacht & boat</a></li>
-            <li><a href="dining.html" class="dropdown-item">Miami relocation</a></li>
-            <li><a href="wynwood.html" class="dropdown-item">Tours & Excursions</a></li>
-            <li><a href="airport.html" class="dropdown-item">Airport transfer</a></li>
+            <li><a href="wynwood.html" class="dropdown-item">Tours & Excursions(comming soon)</a></li>
+            <li><a href="airport.html" class="dropdown-item">Events(comming soon)</a></li>
 
           </ul>
         </li>
@@ -96,41 +122,111 @@
         <!-- Partner with us dropdown -->
         <li class="nav-item dropdown">
           <button class="nav-link dropdown-toggle" aria-expanded="false">
-            Partner with us
+            Partner With Us
             <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12">
               <path fill="currentColor" d="M7 10l5 5 5-5z"/>
             </svg>
           </button>
           <ul class="dropdown-menu">
-            <li><a href="business.html" class="dropdown-item">Yatch charters</a></li>
-            <li><a href="hotels.html" class="dropdown-item">Hotels & Resorts</a></li>
-            <li><a href="events.html" class="dropdown-item">Event Planners</a></li>
-            <li><a href="events.html" class="dropdown-item">Something different</a></li>
+            <li><a href="drivers.html" class="dropdown-item">Drivers(comming soon)</a></li>
+            <li><a href="business.html" class="dropdown-item">Yatch Brokers(comming soon)</a></li>
+            <li><a href="hotels.html" class="dropdown-item">Hotels & Resorts(coming soon)</a></li>
+            <li><a href="events.html" class="dropdown-item">Event Planners(coming soon)</a></li>
           </ul>
-        </li>
+        </li>  
+            
+          <!-- Direct links -->
+        <li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" aria-expanded="false">
+    Referral <span style="color: #00cc44;">$</span>
+    <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12">
+      <path fill="currentColor" d="M7 10l5 5 5-5z"/>
+    </svg>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-small">
+    <li><a href="refer-driver.html" class="dropdown-item">Refer Driver(comming soon)</a></li>
+    <li><a href="refer-friend.html" class="dropdown-item">Refer Friend(comming Soon)</a></li>
+  </ul>
+</li>
 
-        <!-- Direct links -->
-        <li class="nav-item">
-          <a href="chauffeurs.html" class="nav-link">For chauffeurs</a>
-        </li>
-
-        <li class="nav-item">
-          <a href="chat.html" class="nav-link">Chat</a>
-        </li>
-
-        <!-- Language selector -->
         <li class="nav-item dropdown">
           <button class="nav-link dropdown-toggle" aria-expanded="false">
-            English
-            <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12">
-              <path fill="currentColor" d="M7 10l5 5 5-5z"/>
-            </svg>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-small">
-            <li><a href="?lang=en" class="dropdown-item">English</a></li>
-            <li><a href="?lang=es" class="dropdown-item">Español</a></li>
-          </ul>
-        </li>
+            <svg class="inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="margin-right: 3px; vertical-align: -2px;">
+      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27Z"></path>
+    </svg>
+    Favorites
+    <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12">
+      <path fill="currentColor" d="M7 10l5 5 5-5z"/>
+    </svg>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-small">
+    <li><a href="favorite-drivers.html" class="dropdown-item">Drivers(comming soon)</a></li>
+    <li><a href="favorite-places.html" class="dropdown-item">Places(comming soon)</a></li>
+  </ul>
+</li>
+
+        <!-- Language selector with SVG flags -->
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" aria-expanded="false">
+    <span class="inline-flex items-center">
+      <!-- USA Flag SVG -->
+      <svg class="w-4 h-3 mr-2 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7410 3900" style="width: 18px; height: 12px; margin-right: 5px; vertical-align: -1px;">
+        <rect width="7410" height="3900" fill="#b22234"/>
+        <path d="M0,450H7410m0,600H0m0,600H7410m0,600H0m0,600H7410m0,600H0" stroke="#fff" stroke-width="300"/>
+        <rect width="2964" height="2100" fill="#3c3b6e"/>
+      </svg>
+      English
+    </span>
+    <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12">
+      <path fill="currentColor" d="M7 10l5 5 5-5z"/>
+    </svg>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-small">
+    <li>
+      <a href="?lang=en" class="dropdown-item">
+        <!-- USA Flag SVG -->
+        <svg class="w-4 h-3 mr-2 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7410 3900" style="width: 18px; height: 12px; margin-right: 5px; vertical-align: -1px;">
+          <rect width="7410" height="3900" fill="#b22234"/>
+          <path d="M0,450H7410m0,600H0m0,600H7410m0,600H0m0,600H7410m0,600H0" stroke="#fff" stroke-width="300"/>
+          <rect width="2964" height="2100" fill="#3c3b6e"/>
+        </svg>
+        English
+      </a>
+    </li>
+    <li>
+      <a href="?lang=es" class="dropdown-item">
+        <!-- Spain Flag SVG -->
+        <svg class="w-4 h-3 mr-2 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 500" style="width: 18px; height: 12px; margin-right: 5px; vertical-align: -1px;">
+          <rect width="750" height="500" fill="#c60b1e"/>
+          <rect width="750" height="250" y="125" fill="#ffc400"/>
+        </svg>
+        Español
+      </a>
+    </li>
+    <li>
+      <a href="?lang=pt" class="dropdown-item">
+        <!-- Brazil/Portuguese Flag SVG -->
+        <svg class="w-4 h-3 mr-2 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 504" style="width: 18px; height: 12px; margin-right: 5px; vertical-align: -1px;">
+          <rect width="720" height="504" fill="#009b3a"/>
+          <path d="M360,72 L620,252 L360,432 L100,252 Z" fill="#ffdf00"/>
+          <circle cx="360" cy="252" r="80" fill="#002776" stroke="#fff" stroke-width="10"/>
+        </svg>
+        Português
+      </a>
+    </li>
+    <li>
+      <a href="?lang=fr" class="dropdown-item">
+        <!-- French Flag SVG -->
+        <svg class="w-4 h-3 mr-2 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" style="width: 18px; height: 12px; margin-right: 5px; vertical-align: -1px;">
+          <rect width="300" height="600" fill="#002395"/>
+          <rect width="300" height="600" x="300" fill="#fff"/>
+          <rect width="300" height="600" x="600" fill="#ed2939"/>
+        </svg>
+        Français
+      </a>
+    </li>
+  </ul>
+</li>
 
         <!-- Sign in -->
         <li class="nav-item">
@@ -144,8 +240,11 @@
     <main>
       <!-- Left column - Hero content -->
       <div class="hero-content">
-        <h1 class="text-4xl md:text-5xl font-bold mb-6 text-white">Time is Valuable so Enjoy the moment</h1>
-        <p class="text-xl text-white mb-8">Dont just see it live it.</p>
+        <h1 class="text-4xl md:text-5xl font-bold mb-6" style="font-family: 'Playfair Display', serif; color: #333333; text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;">Time is Valuable Enjoy the moment</h1>
+        <p class="text-xl mb-8" style="font-family: 'Playfair Display', serif; font-weight: bold; color: #97a9bb;">
+  <span style="color: #ff0000; font-size: 1.5rem;">❤️</span> 
+  The Uber of Experiences. Don't Just see it, live it.
+</p>
       </div>
       
       <!-- Right column - Booking form -->
@@ -348,12 +447,11 @@
                   <!-- Experience dropdown and other experience+ fields -->
                   <div id="experience-dropdown-container" class="relative">
                     <label for="experience-dropdown" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Select Service</label>
-                    <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27Z"></path></svg></span>
-                    <select name="experience-dropdown" id="experience-dropdown" required aria-describedby="experience-dropdown-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6">
+                    <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27Z"></path></svg></span>                    <select name="experience-dropdown" id="experience-dropdown" required aria-describedby="experience-dropdown-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6">
                       <option value="">-- Choose Service --</option>
 <option value="hourly_chauffeur">Hourly Chauffeur</option>
 <option value="water_sky">Yacht & boat</option>
-<option value="miami_relocation">Miami relocation</option>
+<option value="miami_relocation">Custom request</option>
 <option value="tours_excursions">Tours & Excursions</option>
 <option value="airport_transfer">Airport transfer</option>
                     </select>
@@ -410,26 +508,52 @@
                        <h2 class="text-2xl font-bold text-center" style="font-family: 'Permanent Marker', cursive; color: #ff4d4d;">
                          Wynwood Art Tour
                        </h2>
-                     </div>
-                     <div id="miami-relocation-options" class="hidden space-y-4 border-t border-gray-200 pt-4">
-  <div class="text-sm bg-gray-50 p-4 rounded-md border border-gray-200">
-    <h3 class="font-bold text-lg mb-2 text-black">Housing services</h3>
-    <p class="mb-3 text-black">Thinking of staying in Miami? There are options we provide our local knowledge To help you acomplish your goals. </p>
-    
-    
-      
- 
-      
-      
-    
-      
-
-      
+                     </div>                     <div id="miami-relocation-options" class="hidden space-y-4 border-t border-gray-200 pt-4">
+  <div class="text-sm bg-gradient-to-r from-purple-50 to-indigo-50 p-6 rounded-lg border border-purple-200 shadow-sm">
+    <div class="flex items-start space-x-3 mb-4">
+      <div class="flex-shrink-0">
+        <svg class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      </div>
       <div>
-        <label for="relocation-notes" class="block text-sm font-medium text-black mb-1">Brief Summary</summary></label>
-        <textarea id="relocation-notes" name="relocation_notes" rows="2" class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Here type when you are availabile to talk, and what you are trying to acomplish!"></textarea>
+        <h3 class="font-bold text-xl mb-2 text-gray-900">Custom Request Details</h3>
+        <p class="mb-4 text-gray-700 leading-relaxed">Tell us about your specific needs and plans. Whether it's housing services, business setup, event planning, or any other Miami-related assistance, we're here to help you accomplish your goals with our local expertise.</p>
       </div>
     </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <div class="bg-white p-4 rounded-md border border-gray-200">
+        <h4 class="font-semibold text-gray-900 mb-2">🏠 Housing & Relocation</h4>
+        <p class="text-sm text-gray-600">Apartment hunting, neighborhood guides, moving assistance</p>
+      </div>
+      <div class="bg-white p-4 rounded-md border border-gray-200">
+        <h4 class="font-semibold text-gray-900 mb-2">🏢 Business Services</h4>
+        <p class="text-sm text-gray-600">Office space, networking events, business setup</p>
+      </div>
+      <div class="bg-white p-4 rounded-md border border-gray-200">
+        <h4 class="font-semibold text-gray-900 mb-2">🎉 Event Planning</h4>
+        <p class="text-sm text-gray-600">Private events, celebrations, corporate gatherings</p>
+      </div>
+      <div class="bg-white p-4 rounded-md border border-gray-200">
+        <h4 class="font-semibold text-gray-900 mb-2">🌟 Lifestyle Services</h4>
+        <p class="text-sm text-gray-600">Personal shopping, dining reservations, entertainment</p>
+      </div>
+    </div>
+
+    <div>
+      <label for="relocation-notes" class="block text-sm font-medium text-gray-900 mb-2">
+        <span class="flex items-center">
+          <svg class="h-4 w-4 mr-1 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+          Your Plan & Requirements
+        </span>
+      </label>
+      <textarea id="relocation-notes" name="relocation_notes" rows="4" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-purple-500 sm:text-sm transition-colors duration-200" placeholder="Please describe your specific needs, timeline, budget considerations, and any other details that will help us create the perfect plan for you. Include when you're available to discuss your requirements in detail."></textarea>
+      <p class="mt-2 text-xs text-gray-500">The more details you provide, the better we can tailor our services to meet your exact needs.</p>
+    </div>
+  </div>
     
     
                     </div>
@@ -483,83 +607,160 @@
 </div>
 -->
   <!-- Enhanced Debug Controls (only visible in development) -->
-<div id="debug-controls" style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.9); color: white; padding: 15px; border-radius: 8px; z-index: 9998; font-family: monospace; font-size: 12px; max-width: 300px; display: none;">
-  <h4 style="margin: 0 0 10px 0; color: #00ff88;">🔧 Miami Concierge Debug Panel</h4>
-  
-  <div style="margin-bottom: 10px;">
-    <strong style="color: #00bcd4;">Form Validation:</strong>
-    <button onclick="forceLocationValidation('from-location', 'oneway', 'fromLocation')" 
-            style="display: block; margin: 3px 0; padding: 4px 8px; background: #10b981; color: white; border: none; border-radius: 3px; font-size: 11px;">
-      ✅ Force From Valid
-    </button>
-    <button onclick="forceLocationValidation('to-address', 'oneway', 'toAddress')" 
-            style="display: block; margin: 3px 0; padding: 4px 8px; background: #10b981; color: white; border: none; border-radius: 3px; font-size: 11px;">
-      ✅ Force To Valid
-    </button>
-    <button onclick="console.log('FormState:', window.formState)" 
-            style="display: block; margin: 3px 0; padding: 4px 8px; background: #3b82f6; color: white; border: none; border-radius: 3px; font-size: 11px;">
-      🔍 Check State
-    </button>
+<div id="debug-controls" class="dev-only" style="position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.9); color: white; padding: 15px; border-radius: 8px; z-index: 9998; font-family: monospace; font-size: 12px; max-width: 300px; display: none;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+    <h4 style="margin: 0; color: #00ff88;">🔧 Miami Concierge Debug Panel</h4>
+    <div>
+      <button id="debug-panel-minimize" style="background: none; border: none; color: white; cursor: pointer; font-size: 16px; padding: 0; margin-right: 5px;" title="Minimize panel">_</button>
+      <button id="debug-panel-close" style="background: none; border: none; color: #ff3333; cursor: pointer; font-size: 18px; padding: 0; font-weight: bold;" title="Close panel">×</button>
+    </div>
   </div>
   
-  <div style="margin-bottom: 10px;">
-    <strong style="color: #ff9800;">Event Monitor:</strong>
-    <button onclick="window.eventMonitor?.show()" 
-            style="display: block; margin: 3px 0; padding: 4px 8px; background: #9c27b0; color: white; border: none; border-radius: 3px; font-size: 11px;">
-      👁️ Show Monitor
-    </button>
-    <button onclick="window.eventMonitor?.toggle()" 
-            style="display: block; margin: 3px 0; padding: 4px 8px; background: #9c27b0; color: white; border: none; border-radius: 3px; font-size: 11px;">
-      🔄 Toggle Monitor
-    </button>
-    <button onclick="window.eventMonitor?.clear()" 
-            style="display: block; margin: 3px 0; padding: 4px 8px; background: #9c27b0; color: white; border: none; border-radius: 3px; font-size: 11px;">
-      🧹 Clear Events
-    </button>
-  </div>
-  
-  <div style="margin-bottom: 10px;">
-    <strong style="color: #f44336;">Test Events:</strong>
-    <button onclick="window.eventBus?.emit('error:show', {fieldId: 'test', message: 'Test error', severity: 'error'})" 
-            style="display: block; margin: 3px 0; padding: 4px 8px; background: #f44336; color: white; border: none; border-radius: 3px; font-size: 11px;">
-      🚨 Test Error
-    </button>
-    <button onclick="window.eventBus?.emit('form:submission:started', {test: true})" 
-            style="display: block; margin: 3px 0; padding: 4px 8px; background: #4caf50; color: white; border: none; border-radius: 3px; font-size: 11px;">
-      📝 Test Form Event
-    </button>
-  </div>
-  
-  <div style="font-size: 10px; color: #888; margin-top: 10px;">
-    Ctrl+Shift+E = Toggle Monitor<br>
-    Ctrl+Shift+D = Toggle Debug Panel
+  <div id="debug-panel-content">
+    <div style="margin-bottom: 10px;">
+      <strong style="color: #00bcd4;">Form Validation:</strong>
+      <button onclick="forceLocationValidation('from-location', 'oneway', 'fromLocation')" 
+              style="display: block; margin: 3px 0; padding: 4px 8px; background: #10b981; color: white; border: none; border-radius: 3px; font-size: 11px;">
+        ✅ Force From Valid
+      </button>
+      <button onclick="forceLocationValidation('to-address', 'oneway', 'toAddress')" 
+              style="display: block; margin: 3px 0; padding: 4px 8px; background: #10b981; color: white; border: none; border-radius: 3px; font-size: 11px;">
+        ✅ Force To Valid
+      </button>
+      <button onclick="console.log('FormState:', window.formState)" 
+              style="display: block; margin: 3px 0; padding: 4px 8px; background: #3b82f6; color: white; border: none; border-radius: 3px; font-size: 11px;">
+        🔍 Check State
+      </button>
+    </div>
+    
+    <div style="margin-bottom: 10px;">
+      <strong style="color: #ff9800;">Event Monitor:</strong>
+      <button onclick="window.eventMonitor?.show()" 
+              style="display: block; margin: 3px 0; padding: 4px 8px; background: #9c27b0; color: white; border: none; border-radius: 3px; font-size: 11px;">
+        👁️ Show Monitor
+      </button>
+      <button onclick="window.eventMonitor?.toggle()" 
+              style="display: block; margin: 3px 0; padding: 4px 8px; background: #9c27b0; color: white; border: none; border-radius: 3px; font-size: 11px;">
+        🔄 Toggle Monitor
+      </button>
+      <button onclick="window.eventMonitor?.clear()" 
+              style="display: block; margin: 3px 0; padding: 4px 8px; background: #9c27b0; color: white; border: none; border-radius: 3px; font-size: 11px;">
+        🧹 Clear Events
+      </button>
+    </div>
+    
+    <div style="margin-bottom: 10px;">
+      <strong style="color: #f44336;">Test Events:</strong>
+      <button onclick="window.eventBus?.emit('error:show', {fieldId: 'test', message: 'Test error', severity: 'error'})" 
+              style="display: block; margin: 3px 0; padding: 4px 8px; background: #f44336; color: white; border: none; border-radius: 3px; font-size: 11px;">
+        🚨 Test Error
+      </button>
+      <button onclick="window.eventBus?.emit('form:submission:started', {test: true})" 
+              style="display: block; margin: 3px 0; padding: 4px 8px; background: #4caf50; color: white; border: none; border-radius: 3px; font-size: 11px;">
+        📝 Test Form Event
+      </button>
+    </div>
+    
+    <div style="font-size: 10px; color: #888; margin-top: 10px;">
+      Ctrl+Shift+E = Toggle Monitor<br>
+      Ctrl+Shift+D = Toggle Debug Panel
+    </div>
   </div>
 </div>
 
+<!-- Debug Panel Toggle Button - Now positioned above the architecture badge -->
+<button id="debug-panel-toggle" style="position: fixed; bottom: 60px; left: 10px; background: rgba(220, 38, 38, 0.9); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer; z-index: 9997; display: none; box-shadow: 0 2px 4px rgba(0,0,0,0.3);" title="Toggle Debug Panel" class="dev-only">
+  🔧
+</button>
+
+<!-- Event-Driven Architecture Badge (Development Only) - Bottom Left Corner -->
+<div class="architecture-badge-floating dev-only" title="Built with Event-Driven Architecture" onclick="showEventArchitecture()">
+  <div class="badge-content">
+    <svg class="badge-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M12 7L7 10V14L12 17L17 14V10L12 7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+    </svg>
+    <span class="badge-text">Event-Driven Architecture</span>
+    <div class="pulse-ring"></div>
+  </div>
+</div>
+
+<button id="inspector-toggle" class="inspector-toggle">🔍</button>
 <script>
-// Show debug controls in development
-document.addEventListener('DOMContentLoaded', () => {
-  const isDevelopment = window.location.hostname === 'localhost' || 
-                       window.location.hostname === '127.0.0.1' ||
-                       window.location.search.includes('debug=true');
+// Debug panel toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+  const debugPanel = document.getElementById('debug-controls');
+  const debugToggle = document.getElementById('debug-panel-toggle');
+  const debugMinimize = document.getElementById('debug-panel-minimize');
+  const debugClose = document.getElementById('debug-panel-close');
+  const debugContent = document.getElementById('debug-panel-content');
   
-  if (isDevelopment) {
-    const debugPanel = document.getElementById('debug-controls');
-    if (debugPanel) {
-      debugPanel.style.display = 'block';
-      
-      // Add keyboard shortcut to toggle debug panel (Ctrl+Shift+D)
-      document.addEventListener('keydown', (event) => {
-        if (event.ctrlKey && event.shiftKey && event.key === 'D') {
-          event.preventDefault();
-          debugPanel.style.display = debugPanel.style.display === 'none' ? 'block' : 'none';
+  // Only show debug controls in development environments
+  const isDevelopment = window.location.hostname === 'localhost' || 
+                        window.location.hostname === '127.0.0.1' ||
+                        window.location.hostname.includes('192.168.') ||
+                        window.location.hostname.includes('.local') ||
+                        window.location.search.includes('debug=true');
+                        
+  if (debugToggle && isDevelopment) {
+    // Show the toggle button only in development
+    debugToggle.style.display = 'block';
+    
+    // Toggle debug panel when button is clicked
+    debugToggle.addEventListener('click', function() {
+      if (debugPanel) {
+        debugPanel.style.display = 'block';
+        debugToggle.style.display = 'none';
+      }
+    });
+  }
+
+  if (debugClose) {
+    // Close debug panel when close button is clicked
+    debugClose.addEventListener('click', function() {
+      if (debugPanel) {
+        debugPanel.style.display = 'none';
+        debugToggle.style.display = 'block';
+      }
+    });
+  }
+
+  if (debugMinimize) {
+    // Minimize debug panel when button is clicked
+    debugMinimize.addEventListener('click', function() {
+      if (debugContent) {
+        if (debugContent.style.display === 'none') {
+          // Expand
+          debugContent.style.display = 'block';
+          debugMinimize.textContent = '_';
+          debugMinimize.title = 'Minimize panel';
+        } else {
+          // Minimize
+          debugContent.style.display = 'none';
+          debugMinimize.textContent = '□';
+          debugMinimize.title = 'Expand panel';
         }
-      });
-    }
+      }
+    });
+  }
+  // Add keyboard shortcut to toggle debug panel (Ctrl+Shift+D) - only in development
+  if (isDevelopment) {
+    document.addEventListener('keydown', function(event) {
+      if (event.ctrlKey && event.shiftKey && event.key === 'D') {
+        event.preventDefault();
+        if (debugPanel.style.display === 'none') {
+          debugPanel.style.display = 'block';
+          debugToggle.style.display = 'none';
+        } else {
+          debugPanel.style.display = 'none';
+          debugToggle.style.display = 'block';
+        }
+      }
+    });
   }
 });
 </script>
-<button id="inspector-toggle" class="inspector-toggle">🔍</button>
   </body>
 </html>
 
