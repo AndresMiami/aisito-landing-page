@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miami AI Concierge - Journey Timeline Documentation</title>
+    <style>
+        /* Journey Timeline Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #333;
+        }
+
+        .timeline-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+            position: relative;
+        }        /* Sticky Header */
+        .timeline-header {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .timeline-logo h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: #667eea;
+            font-weight: 700;
+        }        .timeline-logo p {
+            margin: 0;
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .back-to-architecture {
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-to-architecture:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Tab Navigation */
+        .timeline-nav {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 25px;
+            padding: 5px;
+            gap: 5px;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .nav-tab.active {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-tab:hover:not(.active) {
+            background: #e9ecef;
+            transform: translateY(-1px);
+        }
+
+        /* Timeline Sections */
+        .timeline-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .timeline-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Vertical Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 60px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        /* Timeline Items */
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            cursor: pointer;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -56px;
+            top: 8px;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            z-index: 2;
+        }
+
+        /* Timeline Cards */
+        .timeline-content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #667eea;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .timeline-item:hover .timeline-content-card {
+            transform: translate(8px, -4px);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+        }
+
+        .timeline-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .timeline-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* Expand Button */
+        .timeline-expand-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .timeline-expand-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .expand-arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .timeline-item.expanded .expand-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* Timeline Details */
+        .timeline-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+
+        .timeline-item.expanded .timeline-details {
+            max-height: 1000px;
+        }
+
+        .timeline-details-content {
+            padding-top: 25px;
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+        }
+
+        /* Flow Steps */
+        .flow-steps h4, .event-badges h4, .ux-notes h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .step-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 25px;
+        }
+
+        .step-list li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .step-icon {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        /* Event Badges */
+        .event-badges {
+            margin-bottom: 25px;
+        }
+
+        .event-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .event-badge.auth { background: #e53e3e; }
+        .event-badge.dashboard { background: #38a169; }
+        .event-badge.map { background: #3182ce; }
+        .event-badge.experience { background: #d69e2e; }
+        .event-badge.transport { background: #805ad5; }
+        .event-badge.payment { background: #dd6b20; }
+        .event-badge.booking { background: #319795; }
+        .event-badge.notification { background: #667eea; }
+        .event-badge.update { background: #9f7aea; }
+        .event-badge.feedback { background: #f56565; }
+
+        /* UX Notes */
+        .ux-notes p {
+            color: #555;
+            line-height: 1.6;
+            font-style: italic;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        /* Code Examples Section */
+        .code-examples-content {
+            padding: 20px 0;
+        }
+
+        .code-examples-content h2 {
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        .code-example-card {
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .code-header {
+            padding: 20px 25px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.3s ease;
+        }
+
+        .code-header:hover {
+            background: #e9ecef;
+        }
+
+        .code-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .file-path {
+            color: #667eea;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+
+        .expand-icon {
+            font-size: 1.5rem;
+            color: #667eea;
+            transition: transform 0.3s ease;
+        }
+
+        .code-example-card.expanded .expand-icon {
+            transform: rotate(45deg);
+        }
+
+        .code-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            position: relative;
+        }
+
+        .code-example-card.expanded .code-content {
+            max-height: 2000px;
+        }
+
+        .code-actions {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 10;
+        }
+
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+
+        .copy-btn.copied {
+            background: #38a169;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 25px;
+            margin: 0;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: inherit;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .timeline-container {
+                padding: 20px;
+            }
+
+            .timeline-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .timeline-nav {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .nav-tab {
+                flex: 1;
+                text-align: center;
+            }
+
+            .timeline {
+                padding-left: 40px;
+            }
+
+            .timeline-marker {
+                left: -36px;
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
+            }
+
+            .timeline::before {
+                left: -22px;
+            }
+
+            .timeline-title {
+                font-size: 1.2rem;
+            }
+
+            .code-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .file-path {
+                font-size: 0.8rem;
+            }
+
+            pre {
+                font-size: 0.8rem;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="timeline-container">        <!-- Sticky Header -->
+        <div class="timeline-header">
+            <div class="timeline-logo">
+                <h1>🏖️ Miami AI Concierge</h1>
+                <p>Interactive Journey Timeline Documentation</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <nav class="timeline-nav">
+                    <button class="nav-tab active" onclick="showSection('journey-timeline')">Journey Timeline</button>
+                    <button class="nav-tab" onclick="showSection('code-examples')">Code Examples</button>
+                </nav>
+                <a href="EventArchitecture.html" class="back-to-architecture">← Back to Architecture</a>
+            </div>
+        </div>
+
+        <!-- Journey Timeline Section -->
+        <div id="journey-timeline" class="timeline-section active">
+            <div class="timeline-content">
+                <div class="timeline">
+                    <!-- Step 1: User Authentication -->
+                    <div class="timeline-item" onclick="toggleTimelineItem(this)">
+                        <div class="timeline-marker">1</div>
+                        <div class="timeline-content-card">
+                            <div class="timeline-title">🔐 User Authentication & Session Management</div>
+                            <div class="timeline-description">Initial user authentication and session establishment with secure token management</div>
+                            <button class="timeline-expand-btn">
+                                View Details
+                                <span class="expand-arrow">↓</span>
+                            </button>
+                            <div class="timeline-details">
+                                <div class="timeline-details-content">
+                                    <div class="flow-steps">
+                                        <h4>🔄 User Flow Steps:</h4>
+                                        <ol class="step-list">
+                                            <li><span class="step-icon">1</span>User lands on login/registration page</li>
+                                            <li><span class="step-icon">2</span>Credential validation (email/password or OAuth)</li>
+                                            <li><span class="step-icon">3</span>JWT token generation and storage</li>
+                                            <li><span class="step-icon">4</span>User profile data retrieval</li>
+                                            <li><span class="step-icon">5</span>Session state initialization</li>
+                                        </ol>
+                                    </div>
+                                    <div class="event-badges">
+                                        <h4>📡 System Events:</h4>
+                                        <span class="event-badge auth">AUTH_LOGIN_START</span>
+                                        <span class="event-badge auth">AUTH_VALIDATION_SUCCESS</span>
+                                        <span class="event-badge auth">SESSION_CREATED</span>
+                                        <span class="event-badge auth">USER_PROFILE_LOADED</span>
+                                    </div>
+                                    <div class="ux-notes">
+                                        <h4>✨ User Experience:</h4>
+                                        <p>Seamless authentication with social login options, password strength validation, and automatic redirect to dashboard upon successful login.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Dashboard Initialization -->
+                    <div class="timeline-item" onclick="toggleTimelineItem(this)">
+                        <div class="timeline-marker">2</div>
+                        <div class="timeline-content-card">
+                            <div class="timeline-title">🏡 Dashboard Initialization & Component Loading</div>
+                            <div class="timeline-description">Dynamic loading of Miami-specific components and user interface elements</div>
+                            <button class="timeline-expand-btn">
+                                View Details
+                                <span class="expand-arrow">↓</span>
+                            </button>
+                            <div class="timeline-details">
+                                <div class="timeline-details-content">
+                                    <div class="flow-steps">
+                                        <h4>🔄 User Flow Steps:</h4>
+                                        <ol class="step-list">
+                                            <li><span class="step-icon">1</span>Dashboard components lazy loading</li>
+                                            <li><span class="step-icon">2</span>Miami experience data fetching</li>
+                                            <li><span class="step-icon">3</span>Google Maps initialization</li>
+                                            <li><span class="step-icon">4</span>User preferences application</li>
+                                            <li><span class="step-icon">5</span>Real-time data synchronization</li>
+                                        </ol>
+                                    </div>
+                                    <div class="event-badges">
+                                        <h4>📡 System Events:</h4>
+                                        <span class="event-badge dashboard">DASHBOARD_INIT_START</span>
+                                        <span class="event-badge dashboard">COMPONENTS_LOADED</span>
+                                        <span class="event-badge map">MAPS_INITIALIZED</span>
+                                        <span class="event-badge dashboard">PREFERENCES_APPLIED</span>
+                                    </div>
+                                    <div class="ux-notes">
+                                        <h4>✨ User Experience:</h4>
+                                        <p>Progressive loading with skeleton screens, personalized Miami recommendations, and intuitive navigation between experiences.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Experience Discovery -->
+                    <div class="timeline-item" onclick="toggleTimelineItem(this)">
+                        <div class="timeline-marker">3</div>
+                        <div class="timeline-content-card">
+                            <div class="timeline-title">🎪 Experience Discovery & Selection</div>
+                            <div class="timeline-description">Interactive exploration of Miami attractions, hotels, and activities with personalized recommendations</div>
+                            <button class="timeline-expand-btn">
+                                View Details
+                                <span class="expand-arrow">↓</span>
+                            </button>
+                            <div class="timeline-details">
+                                <div class="timeline-details-content">
+                                    <div class="flow-steps">
+                                        <h4>🔄 User Flow Steps:</h4>
+                                        <ol class="step-list">
+                                            <li><span class="step-icon">1</span>Browse Miami attractions and experiences</li>
+                                            <li><span class="step-icon">2</span>Filter by preferences (price, location, type)</li>
+                                            <li><span class="step-icon">3</span>View detailed experience information</li>
+                                            <li><span class="step-icon">4</span>Check availability and pricing</li>
+                                            <li><span class="step-icon">5</span>Add experiences to cart/wishlist</li>
+                                        </ol>
+                                    </div>
+                                    <div class="event-badges">
+                                        <h4>📡 System Events:</h4>
+                                        <span class="event-badge experience">EXPERIENCE_SEARCH</span>
+                                        <span class="event-badge experience">FILTER_APPLIED</span>
+                                        <span class="event-badge experience">EXPERIENCE_SELECTED</span>
+                                        <span class="event-badge experience">CART_UPDATED</span>
+                                    </div>
+                                    <div class="ux-notes">
+                                        <h4>✨ User Experience:</h4>
+                                        <p>AI-powered recommendations, visual experience galleries, real-time availability updates, and seamless cart management.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Location & Transportation -->
+                    <div class="timeline-item" onclick="toggleTimelineItem(this)">
+                        <div class="timeline-marker">4</div>
+                        <div class="timeline-content-card">
+                            <div class="timeline-title">🗺️ Location Selection & Transportation Planning</div>
+                            <div class="timeline-description">Interactive map integration for location selection and transportation coordination</div>
+                            <button class="timeline-expand-btn">
+                                View Details
+                                <span class="expand-arrow">↓</span>
+                            </button>
+                            <div class="timeline-details">
+                                <div class="timeline-details-content">
+                                    <div class="flow-steps">
+                                        <h4>🔄 User Flow Steps:</h4>
+                                        <ol class="step-list">
+                                            <li><span class="step-icon">1</span>Select pickup/dropoff locations on map</li>
+                                            <li><span class="step-icon">2</span>Choose transportation type (Uber, rental, etc.)</li>
+                                            <li><span class="step-icon">3</span>Calculate routes and travel times</li>
+                                            <li><span class="step-icon">4</span>Coordinate with experience bookings</li>
+                                            <li><span class="step-icon">5</span>Confirm transportation arrangements</li>
+                                        </ol>
+                                    </div>
+                                    <div class="event-badges">
+                                        <h4>📡 System Events:</h4>
+                                        <span class="event-badge map">LOCATION_SELECTED</span>
+                                        <span class="event-badge map">ROUTE_CALCULATED</span>
+                                        <span class="event-badge transport">TRANSPORT_BOOKED</span>
+                                        <span class="event-badge transport">SCHEDULE_SYNCED</span>
+                                    </div>
+                                    <div class="ux-notes">
+                                        <h4>✨ User Experience:</h4>
+                                        <p>Google Maps integration, real-time traffic data, transportation cost estimates, and smart scheduling coordination.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Booking & Payment -->
+                    <div class="timeline-item" onclick="toggleTimelineItem(this)">
+                        <div class="timeline-marker">5</div>
+                        <div class="timeline-content-card">
+                            <div class="timeline-title">💳 Booking Confirmation & Payment Processing</div>
+                            <div class="timeline-description">Secure payment processing and booking confirmation with real-time validation</div>
+                            <button class="timeline-expand-btn">
+                                View Details
+                                <span class="expand-arrow">↓</span>
+                            </button>
+                            <div class="timeline-details">
+                                <div class="timeline-details-content">
+                                    <div class="flow-steps">
+                                        <h4>🔄 User Flow Steps:</h4>
+                                        <ol class="step-list">
+                                            <li><span class="step-icon">1</span>Review booking summary and total cost</li>
+                                            <li><span class="step-icon">2</span>Enter payment information securely</li>
+                                            <li><span class="step-icon">3</span>Apply discounts or promo codes</li>
+                                            <li><span class="step-icon">4</span>Process payment through secure gateway</li>
+                                            <li><span class="step-icon">5</span>Generate booking confirmation</li>
+                                        </ol>
+                                    </div>
+                                    <div class="event-badges">
+                                        <h4>📡 System Events:</h4>
+                                        <span class="event-badge payment">PAYMENT_INIT</span>
+                                        <span class="event-badge payment">PAYMENT_VALIDATION</span>
+                                        <span class="event-badge payment">PAYMENT_SUCCESS</span>
+                                        <span class="event-badge booking">BOOKING_CONFIRMED</span>
+                                    </div>
+                                    <div class="ux-notes">
+                                        <h4>✨ User Experience:</h4>
+                                        <p>PCI-compliant payment processing, real-time validation, instant confirmation emails, and digital receipt generation.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 6: Post-Booking Management -->
+                    <div class="timeline-item" onclick="toggleTimelineItem(this)">
+                        <div class="timeline-marker">6</div>
+                        <div class="timeline-content-card">
+                            <div class="timeline-title">📋 Post-Booking Management & Updates</div>
+                            <div class="timeline-description">Ongoing booking management, modifications, and real-time updates throughout the experience</div>
+                            <button class="timeline-expand-btn">
+                                View Details
+                                <span class="expand-arrow">↓</span>
+                            </button>
+                            <div class="timeline-details">
+                                <div class="timeline-details-content">
+                                    <div class="flow-steps">
+                                        <h4>🔄 User Flow Steps:</h4>
+                                        <ol class="step-list">
+                                            <li><span class="step-icon">1</span>Access booking dashboard and itinerary</li>
+                                            <li><span class="step-icon">2</span>Receive real-time notifications</li>
+                                            <li><span class="step-icon">3</span>Make modifications or cancellations</li>
+                                            <li><span class="step-icon">4</span>Track live updates and changes</li>
+                                            <li><span class="step-icon">5</span>Provide feedback and reviews</li>
+                                        </ol>
+                                    </div>
+                                    <div class="event-badges">
+                                        <h4>📡 System Events:</h4>
+                                        <span class="event-badge notification">NOTIFICATION_SENT</span>
+                                        <span class="event-badge booking">BOOKING_MODIFIED</span>
+                                        <span class="event-badge update">REAL_TIME_UPDATE</span>
+                                        <span class="event-badge feedback">FEEDBACK_COLLECTED</span>
+                                    </div>
+                                    <div class="ux-notes">
+                                        <h4>✨ User Experience:</h4>
+                                        <p>Live tracking, push notifications, easy modification process, and seamless feedback collection for continuous improvement.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Examples Section -->
+        <div id="code-examples" class="timeline-section">
+            <div class="code-examples-content">
+                <h2>📝 Code Implementation Examples</h2>
+                
+                <!-- Authentication Code Example -->
+                <div class="code-example-card">
+                    <div class="code-header" onclick="toggleExpandable(this)">
+                        <h3>🔐 Authentication Flow Implementation</h3>
+                        <span class="file-path">src/auth/AuthComponent.js</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div class="code-content">
+                        <div class="code-actions">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code>// Authentication Component with JWT Token Management
+class AuthComponent {
+    constructor() {
+        this.authState = {
+            isAuthenticated: false,
+            user: null,
+            token: null
+        };
+        this.eventBus = window.eventBus;
+        this.setupEventListeners();
+    }
+
+    async login(credentials) {
+        try {
+            this.eventBus.emit('AUTH_LOGIN_START', { email: credentials.email });
+            
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(credentials)
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                this.setAuthState(data.user, data.token);
+                this.eventBus.emit('AUTH_VALIDATION_SUCCESS', { user: data.user });
+                return { success: true, user: data.user };
+            } else {
+                throw new Error('Authentication failed');
+            }
+        } catch (error) {
+            this.eventBus.emit('AUTH_ERROR', { error: error.message });
+            return { success: false, error: error.message };
+        }
+    }
+
+    setAuthState(user, token) {
+        this.authState = { isAuthenticated: true, user, token };
+        localStorage.setItem('authToken', token);
+        this.eventBus.emit('SESSION_CREATED', { user });
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <!-- Experience Selector Code Example -->
+                <div class="code-example-card">
+                    <div class="code-header" onclick="toggleExpandable(this)">
+                        <h3>🎪 Experience Selector Component</h3>
+                        <span class="file-path">components/ExperienceSelector.js</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div class="code-content">
+                        <div class="code-actions">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code>// Miami Experience Selector with Real-time Filtering
+class ExperienceSelector {
+    constructor(containerId) {
+        this.container = document.getElementById(containerId);
+        this.experiences = [];
+        this.filters = { type: 'all', priceRange: 'all', location: 'all' };
+        this.eventBus = window.eventBus;
+        this.init();
+    }
+
+    async loadExperiences() {
+        try {
+            this.eventBus.emit('EXPERIENCE_SEARCH', { filters: this.filters });
+            
+            const response = await fetch('/api/experiences/miami');
+            this.experiences = await response.json();
+            
+            this.renderExperiences();
+            this.eventBus.emit('EXPERIENCES_LOADED', { count: this.experiences.length });
+        } catch (error) {
+            this.eventBus.emit('EXPERIENCE_ERROR', { error: error.message });
+        }
+    }
+
+    applyFilters(newFilters) {
+        this.filters = { ...this.filters, ...newFilters };
+        this.eventBus.emit('FILTER_APPLIED', { filters: this.filters });
+        
+        const filtered = this.experiences.filter(exp => {
+            return this.matchesFilters(exp, this.filters);
+        });
+        
+        this.renderExperiences(filtered);
+    }
+
+    selectExperience(experienceId) {
+        const experience = this.experiences.find(exp => exp.id === experienceId);
+        this.eventBus.emit('EXPERIENCE_SELECTED', { experience });
+        this.addToCart(experience);
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <!-- Payment Form Code Example -->
+                <div class="code-example-card">
+                    <div class="code-header" onclick="toggleExpandable(this)">
+                        <h3>💳 Payment Form Integration</h3>
+                        <span class="file-path">components/PaymentForm.js</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div class="code-content">
+                        <div class="code-actions">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code>// Secure Payment Form with Stripe Integration
+class PaymentForm {
+    constructor() {
+        this.stripe = Stripe(process.env.STRIPE_PUBLIC_KEY);
+        this.elements = this.stripe.elements();
+        this.eventBus = window.eventBus;
+        this.setupForm();
+    }
+
+    setupForm() {
+        this.cardElement = this.elements.create('card', {
+            style: {
+                base: { fontSize: '16px', color: '#424770' }
+            }
+        });
+        this.cardElement.mount('#card-element');
+    }
+
+    async processPayment(bookingData) {
+        try {
+            this.eventBus.emit('PAYMENT_INIT', { amount: bookingData.total });
+            
+            const { token, error } = await this.stripe.createToken(this.cardElement);
+            
+            if (error) {
+                throw new Error(error.message);
+            }
+
+            this.eventBus.emit('PAYMENT_VALIDATION', { token: token.id });
+            
+            const response = await fetch('/api/payments/process', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    token: token.id,
+                    amount: bookingData.total,
+                    booking: bookingData
+                })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                this.eventBus.emit('PAYMENT_SUCCESS', { transactionId: result.id });
+                this.eventBus.emit('BOOKING_CONFIRMED', { booking: result.booking });
+                return { success: true, booking: result.booking };
+            }
+        } catch (error) {
+            this.eventBus.emit('PAYMENT_ERROR', { error: error.message });
+            return { success: false, error: error.message };
+        }
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <!-- Event Bus Code Example -->
+                <div class="code-example-card">
+                    <div class="code-header" onclick="toggleExpandable(this)">
+                        <h3>🚌 Event Bus System</h3>
+                        <span class="file-path">core/EventBus.js</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div class="code-content">
+                        <div class="code-actions">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code>// Centralized Event Bus for Component Communication
+class EventBus {
+    constructor() {
+        this.events = new Map();
+        this.debug = true;
+    }
+
+    on(eventName, callback) {
+        if (!this.events.has(eventName)) {
+            this.events.set(eventName, []);
+        }
+        this.events.get(eventName).push(callback);
+        
+        if (this.debug) {
+            console.log(`EventBus: Registered listener for ${eventName}`);
+        }
+    }
+
+    emit(eventName, data = {}) {
+        if (this.debug) {
+            console.log(`EventBus: Emitting ${eventName}`, data);
+        }
+        
+        if (this.events.has(eventName)) {
+            this.events.get(eventName).forEach(callback => {
+                try {
+                    callback(data);
+                } catch (error) {
+                    console.error(`EventBus: Error in ${eventName} listener:`, error);
+                }
+            });
+        }
+    }
+
+    off(eventName, callback) {
+        if (this.events.has(eventName)) {
+            const callbacks = this.events.get(eventName);
+            const index = callbacks.indexOf(callback);
+            if (index > -1) {
+                callbacks.splice(index, 1);
+            }
+        }
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Journey Timeline JavaScript Functions
+        
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.timeline-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show target section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+        }
+        
+        function toggleTimelineItem(item) {
+            // Check if already expanded
+            const isExpanded = item.classList.contains('expanded');
+            
+            // Collapse all items first (accordion behavior)
+            document.querySelectorAll('.timeline-item').forEach(timelineItem => {
+                timelineItem.classList.remove('expanded');
+            });
+            
+            // If this item wasn't expanded, expand it
+            if (!isExpanded) {
+                item.classList.add('expanded');
+            }
+        }
+        
+        function toggleExpandable(header) {
+            const card = header.closest('.code-example-card');
+            const isExpanded = card.classList.contains('expanded');
+            
+            // Collapse all code examples first
+            document.querySelectorAll('.code-example-card').forEach(example => {
+                example.classList.remove('expanded');
+            });
+            
+            // If this wasn't expanded, expand it
+            if (!isExpanded) {
+                card.classList.add('expanded');
+            }
+        }
+        
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-content').querySelector('code');
+            const text = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy code:', err);
+            });
+        }
+        
+        // Initialize timeline on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set first tab as active by default
+            const firstTab = document.querySelector('.nav-tab');
+            if (firstTab) {
+                firstTab.classList.add('active');
+            }
+            
+            // Show first section by default
+            const firstSection = document.getElementById('journey-timeline');
+            if (firstSection) {
+                firstSection.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>

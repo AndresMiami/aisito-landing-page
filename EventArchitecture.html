@@ -1,0 +1,2687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miami AI Concierge - System Initialization Workflow</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: auto;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+            background: linear-gradient(45deg, #fff, #4fc3f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        /* Diagram Section */
+        .diagram-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 12px 48px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .diagram-section h2 {
+            color: white;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Side-by-side layout */
+        .diagram-container {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+        
+        .diagram-mermaid {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 0;
+        }
+        
+        /* Component Explanations - Vertical layout */
+        .component-explanations {
+            flex: 1;
+            background: rgba(28, 32, 38, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            max-height: 600px;
+            overflow-y: auto;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .component-explanations h3 {
+            margin-bottom: 20px;
+            color: #fff;
+            font-size: 1.4rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            font-weight: 600;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(79, 195, 247, 0.3);
+        }
+        
+        .component-item {
+            margin-bottom: 22px;
+            padding-bottom: 22px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .component-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(5px);
+            padding-left: 10px;
+            border-radius: 8px;
+        }
+        
+        .component-item:last-child {
+            border-bottom: none;
+        }
+
+        .component-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #4fc3f7;
+            display: flex;
+            align-items: center;
+            letter-spacing: 0.03em;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+        }
+        
+        .component-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 10px;
+            display: inline-block;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .component-description {
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 1rem;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            padding-left: 5px;
+        }
+
+        /* File references styling */
+        .file-reference {
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .file-reference strong {
+            display: block;
+            color: #81c784;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .file-reference code {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #ff9800;
+            margin: 0 4px 4px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            white-space: nowrap;
+            display: inline-block;
+            transition: all 0.2s ease;
+        }
+        
+        .file-reference code:hover {
+            background: rgba(0, 0, 0, 0.6);
+            border-color: #4fc3f7;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Custom scrollbar for component explanations */
+        .component-explanations::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .component-explanations::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+        
+        .component-explanations::-webkit-scrollbar-thumb {
+            background: rgba(79, 195, 247, 0.4);
+            border-radius: 4px;
+        }
+          .component-explanations::-webkit-scrollbar-thumb:hover {
+            background: rgba(79, 195, 247, 0.6);
+        }
+
+        /* Search container styling */
+        .search-container {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .search-container:hover {
+            border-color: rgba(79, 195, 247, 0.4);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        #component-search {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        #component-search::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
+        }
+
+        #component-search:focus {
+            outline: none;
+            border-color: #4fc3f7;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 2px rgba(79, 195, 247, 0.2);
+        }
+
+        .search-results-count {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .search-results-count.visible {
+            opacity: 1;
+        }
+
+        /* Component filtering styles */
+        .component-item.hidden {
+            display: none;
+            max-height: 0;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        .component-item.highlight {
+            background: rgba(79, 195, 247, 0.1);
+            border-left: 3px solid #4fc3f7;
+            border-radius: 8px;
+            padding-left: 15px;
+            margin-left: -15px;
+            transition: all 0.3s ease;
+        }
+
+        .search-highlight {
+            background: rgba(255, 235, 59, 0.3);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 600;
+        }/* Color indicators for components */        .color-user-loads { background-color: #e1f5fe; }
+        .color-eventbus { background-color: #f3e5f5; }
+        .color-components { background-color: #e8f5e8; }
+        .color-maps-api { background-color: #fff3e0; }
+        .color-session { background-color: #fce4ec; }
+        .color-event-definitions { background-color: #e6f7ff; }
+        .color-payload-creation { background-color: #fff8e1; }
+        .color-analytics { background-color: #f3e5f5; }
+        .color-filtering { background-color: #e8f5e8; }
+        .color-ui-updates { background-color: #fce4ec; }
+        .color-payload-creation { background-color: #f0f4f8; }
+        .color-analytics { background-color: #e8f5e8; }
+        .color-filtering { background-color: #fff3e0; }
+        .color-ui-updates { background-color: #ffeaa7; }
+
+        /* Expandable component styles */
+        .component-item {
+            cursor: pointer;
+        }
+        
+        .component-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            margin-top: 10px;
+            opacity: 0;
+        }
+        
+        .component-item.expanded .component-details {
+            max-height: 800px;
+            opacity: 1;
+            padding: 15px;
+            border-left: 3px solid #4fc3f7;
+        }
+        
+        .component-name:after {
+            content: "+";
+            margin-left: auto;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .component-item.expanded .component-name:after {
+            content: "−";
+            transform: rotate(180deg);
+        }
+        
+        .detail-section {
+            margin-bottom: 15px;
+        }
+        
+        .detail-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .detail-title {
+            font-weight: 600;
+            color: #81c784;
+            margin-bottom: 5px;
+            font-size: 0.95rem;
+        }
+        
+        .detail-content {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 1200px) {
+            .diagram-container {
+                flex-direction: column;
+            }
+            
+            .diagram-mermaid,
+            .component-explanations {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🚀 System Initialization Workflow</h1>
+            <p>Educational guide to Miami AI Concierge startup sequence and component initialization</p>
+        </div>
+
+        <!-- Architecture Diagram with Explanations -->
+        <div class="diagram-section">
+            <h2>🏗️ System Initialization Architecture</h2>
+            
+            <div class="diagram-container">
+                <div class="diagram-mermaid">                    <div class="mermaid">
+                        graph TD
+                            A[User loads dashboard.html] --> B[EventBus initializes]
+                            A --> C[DOM Event System active]
+                            B --> BD[Event Definitions loaded]
+                            BD --> D[Components register]
+                            C --> E1[SimpleBridge initializes]
+                            D --> E2[Google Maps API loads]
+                            E1 --- E2
+                            E2 --> F[Places Autocomplete attaches]
+                            F --> G[Form validation setup]
+                            G --> H[Session persistence active]
+                            H --> I[Shadow DOM detection begins]
+                            I --> J[Event Visualizer connects]
+                            J --> K[User interaction]
+                            
+                            K --> L1[Form input events]
+                            K --> L2[Map selection events]
+                            K --> L3[Validation events]
+                            
+                            %% DOM Event Path
+                            L1 --> M1[DOM Events triggered]
+                            M1 --> N1[Native event handlers]
+                            N1 --> O1[SimpleBridge listeners]
+                              %% EventBus Path
+                            L2 --> M2[EventBus events published]
+                            M2 --> ED[Event Definition Resolution]
+                            ED --> N2[EventBus subscribers notified]
+                            
+                            %% Bridge connecting the systems
+                            O1 --> P[DOM-to-EventBus translation]
+                            P --> PC[Custom Payload Creation]
+                            PC --> M2
+                            
+                            %% Analytics tracking parallel path
+                            N2 --> AT[Analytics Event Tracking]
+                            
+                            %% Filtering and prioritization
+                            N2 --> FP[Subscriber Filtering & Prioritization]
+                            FP --> Q1[Real-time validation]
+                            FP --> Q2[Address tracking]
+                            FP --> Q3[Error handling]
+                            
+                            Q1 --> R[Session updates]
+                            Q2 --> R
+                            Q3 --> R
+                            
+                            R --> UI[UI State Updates]
+                            UI --> K
+                            R --> S[Event Visualizer updates]
+                              %% Analytics parallel flow
+                            AT --> S
+                            
+                            style A fill:#e1f5fe
+                            style B,M2,N2 fill:#f3e5f5
+                            style BD fill:#e6f7ff
+                            style C,M1,N1 fill:#e6f7ff
+                            style D fill:#e8f5e8
+                            style E1,O1,P fill:#fff8e6
+                            style J,S fill:#fce4ec
+                            style ED fill:#e6f7ff
+                            style PC fill:#fff8e1
+                            style AT fill:#f3e5f5
+                            style FP fill:#e8f5e8
+                            style UI fill:#fce4ec
+                    </div>
+                </div>                <!-- Component Explanations Section -->
+                <div class="component-explanations">
+                    <h3>Component Explanations</h3>
+                    
+                    <!-- Search input -->
+                    <div class="search-container">
+                        <input type="text" 
+                               id="component-search" 
+                               placeholder="🔍 Search components..."
+                               autocomplete="off"
+                               aria-label="Search components">
+                        <div class="search-results-count"></div>
+                    </div>
+                    
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon color-user-loads"></span>
+                            User loads dashboard.html
+                        </div>
+                        <div class="component-description">
+                            The initial action when a user navigates to the Miami AI Concierge booking platform in their browser.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>dashboard.html</code>, 
+                                <code>index.html</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    This is the entry point that triggers the entire Miami AI Concierge system initialization sequence. When a user loads dashboard.html:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>HTML document parsing begins</li>
+                                        <li>CSS stylesheets are loaded and applied</li>
+                                        <li>JavaScript dependencies are fetched and executed</li>
+                                        <li>DOM structure is constructed and ready for manipulation</li>
+                                        <li>DOMContentLoaded event prepares to fire</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    This occurs when:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Users first visit the Miami booking website</li>
+                                        <li>Users refresh the dashboard page</li>
+                                        <li>Users navigate back from external Miami service pages</li>
+                                        <li>Users return to continue a previous Miami booking session</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Loading dashboard.html immediately triggers EventBus initialization, which serves as the foundation for all subsequent component communication and system startup.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon color-eventbus"></span>
+                            EventBus initializes
+                        </div>
+                        <div class="component-description">
+                            The central communication hub that enables all components to communicate through a publish/subscribe pattern.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>src/core/EventBus.js</code>, 
+                                <code>eventBus.js</code>, 
+                                <code>EventDefinitions.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    EventBus initialization establishes the core communication infrastructure for the entire Miami AI Concierge system:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Creates a centralized event registry for all component communication</li>
+                                        <li>Establishes pub/sub patterns for loose coupling between components</li>
+                                        <li>Sets up debug mode detection for development and troubleshooting</li>
+                                        <li>Initializes connection to Event Visualizer for real-time monitoring</li>
+                                        <li>Creates event history tracking for debugging purposes</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    EventBus is the first system component to initialize and is used:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Immediately after dashboard.html loads to establish communication infrastructure</li>
+                                        <li>Throughout the application lifetime for all inter-component communication</li>
+                                        <li>During development for debugging and system monitoring</li>
+                                        <li>For connecting external tools like the Event Visualizer</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    EventBus serves as the foundation for all other components, enabling Components register, Session persistence, and all UI components to communicate effectively.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon color-event-definitions"></span>
+                            Event Definitions loaded
+                        </div>
+                        <div class="component-description">
+                            Central registry of all event types that components can emit or listen to, organized by domain category.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>core/EventDefinitions.js</code>, 
+                                <code>FormEvents.js</code>, 
+                                <code>MapEvents.js</code>,
+                                <code>UIEvents.js</code>,
+                                <code>ErrorEvents.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Event Definitions establish the communication protocol for the entire system:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Centralizes 180+ named events into logical domain categories</li>
+                                        <li>Provides standardized event naming conventions (domain:action:state)</li>
+                                        <li>Includes payload creator functions for consistent data structures</li>
+                                        <li>Enables type-checking and validation of event names</li>
+                                        <li>Facilitates domain-specific event imports for components</li>
+                                        <li>Supports both debug and production environments</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Event Definitions are loaded and used:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>During EventBus initialization as a foundation for all events</li>
+                                        <li>When components register to define what events they handle</li>
+                                        <li>Each time a component emits or listens for events</li>
+                                        <li>During Event Visualizer connection for event categorization</li>
+                                        <li>When validating custom events from external services</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Event Definitions act as the communication protocol between EventBus and all other components, serving as a contract for how components interact through events.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon color-components"></span>
+                            Components register
+                        </div>
+                        <div class="component-description">
+                            Dynamic component registration system that manages component lifecycles and dependencies.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>src/core/ComponentRegistry.js</code>, 
+                                <code>dashboard-components.js</code>, 
+                                <code>core/TabNavigationComponent.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    The Component Registry provides sophisticated component management capabilities:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Maintains a registry of all available UI components</li>
+                                        <li>Handles dynamic component loading and instantiation</li>
+                                        <li>Manages component dependencies and initialization order</li>
+                                        <li>Provides lifecycle hooks for component setup and teardown</li>
+                                        <li>Enables hot reloading and component updates during development</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Component Registry manages:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>TabNavigationComponent for Miami service category navigation</li>
+                                        <li>VehicleSelectionComponent for Miami transportation options</li>
+                                        <li>ExperienceSelector for Miami attraction and activity choices</li>
+                                        <li>FormSubmissionComponent for Miami booking confirmation</li>
+                                        <li>Dynamic loading of components based on user navigation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Component Registry uses EventBus for communication and coordinates with Google Maps API loading to ensure proper component initialization order.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon color-maps-api"></span>
+                            Google Maps API loads
+                        </div>
+                        <div class="component-description">
+                            External Google Maps service integration that provides mapping, location services, and Places Autocomplete functionality.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>maps.js</code>, 
+                                <code>js/custom-autocomplete.js</code>, 
+                                <code>js/custom-places.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Google Maps API integration provides essential location-based services:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Loads Google Maps JavaScript API with Miami-specific configurations</li>
+                                        <li>Initializes map instances for location selection and visualization</li>
+                                        <li>Establishes connection to Google Places database for location searching</li>
+                                        <li>Sets up geocoding services for address validation</li>
+                                        <li>Prepares distance and directions services for Miami transportation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Google Maps API is used for:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Displaying interactive maps of Miami areas</li>
+                                        <li>Validating Miami addresses and locations</li>
+                                        <li>Calculating distances between Miami pickup and destination points</li>
+                                        <li>Providing real-time Miami traffic and routing information</li>
+                                        <li>Supporting location-based Miami attraction recommendations</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Google Maps API loading enables Places Autocomplete attachment and provides the foundation for Address tracking and Map selection events.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">Places Autocomplete attaches</div>
+                        <div class="component-description">
+                            Google Places Autocomplete service that provides intelligent location suggestions as users type.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>js/custom-autocomplete.js</code>, 
+                                <code>js/custom-places.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Places Autocomplete enhances user experience by providing intelligent location suggestions:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Attaches autocomplete functionality to address input fields</li>
+                                        <li>Filters suggestions to Miami area locations when appropriate</li>
+                                        <li>Provides detailed place information including coordinates</li>
+                                        <li>Validates locations against Google's comprehensive database</li>
+                                        <li>Reduces user typing and input errors</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Places Autocomplete activates when:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Users type in Miami hotel or pickup location fields</li>
+                                        <li>Miami destination addresses are being entered</li>
+                                        <li>Miami attraction or venue names are searched</li>
+                                        <li>Users need assistance finding specific Miami locations</li>
+                                        <li>Address validation requires Google Places verification</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Places Autocomplete works with Form validation setup to ensure accurate location data and enables real-time Address tracking during user interaction.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">Form validation setup</div>
+                        <div class="component-description">
+                            Initialization of the form validation system that ensures data quality and business rule compliance.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>essential-functions.js</code>, 
+                                <code>formValidation.js</code>, 
+                                <code>validation-listeners.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Form validation setup establishes the data quality assurance system:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Loads validation rules for Miami-specific booking requirements</li>
+                                        <li>Attaches event listeners for real-time validation</li>
+                                        <li>Configures business logic for Miami service constraints</li>
+                                        <li>Sets up cross-field validation for complex booking scenarios</li>
+                                        <li>Initializes error handling and user feedback systems</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Form validation setup prepares for:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Real-time validation of Miami location inputs</li>
+                                        <li>Miami service availability and capacity checking</li>
+                                        <li>Contact information format validation</li>
+                                        <li>Date and time constraint validation for Miami activities</li>
+                                        <li>Payment information security validation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Form validation setup enables Real-time validation during user interaction and coordinates with Session persistence to maintain validation state.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon color-session"></span>
+                            Session persistence active
+                        </div>
+                        <div class="component-description">
+                            System for maintaining user state and Miami trip data across browser sessions and page refreshes.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>essential-functions.js</code>, 
+                                <code>SessionManager.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Session persistence provides comprehensive state management:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Automatically saves validated form inputs and Miami selections</li>
+                                        <li>Restores user state when returning to the application</li>
+                                        <li>Multi-step form progress tracking for complex Miami itineraries</li>
+                                        <li>Temporary storage of API responses and location data</li>
+                                        <li>Session cleanup and data lifecycle management</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Session persistence activates for:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Saving Miami hotel preferences and booking details</li>
+                                        <li>Preserving Miami attraction selections across navigation</li>
+                                        <li>Maintaining transportation choices and pickup locations</li>
+                                        <li>Storing user preferences for future Miami trip planning</li>
+                                        <li>Recovering from accidental page refreshes or browser closure</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Session persistence coordinates with Shadow DOM detection for comprehensive state monitoring and enables Session updates during active user interaction.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">Shadow DOM detection begins</div>
+                        <div class="component-description">
+                            System for detecting and monitoring shadow DOM elements for comprehensive event tracking.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>ShadowDOMDetector.js</code>, 
+                                <code>event-monitor.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Shadow DOM Detection ensures comprehensive event monitoring across all DOM structures:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Identifies shadow DOM boundaries for complete event coverage</li>
+                                        <li>Enables debugging of encapsulated component interactions</li>
+                                        <li>Provides visibility into third-party component behavior</li>
+                                        <li>Ensures event listeners can capture all user interactions</li>
+                                        <li>Monitors dynamic shadow DOM creation and destruction</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Shadow DOM Detection activates when:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Google Maps components create shadow DOM elements</li>
+                                        <li>Third-party Miami service widgets are embedded</li>
+                                        <li>Custom components use shadow DOM for encapsulation</li>
+                                        <li>Development mode requires comprehensive event debugging</li>
+                                        <li>Event Visualizer needs complete system visibility</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Shadow DOM Detection enables Event Visualizer connections and provides complete system visibility for comprehensive event monitoring.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">Event Visualizer connects</div>
+                        <div class="component-description">
+                            React-based debugging interface that provides real-time visualization of system events and component interactions.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>event-visualizer/src/App.jsx</code>, 
+                                <code>event-visualizer-test.html</code>, 
+                                <code>visual-workflow-inspector</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Event Visualizer provides comprehensive system monitoring and debugging capabilities:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Real-time visualization of event flow through the system</li>
+                                        <li>Interactive component state monitoring</li>
+                                        <li>Performance metrics tracking and analysis</li>
+                                        <li>Session persistence monitoring and debugging</li>
+                                        <li>Shadow DOM bypass monitoring for complete event coverage</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Event Visualizer connects during:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Development and debugging of Miami booking workflows</li>
+                                        <li>Testing of Miami service integration points</li>
+                                        <li>Performance optimization of Miami location validation</li>
+                                        <li>Real-time monitoring of production Miami booking systems</li>
+                                        <li>Troubleshooting complex Miami itinerary validation issues</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Event Visualizer connects to the EventBus and provides ongoing Event Visualizer updates throughout system operation, enabling comprehensive system monitoring.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">User interaction</div>
+                        <div class="component-description">
+                            The point where system initialization completes and users can actively engage with the Miami booking interface.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>UIEvents.js</code>, 
+                                <code>dashboard.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    User interaction marks the transition from system initialization to active operation:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>All system components are fully initialized and ready</li>
+                                        <li>User interface is responsive and interactive</li>
+                                        <li>Real-time validation and feedback systems are active</li>
+                                        <li>Event monitoring and logging are operational</li>
+                                        <li>Session persistence is automatically saving user progress</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    User interaction begins when:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Users start typing in Miami location fields</li>
+                                        <li>Miami service tabs are clicked and navigated</li>
+                                        <li>Map locations are selected for Miami activities</li>
+                                        <li>Form fields are focused and user input begins</li>
+                                        <li>Miami booking preferences are being configured</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    User interaction triggers Form input events, Map selection events, and Validation events, beginning the active operational phase of the system.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">Form input events</div>
+                        <div class="component-description">
+                            Events generated when users interact with form elements, triggering validation and state updates.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>FormEvents.js</code>, 
+                                <code>src/core/FormEvents.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Form input events capture and process user interactions with form elements:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Capture typing, selection, and focus events from form fields</li>
+                                        <li>Trigger real-time validation as users interact with forms</li>
+                                        <li>Provide immediate feedback on input validity</li>
+                                        <li>Update session storage with valid input data</li>
+                                        <li>Coordinate cross-field validation dependencies</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Form input events occur when:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Users type Miami addresses or select from autocomplete</li>
+                                        <li>Contact information is entered for Miami bookings</li>
+                                        <li>Date and time selections are made for Miami activities</li>
+                                        <li>Special requirements are specified for Miami services</li>
+                                        <li>Payment information is entered for Miami reservations</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Form input events trigger Real-time validation and contribute to Session updates, ensuring data quality and persistence throughout the Miami booking process.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">Map selection events</div>
+                        <div class="component-description">
+                            Events generated when users interact with map elements, selecting locations or viewing Miami area information.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>MapEvents.js</code>, 
+                                <code>maps.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Map selection events handle geographic and location-based user interactions:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Capture map clicks, marker selections, and area interactions</li>
+                                        <li>Convert geographic coordinates to usable address data</li>
+                                        <li>Trigger location validation against Miami service boundaries</li>
+                                        <li>Update form fields with selected location information</li>
+                                        <li>Provide visual feedback for valid/invalid location selections</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Map selection events occur when:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Users click on Miami map locations for pickup/dropoff points</li>
+                                        <li>Miami attraction markers are selected on the map</li>
+                                        <li>Location boundaries are explored for Miami service areas</li>
+                                        <li>Alternative Miami destinations are compared visually</li>
+                                        <li>Distance and route information is requested for Miami transportation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Map selection events enable Address tracking and contribute to Session updates, ensuring location data is properly validated and preserved.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">Validation events</div>
+                        <div class="component-description">
+                            Events that orchestrate the validation process, ensuring data quality and business rule compliance.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>validation-listeners.js</code>, 
+                                <code>formValidation.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Validation events coordinate the comprehensive data validation process:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Orchestrate validation rule execution across all form fields</li>
+                                        <li>Handle both synchronous and asynchronous validation processes</li>
+                                        <li>Coordinate cross-field validation dependencies</li>
+                                        <li>Trigger appropriate feedback based on validation results</li>
+                                        <li>Manage validation state for complex Miami booking scenarios</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Validation events are triggered for:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Real-time validation of Miami location and service selections</li>
+                                        <li>Form submission validation for complete Miami booking requests</li>
+                                        <li>Cross-field validation when Miami service combinations change</li>
+                                        <li>API-based validation of Miami venue availability and pricing</li>
+                                        <li>Business rule validation for Miami seasonal restrictions</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Validation events trigger Real-time validation, Error handling, and contribute to Event Visualizer updates for comprehensive system monitoring.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">Real-time validation</div>
+                        <div class="component-description">
+                            Continuous validation system that processes user input as it happens, providing immediate feedback.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>essential-functions.js</code>, 
+                                <code>formValidation.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Real-time Validation provides immediate user feedback during form interaction:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Validates Miami addresses as users type</li>
+                                        <li>Checks Miami service availability in real-time</li>
+                                        <li>Provides instant feedback without form submission</li>
+                                        <li>Prevents invalid data entry before completion</li>
+                                        <li>Enhances user experience with immediate guidance</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Real-time Validation occurs during:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Miami hotel address entry with instant verification</li>
+                                        <li>Transportation booking with live availability checks</li>
+                                        <li>Attraction selection with capacity and schedule validation</li>
+                                        <li>Contact information entry with format checking</li>
+                                        <li>Multi-step form navigation with progress validation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Real-time Validation coordinates with Session updates to ensure valid data is preserved and contributes to Event Visualizer updates for system monitoring.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">Address tracking</div>
+                        <div class="component-description">
+                            System for monitoring and validating Miami location selections and address changes.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>essential-functions.js</code>, 
+                                <code>maps.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Address Tracking monitors location-related user interactions:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Tracks Miami location selections from maps and autocomplete</li>
+                                        <li>Validates addresses against Miami service boundaries</li>
+                                        <li>Monitors changes to pickup and destination locations</li>
+                                        <li>Maintains location history for user convenience</li>
+                                        <li>Integrates with Google Maps for real-time verification</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Address Tracking activates when:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Users select Miami hotels from autocomplete suggestions</li>
+                                        <li>Transportation pickup/dropoff locations are chosen</li>
+                                        <li>Miami attraction addresses are entered or selected</li>
+                                        <li>Users modify existing location selections</li>
+                                        <li>GPS location services provide current position</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Address Tracking integrates with Session updates to maintain location data and provides input to Event Visualizer updates for comprehensive monitoring.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">Error handling</div>
+                        <div class="component-description">
+                            Comprehensive error management system that gracefully handles validation failures and system issues.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>ErrorEvents.js</code>, 
+                                <code>errorHandling.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Error Handling ensures robust system operation and user experience:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Captures and processes validation failures and system errors</li>
+                                        <li>Provides user-friendly error messages and recovery guidance</li>
+                                        <li>Logs errors for debugging and system improvement</li>
+                                        <li>Implements fallback mechanisms for critical system functions</li>
+                                        <li>Ensures system stability during error conditions</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Error Handling activates when:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Miami location validation fails due to service area restrictions</li>
+                                        <li>API calls to Miami service providers fail or timeout</li>
+                                        <li>Network connectivity issues affect Google Maps integration</li>
+                                        <li>User input violates Miami booking business rules</li>
+                                        <li>System resources are temporarily unavailable</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Error Handling coordinates with Session updates to maintain system state and provides error information to Event Visualizer updates for monitoring and debugging.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">Session updates</div>
+                        <div class="component-description">
+                            Continuous state management that saves validated data and maintains user progress throughout the Miami booking process.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>essential-functions.js</code>, 
+                                <code>SessionManager.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Session Updates provide continuous state persistence during active user interaction:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Automatically saves validated form data as users progress</li>
+                                        <li>Updates stored session data when validation states change</li>
+                                        <li>Maintains synchronization between UI state and stored data</li>
+                                        <li>Handles incremental updates for optimal performance</li>
+                                        <li>Ensures data consistency across system components</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Session Updates occur when:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Valid Miami locations are selected and confirmed</li>
+                                        <li>Miami service preferences are updated or modified</li>
+                                        <li>Form validation status changes from invalid to valid</li>
+                                        <li>User navigation progresses between Miami booking steps</li>
+                                        <li>External API responses update Miami availability data</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Session Updates aggregate data from Real-time validation, Address tracking, and Error handling, and provide current state information to Event Visualizer updates.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">Event Visualizer updates</div>
+                        <div class="component-description">
+                            Real-time updates to the Event Visualizer interface showing current system activity and performance metrics.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>event-visualizer/src/App.jsx</code>, 
+                                <code>event-visualizer/src/components/LiveSystemMonitor.jsx</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Event Visualizer Updates provide real-time system monitoring and debugging capabilities:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Updates visual representations of event flow and system state</li>
+                                        <li>Provides real-time performance metrics and system health indicators</li>
+                                        <li>Displays session persistence status and data integrity</li>
+                                        <li>Shows component interaction patterns and dependencies</li>
+                                        <li>Enables live debugging of Miami booking workflows</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Event Visualizer Updates occur during:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Active development and testing of Miami booking features</li>
+                                        <li>Production monitoring of Miami service performance</li>
+                                        <li>Debugging complex Miami itinerary validation issues</li>
+                                        <li>Performance optimization of Miami location services</li>
+                                        <li>Real-time system health monitoring during peak usage</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Event Visualizer Updates receive data from all system components, providing comprehensive visibility into the complete Miami AI Concierge system operation and performance.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- New components added here -->
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon" style="background-color:#e6f7ff;"></span>
+                            DOM Event System active
+                        </div>
+                        <div class="component-description">
+                            Native browser event system that handles direct element-level interactions and UI events.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>custom-autocomplete.js</code>, 
+                                <code>maps.js</code>,
+                                <code>dashboard.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    The DOM Event System provides direct element-level interaction handling:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Captures native browser events (click, input, focus, blur)</li>
+                                        <li>Enables direct interaction with third-party components</li>
+                                        <li>Provides bubbling and capturing phases for event delegation</li>
+                                        <li>Works with standard addEventListener API</li>
+                                        <li>Handles Google Maps and Places API direct integrations</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    DOM Events are used for:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Direct UI interactions with form elements</li>
+                                        <li>Google Maps and Places API integration</li>
+                                        <li>Third-party widget interactions</li>
+                                        <li>Legacy component compatibility</li>
+                                        <li>Browser-specific features like geolocation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    DOM Events connect to SimpleBridge which translates them into EventBus events, allowing both systems to work together seamlessly.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon" style="background-color:#fff8e6;"></span>
+                            SimpleBridge initializes
+                        </div>
+                        <div class="component-description">
+                            Bridge component that connects DOM events to the EventBus system, enabling dual-system architecture.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>simple-bridge.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    SimpleBridge serves as the translator between DOM events and EventBus:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Captures DOM events through event listeners</li>
+                                        <li>Translates DOM events into standardized EventBus events</li>
+                                        <li>Maintains backward compatibility with existing code</li>
+                                        <li>Enables gradual migration to EventBus architecture</li>
+                                        <li>Creates a unified interface for both event systems</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    SimpleBridge activates for:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Form submission events from standard forms</li>
+                                        <li>Google Maps location selection events</li>
+                                        <li>Input field changes and validation</li>
+                                        <li>Navigation and tab switching</li>
+                                        <li>Any DOM event that needs to trigger application logic</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    SimpleBridge connects the DOM Event System to the EventBus system, enabling DOM-to-EventBus translation for seamless operation across both architectures.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon" style="background-color:#fff8e6;"></span>
+                            DOM-to-EventBus translation
+                        </div>
+                        <div class="component-description">
+                            Process that converts DOM events to EventBus events, enabling unified system communication.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>simple-bridge.js</code>,
+                                <code>event-monitor.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    DOM-to-EventBus translation standardizes events across the system:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Captures raw DOM events and extracts relevant data</li>
+                                        <li>Formats event data according to EventBus standards</li>
+                                        <li>Converts element-specific events to semantic application events</li>
+                                        <li>Adds additional context and metadata to events</li>
+                                        <li>Ensures all system components receive uniform event structures</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Translation occurs when:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>DOM input events need to trigger validation logic</li>
+                                        <li>Google Maps selections need to update application state</li>
+                                        <li>Form submissions need to trigger business processes</li>
+                                        <li>UI interactions need to be tracked for analytics</li>
+                                        <li>Third-party components need to integrate with the system</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    DOM-to-EventBus translation connects native DOM events to the EventBus subscriber system, enabling Real-time validation, Address tracking, and Error handling to respond to all user interactions.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon" style="background-color:#f3e5f5;"></span>
+                            Event Definition Resolution
+                        </div>
+                        <div class="component-description">
+                            Process that validates and matches published events against the EventDefinitions.js registry before notifying subscribers.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>core/EventDefinitions.js</code>, 
+                                <code>src/core/EventBus.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Event Definition Resolution ensures event integrity and consistency:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Validates that published events match defined event constants</li>
+                                        <li>Prevents typos and undefined events from propagating</li>
+                                        <li>Enforces domain-specific event naming conventions</li>
+                                        <li>Provides runtime event validation and debugging support</li>
+                                        <li>Maintains event catalog for system documentation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Event Definition Resolution activates every time an event is published:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>During form validation when FORM_EVENTS are published</li>
+                                        <li>When location events are triggered from Google Maps interactions</li>
+                                        <li>During error handling when ERROR_EVENTS are emitted</li>
+                                        <li>For analytics tracking when ANALYTICS_EVENTS are published</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Event Definition Resolution acts as a gateway between EventBus event publishing and subscriber notification, ensuring event consistency across the system.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon color-payload-creation"></span>
+                            Custom Payload Creation
+                        </div>
+                        <div class="component-description">
+                            Standardized payload generation using utility functions to ensure consistent event data structures.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>core/EventDefinitions.js</code>, 
+                                <code>simple-bridge.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Custom Payload Creation standardizes event data across the system:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Uses createFormPayload() for form-related events with fieldId, value, formData</li>
+                                        <li>Applies createLocationPayload() for location events with address, coordinates, placeId</li>
+                                        <li>Generates createFieldError() payloads for validation failures</li>
+                                        <li>Creates createAnalyticsPayload() for user interaction tracking</li>
+                                        <li>Adds timestamps and source metadata to all payloads</li>
+                                        <li>Ensures consistent data structure for downstream processing</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Custom Payload Creation occurs during event translation:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>When DOM events are converted to EventBus events</li>
+                                        <li>During Google Places autocomplete selection events</li>
+                                        <li>For form validation and error reporting events</li>
+                                        <li>When creating analytics events for user behavior tracking</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Custom Payload Creation processes data from DOM-to-EventBus translation and feeds standardized payloads into the EventBus publishing system.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon color-filtering"></span>
+                            Subscriber Filtering & Prioritization
+                        </div>
+                        <div class="component-description">
+                            System that manages which subscribers receive events and in what order, based on priority and filtering criteria.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>src/core/EventBus.js</code>, 
+                                <code>core/ComponentRegistry.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Subscriber Filtering & Prioritization optimizes event processing:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Filters subscribers based on event type and component state</li>
+                                        <li>Prioritizes critical system events (validation, error handling)</li>
+                                        <li>Manages subscriber execution order for dependencies</li>
+                                        <li>Prevents inactive components from receiving events</li>
+                                        <li>Optimizes performance by reducing unnecessary processing</li>
+                                        <li>Handles subscriber unregistration and cleanup</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Subscriber Filtering & Prioritization operates for every event:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Prioritizing validation events over UI updates</li>
+                                        <li>Ensuring address tracking occurs before session updates</li>
+                                        <li>Filtering events based on active Miami service tabs</li>
+                                        <li>Managing component lifecycle during navigation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Subscriber Filtering & Prioritization receives events from EventBus subscribers notification and coordinates the execution of Real-time validation, Address tracking, and Error handling.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon color-analytics"></span>
+                            Analytics Event Tracking
+                        </div>
+                        <div class="component-description">
+                            Parallel system that captures user interactions and system events for analytics and performance monitoring.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>core/EventDefinitions.js</code>, 
+                                <code>analytics.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Analytics Event Tracking provides comprehensive user behavior insights:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Tracks Miami service selection patterns and preferences</li>
+                                        <li>Monitors form completion rates and abandonment points</li>
+                                        <li>Captures Google Maps interaction patterns</li>
+                                        <li>Records validation error frequencies and types</li>
+                                        <li>Measures system performance and load times</li>
+                                        <li>Generates conversion funnel analytics for booking flow</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Analytics Event Tracking operates continuously:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>During Miami experience selection and vehicle choice</li>
+                                        <li>When users interact with location autocomplete</li>
+                                        <li>For form validation success and failure events</li>
+                                        <li>During session persistence and recovery events</li>
+                                        <li>When errors occur or are resolved</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Analytics Event Tracking operates in parallel to the main event processing flow, capturing data from EventBus subscribers and feeding insights to Event Visualizer updates.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon color-ui-updates"></span>
+                            UI State Updates
+                        </div>
+                        <div class="component-description">
+                            System that manages user interface updates and provides visual feedback based on processed events and state changes.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>UIEvents.js</code>, 
+                                <code>dashboard.js</code>, 
+                                <code>essential-functions.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    UI State Updates provide responsive visual feedback to users:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Updates form field styling based on validation state</li>
+                                        <li>Shows/hides loading indicators during async operations</li>
+                                        <li>Displays success messages for completed actions</li>
+                                        <li>Renders error messages and validation feedback</li>
+                                        <li>Updates Miami service availability indicators</li>
+                                        <li>Refreshes address autocomplete suggestions</li>
+                                        <li>Manages modal dialogs and confirmation screens</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    UI State Updates occur after every user action:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>After form field validation completes</li>
+                                        <li>When Google Places autocomplete selections are made</li>
+                                        <li>During Miami service tab navigation</li>
+                                        <li>After successful form submissions or error states</li>
+                                        <li>When session data is restored or updated</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    UI State Updates receive processed data from Session updates and create the feedback loop back to User interaction, completing the event processing cycle.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon" style="background-color:#f3e5f5;"></span>
+                            Event Definition Resolution
+                        </div>
+                        <div class="component-description">
+                            Process that validates and matches published events against the EventDefinitions.js registry before notifying subscribers.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>core/EventDefinitions.js</code>, 
+                                <code>src/core/EventBus.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Event Definition Resolution ensures event integrity and consistency:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Validates that published events match defined event constants</li>
+                                        <li>Prevents typos and undefined events from propagating</li>
+                                        <li>Enforces domain-specific event naming conventions</li>
+                                        <li>Provides runtime event validation and debugging support</li>
+                                        <li>Maintains event catalog for system documentation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Event Definition Resolution activates every time an event is published:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>During form validation when FORM_EVENTS are published</li>
+                                        <li>When location events are triggered from Google Maps interactions</li>
+                                        <li>During error handling when ERROR_EVENTS are emitted</li>
+                                        <li>For analytics tracking when ANALYTICS_EVENTS are published</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Event Definition Resolution acts as a gateway between EventBus event publishing and subscriber notification, ensuring event consistency across the system.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon color-payload-creation"></span>
+                            Custom Payload Creation
+                        </div>
+                        <div class="component-description">
+                            Standardized payload generation using utility functions to ensure consistent event data structures.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>core/EventDefinitions.js</code>, 
+                                <code>simple-bridge.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Custom Payload Creation standardizes event data across the system:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Uses createFormPayload() for form-related events with fieldId, value, formData</li>
+                                        <li>Applies createLocationPayload() for location events with address, coordinates, placeId</li>
+                                        <li>Generates createFieldError() payloads for validation failures</li>
+                                        <li>Creates createAnalyticsPayload() for user interaction tracking</li>
+                                        <li>Adds timestamps and source metadata to all payloads</li>
+                                        <li>Ensures consistent data structure for downstream processing</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Custom Payload Creation occurs during event translation:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>When DOM events are converted to EventBus events</li>
+                                        <li>During Google Places autocomplete selection events</li>
+                                        <li>For form validation and error reporting events</li>
+                                        <li>When creating analytics events for user behavior tracking</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Custom Payload Creation processes data from DOM-to-EventBus translation and feeds standardized payloads into the EventBus publishing system.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon color-filtering"></span>
+                            Subscriber Filtering & Prioritization
+                        </div>
+                        <div class="component-description">
+                            System that manages which subscribers receive events and in what order, based on priority and filtering criteria.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>src/core/EventBus.js</code>, 
+                                <code>core/ComponentRegistry.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Subscriber Filtering & Prioritization optimizes event processing:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Filters subscribers based on event type and component state</li>
+                                        <li>Prioritizes critical system events (validation, error handling)</li>
+                                        <li>Manages subscriber execution order for dependencies</li>
+                                        <li>Prevents inactive components from receiving events</li>
+                                        <li>Optimizes performance by reducing unnecessary processing</li>
+                                        <li>Handles subscriber unregistration and cleanup</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Subscriber Filtering & Prioritization operates for every event:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Prioritizing validation events over UI updates</li>
+                                        <li>Ensuring address tracking occurs before session updates</li>
+                                        <li>Filtering events based on active Miami service tabs</li>
+                                        <li>Managing component lifecycle during navigation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Subscriber Filtering & Prioritization receives events from EventBus subscribers notification and coordinates the execution of Real-time validation, Address tracking, and Error handling.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon color-analytics"></span>
+                            Analytics Event Tracking
+                        </div>
+                        <div class="component-description">
+                            Parallel system that captures user interactions and system events for analytics and performance monitoring.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>core/EventDefinitions.js</code>, 
+                                <code>analytics.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Analytics Event Tracking provides comprehensive user behavior insights:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Tracks Miami service selection patterns and preferences</li>
+                                        <li>Monitors form completion rates and abandonment points</li>
+                                        <li>Captures Google Maps interaction patterns</li>
+                                        <li>Records validation error frequencies and types</li>
+                                        <li>Measures system performance and load times</li>
+                                        <li>Generates conversion funnel analytics for booking flow</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    Analytics Event Tracking operates continuously:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>During Miami experience selection and vehicle choice</li>
+                                        <li>When users interact with location autocomplete</li>
+                                        <li>For form validation success and failure events</li>
+                                        <li>During session persistence and recovery events</li>
+                                        <li>When errors occur or are resolved</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Analytics Event Tracking operates in parallel to the main event processing flow, capturing data from EventBus subscribers and feeding insights to Event Visualizer updates.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon color-ui-updates"></span>
+                            UI State Updates
+                        </div>
+                        <div class="component-description">
+                            System that manages user interface updates and provides visual feedback based on processed events and state changes.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>UIEvents.js</code>, 
+                                <code>dashboard.js</code>, 
+                                <code>essential-functions.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    UI State Updates provide responsive visual feedback to users:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Updates form field styling based on validation state</li>
+                                        <li>Shows/hides loading indicators during async operations</li>
+                                        <li>Displays success messages for completed actions</li>
+                                        <li>Renders error messages and validation feedback</li>
+                                        <li>Updates Miami service availability indicators</li>
+                                        <li>Refreshes address autocomplete suggestions</li>
+                                        <li>Manages modal dialogs and confirmation screens</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    UI State Updates occur after every user action:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>After form field validation completes</li>
+                                        <li>When Google Places autocomplete selections are made</li>
+                                        <li>During Miami service tab navigation</li>
+                                        <li>After successful form submissions or error states</li>
+                                        <li>When session data is restored or updated</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    UI State Updates receive processed data from Session updates and create the feedback loop back to User interaction, completing the event processing cycle.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Interaction Flow Integration Section -->
+                    <div class="diagram-section">
+            <h2>🎯 User Interaction Flow Integration</h2>
+            
+            <div class="diagram-container">
+                <div class="diagram-mermaid">
+                    <div class="mermaid">
+                        graph TD
+                            %% User Interaction Hub - Central Entry Point
+                            UI[👤 User Interaction Hub] --> UIA[🎯 User Action Detection]
+                            UIA --> DOM1[🖱️ handleAuth Events]
+                            UIA --> DOM2[🗺️ handleMap Events]
+                            UIA --> DOM3[📝 handleForm Events]
+                            UIA --> DOM4[❌ handleError Events]
+                            
+                            %% DOMManager Handler Preprocessing
+                            DOM1 --> PREP1[🔐 Auth Preprocessing]
+                            DOM2 --> PREP2[📍 Location Preprocessing]
+                            DOM3 --> PREP3[📋 Form Data Preprocessing]
+                            DOM4 --> PREP4[🚨 Error Context Preprocessing]
+                            
+                            %% Event Bus Integration Points
+                            PREP1 --> EVT1[🔑 AUTH_EVENT]
+                            PREP2 --> EVT2[🌍 MAP_EVENT]
+                            PREP3 --> EVT3[📄 FORM_EVENT]
+                            PREP4 --> EVT4[⚠️ ERROR_EVENT]
+                            
+                            %% Event Definition Resolution
+                            EVT1 --> EDR1[🔍 Auth Event Resolution]
+                            EVT2 --> EDR2[🔍 Map Event Resolution]
+                            EVT3 --> EDR3[🔍 Form Event Resolution]
+                            EVT4 --> EDR4[🔍 Error Event Resolution]
+                            
+                            %% Connect to existing EventBus workflow
+                            EDR1 --> EB[🚌 EventBus Hub]
+                            EDR2 --> EB
+                            EDR3 --> EB
+                            EDR4 --> EB
+                            
+                            %% EventBus Distribution to Miami Components
+                            EB --> COMP1[🏖️ Miami ExperienceSelector]
+                            EB --> COMP2[🚗 Miami VehicleSelection]
+                            EB --> COMP3[💳 Miami PaymentForm]
+                            EB --> COMP4[🗺️ Miami GoogleMapsComponent]
+                            EB --> COMP5[✅ Miami ValidationComponent]
+                            
+                            %% Component Response Flow
+                            COMP1 --> RESP1[🎪 Experience State Update]
+                            COMP2 --> RESP2[🚙 Vehicle State Update]
+                            COMP3 --> RESP3[💰 Payment State Update]
+                            COMP4 --> RESP4[📍 Map State Update]
+                            COMP5 --> RESP5[✔️ Validation State Update]
+                            
+                            %% State Synchronization
+                            RESP1 --> SYNC[🔄 State Synchronization Hub]
+                            RESP2 --> SYNC
+                            RESP3 --> SYNC
+                            RESP4 --> SYNC
+                            RESP5 --> SYNC
+                            
+                            %% UI Feedback Loop
+                            SYNC --> UIF[🖥️ UI Feedback System]
+                            UIF --> VIS[👁️ Visual Feedback]
+                            UIF --> AUD[🔊 Analytics Updates]
+                            UIF --> ERR[🚨 Error Display]
+                            
+                            %% Completion Flow
+                            VIS --> UI
+                            AUD --> UI
+                            ERR --> UI
+                            
+                            %% Styling for different component types
+                            style UI fill:#e1f5fe,stroke:#01579b,stroke-width:3px
+                            style UIA fill:#e3f2fd,stroke:#0277bd
+                            style DOM1,DOM2,DOM3,DOM4 fill:#fff3e0,stroke:#f57c00
+                            style PREP1,PREP2,PREP3,PREP4 fill:#f3e5f5,stroke:#7b1fa2
+                            style EVT1,EVT2,EVT3,EVT4 fill:#e8f5e8,stroke:#388e3c
+                            style EDR1,EDR2,EDR3,EDR4 fill:#e6f7ff,stroke:#0288d1
+                            style EB fill:#fce4ec,stroke:#c2185b,stroke-width:4px
+                            style COMP1,COMP2,COMP3,COMP4,COMP5 fill:#fff8e1,stroke:#ffa000
+                            style RESP1,RESP2,RESP3,RESP4,RESP5 fill:#f1f8e9,stroke:#689f38
+                            style SYNC fill:#fdf2e9,stroke:#ff6f00,stroke-width:3px
+                            style UIF fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+                            style VIS,AUD,ERR fill:#e8eaf6,stroke:#3f51b5
+                    </div>
+                </div>
+                
+                <!-- User Interaction Flow Explanations -->
+                <div class="component-explanations">
+                    <h3>🎯 User Interaction Flow Components</h3>
+                    <div class="search-container">
+                        <input type="text" id="interaction-search" placeholder="🔍 Search interaction components..." />
+                        <div class="search-results-count" id="interaction-search-count"></div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon" style="background-color:#e1f5fe;"></span>
+                            👤 User Interaction Hub
+                        </div>
+                        <div class="component-description">
+                            Central dispatcher that captures all user interactions and routes them to appropriate DOMManager handlers.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>src/core/UserInteractionHub.js</code>,
+                                <code>dashboard-components.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    User Interaction Hub serves as the central entry point for all user actions:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Detects mouse clicks, keyboard input, touch events, and form interactions</li>
+                                        <li>Classifies interactions by type (auth, map, form, error-related)</li>
+                                        <li>Routes interactions to specialized DOMManager handlers</li>
+                                        <li>Maintains interaction context and user session state</li>
+                                        <li>Provides centralized logging and debugging for user actions</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    User Interaction Hub activates for:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>User clicks on Miami attraction buttons in ExperienceSelector</li>
+                                        <li>User types in location fields for Miami destinations</li>
+                                        <li>User submits booking forms for Miami experiences</li>
+                                        <li>User interacts with Google Maps for Miami locations</li>
+                                        <li>User authentication and login interactions</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    User Interaction Hub connects to all DOMManager handlers and serves as the entry point for the entire EventBus workflow system.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon" style="background-color:#fff3e0;"></span>
+                            🔐 handleAuth Events
+                        </div>
+                        <div class="component-description">
+                            DOMManager handler specialized for user authentication interactions and session management.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>src/managers/DOMManager.js</code>,
+                                <code>auth/AuthComponent.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    handleAuth processes all authentication-related user interactions:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Login form submissions and validation</li>
+                                        <li>User registration and account creation</li>
+                                        <li>Session token refresh and management</li>
+                                        <li>Password reset and recovery flows</li>
+                                        <li>OAuth integration with social media platforms</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    handleAuth feeds into Auth Preprocessing and generates AUTH_EVENT for EventBus distribution to authentication-aware components.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon" style="background-color:#fff3e0;"></span>
+                            🗺️ handleMap Events
+                        </div>
+                        <div class="component-description">
+                            DOMManager handler for Google Maps interactions, location selection, and geographical data processing.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>src/managers/DOMManager.js</code>,
+                                <code>maps/GoogleMapsComponent.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    handleMap processes all map-related user interactions:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Google Places autocomplete selections</li>
+                                        <li>Map marker clicks and location confirmations</li>
+                                        <li>Address validation and geocoding requests</li>
+                                        <li>Route planning and distance calculations</li>
+                                        <li>Miami-specific location filtering and suggestions</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    handleMap activates when:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Users search for Miami hotels, restaurants, or attractions</li>
+                                        <li>Users select pickup/dropoff locations for Miami transportation</li>
+                                        <li>Users interact with Miami neighborhood maps</li>
+                                        <li>Users plan routes between Miami attractions</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    handleMap connects to Location Preprocessing and generates MAP_EVENT for Miami GoogleMapsComponent and location-aware components.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon" style="background-color:#fff3e0;"></span>
+                            📝 handleForm Events
+                        </div>
+                        <div class="component-description">
+                            DOMManager handler for form interactions, validation, and data submission across all Miami booking forms.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>src/managers/DOMManager.js</code>,
+                                <code>forms/FormComponent.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    handleForm processes all form-related user interactions:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Real-time field validation as users type</li>
+                                        <li>Form submission and data serialization</li>
+                                        <li>File upload handling for documents and images</li>
+                                        <li>Multi-step form navigation and state management</li>
+                                        <li>Form auto-save and session persistence</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    handleForm activates for:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Miami booking form submissions (hotels, experiences, transportation)</li>
+                                        <li>User preference settings and profile updates</li>
+                                        <li>Payment information collection and validation</li>
+                                        <li>Special request forms for custom Miami experiences</li>
+                                        <li>Newsletter signup and communication preferences</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    handleForm connects to Form Data Preprocessing and generates FORM_EVENT for Miami PaymentForm, ValidationComponent, and all form-aware components.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon" style="background-color:#fff3e0;"></span>
+                            ❌ handleError Events
+                        </div>
+                        <div class="component-description">
+                            DOMManager handler for error detection, user error recovery actions, and error-related user interactions.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>src/managers/DOMManager.js</code>,
+                                <code>error/ErrorComponent.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    handleError processes all error-related user interactions:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>User acknowledgment of error messages</li>
+                                        <li>Error correction attempts and retry actions</li>
+                                        <li>User feedback on error experiences</li>
+                                        <li>Error reporting and bug submission</li>
+                                        <li>Help-seeking behavior during error states</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">When It's Used in Miami AI Concierge</div>
+                                <div class="detail-content">
+                                    handleError activates when:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Users encounter booking errors or payment failures</li>
+                                        <li>Users click "Try Again" buttons after failed operations</li>
+                                        <li>Users dismiss error notifications or alerts</li>
+                                        <li>Users request help or contact support from error screens</li>
+                                        <li>Users attempt to correct validation errors in forms</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    handleError connects to Error Context Preprocessing and generates ERROR_EVENT for error handling and recovery systems throughout the Miami application.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon" style="background-color:#e6f7ff;"></span>
+                            🔍 Event Definition Resolution
+                        </div>
+                        <div class="component-description">
+                            Enhanced event resolution system that validates and matches user interaction events against the comprehensive EventDefinitions.js registry.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>core/EventDefinitions.js</code>,
+                                <code>src/core/EventBus.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Purpose in Detail</div>
+                                <div class="detail-content">
+                                    Event Definition Resolution ensures user interaction events are properly categorized and routed:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Validates incoming events against predefined schemas</li>
+                                        <li>Resolves event aliases and normalized event names</li>
+                                        <li>Ensures event payload structure matches expectations</li>
+                                        <li>Provides event versioning and backward compatibility</li>
+                                        <li>Logs unrecognized events for system improvement</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Event Definition Resolution acts as the gateway between DOMManager preprocessing and EventBus distribution, ensuring all user interactions follow standardized event protocols.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-name">
+                            <span class="component-icon" style="background-color:#fff8e1;"></span>
+                            🏖️ Miami Component Integration
+                        </div>
+                        <div class="component-description">
+                            Specialized Miami AI Concierge components that respond to user interaction events and maintain Miami-specific application state.
+                            <div class="file-reference">
+                                <strong>Relevant Files:</strong> 
+                                <code>components/ExperienceSelector.js</code>,
+                                <code>components/VehicleSelection.js</code>,
+                                <code>components/PaymentForm.js</code>
+                            </div>
+                        </div>
+                        <div class="component-details">
+                            <div class="detail-section">
+                                <div class="detail-title">Miami Components Overview</div>
+                                <div class="detail-content">
+                                    Miami-specific components that respond to user interactions:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li><strong>Miami ExperienceSelector:</strong> Handles attraction and activity selection events</li>
+                                        <li><strong>Miami VehicleSelection:</strong> Processes transportation choice and scheduling events</li>
+                                        <li><strong>Miami PaymentForm:</strong> Manages payment processing and billing events</li>
+                                        <li><strong>Miami GoogleMapsComponent:</strong> Responds to location and mapping events</li>
+                                        <li><strong>Miami ValidationComponent:</strong> Handles validation and error correction events</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">State Synchronization</div>
+                                <div class="detail-content">
+                                    All Miami components participate in centralized state synchronization:
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Components emit state change events when user interactions modify their data</li>
+                                        <li>State Synchronization Hub consolidates changes across all components</li>
+                                        <li>UI Feedback System provides visual and auditory feedback to users</li>
+                                        <li>Analytics Updates track user behavior for optimization</li>
+                                        <li>Error Display manages error states and recovery guidance</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">Connection to Other Components</div>
+                                <div class="detail-content">
+                                    Miami Components receive events from EventBus Hub and feed their state changes back into the State Synchronization Hub, creating a complete user interaction feedback loop.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    <script>
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#4fc3f7',
+                primaryTextColor: '#000',
+                primaryBorderColor: '#2196F3',
+                lineColor: '#666',
+                sectionBkgColor: '#f5f5f5',
+                altSectionBkgColor: '#e8f5e8',
+                gridColor: '#e0e0e0',
+                secondaryColor: '#fff',
+                tertiaryColor: '#f9f9f9'
+            }
+        });        // Component expand/collapse functionality and search
+        document.addEventListener('DOMContentLoaded', function() {
+            setupExpandableComponents();
+            setupComponentSearch();
+        });
+
+        function setupExpandableComponents() {
+            const componentItems = document.querySelectorAll('.component-item');
+            
+            componentItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // Don't toggle if clicking on search highlights or interactive elements
+                    if (e.target.closest('.search-highlight') || 
+                        e.target.closest('input') || 
+                        e.target.closest('button')) {
+                        return;
+                    }
+                    this.classList.toggle('expanded');
+                });
+            });
+        }
+
+        function setupComponentSearch() {
+            // Setup search for both main components and interaction components
+            setupSearchForSection('component-search', '.search-results-count');
+            setupSearchForSection('interaction-search', '#interaction-search-count');
+        }
+
+        function setupSearchForSection(searchInputId, resultsCountSelector) {
+            const searchInput = document.getElementById(searchInputId);
+            const searchResultsCount = document.querySelector(resultsCountSelector);
+            
+            if (!searchInput || !searchResultsCount) return;
+
+            // Get component items from the section containing this search input
+            const section = searchInput.closest('.diagram-section') || searchInput.closest('.component-explanations');
+            const componentItems = Array.from(section?.querySelectorAll('.component-item') || []);
+            
+            if (componentItems.length === 0) return;
+
+            let searchTimeout;
+
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    performSearch(this.value.toLowerCase().trim(), componentItems, searchResultsCount);
+                }, 150);
+            });
+
+            // Clear search functionality
+            function clearSearch() {
+                searchInput.value = '';
+                performSearch('', componentItems, searchResultsCount);
+                searchInput.focus();
+            }
+
+            // Add keyboard shortcuts
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    clearSearch();
+                }
+            });
+
+            // Focus search on Ctrl+F or Cmd+F (for the first search input only)
+            if (searchInputId === 'component-search') {
+                document.addEventListener('keydown', function(e) {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                        e.preventDefault();
+                        searchInput.focus();
+                        searchInput.select();
+                    }
+                });
+            }
+
+            function performSearch(query, items, resultsElement) {
+                let visibleCount = 0;
+                let hasResults = false;
+
+                items.forEach(item => {
+                    // Clear previous highlights
+                    clearHighlights(item);
+                    
+                    if (!query) {
+                        // Show all items when search is empty
+                        item.classList.remove('hidden', 'highlight');
+                        visibleCount++;
+                        return;
+                    }
+
+                    // Search in component name, description, and details
+                    const componentName = item.querySelector('.component-name')?.textContent || '';
+                    const componentDescription = item.querySelector('.component-description')?.textContent || '';
+                    const componentDetails = item.querySelector('.component-details')?.textContent || '';
+                    
+                    const searchableContent = `${componentName} ${componentDescription} ${componentDetails}`.toLowerCase();
+                    
+                    if (searchableContent.includes(query)) {
+                        item.classList.remove('hidden');
+                        item.classList.add('highlight');
+                        visibleCount++;
+                        hasResults = true;
+                        
+                        // Highlight search terms
+                        highlightSearchTerms(item, query);
+                        
+                        // Auto-expand if searching in details
+                        if (componentDetails.toLowerCase().includes(query) && 
+                            !componentName.toLowerCase().includes(query) && 
+                            !componentDescription.toLowerCase().includes(query)) {
+                            item.classList.add('expanded');
+                        }
+                    } else {
+                        item.classList.add('hidden');
+                        item.classList.remove('highlight');
+                    }
+                });
+
+                // Update results count
+                updateSearchResultsCount(query, visibleCount, hasResults, resultsElement);
+            }
+        }
+
+        function highlightSearchTerms(item, query) {
+            const searchableElements = [
+                item.querySelector('.component-name'),
+                item.querySelector('.component-description'),
+                ...item.querySelectorAll('.detail-content')
+            ];
+
+            searchableElements.forEach(element => {
+                if (!element) return;
+                
+                const originalHTML = element.getAttribute('data-original-html') || element.innerHTML;
+                element.setAttribute('data-original-html', originalHTML);
+                
+                const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+                const highlightedHTML = originalHTML.replace(regex, '<span class="search-highlight">$1</span>');
+                element.innerHTML = highlightedHTML;
+            });
+        }
+
+        function clearHighlights(item) {
+            const highlightedElements = item.querySelectorAll('[data-original-html]');
+            highlightedElements.forEach(element => {
+                const originalHTML = element.getAttribute('data-original-html');
+                if (originalHTML) {
+                    element.innerHTML = originalHTML;
+                }
+            });
+        }
+
+        function updateSearchResultsCount(query, visibleCount, hasResults, resultsElement) {
+            if (!query) {
+                resultsElement.classList.remove('visible');
+                return;
+            }
+
+            if (hasResults) {
+                resultsElement.textContent = `Found ${visibleCount} component${visibleCount !== 1 ? 's' : ''} matching "${query}"`;
+                resultsElement.style.color = 'rgba(129, 199, 132, 0.9)'; // Success green
+            } else {
+                resultsElement.textContent = `No components found matching "${query}"`;
+                resultsElement.style.color = 'rgba(255, 152, 0, 0.9)'; // Warning orange
+            }
+            
+            resultsElement.classList.add('visible');
+        }
+
+        function escapeRegex(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+    </script>
+</body>
+</html>
