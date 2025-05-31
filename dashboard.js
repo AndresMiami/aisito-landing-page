@@ -1,6 +1,31 @@
 console.log("🚀 Dashboard.js module loading...");
 console.log("🧪 Testing: Module execution at", new Date().toISOString());
 
+// Development Environment Detection
+function detectDevelopmentEnvironment() {
+  const isDevelopment = 
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname === '' ||
+    window.location.port === '8080' ||
+    window.location.port === '3000' ||
+    window.location.port === '5000' ||
+    window.location.protocol === 'file:' ||
+    window.location.search.includes('dev=true');
+    
+  if (isDevelopment) {
+    document.body.classList.add('development', 'localhost');
+    console.log('🔧 Development environment detected - showing dev tools');
+  } else {
+    console.log('🚀 Production environment detected - hiding dev tools');
+  }
+  
+  return isDevelopment;
+}
+
+// Initialize development detection immediately
+detectDevelopmentEnvironment();
+
 // Wait for DOM and components to be ready
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('🚀 Dashboard: Starting initialization...');
@@ -516,8 +541,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 /**
  * Element Inspector Functionality
  * Allows clicking on elements to get their IDs and controller information
+ * Only available in development environments
  */
 function initializeElementInspector() {
+  // Check if we're in a development environment
+  const isDevelopment = window.location.hostname === 'localhost' || 
+                        window.location.hostname === '127.0.0.1' ||
+                        window.location.hostname.includes('192.168.') ||
+                        window.location.hostname.includes('.local') ||
+                        window.location.search.includes('debug=true');
+  
+  if (!isDevelopment) {
+    console.log('🔍 Element Inspector disabled in production environment');
+    return;
+  }
+  
   console.log('🔍 Initializing Element Inspector...');
   
   const inspectorToggle = document.getElementById('inspector-toggle');
@@ -718,8 +756,49 @@ window.fixMiamiConcierge = function() {
   }
 };
 
+/**
+ * Show Event Architecture Documentation
+ * This function is called when the Event-Driven Architecture badge is clicked
+ */
+function showEventArchitecture() {
+  try {
+    // Open EventArchitecture.html in a new window/tab
+    const architectureUrl = './EventArchitecture.html';
+    const newWindow = window.open(architectureUrl, '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+    
+    if (!newWindow) {
+      // Fallback if popup is blocked
+      window.location.href = architectureUrl;
+    }
+    
+    // Log the event for analytics
+    if (window.eventBus && EventDefinitions) {
+      window.eventBus.emit('ARCHITECTURE_DOCUMENTATION_VIEWED', {
+        source: 'header-badge',
+        timestamp: Date.now(),
+        userAgent: navigator.userAgent
+      });
+    }
+    
+    console.log('🏗️ Event Architecture documentation opened');
+  } catch (error) {
+    console.error('❌ Error opening Event Architecture documentation:', error);
+    
+    // Fallback - try direct navigation
+    try {
+      window.location.href = './EventArchitecture.html';
+    } catch (fallbackError) {
+      console.error('❌ Fallback navigation also failed:', fallbackError);
+    }
+  }
+}
+
+// Make the function globally available for the onclick handler
+window.showEventArchitecture = showEventArchitecture;
+
 // Log the helper availability
 console.log('🔧 Emergency fix function available. Run window.fixMiamiConcierge() in console if needed.');
+console.log('🏗️ Event Architecture function available: showEventArchitecture()');
 console.log('✅ Dashboard.js: Module loaded successfully');
 
 // Make available globally (NO DUPLICATES)
