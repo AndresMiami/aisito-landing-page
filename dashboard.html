@@ -39,9 +39,6 @@
      Need to rebuild local file with all required components before removing CDN -->
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="css/tailwind.min.css">
-
-<!-- With a proper production build or local file -->
-<link rel="stylesheet" href="css/tailwind.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -49,6 +46,172 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/custom-places.css">
+    <!-- Airbnb-style booking button styles -->
+    <style>
+    /* Airbnb-style booking button container */
+      .airbnb-booking-container {
+        display: flex;
+        max-width: 400px;
+        border: 1px solid #dddddd;
+        border-radius: 32px;
+        overflow: hidden;
+        background: white;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: box-shadow 0.2s ease;
+        margin-bottom: 20px;
+      }
+
+      .airbnb-booking-container:hover {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Individual booking buttons */
+      .airbnb-booking-button {
+        flex: 1;
+        padding: 12px 16px !important;
+        border: none;
+        background: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+        min-height: 60px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .airbnb-booking-button:hover {
+        background: #f7f7f7;
+      }
+
+      .airbnb-booking-button.active {
+        background: #f7f7f7;
+        box-shadow: inset 0 0 0 2px #222222;
+      }
+
+      /* Left button active state with proper border radius */
+      .airbnb-booking-button-left.active {
+        border-radius: 32px 0 0 32px;
+      }
+
+      /* Right button active state with proper border radius */
+      .airbnb-booking-button-right.active {
+        border-radius: 0 32px 32px 0;
+      }
+
+      /* Left button specific styling */
+      .airbnb-booking-button-left {
+        border-right: 1px solid #dddddd;
+      }
+
+      /* Button content layout */
+      .airbnb-button-content {
+        display: flex;
+        align-items: center;
+        gap: 10px !important;
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      /* Icon styling */
+      .airbnb-button-icon {
+        color: #222222;
+        flex-shrink: 0;
+      }
+
+      .airbnb-button-icon .w-5 {
+        width: 1rem !important;
+        height: 1rem !important;
+      }
+
+      .airbnb-button-icon .h-5 {
+        width: 1rem !important;
+        height: 1rem !important;
+      }
+
+      /* Text content */
+      .airbnb-button-text {
+        text-align: left;
+        flex: 1;
+      }
+
+      .airbnb-button-title {
+        font-size: 14px !important;
+        font-weight: 600;
+        color: #222222;
+        line-height: 1.25;
+        margin-bottom: 2px;
+      }
+
+      .airbnb-button-subtitle {
+        font-size: 12px !important;
+        color: #717171;
+        line-height: 1.25;
+      }
+
+      /* Active state styling */
+      .airbnb-booking-button.active .airbnb-button-title {
+        color: #222222;
+      }
+
+      .airbnb-booking-button.active .airbnb-button-subtitle {
+        color: #222222;
+      }
+
+      .airbnb-booking-button.active .airbnb-button-icon {
+        color: #222222;
+      }
+
+      /* Focus states for accessibility */
+      .airbnb-booking-button:focus {
+        outline: none;
+        box-shadow: inset 0 0 0 2px #222222;
+      }
+
+      /* Mobile responsive adjustments */
+      @media (max-width: 640px) {
+        .airbnb-booking-container {
+          flex-direction: column;
+          border-radius: 16px;
+        }
+
+        .airbnb-booking-button-left {
+          border-right: none;
+          border-bottom: 1px solid #dddddd;
+        }
+
+        /* Mobile active state border radius */
+        .airbnb-booking-button-left.active {
+          border-radius: 16px 16px 0 0;
+        }
+
+        .airbnb-booking-button-right.active {
+          border-radius: 0 0 16px 16px;
+        }
+
+        .airbnb-button-content {
+          justify-content: center;
+          text-align: center;
+        }
+
+        .airbnb-button-text {
+          text-align: center;
+        }
+
+        .airbnb-booking-button {
+          min-height: 50px !important;
+          padding: 10px 12px !important;
+        }
+
+        .airbnb-button-title {
+          font-size: 13px !important;
+        }
+
+        .airbnb-button-subtitle {
+          font-size: 11px !important;
+        }
+      }
+    </style>
     <!-- Google Maps -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAd_O4s_73E_A8rq7TGCHKVEBFHzNecAHM&libraries=places&v=beta&loading=async"></script>
 
@@ -303,19 +466,33 @@
 
                   <div id="date-time-container-oneway" class="relative">
                     <input type="hidden" name="booking_preference" id="booking-preference" value="">
-                    
-                    <div class="button-container mb-4">
-                      <button type="button" id="request-now-button" class="booking-time-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#1e3a8a" class="w-6 h-6">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-lg font-bold">Request Now</span>
+                      <div class="airbnb-booking-container">
+                      <button type="button" id="request-now-button" class="airbnb-booking-button airbnb-booking-button-left">
+                        <div class="airbnb-button-content">
+                          <div class="airbnb-button-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                          <div class="airbnb-button-text">
+                            <div class="airbnb-button-title">Request Now</div>
+                            <div class="airbnb-button-subtitle">Available immediately</div>
+                          </div>
+                        </div>
                       </button>
-                      <button type="button" id="book-later-button" class="booking-time-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#1e3a8a" class="w-6 h-6">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 2 00-2-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <span class="text-lg font-bold">Book for Later</span>
+                      
+                      <button type="button" id="book-later-button" class="airbnb-booking-button airbnb-booking-button-right">
+                        <div class="airbnb-button-content">
+                          <div class="airbnb-button-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 00-2-2V7a2 2 0 00-2-2H5a2 2 0 002 2z" />
+                            </svg>
+                          </div>
+                          <div class="airbnb-button-text">
+                            <div class="airbnb-button-title">Book for Later</div>
+                            <div class="airbnb-button-subtitle">Schedule your trip</div>
+                          </div>
+                        </div>
                       </button>
                     </div>
                   </div>
@@ -576,8 +753,7 @@
             </div>
           </div>
         </div>
-      </div>
-    </main>    
+      </div>    </main>    
 <!-- COMMENT OUT OR REMOVE this debug section before pushing to production -->
 <!--
 <div style="position: fixed; top: 10px; right: 10px; background: white; padding: 10px; border: 1px solid #ccc; z-index: 9999;">
@@ -600,6 +776,79 @@
   </button>
 </div>
 -->
+
+<!-- Script for Airbnb-style booking button functionality -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const requestNowButton = document.getElementById('request-now-button');
+    const bookLaterButton = document.getElementById('book-later-button');
+
+    function setActiveButton(activeButton, inactiveButton) {
+      // Remove active class from both buttons
+      requestNowButton.classList.remove('active');
+      bookLaterButton.classList.remove('active');
+      
+      // Add active class to selected button
+      activeButton.classList.add('active');
+      
+      // Preserve existing functionality - this maintains compatibility with the event system
+      if (activeButton === requestNowButton) {
+        // When "Request Now" is clicked
+        if (window.formState && window.formState.oneway) {
+          window.formState.oneway.bookingTime = true;
+        }
+        
+        const bookingPrefInput = document.getElementById('booking-preference');
+        if (bookingPrefInput) bookingPrefInput.value = 'now';
+        
+        const scheduledInputs = document.getElementById('scheduled-booking-inputs');
+        if (scheduledInputs) scheduledInputs.classList.add('hidden');
+        
+        // Emit event if event bus is available
+        if (window.eventBus) {
+          window.eventBus.emit('form:booking-preference-changed', { preference: 'now', tab: 'oneway' });
+        }
+        
+        console.log('📅 Request Now selected');
+      } else {
+        // When "Book for Later" is clicked
+        if (window.formState && window.formState.oneway) {
+          window.formState.oneway.bookingTime = false;
+        }
+        
+        const bookingPrefInput = document.getElementById('booking-preference');
+        if (bookingPrefInput) bookingPrefInput.value = 'later';
+        
+        const scheduledInputs = document.getElementById('scheduled-booking-inputs');
+        if (scheduledInputs) scheduledInputs.classList.remove('hidden');
+        
+        // Emit event if event bus is available
+        if (window.eventBus) {
+          window.eventBus.emit('form:booking-preference-changed', { preference: 'later', tab: 'oneway' });
+        }
+        
+        console.log('📅 Book for Later selected');
+      }
+      
+      // Check form validity if the function exists
+      if (typeof checkFormValidity === 'function') {
+        checkFormValidity();
+      }
+    }
+
+    requestNowButton.addEventListener('click', function() {
+      setActiveButton(requestNowButton, bookLaterButton);
+    });
+
+    bookLaterButton.addEventListener('click', function() {
+      setActiveButton(bookLaterButton, requestNowButton);
+    });
+
+    // Set default state (preserve existing default)
+    // By default, we activate the "Request Now" button
+    requestNowButton.click();
+  });
+</script>
   <!-- Enhanced Debug Controls (only visible in development) -->
 <div id="debug-controls" class="dev-only" style="position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.9); color: white; padding: 15px; border-radius: 8px; z-index: 9998; font-family: monospace; font-size: 12px; max-width: 300px; display: none;">
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
