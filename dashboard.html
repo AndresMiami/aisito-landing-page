@@ -60,6 +60,11 @@
         transition: box-shadow 0.2s ease;
         margin-bottom: 20px;
       }
+      
+      /* Fix for time picker cut-off issue */
+      .booking-form-card {
+        overflow: visible !important;
+      }
 
       .airbnb-booking-container:hover {
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.1);
@@ -205,11 +210,294 @@
 
         .airbnb-button-title {
           font-size: 13px !important;
-        }
-
-        .airbnb-button-subtitle {
+        }        .airbnb-button-subtitle {
           font-size: 11px !important;
         }
+      }
+      
+      /* Enhanced Date/Time Input Styling - Airbnb Aligned */
+      #scheduled-booking-inputs {
+          background: white;
+          border-radius: 16px;
+          padding: 20px;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
+          border: 1px solid #dddddd;
+          transition: box-shadow 0.2s ease;
+          margin-top: 16px;
+          position: relative;
+          overflow: visible !important; /* Fix for time picker cut-off */
+      }
+
+      #scheduled-booking-inputs:hover {
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Enhanced input field styling */
+      #pickup-date-oneway,
+      #pickup-time-oneway {
+          border: 1px solid #dddddd !important;
+          border-radius: 12px !important;
+          padding: 14px 16px !important;
+          font-size: 14px !important;
+          font-weight: 400;
+          color: #222222 !important;
+          background: white !important;
+          transition: all 0.2s ease !important;
+          box-shadow: none !important;
+          min-height: 48px;
+      }
+
+      #pickup-date-oneway:focus,
+      #pickup-time-oneway:focus {
+          border-color: #222222 !important;
+          box-shadow: 0 0 0 1px #222222 !important;
+          outline: none !important;
+          background: #fafafa !important;
+      }
+
+      #pickup-date-oneway:hover,
+      #pickup-time-oneway:hover {
+          border-color: #717171 !important;
+          background: #fafafa !important;
+      }
+
+      /* Label styling to match Airbnb aesthetic */
+      label[for="pickup-date-oneway"],
+      label[for="pickup-time-oneway"] {
+          font-size: 12px !important;
+          font-weight: 600 !important;
+          color: #222222 !important;
+          margin-bottom: 8px !important;
+          display: block;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+      }
+
+      /* Grid container enhancement */
+      #scheduled-booking-inputs .grid {
+          gap: 16px;
+      }      /* Placeholder styling */
+      #pickup-date-oneway::placeholder,
+      #pickup-time-oneway::placeholder {
+          color: #717171 !important;
+          font-weight: 400;
+      }
+
+      /* Custom Flatpickr Theme - Airbnb Style */
+      .flatpickr-calendar {
+          border-radius: 12px !important;
+          border: 1px solid #dddddd !important;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+          z-index: 9999 !important; /* Fix for time picker cut-off */
+      }
+
+      .flatpickr-calendar.open {
+          animation: flatpickrFadeIn 0.2s ease !important;
+      }
+
+      @keyframes flatpickrFadeIn {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+      }
+
+      .flatpickr-months {
+          background: white !important;
+          border-radius: 12px 12px 0 0 !important;
+          padding: 16px !important;
+      }
+
+      .flatpickr-month {
+          color: #222222 !important;
+          font-weight: 600 !important;
+      }
+
+      .flatpickr-prev-month,
+      .flatpickr-next-month {
+          width: 32px !important;
+          height: 32px !important;
+          border-radius: 50% !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          transition: background-color 0.2s ease !important;
+      }
+
+      .flatpickr-prev-month:hover,
+      .flatpickr-next-month:hover {
+          background-color: #f7f7f7 !important;
+      }
+
+      .flatpickr-weekdays {
+          background: white !important;
+          padding: 0 16px !important;
+      }
+
+      .flatpickr-weekday {
+          color: #717171 !important;
+          font-weight: 600 !important;
+          font-size: 12px !important;
+      }
+
+      .flatpickr-days {
+          padding: 0 16px 16px 16px !important;
+      }
+
+      .flatpickr-day {
+          border-radius: 50% !important;
+          border: none !important;
+          color: #222222 !important;
+          font-weight: 400 !important;
+          transition: all 0.2s ease !important;
+          width: 36px !important;
+          height: 36px !important;
+          line-height: 36px !important;
+      }
+
+      .flatpickr-day:hover {
+          background: #f7f7f7 !important;
+          border-color: transparent !important;
+      }
+
+      .flatpickr-day.selected {
+          background: #222222 !important;
+          color: white !important;
+          border-color: #222222 !important;
+      }
+
+      .flatpickr-day.today {
+          border: 2px solid #FF385C !important;
+          color: #FF385C !important;
+          font-weight: 600 !important;
+      }
+
+      .flatpickr-day.today.selected {
+          background: #FF385C !important;
+          color: white !important;
+          border-color: #FF385C !important;
+      }
+
+      /* Time picker styling */
+      .flatpickr-time {
+          border-top: 1px solid #eeeeee !important;
+          padding: 16px !important;
+          background: white !important;
+          border-radius: 0 0 12px 12px !important;
+      }
+
+      .flatpickr-time input {
+          border: 1px solid #dddddd !important;
+          border-radius: 8px !important;
+          padding: 8px 12px !important;
+          font-size: 14px !important;
+          color: #222222 !important;
+          background: white !important;
+      }
+
+      .flatpickr-time input:focus {
+          border-color: #222222 !important;
+          box-shadow: 0 0 0 1px #222222 !important;
+          outline: none !important;
+      }      .flatpickr-time .flatpickr-time-separator {
+          color: #222222 !important;
+          font-weight: 600 !important;
+      }
+      
+      /* Mobile Responsive Enhancements */
+      @media (max-width: 640px) {
+          #scheduled-booking-inputs {
+              padding: 16px;
+              border-radius: 12px;
+              margin-top: 12px;
+          }
+          
+          #scheduled-booking-inputs .grid {
+              grid-template-columns: 1fr;
+              gap: 12px;
+          }
+          
+          #pickup-date-oneway,
+          #pickup-time-oneway {
+              padding: 12px 14px !important;
+              font-size: 16px !important; /* Prevents zoom on iOS */
+              min-height: 44px;
+          }
+          
+          label[for="pickup-date-oneway"],
+          label[for="pickup-time-oneway"] {
+              font-size: 11px !important;
+              margin-bottom: 6px !important;
+          }
+          
+          /* Mobile Flatpickr adjustments */
+          .flatpickr-calendar {
+              width: 90vw !important;
+              max-width: 320px !important;
+          }
+            .flatpickr-day {
+              width: 32px !important;
+              height: 32px !important;
+              line-height: 32px !important;
+              font-size: 13px !important;
+          }
+      }
+      
+      /* Visual Feedback Enhancements */
+      #scheduled-booking-inputs {
+          position: relative;
+          overflow: visible !important; /* Fix for time picker cut-off */
+      }
+      
+      #scheduled-booking-inputs::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+          transition: left 0.5s ease;
+          pointer-events: none;
+      }
+      
+      #scheduled-booking-inputs:hover::before {
+          left: 100%;
+      }
+      
+      /* Input focus animation */
+      #pickup-date-oneway,
+      #pickup-time-oneway {
+          position: relative;
+      }
+      
+      #pickup-date-oneway:focus,
+      #pickup-time-oneway:focus {
+          transform: translateY(-1px);
+          box-shadow: 0 0 0 1px #222222, 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+      }
+      
+      /* Success state styling */
+      #pickup-date-oneway.filled,
+      #pickup-time-oneway.filled {
+          border-color: #10b981 !important;
+          background: #f0fdf4 !important;
+      }
+      
+      #pickup-date-oneway.filled:focus,
+      #pickup-time-oneway.filled:focus {
+          border-color: #10b981 !important;
+          box-shadow: 0 0 0 1px #10b981 !important;
+      }
+      
+      /* Icon styling for inputs */
+      .input-icon {
+          position: absolute;
+          right: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #717171;
+          pointer-events: none;
+          font-size: 16px;
       }
     </style>
     <!-- Google Maps -->
@@ -842,12 +1130,115 @@
 
     bookLaterButton.addEventListener('click', function() {
       setActiveButton(bookLaterButton, requestNowButton);
-    });
-
-    // Set default state (preserve existing default)
+    });    // Set default state (preserve existing default)
     // By default, we activate the "Request Now" button
     requestNowButton.click();
   });
+</script>
+
+<!-- Script for Date/Time Input Visual Feedback Enhancements -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add icons to the date and time inputs
+    const dateInput = document.getElementById('pickup-date-oneway');
+    const timeInput = document.getElementById('pickup-time-oneway');
+    
+    if (dateInput) {
+      const dateIconContainer = document.createElement('span');
+      dateIconContainer.className = 'input-icon';
+    if (timeInput) {
+      const timeIconContainer = document.createElement('span');
+      timeIconContainer.className = 'input-icon';
+      timeIconContainer.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/></svg>';
+      timeInput.parentNode.style.position = 'relative';
+      timeInput.parentNode.appendChild(timeIconContainer);
+    }
+    
+    // Add shimmer effect to the scheduled booking container on first display
+    const bookLaterButton = document.getElementById('book-later-button');
+    if (bookLaterButton) {
+      bookLaterButton.addEventListener('click', function() {
+        const scheduledInputs = document.getElementById('scheduled-booking-inputs');
+        if (scheduledInputs && scheduledInputs.classList.contains('hidden')) {
+          setTimeout(() => {
+            scheduledInputs.classList.remove('hidden');
+            // Trigger the shimmer animation after a small delay
+            setTimeout(() => {
+              if (scheduledInputs.offsetWidth) { // Force reflow
+                scheduledInputs.style.transition = 'box-shadow 0.3s ease';
+                scheduledInputs.style.boxShadow = '0 0 0 2px rgba(34, 34, 34, 0.2)';
+                setTimeout(() => {
+                  scheduledInputs.style.boxShadow = '';
+                }, 800);
+              }
+            }, 100);
+          }, 10);
+        }
+      });
+    }
+  });
+</script>
+
+<!-- Enhanced Date/Time Input Behavior -->
+<script>
+// Enhanced Date/Time Input Behavior
+document.addEventListener('DOMContentLoaded', function() {
+    const dateInput = document.getElementById('pickup-date-oneway');
+    const timeInput = document.getElementById('pickup-time-oneway');
+    
+    // Add filled class when inputs have values
+    function updateInputState(input) {
+        if (input && input.value.trim() !== '') {
+            input.classList.add('filled');
+        } else if (input) {
+            input.classList.remove('filled');
+        }
+    }
+    
+    // Monitor input changes
+    if (dateInput) {
+        dateInput.addEventListener('change', () => updateInputState(dateInput));
+        dateInput.addEventListener('input', () => updateInputState(dateInput));
+        // Check initial state
+        updateInputState(dateInput);
+    }
+    
+    if (timeInput) {
+        timeInput.addEventListener('change', () => updateInputState(timeInput));
+        timeInput.addEventListener('input', () => updateInputState(timeInput));
+        // Check initial state
+        updateInputState(timeInput);
+    }
+    
+    // Enhanced Flatpickr configuration
+    if (dateInput && typeof flatpickr !== 'undefined') {
+        flatpickr(dateInput, {
+            dateFormat: "M j, Y",
+            minDate: "today",
+            theme: "airbnb",
+            animate: true,
+            onChange: function(selectedDates, dateStr, instance) {
+                updateInputState(dateInput);
+                console.log('Date selected:', dateStr);
+            }
+        });
+    }
+    
+    if (timeInput && typeof flatpickr !== 'undefined') {
+        flatpickr(timeInput, {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "h:i K",
+            time_24hr: false,
+            minuteIncrement: 15,
+            theme: "airbnb",
+            onChange: function(selectedDates, timeStr, instance) {
+                updateInputState(timeInput);
+                console.log('Time selected:', timeStr);
+            }
+        });
+    }
+});
 </script>
   <!-- Enhanced Debug Controls (only visible in development) -->
 <div id="debug-controls" class="dev-only" style="position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.9); color: white; padding: 15px; border-radius: 8px; z-index: 9998; font-family: monospace; font-size: 12px; max-width: 300px; display: none;">
@@ -921,7 +1312,7 @@
   <div class="badge-content">
     <svg class="badge-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-      <path d="M12 7L7 10V14L12 17L17 14V10L12 7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M12 7L7 10V14L12 17L17 14L12 7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
       <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
     </svg>
     <span class="badge-text">Event-Driven Architecture</span>
