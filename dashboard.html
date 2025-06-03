@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Booking - I ❤️ Miami Concierge</title>
-    <link rel="stylesheet" href="css/main.css">
+    <title>Booking - I ❤️ Miami Concierge</title>    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/fix-place-autocomplete.css">
     <!-- Development/Production Environment Styles -->
     <style>
       /* Hide dev-only elements by default (for production) */
@@ -101,452 +101,309 @@
       .airbnb-booking-button-right.active {
         border-radius: 0 32px 32px 0;
       }
-
-      /* Left button specific styling */
-      .airbnb-booking-button-left {
-        border-right: 1px solid #dddddd;
+      
+      /* Experience Search Bar Styles */
+      .experience-search-container { margin: 20px 0; width: 100%; }
+      .experience-search-bar { background: white; border-radius: 32px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12); display: flex; align-items: center; border: 1px solid #dddddd; overflow: hidden; transition: all 0.3s ease; width: 100%; position: relative; }
+      .experience-search-bar:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }      .experience-search-bar .search-section { flex: 1; padding: 12px 20px; display: flex; flex-direction: column; justify-content: center; cursor: pointer; transition: background-color 0.2s ease; border-right: 1px solid #dddddd; min-height: 56px; position: relative; }
+      .experience-search-bar .search-section:first-child { background-color: #f7f7f7; border-radius: 32px 0 0 32px; flex: 1.2; }
+      .experience-search-bar .search-section:nth-child(2) { flex: 1; background-color: white; }
+      .experience-search-bar .search-section:nth-child(3) { background-color: #f7f7f7; border-right: none; border-radius: 0 32px 32px 0; padding-right: 12px; }
+      .experience-search-bar .search-section:hover { background-color: #ebebeb; z-index: 1; }
+      .experience-search-bar .search-section.selected { background-color: #f7f7f7; box-shadow: inset 0 0 0 2px #222222; z-index: 2; }
+      .experience-search-bar .search-label { font-size: 11px; font-weight: 600; color: #222222; margin-bottom: 2px; line-height: 1.2; }
+      .experience-search-bar .search-value { font-size: 13px; font-weight: 400; color: #717171; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
+      .experience-search-bar .search-value.has-value { color: #222222; font-weight: 500; }
+      .experience-search-bar .search-button { background: linear-gradient(135deg, #FF385C 0%, #E61E4D 100%); border: none; border-radius: 50%; width: 40px; height: 40px; margin: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; box-shadow: 0 2px 6px rgba(255, 56, 92, 0.3); position: relative; z-index: 3; }      .experience-search-bar .search-button:hover { transform: scale(1.04); box-shadow: 0 3px 10px rgba(255, 56, 92, 0.4); }
+      .experience-search-bar .search-button svg { width: 14px; height: 14px; color: white; }      /* Specific styles for the booking timing bar */
+      .booking-timing-bar .search-section:first-child { flex: 1.8; }
+      .booking-timing-bar .search-section:nth-child(2) { flex: 1; }
+      .booking-timing-bar .search-value { font-size: 14px; }
+      .booking-timing-bar #requestNowValue { font-weight: 500; }      /* Modal Background Overlay */
+      .experience-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 100;
+        transition: opacity 0.3s ease;
+        opacity: 0;
+      }
+      .experience-modal-overlay.visible {
+        display: block;
+        opacity: 1;
       }
 
-      /* Button content layout */
-      .airbnb-button-content {
+      /* Modal Container Styles */
+      .experience-modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.95);
+        background-color: white;
+        border-radius: 16px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        z-index: 101;
+        width: 90%;
+        max-width: 550px;
+        max-height: 80vh;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        opacity: 0;
+      }
+      .experience-modal.visible {
+        display: block;
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      
+      /* Modal Header */
+      .experience-modal-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid #dddddd;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .experience-modal-header h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+      }
+      .experience-modal-close {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #717171;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
         display: flex;
         align-items: center;
-        gap: 10px !important;
+        justify-content: center;
+        transition: background-color 0.2s;
+      }
+      .experience-modal-close:hover {
+        background-color: #f7f7f7;
+      }
+      
+      /* Modal Content */
+      .experience-modal-content {
+        padding: 20px;
+        max-height: calc(80vh - 70px);
+        overflow-y: auto;
+      }
+      
+      /* Location Search Styles */
+      .location-search-input {
         width: 100%;
-        justify-content: flex-start;
-      }
-
-      /* Icon styling */
-      .airbnb-button-icon {
-        color: #222222;
-        flex-shrink: 0;
-      }
-
-      .airbnb-button-icon .w-5 {
-        width: 1rem !important;
-        height: 1rem !important;
-      }
-
-      .airbnb-button-icon .h-5 {
-        width: 1rem !important;
-        height: 1rem !important;
-      }
-
-      /* Text content */
-      .airbnb-button-text {
-        text-align: left;
-        flex: 1;
-      }
-
-      .airbnb-button-title {
-        font-size: 14px !important;
-        font-weight: 600;
-        color: #222222;
-        line-height: 1.25;
-        margin-bottom: 2px;
-      }
-
-      .airbnb-button-subtitle {
-        font-size: 12px !important;
-        color: #717171;
-        line-height: 1.25;
-      }
-
-      /* Active state styling */
-      .airbnb-booking-button.active .airbnb-button-title {
-        color: #222222;
-      }
-
-      .airbnb-booking-button.active .airbnb-button-subtitle {
-        color: #222222;
-      }
-
-      .airbnb-booking-button.active .airbnb-button-icon {
-        color: #222222;
-      }
-
-      /* Focus states for accessibility */
-      .airbnb-booking-button:focus {
+        padding: 12px 16px;
+        font-size: 16px;
+        border: 1px solid #dddddd;
+        border-radius: 8px;
+        margin-bottom: 16px;
         outline: none;
-        box-shadow: inset 0 0 0 2px #222222;
       }
-
-      /* Mobile responsive adjustments */
-      @media (max-width: 640px) {
-        .airbnb-booking-container {
-          flex-direction: column;
-          border-radius: 16px;
-        }
-
-        .airbnb-booking-button-left {
-          border-right: none;
-          border-bottom: 1px solid #dddddd;
-        }
-
-        /* Mobile active state border radius */
-        .airbnb-booking-button-left.active {
-          border-radius: 16px 16px 0 0;
-        }
-
-        .airbnb-booking-button-right.active {
-          border-radius: 0 0 16px 16px;
-        }
-
-        .airbnb-button-content {
-          justify-content: center;
-          text-align: center;
-        }
-
-        .airbnb-button-text {
-          text-align: center;
-        }
-
-        .airbnb-booking-button {
-          min-height: 50px !important;
-          padding: 10px 12px !important;
-        }
-
-        .airbnb-button-title {
-          font-size: 13px !important;
-        }        .airbnb-button-subtitle {
-          font-size: 11px !important;
-        }
+      .location-search-input:focus {
+        border-color: #222222;
+        box-shadow: 0 0 0 1px #222222;
       }
       
-      /* Enhanced Date/Time Input Styling - Airbnb Aligned */
-      #scheduled-booking-inputs {
-          background: white;
-          border-radius: 16px;
-          padding: 20px;
-          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);          border: 1px solid #dddddd;
-          transition: box-shadow 0.2s ease;
-          margin-top: 16px;
-          position: relative;
+      .location-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
       }
-
-      #scheduled-booking-inputs:hover {
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.1);
+      .location-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: background-color 0.2s;
       }
-
-      /* Enhanced input field styling */
-      #pickup-date-oneway,
-      #pickup-time-oneway {
-          border: 1px solid #dddddd !important;
-          border-radius: 12px !important;
-          padding: 14px 16px !important;
-          font-size: 14px !important;
-          font-weight: 400;
-          color: #222222 !important;
-          background: white !important;
-          transition: all 0.2s ease !important;
-          box-shadow: none !important;
-          min-height: 48px;
+      .location-item:hover {
+        background-color: #f7f7f7;
       }
-
-      /* Custom styles for time dropdown select */
-      select#pickup-time-oneway {
-          border: 1px solid #dddddd !important;
-          border-radius: 12px !important;
-          padding: 14px 16px !important;
-          font-size: 14px !important;
-          font-weight: 400;
-          color: #222222 !important;
-          background: white !important;
-          transition: all 0.2s ease !important;
-          box-shadow: none !important;
-          min-height: 48px;
-          appearance: auto; /* Show the dropdown arrow */
+      .location-icon {
+        margin-right: 16px;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f7f7f7;
+        color: #717171;
       }
-
-      #pickup-date-oneway:focus,
-      #pickup-time-oneway:focus {
-          border-color: #222222 !important;
-          box-shadow: 0 0 0 1px #222222 !important;
-          outline: none !important;
-          background: #fafafa !important;
+      .location-details h4 {
+        margin: 0 0 4px 0;
+        font-size: 14px;
+        font-weight: 600;
       }
-
-      /* Style for the dropdown when it's filled */
-      select#pickup-time-oneway.filled {
-          border-color: #10b981 !important;
-          background: #f0fdf4 !important;
-      }
-
-      select#pickup-time-oneway option {
-          padding: 8px;
-          font-size: 14px;
-      }
-
-      #pickup-date-oneway:hover,
-      #pickup-time-oneway:hover {
-          border-color: #717171 !important;
-          background: #fafafa !important;
-      }
-
-      /* Label styling to match Airbnb aesthetic */
-      label[for="pickup-date-oneway"],
-      label[for="pickup-time-oneway"] {
-          font-size: 12px !important;
-          font-weight: 600 !important;
-          color: #222222 !important;
-          margin-bottom: 8px !important;
-          display: block;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-      }
-
-      /* Grid container enhancement */
-      #scheduled-booking-inputs .grid {
-          gap: 16px;
-      }      /* Placeholder styling */
-      #pickup-date-oneway::placeholder,
-      #pickup-time-oneway::placeholder {
-          color: #717171 !important;
-          font-weight: 400;
-      }
-
-      /* Custom Flatpickr Theme - Airbnb Style */
-      .flatpickr-calendar {
-          border-radius: 12px !important;
-          border: 1px solid #dddddd !important;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-          z-index: 9999 !important; /* Fix for time picker cut-off */
-      }
-
-      .flatpickr-calendar.open {
-          animation: flatpickrFadeIn 0.2s ease !important;
-      }
-
-      @keyframes flatpickrFadeIn {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
-      }
-
-      .flatpickr-months {
-          background: white !important;
-          border-radius: 12px 12px 0 0 !important;
-          padding: 16px !important;
-      }
-
-      .flatpickr-month {
-          color: #222222 !important;
-          font-weight: 600 !important;
-      }
-
-      .flatpickr-prev-month,
-      .flatpickr-next-month {
-          width: 32px !important;
-          height: 32px !important;
-          border-radius: 50% !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          transition: background-color 0.2s ease !important;
-      }
-
-      .flatpickr-prev-month:hover,
-      .flatpickr-next-month:hover {
-          background-color: #f7f7f7 !important;
-      }
-
-      .flatpickr-weekdays {
-          background: white !important;
-          padding: 0 16px !important;
-      }
-
-      .flatpickr-weekday {
-          color: #717171 !important;
-          font-weight: 600 !important;
-          font-size: 12px !important;
-      }
-
-      .flatpickr-days {
-          padding: 0 16px 16px 16px !important;
-      }
-
-      .flatpickr-day {
-          border-radius: 50% !important;
-          border: none !important;
-          color: #222222 !important;
-          font-weight: 400 !important;
-          transition: all 0.2s ease !important;
-          width: 36px !important;
-          height: 36px !important;
-          line-height: 36px !important;
-      }
-
-      .flatpickr-day:hover {
-          background: #f7f7f7 !important;
-          border-color: transparent !important;
-      }
-
-      .flatpickr-day.selected {
-          background: #222222 !important;
-          color: white !important;
-          border-color: #222222 !important;
-      }
-
-      .flatpickr-day.today {
-          border: 2px solid #FF385C !important;
-          color: #FF385C !important;
-          font-weight: 600 !important;
-      }
-
-      .flatpickr-day.today.selected {
-          background: #FF385C !important;
-          color: white !important;
-          border-color: #FF385C !important;
-      }
-
-      /* Time picker styling */
-      .flatpickr-time {
-          border-top: 1px solid #eeeeee !important;
-          padding: 16px !important;
-          background: white !important;
-          border-radius: 0 0 12px 12px !important;
-      }
-
-      .flatpickr-time input {
-          border: 1px solid #dddddd !important;
-          border-radius: 8px !important;
-          padding: 8px 12px !important;
-          font-size: 14px !important;
-          color: #222222 !important;
-          background: white !important;
-      }
-
-      .flatpickr-time input:focus {
-          border-color: #222222 !important;
-          box-shadow: 0 0 0 1px #222222 !important;
-          outline: none !important;      }      .flatpickr-time .flatpickr-time-separator {
-          color: #222222 !important;
-          font-weight: 600 !important;
-      }      /* Custom styles for time dropdown select */
-      select#pickup-time-oneway {
-          border: 1px solid #dddddd !important;
-          border-radius: 12px !important;
-          padding: 14px 16px !important;
-          font-size: 14px !important;
-          font-weight: 400;
-          color: #222222 !important;
-          background: white !important;
-          transition: all 0.2s ease !important;
-          box-shadow: none !important;
-          min-height: 48px;
-          appearance: auto; /* Show the dropdown arrow */      }
-      
-      /* Time dropdown options styling */
-      select#pickup-time-oneway option {
-          padding: 8px;
-          font-size: 14px;
-      }
-
-      select#pickup-time-oneway:focus {
-          border-color: #222222 !important;
-          box-shadow: 0 0 0 1px #222222 !important;
-          outline: none !important;
-          background: #fafafa !important;
-      }
-
-      /* Style for the dropdown when it's filled */
-      select#pickup-time-oneway.filled {
-          border-color: #10b981 !important;
-          background: #f0fdf4 !important;
+      .location-details p {
+        margin: 0;
+        font-size: 12px;
+        color: #717171;
       }
       
-      /* Mobile Responsive Enhancements */
-      @media (max-width: 640px) {
-          #scheduled-booking-inputs {
-              padding: 16px;
-              border-radius: 12px;
-              margin-top: 12px;
-          }
+      /* Date Picker Styles */
+      .date-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .date-option {
+        flex: 1 0 calc(33.33% - 10px);
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #dddddd;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .date-option:hover {
+        border-color: #222222;
+      }
+      .date-option.selected {
+        background-color: #f7f7f7;
+        border-color: #222222;
+      }
+      .date-option h4 {
+        margin: 0 0 4px 0;
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .date-option p {
+        margin: 0;
+        font-size: 12px;
+        color: #717171;
+      }
+      
+      .calendar-container {
+        margin-top: 20px;
+        max-width: 100%;
+        overflow-x: auto;
+      }
+      
+      /* Guest Selector Styles */
+      .guest-category {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 0;
+        border-bottom: 1px solid #dddddd;
+      }
+      .guest-category:last-child {
+        border-bottom: none;
+      }
+      .guest-info h4 {
+        margin: 0 0 4px 0;
+        font-size: 16px;
+        font-weight: 500;
+      }
+      .guest-info p {
+        margin: 0;
+        font-size: 14px;
+        color: #717171;
+      }
+      .guest-count {
+        display: flex;
+        align-items: center;
+      }
+      .guest-button {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1px solid #dddddd;
+        background: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .guest-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .guest-button:hover:not(:disabled) {
+        border-color: #222222;
+      }
+      .guest-count-value {
+        margin: 0 16px;
+        width: 20px;
+        text-align: center;
+        font-size: 16px;
+      }
+      
+      /* Modal Footer */
+      .experience-modal-footer {
+        padding: 16px 20px;
+        border-top: 1px solid #dddddd;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        background-color: white;
+      }
+      .modal-clear-btn {
+        background: none;
+        border: none;
+        padding: 10px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: underline;
+        color: #222222;
+      }
+      .modal-save-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #FF385C 0%, #E61E4D 100%);
+        color: white;
+        cursor: pointer;
+        margin-left: 10px;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .modal-save-btn:hover {
+        transform: scale(1.02);
+        box-shadow: 0 2px 8px rgba(230, 30, 77, 0.3);
+      }
+
+      @media (max-width: 768px) {
+          .experience-search-bar { flex-direction: column; border-radius: 16px; }
+          .experience-search-bar .search-section { border-right: none; border-bottom: 1px solid #dddddd; padding: 14px 18px; min-height: 50px; background-color: white !important; border-radius: 0 !important; }
+          .experience-search-bar .search-section:first-child { border-radius: 16px 16px 0 0 !important; }
+          .experience-search-bar .search-section:nth-child(3) { border-bottom: none; border-radius: 0 0 16px 16px !important; }
+          .experience-search-bar .search-section:hover { border-radius: 0 !important; background-color: #f7f7f7 !important; }
+          .experience-search-bar .search-button { margin: 10px; width: 36px; height: 36px; align-self: center; }
+          .experience-search-bar .search-button svg { width: 12px; height: 12px; }
           
-          #scheduled-booking-inputs .grid {
-              grid-template-columns: 1fr;
-              gap: 12px;
+          .experience-modal {
+            width: 100%;
+            max-width: none;
+            top: auto;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            transform: translateY(100%);
+            border-radius: 16px 16px 0 0;
+            max-height: 95vh;
           }
-          
-          #pickup-date-oneway,
-          #pickup-time-oneway {
-              padding: 12px 14px !important;
-              font-size: 16px !important; /* Prevents zoom on iOS */
-              min-height: 44px;
+          .experience-modal.visible {
+            transform: translateY(0);
           }
-          
-          label[for="pickup-date-oneway"],
-          label[for="pickup-time-oneway"] {
-              font-size: 11px !important;
-              margin-bottom: 6px !important;
+          .date-option {
+            flex: 1 0 calc(50% - 10px);
           }
-          
-          /* Mobile Flatpickr adjustments */
-          .flatpickr-calendar {
-              width: 90vw !important;
-              max-width: 320px !important;
-          }
-            .flatpickr-day {
-              width: 32px !important;
-              height: 32px !important;
-              line-height: 32px !important;
-              font-size: 13px !important;
-          }
-      }      /* Visual Feedback Enhancements */
-      #scheduled-booking-inputs {
-          position: relative;
-      }
-      
-      #scheduled-booking-inputs::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-          transition: left 0.5s ease;
-          pointer-events: none;
-      }
-      
-      #scheduled-booking-inputs:hover::before {
-          left: 100%;
-      }
-      
-      /* Input focus animation */
-      #pickup-date-oneway,
-      #pickup-time-oneway {
-          position: relative;
-      }
-      
-      #pickup-date-oneway:focus,
-      #pickup-time-oneway:focus {
-          transform: translateY(-1px);
-          box-shadow: 0 0 0 1px #222222, 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-      }
-      
-      /* Success state styling */
-      #pickup-date-oneway.filled,
-      #pickup-time-oneway.filled {
-          border-color: #10b981 !important;
-          background: #f0fdf4 !important;
-      }
-      
-      #pickup-date-oneway.filled:focus,
-      #pickup-time-oneway.filled:focus {
-          border-color: #10b981 !important;
-          box-shadow: 0 0 0 1px #10b981 !important;
-      }
-      
-      /* Icon styling for inputs */
-      .input-icon {
-          position: absolute;
-          right: 12px;
-          top: 50%;
-          transform: translateY(-50%);
-          color: #717171;
-          pointer-events: none;
-          font-size: 16px;
       }
     </style>
     <!-- Google Maps -->
@@ -574,6 +431,7 @@
 <!-- Application logic after components are registered -->
 <script type="module" src="./dashboard.js"></script>
 <script type="module" src="./simple-bridge.js"></script>
+<script src="./js/booking-timing-bar.js"></script>
 
 <!-- IMPORTANT: Delete this duplicate script loading section at the bottom of your HTML file -->
 <!-- DELETE THIS SECTION
@@ -584,6 +442,9 @@
 <script type="module" src="./dashboard-components.js"></script>
 <script type="module" src="./dashboard.js"></script>
 -->
+
+<!-- Booking Timing Bar Component Script -->
+<script src="./js/booking-timing-bar.js"></script>
   
   </head>
   <body class="bg-gray-100" style="background-image: url('images/miami-skyline-abstract-form.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
@@ -799,39 +660,25 @@
                       </gmp-place-autocomplete>
                       <span id="to-address-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                     </div>
-                  </div>
-
-                  <div id="date-time-container-oneway" class="relative">
+                  </div>                  <div id="date-time-container-oneway" class="relative">
                     <input type="hidden" name="booking_preference" id="booking-preference" value="">
-                      <div class="airbnb-booking-container">
-                      <button type="button" id="request-now-button" class="airbnb-booking-button airbnb-booking-button-left">
-                        <div class="airbnb-button-content">
-                          <div class="airbnb-button-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                      <div class="booking-timing-container">
+                        <div class="experience-search-bar booking-timing-bar" id="bookingTimingContainer">
+                          <div class="search-section" id="requestNowSection">
+                              <div class="search-label">When</div>
+                              <div class="search-value" id="requestNowValue">Request Now</div>
                           </div>
-                          <div class="airbnb-button-text">
-                            <div class="airbnb-button-title">Request Now</div>
-                            <div class="airbnb-button-subtitle">Available immediately</div>
+                          <div class="search-section" id="bookLaterSection">
+                              <div class="search-label">Schedule</div>
+                              <div class="search-value" id="bookLaterValue">Book for Later</div>
                           </div>
+                          <button class="search-button" id="confirmTimingButton">
+                              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                              </svg>
+                          </button>
                         </div>
-                      </button>
-                      
-                      <button type="button" id="book-later-button" class="airbnb-booking-button airbnb-booking-button-right">
-                        <div class="airbnb-button-content">
-                          <div class="airbnb-button-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 00-2-2V7a2 2 0 00-2-2H5a2 2 0 002 2z" />
-                            </svg>
-                          </div>
-                          <div class="airbnb-button-text">
-                            <div class="airbnb-button-title">Book for Later</div>
-                            <div class="airbnb-button-subtitle">Schedule your trip</div>
-                          </div>
-                        </div>
-                      </button>
-                    </div>
+                      </div>
                   </div>
                   <span id="booking-time-error" class="mt-1 block text-xs text-red-600 hidden"></span>
 
@@ -989,119 +836,34 @@
                             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                           </svg>
                         </span>
-                        <gmp-place-autocomplete id="from-location-exp" placeholder="Enter starting location..."></gmp-place-autocomplete>
+                        <gmp-place-autocomplete id="from-location-exp" placeholder="Enter starting location..." style="max-width: 100%; width: 100%; height: auto;"></gmp-place-autocomplete>
                       </div>
                       <span id="from-location-exp-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                     </div>
-                  </div>
-
-                  <!-- Experience dropdown and other experience+ fields -->
-                  <div id="experience-dropdown-container" class="relative">
-  <label for="experience-dropdown" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Select Service</label>
-  <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27Z"></path></svg></span>
-  <select name="experience-dropdown" id="experience-dropdown" required aria-describedby="experience-dropdown-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6">
-    <option value="">-- Choose Service --</option>
-    <!-- HOURLY_CHAUFFEUR_CODE_START - EXTRACT TO SEPARATE PAGE 
-    <option value="hourly_chauffeur">Hourly Chauffeur</option>
-    HOURLY_CHAUFFEUR_CODE_END -->
-    <option value="water_sky">Yacht & boat</option>
-  </select>
-  <span id="experience-dropdown-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-</div>
-                  <div id="hourly-description" class="hidden text-sm text-gray-600 bg-gray-50 p-3 rounded-md border border-gray-200">
-                    Ideal for business meetings, tourist visits, and multiple stop trips. Gives you flexibility and control over your schedule.
-                  </div>                  <!-- REMOVED: tours-description div -->
-                  <!-- REMOVED: airport-description div -->
-                  <div id="duration-container" class="relative hidden">
-                    <label for="duration-hourly" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-500">Duration</label>
-                    <span class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[--color-teal]"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3Z"></path></svg></span>
-                    <select name="duration-hourly" id="duration-hourly" required aria-describedby="duration-hourly-error" class="block w-full rounded-md border-0 py-3 pr-3 pl-12 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] focus:ring-inset sm:text-sm sm:leading-6">
-                      <option value="2">2 hours</option><option value="3">3 hours</option><option value="4">4 hours</option><option value="5">5 hours</option><option value="6">6 hours</option><option value="7">7 hours</option><option value="8">8 hours</option><option value="9">9 hours</option><option value="10">10 hours</option><option value="11">11 hours</option><option value="12">12 hours</option>
-                    </select>
-                    <span id="duration-hourly-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                  </div>
-                  <div id="date-time-container-hourly" class="relative hidden">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
-                      <div>
-                        <label for="pickup-date-hourly" class="block text-xs font-medium text-gray-500 mb-0.5">Date</label>
-                        <input type="text" name="pickup-date-hourly" id="pickup-date-hourly" required aria-describedby="pickup-date-hourly-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Date..." />
-                        <span id="pickup-date-hourly-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                      </div>
-                      <div>
-                        <label for="pickup-time-hourly" id="pickup-time-label-hourly" class="block text-xs font-medium text-gray-500 mb-0.5">Start Time</label>
-                        <input type="text" name="pickup-time-hourly" id="pickup-time-hourly" required aria-describedby="pickup-time-hourly-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Start Time..." />
-                        <span id="pickup-time-hourly-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+                    
+                    <!-- Enhanced Airbnb-style Search Bar -->
+                    <div class="experience-search-container">
+                      <div class="experience-search-bar" id="experienceSearchContainer">
+                        <div class="search-section" id="experienceLocationSection">
+                            <div class="search-label">Where</div>
+                            <div class="search-value" id="experienceLocationValue">Search destinations</div>
+                        </div>
+                        <div class="search-section" id="experienceDateSection">
+                            <div class="search-label">Date</div>
+                            <div class="search-value" id="experienceDateValue">Add dates</div>
+                        </div>
+                        <div class="search-section" id="experienceGuestSection">
+                            <div class="search-label">Who</div>
+                            <div class="search-value" id="experienceGuestValue">Add guests</div>
+                        </div>
+                        <button class="search-button" id="experienceSearchButton">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </button>
                       </div>
                     </div>
                   </div>
-                  <div id="date-preference-container" class="relative hidden pt-2">
-                    <label class="block text-sm font-medium text-black mb-1" id="date-preference-label">Preferred Timing</label>
-                    <fieldset aria-labelledby="date-preference-label" aria-describedby="date_preference-error">
-                      <legend class="sr-only">Select Preferred Timing</legend>
-                      <div class="flex flex-wrap gap-x-4 gap-y-2">
-                        <div class="flex items-center"><input id="pref-asap" name="date_preference" type="radio" value="ASAP / Next Day" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-asap" class="ml-2 block text-sm text-gray-900">Today / Next Day</label></div>
-                        <div class="flex items-center"><input id="pref-weekend" name="date_preference" type="radio" value="This Coming Weekend" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-weekend" class="ml-2 block text-sm text-gray-900">This Coming Weekend</label></div>
-                        <div class="flex items-center"><input id="pref-weekday" name="date_preference" type="radio" value="Next Week (Mon-Fri)" class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-weekday" class="ml-2 block text-sm text-gray-900">Next Week (Mon-Fri)</label></div>
-                        <div class="flex items-center"><input id="pref-flexible" name="date_preference" type="radio" value="Flexible / Other Date" checked class="h-4 w-4 border-gray-300 text-[--color-teal] focus:ring-[--color-teal]"><label for="pref-flexible" class="ml-2 block text-sm text-gray-900">Flexible / Other Date</label></div>
-                      </div>
-                    </fieldset>
-                    <span id="date_preference-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                  </div>
-                  <div id="experience-options-container" class="hidden space-y-4">
-                    <div id="water-sky-options" class="hidden relative border-t border-gray-200 pt-4"></div>
-                     <div id="wynwood-night-options" class="hidden space-y-4 border-t border-gray-200 pt-4">
-                       <h2 class="text-2xl font-bold text-center" style="font-family: 'Permanent Marker', cursive; color: #ff4d4d;">
-                         Wynwood Art Tour
-                       </h2>
-                     </div>                     <div id="miami-relocation-options" class="hidden space-y-4 border-t border-gray-200 pt-4">
-  <div class="text-sm bg-gradient-to-r from-purple-50 to-indigo-50 p-6 rounded-lg border border-purple-200 shadow-sm">
-    <div class="flex items-start space-x-3 mb-4">
-      <div class="flex-shrink-0">
-        <svg class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-      </div>
-      <div>
-        <h3 class="font-bold text-xl mb-2 text-gray-900">Custom Request Details</h3>
-        <p class="mb-4 text-gray-700 leading-relaxed">Tell us about your specific needs and plans. Whether it's housing services, business setup, event planning, or any other Miami-related assistance, we're here to help you accomplish your goals with our local expertise.</p>
-      </div>
-    </div>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-      <div class="bg-white p-4 rounded-md border border-gray-200">
-        <h4 class="font-semibold text-gray-900 mb-2">🏠 Housing & Relocation</h4>
-        <p class="text-sm text-gray-600">Apartment hunting, neighborhood guides, moving assistance</p>
-      </div>
-      <div class="bg-white p-4 rounded-md border border-gray-200">
-        <h4 class="font-semibold text-gray-900 mb-2">🏢 Business Services</h4>
-        <p class="text-sm text-gray-600">Office space, networking events, business setup</p>
-      </div>
-      <div class="bg-white p-4 rounded-md border border-gray-200">
-        <h4 class="font-semibold text-gray-900 mb-2">🎉 Event Planning</h4>
-        <p class="text-sm text-gray-600">Private events, celebrations, corporate gatherings</p>
-      </div>
-      <div class="bg-white p-4 rounded-md border border-gray-200">
-        <h4 class="font-semibold text-gray-900 mb-2">🌟 Lifestyle Services</h4>
-        <p class="text-sm text-gray-600">Personal shopping, dining reservations, entertainment</p>
-      </div>
-    </div>
-
-    <div>
-      <label for="relocation-notes" class="block text-sm font-medium text-gray-900 mb-2">
-        <span class="flex items-center">
-          <svg class="h-4 w-4 mr-1 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-          </svg>
-          Your Plan & Requirements
-        </span>
-      </label>
-      <textarea id="relocation-notes" name="relocation_notes" rows="4" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-purple-500 sm:text-sm transition-colors duration-200" placeholder="Please describe your specific needs, timeline, budget considerations, and any other details that will help us create the perfect plan for you. Include when you're available to discuss your requirements in detail."></textarea>
-      <p class="mt-2 text-xs text-gray-500">The more details you provide, the better we can tailor our services to meet your exact needs.</p>
-    </div>
-  </div>
-    
-    
-                    </div>
                 </div>
               </div>
 
@@ -1151,76 +913,8 @@
 </div>
 -->
 
-<!-- Script for Airbnb-style booking button functionality -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const requestNowButton = document.getElementById('request-now-button');
-    const bookLaterButton = document.getElementById('book-later-button');
-
-    function setActiveButton(activeButton, inactiveButton) {
-      // Remove active class from both buttons
-      requestNowButton.classList.remove('active');
-      bookLaterButton.classList.remove('active');
-      
-      // Add active class to selected button
-      activeButton.classList.add('active');
-      
-      // Preserve existing functionality - this maintains compatibility with the event system
-      if (activeButton === requestNowButton) {
-        // When "Request Now" is clicked
-        if (window.formState && window.formState.oneway) {
-          window.formState.oneway.bookingTime = true;
-        }
-        
-        const bookingPrefInput = document.getElementById('booking-preference');
-        if (bookingPrefInput) bookingPrefInput.value = 'now';
-        
-        const scheduledInputs = document.getElementById('scheduled-booking-inputs');
-        if (scheduledInputs) scheduledInputs.classList.add('hidden');
-        
-        // Emit event if event bus is available
-        if (window.eventBus) {
-          window.eventBus.emit('form:booking-preference-changed', { preference: 'now', tab: 'oneway' });
-        }
-        
-        console.log('📅 Request Now selected');
-      } else {
-        // When "Book for Later" is clicked
-        if (window.formState && window.formState.oneway) {
-          window.formState.oneway.bookingTime = false;
-        }
-        
-        const bookingPrefInput = document.getElementById('booking-preference');
-        if (bookingPrefInput) bookingPrefInput.value = 'later';
-        
-        const scheduledInputs = document.getElementById('scheduled-booking-inputs');
-        if (scheduledInputs) scheduledInputs.classList.remove('hidden');
-        
-        // Emit event if event bus is available
-        if (window.eventBus) {
-          window.eventBus.emit('form:booking-preference-changed', { preference: 'later', tab: 'oneway' });
-        }
-        
-        console.log('📅 Book for Later selected');
-      }
-      
-      // Check form validity if the function exists
-      if (typeof checkFormValidity === 'function') {
-        checkFormValidity();
-      }
-    }
-
-    requestNowButton.addEventListener('click', function() {
-      setActiveButton(requestNowButton, bookLaterButton);
-    });
-
-    bookLaterButton.addEventListener('click', function() {
-      setActiveButton(bookLaterButton, requestNowButton);
-    });    // Set default state (preserve existing default)
-    // By default, we activate the "Request Now" button
-    requestNowButton.click();
-  });
-</script>
+<!-- Script for Booking Timing Bar Component -->
+<script src="./js/booking-timing-bar.js"></script>
 
 <!-- Script for Date/Time Input Visual Feedback Enhancements -->
 <script>
@@ -1232,6 +926,8 @@
     if (dateInput) {
       const dateIconContainer = document.createElement('span');
       dateIconContainer.className = 'input-icon';
+    }
+    
     if (timeInput) {
       const timeIconContainer = document.createElement('span');
       timeIconContainer.className = 'input-icon';
@@ -1240,28 +936,7 @@
       timeInput.parentNode.appendChild(timeIconContainer);
     }
     
-    // Add shimmer effect to the scheduled booking container on first display
-    const bookLaterButton = document.getElementById('book-later-button');
-    if (bookLaterButton) {
-      bookLaterButton.addEventListener('click', function() {
-        const scheduledInputs = document.getElementById('scheduled-booking-inputs');
-        if (scheduledInputs && scheduledInputs.classList.contains('hidden')) {
-          setTimeout(() => {
-            scheduledInputs.classList.remove('hidden');
-            // Trigger the shimmer animation after a small delay
-            setTimeout(() => {
-              if (scheduledInputs.offsetWidth) { // Force reflow
-                scheduledInputs.style.transition = 'box-shadow 0.3s ease';
-                scheduledInputs.style.boxShadow = '0 0 0 2px rgba(34, 34, 34, 0.2)';
-                setTimeout(() => {
-                  scheduledInputs.style.boxShadow = '';
-                }, 800);
-              }
-            }, 100);
-          }, 10);
-        }
-      });
-    }
+    // Note: Shimmer effect for scheduled booking container is now handled by booking-timing-bar.js
   });
 </script>
 
@@ -1318,7 +993,44 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-  <!-- Enhanced Debug Controls (only visible in development) -->
+<!-- Experience Search Bar Component -->
+<script>
+// Initialize the global experienceSearchBar variable
+window.experienceSearchBar = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Wait for DOM to be fully loaded
+    setTimeout(() => {
+        // Make sure we have the search container
+        if (document.getElementById('experienceSearchContainer')) {
+            console.log('Initializing enhanced experience search bar');
+        }
+    }, 100);
+});
+</script>
+
+<!-- Update the Experience Search Bar JavaScript to properly connect click events -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Wait for DOM to be fully loaded, then initialize with a small delay to ensure all elements are rendered
+  setTimeout(() => {
+    // Only create one instance of the ExperienceSearchBar class
+    if (document.getElementById('experienceSearchContainer')) {
+      // Remove any previous initialization
+      if (window.experienceSearchBar) {
+        console.log('Existing search bar found, updating');
+      } else {
+        console.log('Initializing experience search bar');
+        // Create and store the instance globally
+        window.experienceSearchBar = new ExperienceSearchBar();
+        window.experienceSearchBar.init(); // Initialize the component
+      }
+    }
+  }, 100);
+});
+</script>
+
+<!-- Enhanced Debug Controls (only visible in development) -->
 <div id="debug-controls" class="dev-only" style="position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.9); color: white; padding: 15px; border-radius: 8px; z-index: 9998; font-family: monospace; font-size: 12px; max-width: 300px; display: none;">
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
     <h4 style="margin: 0; color: #00ff88;">🔧 Miami Concierge Debug Panel</h4>
@@ -1364,7 +1076,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div style="margin-bottom: 10px;">
       <strong style="color: #f44336;">Test Events:</strong>
       <button onclick="window.eventBus?.emit('error:show', {fieldId: 'test', message: 'Test error', severity: 'error'})" 
-              style="display: block; margin: 3px 0; padding: 4px 8px; background: #f44336; color: white; border: none; border-radius: 3px; font-size: 11px;">
+              style="display: block; margin: 3px 0; padding:  4px 8px; background: #f44336; color: white; border: none; border-radius: 3px; font-size: 11px;">
         🚨 Test Error
       </button>
       <button onclick="window.eventBus?.emit('form:submission:started', {test: true})" 
@@ -1468,11 +1180,650 @@ document.addEventListener('DOMContentLoaded', function() {
           debugPanel.style.display = 'none';
           debugToggle.style.display = 'block';
         }
-      }
-    });
+      }    });
   }
 });
 </script>
+
+<!-- Experience Search Bar Modals -->
+<!-- Modal Overlay -->
+<div class="experience-modal-overlay" id="experienceModalOverlay"></div>
+
+<!-- Location Modal -->
+<div class="experience-modal" id="experienceLocationModal">
+  <div class="experience-modal-header">
+    <h3>Where are you going?</h3>
+    <button class="experience-modal-close" id="locationModalClose">
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+      </svg>
+    </button>
+  </div>
+  <div class="experience-modal-content">
+    <input type="text" class="location-search-input" id="locationSearchInput" placeholder="Search destinations">
+    <ul class="location-list" id="locationList">
+      <li class="location-item" data-location="Miami">
+        <div class="location-icon">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8 1a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 4z"/>
+          </svg>
+        </div>
+        <div class="location-details">
+          <h4>Miami</h4>
+          <p>Florida, United States</p>
+        </div>
+      </li>
+      <li class="location-item" data-location="South Beach">
+        <div class="location-icon">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8 1a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 4z"/>
+          </svg>
+        </div>
+        <div class="location-details">
+          <h4>South Beach</h4>
+          <p>Miami Beach, Florida</p>
+        </div>
+      </li>
+      <li class="location-item" data-location="Miami Design District">
+        <div class="location-icon">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8 1a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 4z"/>
+          </svg>
+        </div>
+        <div class="location-details">
+          <h4>Miami Design District</h4>
+          <p>Miami, Florida</p>
+        </div>
+      </li>
+      <li class="location-item" data-location="Wynwood">
+        <div class="location-icon">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8 1a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 4z"/>
+          </svg>
+        </div>
+        <div class="location-details">
+          <h4>Wynwood</h4>
+          <p>Miami, Florida</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div class="experience-modal-footer">
+    <button class="modal-clear-btn" id="locationClearBtn">Clear</button>
+    <button class="modal-save-btn" id="locationSaveBtn">Save</button>
+  </div>
+</div>
+
+<!-- Date Modal -->
+<div class="experience-modal" id="experienceDateModal">
+  <div class="experience-modal-header">
+    <h3>When do you want to go?</h3>
+    <button class="experience-modal-close" id="dateModalClose">
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+      </svg>
+    </button>
+  </div>
+  <div class="experience-modal-content">
+    <div class="date-options">
+      <div class="date-option" data-date="today">
+        <h4>Today</h4>
+        <p id="todayDate"></p>
+      </div>
+      <div class="date-option" data-date="tomorrow">
+        <h4>Tomorrow</h4>
+        <p id="tomorrowDate"></p>
+      </div>
+      <div class="date-option" data-date="weekend">
+        <h4>This weekend</h4>
+        <p id="weekendDate"></p>
+      </div>
+      <div class="date-option" data-date="nextWeek">
+        <h4>Next week</h4>
+        <p id="nextWeekDate"></p>
+      </div>
+      <div class="date-option" data-date="nextMonth">
+        <h4>Next month</h4>
+        <p id="nextMonthDate"></p>
+      </div>
+      <div class="date-option" data-date="flexible">
+        <h4>I'm flexible</h4>
+        <p>Show calendar</p>
+      </div>
+    </div>
+    <div class="calendar-container" id="experienceCalendar"></div>
+  </div>
+  <div class="experience-modal-footer">
+    <button class="modal-clear-btn" id="dateClearBtn">Clear</button>
+    <button class="modal-save-btn" id="dateSaveBtn">Save</button>
+  </div>
+</div>
+
+<!-- Guest Modal -->
+<div class="experience-modal" id="experienceGuestModal">
+  <div class="experience-modal-header">
+    <h3>Who's coming?</h3>
+    <button class="experience-modal-close" id="guestModalClose">
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+      </svg>
+    </button>
+  </div>
+  <div class="experience-modal-content">
+    <div class="guest-category">
+      <div class="guest-info">
+        <h4>Adults</h4>
+        <p>Ages 13+</p>
+      </div>
+      <div class="guest-count">
+        <button class="guest-button" id="adultDecrease" disabled>
+          <svg width="12" height="2" viewBox="0 0 12 2" fill="none">
+            <rect width="12" height="2" rx="1" fill="currentColor"/>
+          </svg>
+        </button>
+        <span class="guest-count-value" id="adultCount">0</span>
+        <button class="guest-button" id="adultIncrease">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <rect y="5" width="12" height="2" rx="1" fill="currentColor"/>
+            <rect x="5" width="2" height="12" rx="1" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="guest-category">
+      <div class="guest-info">
+        <h4>Children</h4>
+        <p>Ages 2-12</p>
+      </div>
+      <div class="guest-count">
+        <button class="guest-button" id="childDecrease" disabled>
+          <svg width="12" height="2" viewBox="0 0 12 2" fill="none">
+            <rect width="12" height="2" rx="1" fill="currentColor"/>
+          </svg>
+        </button>
+        <span class="guest-count-value" id="childCount">0</span>
+        <button class="guest-button" id="childIncrease">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <rect y="5" width="12" height="2" rx="1" fill="currentColor"/>
+            <rect x="5" width="2" height="12" rx="1" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="guest-category">
+      <div class="guest-info">
+        <h4>Infants</h4>
+        <p>Under 2</p>
+      </div>
+      <div class="guest-count">
+        <button class="guest-button" id="infantDecrease" disabled>
+          <svg width="12" height="2" viewBox="0 0 12 2" fill="none">
+            <rect width="12" height="2" rx="1" fill="currentColor"/>
+          </svg>
+        </button>
+        <span class="guest-count-value" id="infantCount">0</span>
+        <button class="guest-button" id="infantIncrease">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <rect y="5" width="12" height="2" rx="1" fill="currentColor"/>
+            <rect x="5" width="2" height="12" rx="1" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="experience-modal-footer">
+    <button class="modal-clear-btn" id="guestClearBtn">Clear</button>
+    <button class="modal-save-btn" id="guestSaveBtn">Save</button>
+  </div>
+</div>
+
+<!-- Experience Search Bar JavaScript -->
+<script>
+  // ExperienceSearchBar class for experience search functionality
+  class ExperienceSearchBar {
+    constructor() {
+      // Search bar elements
+      this.searchContainer = document.getElementById('experienceSearchContainer');
+      this.locationSection = document.getElementById('experienceLocationSection');
+      this.dateSection = document.getElementById('experienceDateSection');
+      this.guestSection = document.getElementById('experienceGuestSection');
+      this.searchButton = document.getElementById('experienceSearchButton');
+      
+      // Values display elements
+      this.locationValue = document.getElementById('experienceLocationValue');
+      this.dateValue = document.getElementById('experienceDateValue');
+      this.guestValue = document.getElementById('experienceGuestValue');
+      
+      // Modal elements
+      this.modalOverlay = document.getElementById('experienceModalOverlay');
+      this.locationModal = document.getElementById('experienceLocationModal');
+      this.dateModal = document.getElementById('experienceDateModal');
+      this.guestModal = document.getElementById('experienceGuestModal');
+      
+      // State variables
+      this.selectedLocation = '';
+      this.selectedDate = '';
+      this.guests = {
+        adults: 0,
+        children: 0,
+        infants: 0
+      };
+      
+      // Flatpickr instance
+      this.calendar = null;
+    }
+    
+    init() {
+      // Check if all required elements exist
+      if (!this.searchContainer || !this.locationSection || !this.dateSection || 
+          !this.guestSection || !this.searchButton) {
+        console.warn('Experience search bar elements not found.');
+        return;
+      }
+      
+      // Initialize date format for quick options
+      this.initDateOptions();
+      
+      // Initialize flatpickr calendar
+      this.initCalendar();
+      
+      // Attach event listeners
+      this.attachEventListeners();
+      
+      console.log('✅ Experience Search Bar initialized');
+    }
+    
+    initDateOptions() {
+      const today = new Date();
+      const tomorrow = new Date();
+      tomorrow.setDate(today.getDate() + 1);
+      
+      // Find weekend (next Saturday)
+      const weekend = new Date();
+      weekend.setDate(today.getDate() + (6 - today.getDay() + 7) % 7);
+      
+      // Next week (7 days from now)
+      const nextWeek = new Date();
+      nextWeek.setDate(today.getDate() + 7);
+      
+      // Next month (first day of next month)
+      const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+      
+      // Format dates for display
+      document.getElementById('todayDate').textContent = this.formatDate(today);
+      document.getElementById('tomorrowDate').textContent = this.formatDate(tomorrow);
+      document.getElementById('weekendDate').textContent = this.formatDate(weekend);
+      document.getElementById('nextWeekDate').textContent = this.formatDate(nextWeek);
+      document.getElementById('nextMonthDate').textContent = this.formatDate(nextMonth);
+    }
+    
+    formatDate(date) {
+      const options = { month: 'short', day: 'numeric' };
+      return date.toLocaleDateString('en-US', options);
+    }
+    
+    initCalendar() {
+      if (typeof flatpickr !== 'undefined') {
+        this.calendar = flatpickr('#experienceCalendar', {
+          inline: true,
+          mode: 'single',
+          dateFormat: 'Y-m-d',
+          minDate: 'today',
+          onChange: (selectedDates) => {
+            if (selectedDates.length > 0) {
+              const date = selectedDates[0];
+              this.selectedDate = date;
+              
+              // Clear selection from quick options
+              const options = document.querySelectorAll('.date-option');
+              options.forEach(opt => opt.classList.remove('selected'));
+            }
+          }
+        });
+      } else {
+        console.warn('Flatpickr library not loaded');
+        // Add fallback date input
+        document.getElementById('experienceCalendar').innerHTML = 
+          '<input type="date" class="location-search-input" min="' + new Date().toISOString().split('T')[0] + '">';
+      }
+    }
+    
+    attachEventListeners() {
+      // Open modals on section click
+      this.locationSection.addEventListener('click', () => this.openModal('location'));
+      this.dateSection.addEventListener('click', () => this.openModal('date'));
+      this.guestSection.addEventListener('click', () => this.openModal('guest'));
+      
+      // Close modals
+      document.getElementById('locationModalClose').addEventListener('click', () => this.closeModal('location'));
+      document.getElementById('dateModalClose').addEventListener('click', () => this.closeModal('date'));
+      document.getElementById('guestModalClose').addEventListener('click', () => this.closeModal('guest'));
+      
+      // Modal overlay click to close
+      this.modalOverlay.addEventListener('click', () => this.closeAllModals());
+      
+      // Save buttons
+      document.getElementById('locationSaveBtn').addEventListener('click', () => this.saveLocation());
+      document.getElementById('dateSaveBtn').addEventListener('click', () => this.saveDate());
+      document.getElementById('guestSaveBtn').addEventListener('click', () => this.saveGuests());
+      
+      // Clear buttons
+      document.getElementById('locationClearBtn').addEventListener('click', () => this.clearLocation());
+      document.getElementById('dateClearBtn').addEventListener('click', () => this.clearDate());
+      document.getElementById('guestClearBtn').addEventListener('click', () => this.clearGuests());
+      
+      // Location search and selection
+      const locationItems = document.querySelectorAll('.location-item');
+      locationItems.forEach(item => {
+        item.addEventListener('click', () => {
+          locationItems.forEach(i => i.classList.remove('selected'));
+          item.classList.add('selected');
+          this.selectedLocation = item.getAttribute('data-location');
+        });
+      });
+      
+      // Location search input
+      document.getElementById('locationSearchInput').addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        locationItems.forEach(item => {
+          const location = item.getAttribute('data-location').toLowerCase();
+          const shouldShow = location.includes(searchTerm);
+          item.style.display = shouldShow ? 'flex' : 'none';
+        });
+      });
+      
+      // Date quick options
+      const dateOptions = document.querySelectorAll('.date-option');
+      dateOptions.forEach(option => {
+        option.addEventListener('click', () => {
+          dateOptions.forEach(opt => opt.classList.remove('selected'));
+          option.classList.add('selected');
+          
+          const dateType = option.getAttribute('data-date');
+          const today = new Date();
+          
+          switch (dateType) {
+            case 'today':
+              this.selectedDate = today;
+              break;
+            case 'tomorrow':
+              const tomorrow = new Date();
+              tomorrow.setDate(today.getDate() + 1);
+              this.selectedDate = tomorrow;
+              break;
+            case 'weekend':
+              const weekend = new Date();
+              weekend.setDate(today.getDate() + (6 - today.getDay() + 7) % 7);
+              this.selectedDate = weekend;
+              break;
+            case 'nextWeek':
+              const nextWeek = new Date();
+              nextWeek.setDate(today.getDate() + 7);
+              this.selectedDate = nextWeek;
+              break;
+            case 'nextMonth':
+              const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+              this.selectedDate = nextMonth;
+              break;
+            case 'flexible':
+              // Just show the calendar
+              break;
+          }
+          
+          // Update calendar if needed
+          if (this.calendar && dateType !== 'flexible') {
+            this.calendar.setDate(this.selectedDate);
+          }
+        });
+      });
+      
+      // Guest count buttons
+      document.getElementById('adultIncrease').addEventListener('click', () => this.increaseCount('adult'));
+      document.getElementById('adultDecrease').addEventListener('click', () => this.decreaseCount('adult'));
+      document.getElementById('childIncrease').addEventListener('click', () => this.increaseCount('child'));
+      document.getElementById('childDecrease').addEventListener('click', () => this.decreaseCount('child'));
+      document.getElementById('infantIncrease').addEventListener('click', () => this.increaseCount('infant'));
+      document.getElementById('infantDecrease').addEventListener('click', () => this.decreaseCount('infant'));
+      
+      // Search button
+      this.searchButton.addEventListener('click', () => this.search());
+    }
+    
+    openModal(type) {
+      // Close any open modal first
+      this.closeAllModals();
+      
+      // Show overlay
+      this.modalOverlay.classList.add('visible');
+      
+      // Show appropriate modal
+      switch (type) {
+        case 'location':
+          this.locationModal.classList.add('visible');
+          setTimeout(() => document.getElementById('locationSearchInput').focus(), 100);
+          break;
+        case 'date':
+          this.dateModal.classList.add('visible');
+          break;
+        case 'guest':
+          this.guestModal.classList.add('visible');
+          break;
+      }
+      
+      // Update selected status
+      this.locationSection.classList.toggle('selected', type === 'location');
+      this.dateSection.classList.toggle('selected', type === 'date');
+      this.guestSection.classList.toggle('selected', type === 'guest');
+    }
+    
+    closeModal(type) {
+      // Hide overlay and modal
+      this.modalOverlay.classList.remove('visible');
+      
+      switch (type) {
+        case 'location':
+          this.locationModal.classList.remove('visible');
+          break;
+        case 'date':
+          this.dateModal.classList.remove('visible');
+          break;
+        case 'guest':
+          this.guestModal.classList.remove('visible');
+          break;
+      }
+      
+      // Remove selected status
+      this.locationSection.classList.remove('selected');
+      this.dateSection.classList.remove('selected');
+      this.guestSection.classList.remove('selected');
+    }
+    
+    closeAllModals() {
+      this.modalOverlay.classList.remove('visible');
+      this.locationModal.classList.remove('visible');
+      this.dateModal.classList.remove('visible');
+      this.guestModal.classList.remove('visible');
+      
+      this.locationSection.classList.remove('selected');
+      this.dateSection.classList.remove('selected');
+      this.guestSection.classList.remove('selected');
+    }
+    
+    saveLocation() {
+      if (this.selectedLocation) {
+        this.locationValue.textContent = this.selectedLocation;
+        this.locationValue.classList.add('has-value');
+      }
+      this.closeModal('location');
+    }
+    
+    saveDate() {
+      if (this.selectedDate) {
+        const options = { month: 'short', day: 'numeric' };
+        this.dateValue.textContent = this.selectedDate instanceof Date 
+          ? this.selectedDate.toLocaleDateString('en-US', options)
+          : new Date(this.selectedDate).toLocaleDateString('en-US', options);
+        this.dateValue.classList.add('has-value');
+      }
+      this.closeModal('date');
+    }
+    
+    saveGuests() {
+      let guestText = [];
+      const { adults, children, infants } = this.guests;
+      
+      if (adults > 0) {
+        guestText.push(`${adults} adult${adults > 1 ? 's' : ''}`);
+      }
+      
+      if (children > 0) {
+        guestText.push(`${children} child${children > 1 ? 'ren' : ''}`);
+      }
+      
+      if (infants > 0) {
+        guestText.push(`${infants} infant${infants > 1 ? 's' : ''}`);
+      }
+      
+      if (guestText.length > 0) {
+        this.guestValue.textContent = guestText.join(', ');
+        this.guestValue.classList.add('has-value');
+      } else {
+        this.clearGuests();
+      }
+      
+      this.closeModal('guest');
+    }
+    
+    clearLocation() {
+      this.selectedLocation = '';
+      this.locationValue.textContent = 'Search destinations';
+      this.locationValue.classList.remove('has-value');
+      
+      // Clear selected location in list
+      document.querySelectorAll('.location-item').forEach(item => {
+        item.classList.remove('selected');
+      });
+      
+      // Clear search input
+      document.getElementById('locationSearchInput').value = '';
+      
+      // Show all location items
+      document.querySelectorAll('.location-item').forEach(item => {
+        item.style.display = 'flex';
+      });
+    }
+    
+    clearDate() {
+      this.selectedDate = '';
+      this.dateValue.textContent = 'Add dates';
+      this.dateValue.classList.remove('has-value');
+      
+      // Clear selected date option
+      document.querySelectorAll('.date-option').forEach(option => {
+        option.classList.remove('selected');
+      });
+      
+      // Clear calendar selection if available
+      if (this.calendar) {
+        this.calendar.clear();
+      }
+    }
+    
+    clearGuests() {
+      this.guests = {
+        adults: 0,
+        children: 0,
+        infants: 0
+      };
+      
+      this.guestValue.textContent = 'Add guests';
+      this.guestValue.classList.remove('has-value');
+      
+      // Reset count displays
+      document.getElementById('adultCount').textContent = '0';
+      document.getElementById('childCount').textContent = '0';
+      document.getElementById('infantCount').textContent = '0';
+      
+      // Disable decrease buttons
+      document.getElementById('adultDecrease').disabled = true;
+      document.getElementById('childDecrease').disabled = true;
+      document.getElementById('infantDecrease').disabled = true;
+    }
+    
+    increaseCount(type) {
+      switch (type) {
+        case 'adult':
+          this.guests.adults++;
+          document.getElementById('adultCount').textContent = this.guests.adults;
+          document.getElementById('adultDecrease').disabled = this.guests.adults === 0;
+          break;
+        case 'child':
+          this.guests.children++;
+          document.getElementById('childCount').textContent = this.guests.children;
+          document.getElementById('childDecrease').disabled = this.guests.children === 0;
+          break;
+        case 'infant':
+          this.guests.infants++;
+          document.getElementById('infantCount').textContent = this.guests.infants;
+          document.getElementById('infantDecrease').disabled = this.guests.infants === 0;
+          break;
+      }
+    }
+    
+    decreaseCount(type) {
+      switch (type) {
+        case 'adult':
+          if (this.guests.adults > 0) {
+            this.guests.adults--;
+            document.getElementById('adultCount').textContent = this.guests.adults;
+            document.getElementById('adultDecrease').disabled = this.guests.adults === 0;
+          }
+          break;
+        case 'child':
+          if (this.guests.children > 0) {
+            this.guests.children--;
+            document.getElementById('childCount').textContent = this.guests.children;
+            document.getElementById('childDecrease').disabled = this.guests.children === 0;
+          }
+          break;
+        case 'infant':
+          if (this.guests.infants > 0) {
+            this.guests.infants--;
+            document.getElementById('infantCount').textContent = this.guests.infants;
+            document.getElementById('infantDecrease').disabled = this.guests.infants === 0;
+          }
+          break;
+      }
+    }
+    
+    search() {
+      // Gather all search parameters
+      const searchParams = {
+        location: this.selectedLocation || '',
+        date: this.selectedDate ? (this.selectedDate instanceof Date ? this.selectedDate.toISOString().split('T')[0] : this.selectedDate) : '',
+        guests: this.guests
+      };
+      
+      console.log('🔍 Experience search:', searchParams);
+      
+      // Emit event if eventBus is available
+      if (window.eventBus) {
+        window.eventBus.emit('experience:search', searchParams);
+      }
+      
+      // TODO: Implement actual search functionality or form submission
+      // For now, just log the search parameters
+      alert(`Searching for experiences in ${searchParams.location || 'any location'} on ${searchParams.date || 'any date'} for ${this.getTotalGuests()} guests`);
+    }
+    
+    getTotalGuests() {
+      return this.guests.adults + this.guests.children + this.guests.infants || 0;
+    }
+  }
+</script>
+
+<!-- Booking Timing Bar Component Script -->
+<script src="./js/booking-timing-bar.js"></script>
   </body>
 </html>
 
