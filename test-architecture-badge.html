@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Architecture Badge Test</title>
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        body { 
+            padding: 20px; 
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        .test-info {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .status { 
+            padding: 10px; 
+            margin: 10px 0; 
+            border-radius: 5px; 
+        }
+        .status.pass { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status.fail { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .status.info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <h1>🧪 Event-Driven Architecture Badge Test</h1>
+        <p>This page tests the floating architecture badge visibility and functionality.</p>
+        
+        <div id="environment-status" class="status info">
+            <strong>Environment:</strong> <span id="env-type">Detecting...</span>
+        </div>
+        
+        <div id="badge-status" class="status info">
+            <strong>Badge Visibility:</strong> <span id="badge-visibility">Checking...</span>
+        </div>
+        
+        <div id="classes-status" class="status info">
+            <strong>Body Classes:</strong> <span id="body-classes">Loading...</span>
+        </div>
+        
+        <h2>Test Results:</h2>
+        <ul id="test-results"></ul>
+        
+        <h2>Manual Tests:</h2>
+        <ul>
+            <li>✅ Badge should appear in bottom-left corner after 2 seconds</li>
+            <li>✅ Badge should have smooth slide-in animation</li>
+            <li>✅ Hovering should elevate the badge with scale effect</li>
+            <li>✅ Clicking should open EventArchitecture.html</li>
+            <li>✅ On mobile (< 480px), only icon should show</li>
+        </ul>
+    </div>
+
+    <!-- Event-Driven Architecture Badge (Development Only) - Bottom Left Corner -->
+    <div class="architecture-badge-floating dev-only" title="Built with Event-Driven Architecture" onclick="showEventArchitecture()">
+        <div class="badge-content">
+            <svg class="badge-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M12 7L7 10V14L12 17L17 14V10L12 7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+            </svg>
+            <span class="badge-text">Event-Driven Architecture</span>
+            <div class="pulse-ring"></div>
+        </div>
+    </div>
+
+    <script>
+        // Development Environment Detection (same as dashboard.js)
+        function detectDevelopmentEnvironment() {
+            const isDevelopment = 
+                window.location.hostname === 'localhost' ||
+                window.location.hostname === '127.0.0.1' ||
+                window.location.hostname === '' ||
+                window.location.port === '8080' ||
+                window.location.port === '3000' ||
+                window.location.port === '5000' ||
+                window.location.protocol === 'file:' ||
+                window.location.search.includes('dev=true');
+                
+            if (isDevelopment) {
+                document.body.classList.add('development', 'localhost');
+                console.log('🔧 Development environment detected - showing dev tools');
+            } else {
+                console.log('🚀 Production environment detected - hiding dev tools');
+            }
+            
+            return isDevelopment;
+        }
+
+        // Show Event Architecture function
+        function showEventArchitecture() {
+            console.log('🎯 Opening Event Architecture documentation...');
+            window.open('EventArchitecture.html', '_blank');
+        }
+
+        // Test runner
+        function runTests() {
+            const results = [];
+            const isDev = detectDevelopmentEnvironment();
+            
+            // Test environment detection
+            document.getElementById('env-type').textContent = isDev ? 'Development' : 'Production';
+            document.getElementById('environment-status').className = `status ${isDev ? 'pass' : 'fail'}`;
+            
+            // Test body classes
+            const bodyClasses = Array.from(document.body.classList).join(', ') || 'none';
+            document.getElementById('body-classes').textContent = bodyClasses;
+            
+            // Test badge visibility
+            const badge = document.querySelector('.architecture-badge-floating');
+            const badgeVisible = badge && window.getComputedStyle(badge).display !== 'none';
+            document.getElementById('badge-visibility').textContent = badgeVisible ? 'Visible' : 'Hidden';
+            document.getElementById('badge-status').className = `status ${badgeVisible === isDev ? 'pass' : 'fail'}`;
+            
+            // Add test results
+            const testResults = document.getElementById('test-results');
+            
+            results.push({
+                test: 'Environment Detection',
+                result: isDev ? 'PASS' : 'FAIL',
+                message: `Expected development environment, got: ${isDev ? 'development' : 'production'}`
+            });
+            
+            results.push({
+                test: 'Badge Visibility',
+                result: badgeVisible === isDev ? 'PASS' : 'FAIL',
+                message: `Badge visibility (${badgeVisible}) matches environment (${isDev})`
+            });
+            
+            results.push({
+                test: 'Body Classes',
+                result: isDev && document.body.classList.contains('development') ? 'PASS' : 'FAIL',
+                message: `Body classes: ${bodyClasses}`
+            });
+            
+            results.forEach(test => {
+                const li = document.createElement('li');
+                li.className = `status ${test.result === 'PASS' ? 'pass' : 'fail'}`;
+                li.innerHTML = `<strong>${test.test}:</strong> ${test.result} - ${test.message}`;
+                testResults.appendChild(li);
+            });
+        }
+
+        // Initialize tests when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(runTests, 100); // Small delay to ensure everything is loaded
+        });
+    </script>
+</body>
+</html>

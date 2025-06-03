@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Airbnb Search Bar Component - Enhanced</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f7f7f7;
+            padding: 40px 20px;
+            touch-action: manipulation;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Airbnb Search Bar */
+        .airbnb-search-container {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0;
+        }
+
+        .airbnb-search-bar {
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            border: 1px solid #dddddd;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            max-width: 850px;
+            width: 100%;
+            position: relative;
+        }
+
+        .airbnb-search-bar:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+        }
+
+        .search-section {
+            flex: 1;
+            padding: 14px 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            border-right: 1px solid #dddddd;
+            min-height: 66px;
+            position: relative;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .search-section:first-child {
+            background-color: #f7f7f7;
+            border-radius: 40px 0 0 40px;
+        }
+
+        .search-section:nth-child(2) {
+            flex: 1.2;
+            background-color: white;
+        }
+
+        .search-section:nth-child(3) {
+            background-color: #f7f7f7;
+            border-right: none;
+            border-radius: 0 40px 40px 0;
+            padding-right: 16px;
+        }
+
+        .search-section:hover {
+            background-color: #ebebeb;
+            z-index: 1;
+        }
+
+        .search-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #222222;
+            margin-bottom: 2px;
+            line-height: 1.2;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .search-value {
+            font-size: 14px;
+            font-weight: 400;
+            color: #717171;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.3;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .search-value.has-value {
+            color: #222222;
+            font-weight: 500;
+        }
+
+        .search-button {
+            background: linear-gradient(135deg, #FF385C 0%, #E61E4D 100%);
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            margin: 8px 8px 8px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(255, 56, 92, 0.3);
+            position: relative;
+            z-index: 3;
+        }
+
+        .search-button:hover {
+            transform: scale(1.04);
+            box-shadow: 0 4px 12px rgba(255, 56, 92, 0.4);
+        }
+
+        .search-button:active {
+            transform: scale(0.96);
+        }
+
+        .search-button svg {
+            width: 16px;
+            height: 16px;
+            color: white;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 8% auto;
+            padding: 32px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close {
+            color: #717171;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: #222222;
+        }
+
+        .modal h2 {
+            margin-bottom: 24px;
+            color: #222222;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Enhanced Date Picker Styles */
+        .date-picker-container {
+            display: flex;
+            gap: 32px;
+            min-height: 400px;
+        }
+
+        .date-quick-options {
+            flex: 0 0 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .quick-date-option {
+            padding: 16px;
+            border: 1px solid #dddddd;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+            text-align: left;
+        }
+
+        .quick-date-option:hover {
+            border-color: #222222;
+            background-color: #f7f7f7;
+        }
+
+        .quick-date-option.selected {
+            border-color: #222222;
+            background-color: #f7f7f7;
+        }
+
+        .quick-date-title {
+            font-weight: 600;
+            color: #222222;
+            margin-bottom: 4px;
+        }
+
+        .quick-date-subtitle {
+            font-size: 14px;
+            color: #717171;
+        }
+
+        .calendar-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .calendar-nav {
+            background: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease;
+        }
+
+        .calendar-nav:hover {
+            background-color: #f7f7f7;
+        }
+
+        .calendar-month-year {
+            font-size: 18px;
+            font-weight: 600;
+            color: #222222;
+            flex: 1;
+            text-align: center;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+        }
+
+        .calendar-day-header {
+            padding: 12px 8px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #717171;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            border: none;
+            background: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            color: #222222;
+        }
+
+        .calendar-day:hover:not(.disabled) {
+            background-color: #f7f7f7;
+        }
+
+        .calendar-day.today {
+            background-color: #222222;
+            color: white;
+        }
+
+        .calendar-day.selected {
+            background-color: #FF385C;
+            color: white;
+        }
+
+        .calendar-day.disabled {
+            color: #dddddd;
+            cursor: not-allowed;
+        }
+
+        /* Location Dropdown Styles */
+        .location-dropdown {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .location-search {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #dddddd;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .location-search:focus {
+            border-color: #222222;
+        }
+
+        .location-suggestions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .location-suggestion {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border: 1px solid #dddddd;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .location-suggestion:hover {
+            border-color: #222222;
+            background-color: #f7f7f7;
+        }
+
+        .location-suggestion.selected {
+            border-color: #222222;
+            background-color: #f7f7f7;
+        }
+
+        .location-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #f7f7f7;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .location-info {
+            flex: 1;
+        }
+
+        .location-name {
+            font-weight: 600;
+            color: #222222;
+            margin-bottom: 4px;
+        }
+
+        .location-description {
+            font-size: 14px;
+            color: #717171;
+        }
+
+        .modal-button {
+            background: linear-gradient(135deg, #FF385C 0%, #E61E4D 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 24px;
+            transition: all 0.2s ease;
+            font-size: 16px;
+        }
+
+        .modal-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(255, 56, 92, 0.3);
+        }
+
+        /* Guest modal styles */
+        .guest-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #ebebeb;
+        }
+
+        .guest-controls:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .guest-controls:first-child {
+            padding-top: 0;
+        }
+
+        .guest-info {
+            flex: 1;
+        }
+
+        .guest-type {
+            font-weight: 600;
+            color: #222222;
+            margin-bottom: 4px;
+            font-size: 16px;
+        }
+
+        .guest-description {
+            font-size: 14px;
+            color: #717171;
+        }
+
+        .guest-counter-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .counter-button {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #b0b0b0;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 18px;
+            font-weight: 300;
+            color: #717171;
+        }
+
+        .counter-button:hover:not(:disabled) {
+            border-color: #222222;
+            color: #222222;
+        }
+
+        .counter-button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            color: #b0b0b0;
+        }
+
+        .counter-value {
+            font-weight: 400;
+            color: #222222;
+            min-width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .guest-modal .modal-content {
+            max-width: 400px;
+            padding: 24px;
+        }
+
+        .guest-modal .modal h2 {
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .airbnb-search-bar {
+                flex-direction: column;
+                border-radius: 16px;
+                max-width: 100%;
+            }
+
+            .search-section {
+                border-right: none;
+                border-bottom: 1px solid #dddddd;
+                padding: 16px 20px;
+                min-height: 56px;
+                background-color: white !important;
+                border-radius: 0 !important;
+            }
+
+            .search-section:first-child {
+                border-radius: 16px 16px 0 0 !important;
+            }
+
+            .search-section:nth-child(3) {
+                border-bottom: none;
+                border-radius: 0 0 16px 16px !important;
+            }
+
+            .search-section:hover {
+                border-radius: 0 !important;
+                background-color: #f7f7f7 !important;
+            }
+
+            .search-button {
+                margin: 12px;
+                width: 44px;
+                height: 44px;
+                align-self: center;
+            }
+
+            .date-picker-container {
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .date-quick-options {
+                flex: none;
+            }
+        }
+
+        .demo-section {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            margin: 40px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #222222;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .demo-description {
+            color: #717171;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="demo-section">
+            <h1 class="demo-title">Enhanced Airbnb Search Bar Component</h1>
+            <p class="demo-description">Recreated with improved date picker and location dropdown based on Airbnb's design</p>
+            
+            <div class="airbnb-search-container">
+                <div class="airbnb-search-bar" id="searchContainer">
+                    <div class="search-section" id="locationSection">
+                        <div class="search-label">Where</div>
+                        <div class="search-value" id="locationValue">Search destinations</div>
+                    </div>
+
+                    <div class="search-section" id="dateSection">
+                        <div class="search-label">Date</div>
+                        <div class="search-value" id="dateValue">Add dates</div>
+                    </div>
+
+                    <div class="search-section" id="guestSection">
+                        <div class="search-label">Who</div>
+                        <div class="search-value" id="guestValue">Add guests</div>
+                    </div>
+
+                    <button class="search-button" id="searchButton">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for search inputs -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Select Option</h2>
+            <div id="modalBody"></div>
+            <button id="modalConfirm" class="modal-button">Confirm</button>
+        </div>
+    </div>
+
+    <script>
+        class EnhancedAirbnbSearchBar {
+            constructor() {
+                this.selectedLocation = '';
+                this.checkinDate = '';
+                this.checkoutDate = '';
+                this.currentMonth = new Date().getMonth();
+                this.currentYear = new Date().getFullYear();
+                this.guests = {
+                    adults: 0,
+                    children: 0,
+                    infants: 0
+                };
+                
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.updateGuestDisplay();
+            }
+
+            bindEvents() {
+                // Location section
+                document.getElementById('locationSection').addEventListener('click', () => {
+                    this.openLocationModal();
+                });
+
+                // Date section
+                document.getElementById('dateSection').addEventListener('click', () => {
+                    this.openDateModal();
+                });
+
+                // Guest section
+                document.getElementById('guestSection').addEventListener('click', () => {
+                    this.openGuestModal();
+                });
+
+                // Search button
+                document.getElementById('searchButton').addEventListener('click', () => {
+                    this.performSearch();
+                });
+
+                // Modal close
+                document.querySelector('.close').addEventListener('click', () => {
+                    this.closeModal();
+                });
+
+                // Modal confirm
+                document.getElementById('modalConfirm').addEventListener('click', () => {
+                    this.confirmSelection();
+                });
+
+                // Close modal when clicking outside
+                window.addEventListener('click', (event) => {
+                    const modal = document.getElementById('modal');
+                    if (event.target === modal) {
+                        this.closeModal();
+                    }
+                });
+            }
+
+            openLocationModal() {
+                const modalTitle = document.getElementById('modalTitle');
+                const modalBody = document.getElementById('modalBody');
+                
+                modalTitle.textContent = 'Where to?';
+                
+                const locations = [
+                    { name: 'Orlando, FL', description: 'For sights like Walt Disney World Resort', icon: '🏰' },
+                    { name: 'Outer Banks', description: 'Popular beach destination', icon: '🏖️' },
+                    { name: 'New York City, NY', description: 'For its bustling nightlife', icon: '🏙️' },
+                    { name: 'Nashville, TN', description: 'For its top-notch dining', icon: '🎵' },
+                    { name: 'Paris, France', description: 'For its stunning architecture', icon: '🗼' },
+                    { name: 'Miami, FL', description: 'For its bustling nightlife', icon: '🌴' },
+                    { name: 'Asheville, NC', description: 'For sights like Biltmore Estate', icon: '🏔️' }
+                ];
+
+                modalBody.innerHTML = `
+                    <div class="location-dropdown">
+                        <input type="text" class="location-search" placeholder="Search destinations" id="locationSearch">
+                        <div class="location-suggestions" id="locationSuggestions">
+                            ${locations.map(location => `
+                                <div class="location-suggestion" data-location="${location.name}">
+                                    <div class="location-icon">${location.icon}</div>
+                                    <div class="location-info">
+                                        <div class="location-name">${location.name}</div>
+                                        <div class="location-description">${location.description}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+
+                // Add click handlers for location options
+                modalBody.querySelectorAll('.location-suggestion').forEach(option => {
+                    option.addEventListener('click', () => {
+                        modalBody.querySelectorAll('.location-suggestion').forEach(opt => opt.classList.remove('selected'));
+                        option.classList.add('selected');
+                        this.selectedLocation = option.dataset.location;
+                    });
+                });
+
+                this.openModal();
+            }
+
+            openDateModal() {
+                const modalTitle = document.getElementById('modalTitle');
+                const modalBody = document.getElementById('modalBody');
+                
+                modalTitle.textContent = 'When\'s your trip?';
+                
+                modalBody.innerHTML = `
+                    <div class="date-picker-container">
+                        <div class="date-quick-options">
+                            <div class="quick-date-option" data-option="today">
+                                <div class="quick-date-title">Today</div>
+                                <div class="quick-date-subtitle">${this.formatDate(new Date())}</div>
+                            </div>
+                            <div class="quick-date-option" data-option="tomorrow">
+                                <div class="quick-date-title">Tomorrow</div>
+                                <div class="quick-date-subtitle">${this.formatDate(this.addDays(new Date(), 1))}</div>
+                            </div>
+                            <div class="quick-date-option" data-option="weekend">
+                                <div class="quick-date-title">This weekend</div>
+                                <div class="quick-date-subtitle">${this.getWeekendRange()}</div>
+                            </div>
+                        </div>
+                        <div class="calendar-container">
+                            <div class="calendar-header">
+                                <button class="calendar-nav" id="prevMonth">‹</button>
+                                <div class="calendar-month-year" id="monthYear"></div>
+                                <button class="calendar-nav" id="nextMonth">›</button>
+                            </div>
+                            <div class="calendar-grid" id="calendarGrid"></div>
+                        </div>
+                    </div>
+                `;
+
+                this.renderCalendar();
+                this.bindDatePickerEvents();
+                this.openModal();
+            }
+
+            renderCalendar() {
+                const monthYear = document.getElementById('monthYear');
+                const calendarGrid = document.getElementById('calendarGrid');
+                
+                const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'];
+                
+                monthYear.textContent = `${monthNames[this.currentMonth]} ${this.currentYear}`;
+                
+                // Clear calendar
+                calendarGrid.innerHTML = '';
+                
+                // Add day headers
+                const dayHeaders = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+                dayHeaders.forEach(day => {
+                    const header = document.createElement('div');
+                    header.className = 'calendar-day-header';
+                    header.textContent = day;
+                    calendarGrid.appendChild(header);
+                });
+                
+                // Get first day of month and number of days
+                const firstDay = new Date(this.currentYear, this.currentMonth, 1).getDay();
+                const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
+                const today = new Date();
+                
+                // Add empty cells for days before month starts
+                for (let i = 0; i < firstDay; i++) {
+                    const emptyDay = document.createElement('div');
+                    emptyDay.className = 'calendar-day disabled';
+                    calendarGrid.appendChild(emptyDay);
+                }
+                
+                // Add days of month
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dayButton = document.createElement('button');
+                    dayButton.className = 'calendar-day';
+                    dayButton.textContent = day;
+                    
+                    const currentDate = new Date(this.currentYear, this.currentMonth, day);
+                    
+                    // Mark today
+                    if (currentDate.toDateString() === today.toDateString()) {
+                        dayButton.classList.add('today');
+                    }
+                    
+                    // Disable past dates
+                    if (currentDate < today.setHours(0, 0, 0, 0)) {
+                        dayButton.classList.add('disabled');
+                    } else {
+                        dayButton.addEventListener('click', () => {
+                            this.selectDate(currentDate);
+                        });
+                    }
+                    
+                    calendarGrid.appendChild(dayButton);
+                }
+            }
+
+            bindDatePickerEvents() {
+                // Quick options
+                document.querySelectorAll('.quick-date-option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        document.querySelectorAll('.quick-date-option').forEach(opt => opt.classList.remove('selected'));
+                        option.classList.add('selected');
+                        
+                        const optionType = option.dataset.option;
+                        const today = new Date();
+                        
+                        switch (optionType) {
+                            case 'today':
+                                this.checkinDate = this.formatDateForInput(today);
+                                this.checkoutDate = '';
+                                break;
+                            case 'tomorrow':
+                                this.checkinDate = this.formatDateForInput(this.addDays(today, 1));
+                                this.checkoutDate = '';
+                                break;
+                            case 'weekend':
+                                const weekend = this.getNextWeekend();
+                                this.checkinDate = this.formatDateForInput(weekend.start);
+                                this.checkoutDate = this.formatDateForInput(weekend.end);
+                                break;
+                        }
+                    });
+                });
+
+                // Month navigation
+                document.getElementById('prevMonth').addEventListener('click', () => {
+                    this.currentMonth--;
+                    if (this.currentMonth < 0) {
+                        this.currentMonth = 11;
+                        this.currentYear--;
+                    }
+                    this.renderCalendar();
+                });
+
+                document.getElementById('nextMonth').addEventListener('click', () => {
+                    this.currentMonth++;
+                    if (this.currentMonth > 11) {
+                        this.currentMonth = 0;
+                        this.currentYear++;
+                    }
+                    this.renderCalendar();
+                });
+            }
+
+            selectDate(date) {
+                if (!this.checkinDate || (this.checkinDate && this.checkoutDate)) {
+                    // First selection or reset
+                    this.checkinDate = this.formatDateForInput(date);
+                    this.checkoutDate = '';
+                } else {
+                    // Second selection
+                    const checkin = new Date(this.checkinDate);
+                    if (date > checkin) {
+                        this.checkoutDate = this.formatDateForInput(date);
+                    } else {
+                        this.checkinDate = this.formatDateForInput(date);
+                        this.checkoutDate = '';
+                    }
+                }
+                
+                // Clear quick option selections
+                document.querySelectorAll('.quick-date-option').forEach(opt => opt.classList.remove('selected'));
+                
+                // Re-render calendar to show selection
+                this.renderCalendar();
+                this.updateCalendarSelection();
+            }
+
+            updateCalendarSelection() {
+                const calendarDays = document.querySelectorAll('.calendar-day:not(.disabled)');
+                calendarDays.forEach(day => {
+                    day.classList.remove('selected');
+                    const dayNumber = parseInt(day.textContent);
+                    if (dayNumber) {
+                        const dayDate = new Date(this.currentYear, this.currentMonth, dayNumber);
+                        const dayDateString = this.formatDateForInput(dayDate);
+                        
+                        if (dayDateString === this.checkinDate || dayDateString === this.checkoutDate) {
+                            day.classList.add('selected');
+                        }
+                    }
+                });
+            }
+
+            openGuestModal() {
+                const modalTitle = document.getElementById('modalTitle');
+                const modalBody = document.getElementById('modalBody');
+                const modal = document.getElementById('modal');
+                
+                modal.classList.add('guest-modal');
+                modalTitle.textContent = 'Who\'s coming?';
+                
+                modalBody.innerHTML = `
+                    <div class="guest-controls">
+                        <div class="guest-info">
+                            <div class="guest-type">Adults</div>
+                            <div class="guest-description">Ages 13 or above</div>
+                        </div>
+                        <div class="guest-counter-controls">
+                            <button class="counter-button" id="adultsDecrement" ${this.guests.adults <= 0 ? 'disabled' : ''}>−</button>
+                            <span class="counter-value" id="adultsCount">${this.guests.adults}</span>
+                            <button class="counter-button" id="adultsIncrement">+</button>
+                        </div>
+                    </div>
+                    
+                    <div class="guest-controls">
+                        <div class="guest-info">
+                            <div class="guest-type">Children</div>
+                            <div class="guest-description">Ages 2–12</div>
+                        </div>
+                        <div class="guest-counter-controls">
+                            <button class="counter-button" id="childrenDecrement" ${this.guests.children <= 0 ? 'disabled' : ''}>−</button>
+                            <span class="counter-value" id="childrenCount">${this.guests.children}</span>
+                            <button class="counter-button" id="childrenIncrement">+</button>
+                        </div>
+                    </div>
+                    
+                    <div class="guest-controls">
+                        <div class="guest-info">
+                            <div class="guest-type">Infants</div>
+                            <div class="guest-description">Under 2</div>
+                        </div>
+                        <div class="guest-counter-controls">
+                            <button class="counter-button" id="infantsDecrement" ${this.guests.infants <= 0 ? 'disabled' : ''}>−</button>
+                            <span class="counter-value" id="infantsCount">${this.guests.infants}</span>
+                            <button class="counter-button" id="infantsIncrement">+</button>
+                        </div>
+                    </div>
+                `;
+
+                this.bindGuestCounters();
+                this.openModal();
+            }
+
+            bindGuestCounters() {
+                // Adults
+                document.getElementById('adultsDecrement').addEventListener('click', () => {
+                    if (this.guests.adults > 0) {
+                        this.guests.adults--;
+                        this.updateGuestCounter('adults');
+                    }
+                });
+
+                document.getElementById('adultsIncrement').addEventListener('click', () => {
+                    this.guests.adults++;
+                    this.updateGuestCounter('adults');
+                });
+
+                // Children
+                document.getElementById('childrenDecrement').addEventListener('click', () => {
+                    if (this.guests.children > 0) {
+                        this.guests.children--;
+                        this.updateGuestCounter('children');
+                    }
+                });
+
+                document.getElementById('childrenIncrement').addEventListener('click', () => {
+                    this.guests.children++;
+                    this.updateGuestCounter('children');
+                });
+
+                // Infants
+                document.getElementById('infantsDecrement').addEventListener('click', () => {
+                    if (this.guests.infants > 0) {
+                        this.guests.infants--;
+                        this.updateGuestCounter('infants');
+                    }
+                });
+
+                document.getElementById('infantsIncrement').addEventListener('click', () => {
+                    this.guests.infants++;
+                    this.updateGuestCounter('infants');
+                });
+            }
+
+            updateGuestCounter(type) {
+                const countElement = document.getElementById(`${type}Count`);
+                const decrementButton = document.getElementById(`${type}Decrement`);
+                
+                if (countElement) {
+                    countElement.textContent = this.guests[type];
+                }
+                
+                if (decrementButton) {
+                    decrementButton.disabled = this.guests[type] <= 0;
+                }
+            }
+
+            updateGuestDisplay() {
+                const guestValue = document.getElementById('guestValue');
+                const totalGuests = this.guests.adults + this.guests.children;
+                
+                if (totalGuests === 0 && this.guests.infants === 0) {
+                    guestValue.textContent = 'Add guests';
+                    guestValue.classList.remove('has-value');
+                } else {
+                    let displayText = '';
+                    
+                    if (totalGuests > 0) {
+                        displayText = totalGuests === 1 ? '1 guest' : `${totalGuests} guests`;
+                    }
+                    
+                    if (this.guests.infants > 0) {
+                        const infantText = this.guests.infants === 1 ? '1 infant' : `${this.guests.infants} infants`;
+                        displayText = displayText ? `${displayText}, ${infantText}` : infantText;
+                    }
+                    
+                    guestValue.textContent = displayText;
+                    guestValue.classList.add('has-value');
+                }
+            }
+
+            openModal() {
+                document.getElementById('modal').style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+
+            closeModal() {
+                const modal = document.getElementById('modal');
+                modal.style.display = 'none';
+                modal.classList.remove('guest-modal');
+                document.body.style.overflow = 'auto';
+            }
+
+            confirmSelection() {
+                // Update location display
+                if (this.selectedLocation) {
+                    const locationValue = document.getElementById('locationValue');
+                    locationValue.textContent = this.selectedLocation;
+                    locationValue.classList.add('has-value');
+                }
+
+                // Update date display
+                const dateValue = document.getElementById('dateValue');
+                if (this.checkinDate && this.checkoutDate) {
+                    const checkinFormatted = this.formatDate(new Date(this.checkinDate));
+                    const checkoutFormatted = this.formatDate(new Date(this.checkoutDate));
+                    dateValue.textContent = `${checkinFormatted} – ${checkoutFormatted}`;
+                    dateValue.classList.add('has-value');
+                } else if (this.checkinDate) {
+                    const checkinFormatted = this.formatDate(new Date(this.checkinDate));
+                    dateValue.textContent = checkinFormatted;
+                    dateValue.classList.add('has-value');
+                } else {
+                    const selectedQuickOption = document.querySelector('.quick-date-option.selected');
+                    if (selectedQuickOption) {
+                        const optionTitle = selectedQuickOption.querySelector('.quick-date-title').textContent;
+                        dateValue.textContent = optionTitle;
+                        dateValue.classList.add('has-value');
+                    }
+                }
+
+                // Update guest display
+                this.updateGuestDisplay();
+
+                this.closeModal();
+            }
+
+            performSearch() {
+                console.log('Search performed with:', {
+                    location: this.selectedLocation,
+                    checkinDate: this.checkinDate,
+                    checkoutDate: this.checkoutDate,
+                    guests: this.guests
+                });
+                
+                alert('Search functionality would be implemented here!');
+            }
+
+            // Utility functions
+            formatDate(date) {
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            }
+
+            formatDateForInput(date) {
+                return date.toISOString().split('T')[0];
+            }
+
+            addDays(date, days) {
+                const result = new Date(date);
+                result.setDate(result.getDate() + days);
+                return result;
+            }
+
+            getWeekendRange() {
+                const today = new Date();
+                const dayOfWeek = today.getDay();
+                const daysUntilSaturday = (6 - dayOfWeek) % 7;
+                const saturday = this.addDays(today, daysUntilSaturday);
+                const sunday = this.addDays(saturday, 1);
+                
+                return `${this.formatDate(saturday)} – ${this.formatDate(sunday)}`;
+            }
+
+            getNextWeekend() {
+                const today = new Date();
+                const dayOfWeek = today.getDay();
+                const daysUntilSaturday = (6 - dayOfWeek) % 7;
+                const saturday = this.addDays(today, daysUntilSaturday);
+                const sunday = this.addDays(saturday, 1);
+                
+                return { start: saturday, end: sunday };
+            }
+        }
+
+        // Initialize the enhanced search bar
+        document.addEventListener('DOMContentLoaded', () => {
+            new EnhancedAirbnbSearchBar();
+        });
+    </script>
+</body>
+</html>
+

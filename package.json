@@ -1,11 +1,12 @@
 {
   "name": "aisito-landing-page",
   "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
+  "main": "index.js",  "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "echo 'No CSS build needed with CDN'",
-    "dev": "echo 'No CSS watch needed with CDN or run a simple local server command if needed'"
+    "dev": "npx http-server . -p 8080 -c-1",
+    "serve": "npx http-server . -p 8080 -c-1",
+    "production-check": "echo 'Run this before deployment to verify production readiness'"
   },
   "repository": {
     "type": "git",

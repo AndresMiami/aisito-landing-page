@@ -229,11 +229,24 @@ let formState = {
 
 // URL to experience mapping for navigation integration
 const urlToExperienceMap = {
+  /* HOURLY_CHAUFFEUR_CODE_START - EXTRACT TO SEPARATE PAGE
   'hourly.html': 'hourly_chauffeur',
-  'yacht.html': 'water_sky',
-  'dining.html': 'miami_relocation',
+  HOURLY_CHAUFFEUR_CODE_END */
+  
+  /* TOURS_EXCURSIONS_CODE_START - REMOVED
+  'tours.html': 'tours_excursions',
   'wynwood.html': 'tours_excursions',
-  'airport.html': 'airport_transfer'
+  TOURS_EXCURSIONS_CODE_END */
+  
+  /* AIRPORT_TRANSFER_CODE_START - REMOVED
+  'airport.html': 'airport_transfer',
+  AIRPORT_TRANSFER_CODE_END */
+  
+  'yacht.html': 'water_sky',
+  
+  /* MIAMI_RELOCATION_CODE_START - REMOVED
+  'dining.html': 'miami_relocation'
+  MIAMI_RELOCATION_CODE_END */
 };
 
 // Main integration testing functionality (extracted from inline script)
@@ -299,8 +312,7 @@ function getElementRefs() {
     tabButtons: {
       oneway: document.getElementById('tab-button-oneway'),
       experiencePlus: document.getElementById('tab-button-experience-plus')
-    },
-    tabPanels: {
+    },    tabPanels: {
       oneway: document.getElementById('panel-oneway'),
       experiencePlus: document.getElementById('panel-experience-plus')
     },
@@ -761,33 +773,6 @@ function initializeFlatpickr() {
       });
       console.log('✅ Time picker initialized for pickup-time-oneway');
     }
-    
-    // Initialize date/time pickers for Experience+ tab
-    const pickupDateHourly = document.getElementById('pickup-date-hourly');
-    if (pickupDateHourly) {
-      flatpickr(pickupDateHourly, {
-        minDate: 'today',
-        dateFormat: 'Y-m-d',
-        onChange: () => {
-          checkExperienceDateTimeValidity();
-        }
-      });
-      console.log('✅ Date picker initialized for pickup-date-hourly');
-    }
-    
-    const pickupTimeHourly = document.getElementById('pickup-time-hourly');
-    if (pickupTimeHourly) {
-      flatpickr(pickupTimeHourly, {
-        enableTime: true,
-        noCalendar: true,
-        dateFormat: 'H:i',
-        time_24hr: false,
-        onChange: () => {
-          checkExperienceDateTimeValidity();
-        }
-      });
-      console.log('✅ Time picker initialized for pickup-time-hourly');
-    }
   } else {
     console.warn('⚠️ Flatpickr not available');
   }
@@ -1159,26 +1144,32 @@ function handleExperienceSelection(selectedValue) {
   updateSubmitButtonText(selectedValue);
   
   // Show relevant containers based on selection
-  switch (selectedValue) {
+  switch (selectedValue) {    
+    /* HOURLY_CHAUFFEUR_CODE_START - EXTRACT TO SEPARATE PAGE
     case 'hourly_chauffeur':
       refs.descriptions.hourly?.classList.remove('hidden');
       refs.durationContainer?.classList.remove('hidden');
       refs.dateTimeContainerHourly?.classList.remove('hidden');
       console.log('📋 Showing hourly chauffeur options');
       break;
+    HOURLY_CHAUFFEUR_CODE_END */
       
+    /* TOURS_EXCURSIONS_CODE_START - REMOVED
     case 'tours_excursions':
       refs.descriptions.tours?.classList.remove('hidden');
       refs.datePreferenceContainer?.classList.remove('hidden');
       refs.experienceOptions.wynwoodNight?.classList.remove('hidden');
       console.log('📋 Showing tours & excursions options');
       break;
+    TOURS_EXCURSIONS_CODE_END */
       
+    /* AIRPORT_TRANSFER_CODE_START - REMOVED
     case 'airport_transfer':
       refs.descriptions.airport?.classList.remove('hidden');
       refs.datePreferenceContainer?.classList.remove('hidden');
       console.log('📋 Showing airport transfer options');
       break;
+    AIRPORT_TRANSFER_CODE_END */
       
     case 'water_sky':
       refs.datePreferenceContainer?.classList.remove('hidden');
@@ -1186,10 +1177,12 @@ function handleExperienceSelection(selectedValue) {
       console.log('📋 Showing yacht & boat options');
       break;
       
+    /* MIAMI_RELOCATION_CODE_START - REMOVED
     case 'miami_relocation':
       refs.experienceOptions.miamiRelocation?.classList.remove('hidden');
       console.log('📋 Showing Miami relocation options');
       break;
+    MIAMI_RELOCATION_CODE_END */
       
     default:
       console.log('📋 No specific options for:', selectedValue);
@@ -1203,18 +1196,17 @@ function handleExperienceSelection(selectedValue) {
 function updateSubmitButtonText(experience) {
   const refs = getElementRefs();
   const buttonText = refs.submitButton?.querySelector('.button-text');
-  
   if (buttonText) {
     switch (experience) {
+      /* HOURLY_CHAUFFEUR_CODE_START - EXTRACT TO SEPARATE PAGE */
       case 'hourly_chauffeur':
         buttonText.textContent = 'Book Hourly Service';
         break;
-      case 'tours_excursions':
-        buttonText.textContent = 'Book Tour';
-        break;
-      case 'airport_transfer':
-        buttonText.textContent = 'Book Transfer';
-        break;
+      /* HOURLY_CHAUFFEUR_CODE_END */
+      
+      /* REMOVED: Tours & Excursions button text */
+      /* REMOVED: Airport Transfer button text */
+      
       case 'water_sky':
         buttonText.textContent = 'Request Quote';
         break;
@@ -1247,16 +1239,19 @@ function initializeDatePreferences() {
 function checkExperienceDateTimeValidity() {
   const refs = getElementRefs();
   const selectedExperience = refs.experienceDropdown?.value;
-  
+  /* HOURLY_CHAUFFEUR_CODE_START - EXTRACT TO SEPARATE PAGE */
   if (selectedExperience === 'hourly_chauffeur') {
     // For hourly, need both date and time
     const hasDate = (refs.pickupDateHourly?.value?.length || 0) > 0;
     const hasTime = (refs.pickupTimeHourly?.value?.length || 0) > 0;
     formState.experiencePlus.dateTime = hasDate && hasTime;
   } else {
-    // For other experiences, date preference is sufficient
-    const selectedPreference = document.querySelector('input[name="date_preference"]:checked');
-    formState.experiencePlus.dateTime = !!selectedPreference;
+  /* HOURLY_CHAUFFEUR_CODE_END */
+  
+  // For all experiences, date preference is sufficient
+  const selectedPreference = document.querySelector('input[name="date_preference"]:checked');
+  formState.experiencePlus.dateTime = !!selectedPreference;
+  
   }
   
   console.log('📅 Experience+ date/time validity:', formState.experiencePlus.dateTime);
