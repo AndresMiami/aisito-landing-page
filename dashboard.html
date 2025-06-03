@@ -60,10 +60,8 @@
         transition: box-shadow 0.2s ease;
         margin-bottom: 20px;
       }
-      
-      /* Fix for time picker cut-off issue */
-      .booking-form-card {
-        overflow: visible !important;
+        .booking-form-card {
+        overflow: hidden;
       }
 
       .airbnb-booking-container:hover {
@@ -220,12 +218,10 @@
           background: white;
           border-radius: 16px;
           padding: 20px;
-          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
-          border: 1px solid #dddddd;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);          border: 1px solid #dddddd;
           transition: box-shadow 0.2s ease;
           margin-top: 16px;
           position: relative;
-          overflow: visible !important; /* Fix for time picker cut-off */
       }
 
       #scheduled-booking-inputs:hover {
@@ -247,12 +243,38 @@
           min-height: 48px;
       }
 
+      /* Custom styles for time dropdown select */
+      select#pickup-time-oneway {
+          border: 1px solid #dddddd !important;
+          border-radius: 12px !important;
+          padding: 14px 16px !important;
+          font-size: 14px !important;
+          font-weight: 400;
+          color: #222222 !important;
+          background: white !important;
+          transition: all 0.2s ease !important;
+          box-shadow: none !important;
+          min-height: 48px;
+          appearance: auto; /* Show the dropdown arrow */
+      }
+
       #pickup-date-oneway:focus,
       #pickup-time-oneway:focus {
           border-color: #222222 !important;
           box-shadow: 0 0 0 1px #222222 !important;
           outline: none !important;
           background: #fafafa !important;
+      }
+
+      /* Style for the dropdown when it's filled */
+      select#pickup-time-oneway.filled {
+          border-color: #10b981 !important;
+          background: #f0fdf4 !important;
+      }
+
+      select#pickup-time-oneway option {
+          padding: 8px;
+          font-size: 14px;
       }
 
       #pickup-date-oneway:hover,
@@ -397,10 +419,40 @@
       .flatpickr-time input:focus {
           border-color: #222222 !important;
           box-shadow: 0 0 0 1px #222222 !important;
-          outline: none !important;
-      }      .flatpickr-time .flatpickr-time-separator {
+          outline: none !important;      }      .flatpickr-time .flatpickr-time-separator {
           color: #222222 !important;
           font-weight: 600 !important;
+      }      /* Custom styles for time dropdown select */
+      select#pickup-time-oneway {
+          border: 1px solid #dddddd !important;
+          border-radius: 12px !important;
+          padding: 14px 16px !important;
+          font-size: 14px !important;
+          font-weight: 400;
+          color: #222222 !important;
+          background: white !important;
+          transition: all 0.2s ease !important;
+          box-shadow: none !important;
+          min-height: 48px;
+          appearance: auto; /* Show the dropdown arrow */      }
+      
+      /* Time dropdown options styling */
+      select#pickup-time-oneway option {
+          padding: 8px;
+          font-size: 14px;
+      }
+
+      select#pickup-time-oneway:focus {
+          border-color: #222222 !important;
+          box-shadow: 0 0 0 1px #222222 !important;
+          outline: none !important;
+          background: #fafafa !important;
+      }
+
+      /* Style for the dropdown when it's filled */
+      select#pickup-time-oneway.filled {
+          border-color: #10b981 !important;
+          background: #f0fdf4 !important;
       }
       
       /* Mobile Responsive Enhancements */
@@ -440,12 +492,9 @@
               line-height: 32px !important;
               font-size: 13px !important;
           }
-      }
-      
-      /* Visual Feedback Enhancements */
+      }      /* Visual Feedback Enhancements */
       #scheduled-booking-inputs {
           position: relative;
-          overflow: visible !important; /* Fix for time picker cut-off */
       }
       
       #scheduled-booking-inputs::before {
@@ -535,7 +584,7 @@
 <script type="module" src="./dashboard-components.js"></script>
 <script type="module" src="./dashboard.js"></script>
 -->
-
+  
   </head>
   <body class="bg-gray-100" style="background-image: url('images/miami-skyline-abstract-form.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
     <header class="site-header">
@@ -792,10 +841,47 @@
                          <label for="pickup-date-oneway" class="block text-xs font-medium text-gray-500 mb-0.5">Date</label>
                          <input type="text" name="pickup-date-oneway" id="pickup-date-oneway" aria-describedby="pickup-date-oneway-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Date..." />
                          <span id="pickup-date-oneway-error" class="mt-1 block text-xs text-red-600 hidden"></span>
-                      </div>
-                      <div>
+                      </div>                      <div>
                          <label for="pickup-time-oneway" class="block text-xs font-medium text-gray-500 mb-0.5">Time</label>
-                         <input type="text" name="pickup-time-oneway" id="pickup-time-oneway" aria-describedby="pickup-time-oneway-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm" placeholder="Select Time..." />
+                         <select name="pickup-time-oneway" id="pickup-time-oneway" required aria-describedby="pickup-time-oneway-error" class="block w-full rounded-md border-0 py-3 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[--color-gold] sm:text-sm">
+                            <option value="">Select Time...</option>
+                            <option value="06:00 AM">6:00 AM</option>
+                            <option value="06:30 AM">6:30 AM</option>
+                            <option value="07:00 AM">7:00 AM</option>
+                            <option value="07:30 AM">7:30 AM</option>
+                            <option value="08:00 AM">8:00 AM</option>
+                            <option value="08:30 AM">8:30 AM</option>
+                            <option value="09:00 AM">9:00 AM</option>
+                            <option value="09:30 AM">9:30 AM</option>
+                            <option value="10:00 AM">10:00 AM</option>
+                            <option value="10:30 AM">10:30 AM</option>
+                            <option value="11:00 AM">11:00 AM</option>
+                            <option value="11:30 AM">11:30 AM</option>
+                            <option value="12:00 PM">12:00 PM</option>
+                            <option value="12:30 PM">12:30 PM</option>
+                            <option value="01:00 PM">1:00 PM</option>
+                            <option value="01:30 PM">1:30 PM</option>
+                            <option value="02:00 PM">2:00 PM</option>
+                            <option value="02:30 PM">2:30 PM</option>
+                            <option value="03:00 PM">3:00 PM</option>
+                            <option value="03:30 PM">3:30 PM</option>
+                            <option value="04:00 PM">4:00 PM</option>
+                            <option value="04:30 PM">4:30 PM</option>
+                            <option value="05:00 PM">5:00 PM</option>
+                            <option value="05:30 PM">5:30 PM</option>
+                            <option value="06:00 PM">6:00 PM</option>
+                            <option value="06:30 PM">6:30 PM</option>
+                            <option value="07:00 PM">7:00 PM</option>
+                            <option value="07:30 PM">7:30 PM</option>
+                            <option value="08:00 PM">8:00 PM</option>
+                            <option value="08:30 PM">8:30 PM</option>
+                            <option value="09:00 PM">9:00 PM</option>
+                            <option value="09:30 PM">9:30 PM</option>
+                            <option value="10:00 PM">10:00 PM</option>
+                            <option value="10:30 PM">10:30 PM</option>
+                            <option value="11:00 PM">11:00 PM</option>
+                            <option value="11:30 PM">11:30 PM</option>
+                        </select>
                          <span id="pickup-time-oneway-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                       </div>
                    </div>
@@ -1209,8 +1295,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Check initial state
         updateInputState(timeInput);
     }
-    
-    // Enhanced Flatpickr configuration
+      // Enhanced Flatpickr configuration for date picker only
     if (dateInput && typeof flatpickr !== 'undefined') {
         flatpickr(dateInput, {
             dateFormat: "M j, Y",
@@ -1224,18 +1309,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    if (timeInput && typeof flatpickr !== 'undefined') {
-        flatpickr(timeInput, {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "h:i K",
-            time_24hr: false,
-            minuteIncrement: 15,
-            theme: "airbnb",
-            onChange: function(selectedDates, timeStr, instance) {
-                updateInputState(timeInput);
-                console.log('Time selected:', timeStr);
-            }
+    // Time picker now using standard dropdown select - no Flatpickr needed
+    if (timeInput) {
+        timeInput.addEventListener('change', function() {
+            updateInputState(timeInput);
+            console.log('Time selected:', timeInput.value);
         });
     }
 });
