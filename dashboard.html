@@ -228,11 +228,12 @@
       }
       .location-item:hover {
         background-color: #f7f7f7;
-      }
+      }      /* This style applies to location icons in the location item list, 
+      not the input field location icons which are controlled by custom-places.css */
       .location-icon {
         margin-right: 16px;
-        width: 40px;
-        height: 40px;
+        width: 24px; /* Reduced from 40px to be more proportional */
+        height: 24px; /* Reduced from 40px to be more proportional */
         border-radius: 8px;
         display: flex;
         align-items: center;
@@ -382,7 +383,7 @@
           .experience-search-bar { flex-direction: column; border-radius: 16px; }
           .experience-search-bar .search-section { border-right: none; border-bottom: 1px solid #dddddd; padding: 14px 18px; min-height: 50px; background-color: white !important; border-radius: 0 !important; }
           .experience-search-bar .search-section:first-child { border-radius: 16px 16px 0 0 !important; }
-          .experience-search-bar .search-section:nth-child(3) { border-bottom: none; border-radius: 0 0 16px 16px !important; }
+          .experience-search-bar .search-section:last-child { border-bottom: none; border-radius: 0 0 16px 16px !important; }
           .experience-search-bar .search-section:hover { border-radius: 0 !important; background-color: #f7f7f7 !important; }
           .experience-search-bar .search-button { margin: 10px; width: 36px; height: 36px; align-self: center; }
           .experience-search-bar .search-button svg { width: 12px; height: 12px; }
@@ -840,14 +841,9 @@
                       </div>
                       <span id="from-location-exp-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                     </div>
-                    
-                    <!-- Enhanced Airbnb-style Search Bar -->
+                      <!-- Enhanced Airbnb-style Search Bar -->
                     <div class="experience-search-container">
                       <div class="experience-search-bar" id="experienceSearchContainer">
-                        <div class="search-section" id="experienceLocationSection">
-                            <div class="search-label">Where</div>
-                            <div class="search-value" id="experienceLocationValue">Search destinations</div>
-                        </div>
                         <div class="search-section" id="experienceDateSection">
                             <div class="search-label">Date</div>
                             <div class="search-value" id="experienceDateValue">Add dates</div>
@@ -1019,6 +1015,9 @@ document.addEventListener('DOMContentLoaded', function() {
       // Remove any previous initialization
       if (window.experienceSearchBar) {
         console.log('Existing search bar found, updating');
+        
+        // Re-initialize the component to ensure all event listeners are attached
+        window.experienceSearchBar.init();
       } else {
         console.log('Initializing experience search bar');
         // Create and store the instance globally
@@ -1026,7 +1025,7 @@ document.addEventListener('DOMContentLoaded', function() {
         window.experienceSearchBar.init(); // Initialize the component
       }
     }
-  }, 100);
+  }, 200); // Increased delay to ensure DOM is fully loaded
 });
 </script>
 
@@ -1176,7 +1175,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (debugPanel.style.display === 'none') {
           debugPanel.style.display = 'block';
           debugToggle.style.display = 'none';
-        } else {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 } else {
           debugPanel.style.display = 'none';
           debugToggle.style.display = 'block';
         }
@@ -1380,17 +1379,16 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- Experience Search Bar JavaScript -->
 <script>
   // ExperienceSearchBar class for experience search functionality
-  class ExperienceSearchBar {
-    constructor() {
+  class ExperienceSearchBar {    constructor() {
       // Search bar elements
       this.searchContainer = document.getElementById('experienceSearchContainer');
-      this.locationSection = document.getElementById('experienceLocationSection');
+      // Location section removed - using Place Autocomplete directly
       this.dateSection = document.getElementById('experienceDateSection');
       this.guestSection = document.getElementById('experienceGuestSection');
       this.searchButton = document.getElementById('experienceSearchButton');
       
       // Values display elements
-      this.locationValue = document.getElementById('experienceLocationValue');
+      // Location value removed - using Place Autocomplete directly
       this.dateValue = document.getElementById('experienceDateValue');
       this.guestValue = document.getElementById('experienceGuestValue');
       
@@ -1412,10 +1410,9 @@ document.addEventListener('DOMContentLoaded', function() {
       // Flatpickr instance
       this.calendar = null;
     }
-    
-    init() {
+      init() {
       // Check if all required elements exist
-      if (!this.searchContainer || !this.locationSection || !this.dateSection || 
+      if (!this.searchContainer || !this.dateSection || 
           !this.guestSection || !this.searchButton) {
         console.warn('Experience search bar elements not found.');
         return;
@@ -1426,6 +1423,9 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Initialize flatpickr calendar
       this.initCalendar();
+      
+      // Initialize Google Maps Place Autocomplete integration
+      this.initPlaceAutocomplete();
       
       // Attach event listeners
       this.attachEventListeners();
@@ -1487,10 +1487,9 @@ document.addEventListener('DOMContentLoaded', function() {
           '<input type="date" class="location-search-input" min="' + new Date().toISOString().split('T')[0] + '">';
       }
     }
-    
-    attachEventListeners() {
+      attachEventListeners() {
       // Open modals on section click
-      this.locationSection.addEventListener('click', () => this.openModal('location'));
+      // Location section removed - using Place Autocomplete directly
       this.dateSection.addEventListener('click', () => this.openModal('date'));
       this.guestSection.addEventListener('click', () => this.openModal('guest'));
       
@@ -1611,7 +1610,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       
       // Update selected status
-      this.locationSection.classList.toggle('selected', type === 'location');
+      // Location section removed - using Place Autocomplete directly
       this.dateSection.classList.toggle('selected', type === 'date');
       this.guestSection.classList.toggle('selected', type === 'guest');
     }
@@ -1633,7 +1632,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       
       // Remove selected status
-      this.locationSection.classList.remove('selected');
       this.dateSection.classList.remove('selected');
       this.guestSection.classList.remove('selected');
     }
@@ -1644,15 +1642,16 @@ document.addEventListener('DOMContentLoaded', function() {
       this.dateModal.classList.remove('visible');
       this.guestModal.classList.remove('visible');
       
-      this.locationSection.classList.remove('selected');
+      // Location section removed - using Place Autocomplete directly
       this.dateSection.classList.remove('selected');
       this.guestSection.classList.remove('selected');
     }
     
     saveLocation() {
       if (this.selectedLocation) {
-        this.locationValue.textContent = this.selectedLocation;
-        this.locationValue.classList.add('has-value');
+        // We're now using the Google Maps Place Autocomplete directly
+        // so no need to update any display value
+        console.log('Selected location:', this.selectedLocation);
       }
       this.closeModal('location');
     }
@@ -1797,9 +1796,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     search() {
+      // Get location from the place autocomplete if available
+      const locationName = this.selectedLocation && this.selectedLocation.name 
+        ? this.selectedLocation.name 
+        : document.getElementById('from-location-exp')?.value || 'any location';
+      
       // Gather all search parameters
       const searchParams = {
-        location: this.selectedLocation || '',
+        location: locationName,
         date: this.selectedDate ? (this.selectedDate instanceof Date ? this.selectedDate.toISOString().split('T')[0] : this.selectedDate) : '',
         guests: this.guests
       };
@@ -1813,7 +1817,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // TODO: Implement actual search functionality or form submission
       // For now, just log the search parameters
-      alert(`Searching for experiences in ${searchParams.location || 'any location'} on ${searchParams.date || 'any date'} for ${this.getTotalGuests()} guests`);
+      alert(`Searching for experiences in ${locationName} on ${searchParams.date || 'any date'} for ${this.getTotalGuests()} guests`);
     }
     
     getTotalGuests() {
@@ -1821,9 +1825,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 </script>
-
-<!-- Booking Timing Bar Component Script -->
-<script src="./js/booking-timing-bar.js"></script>
-  </body>
-</html>
 
