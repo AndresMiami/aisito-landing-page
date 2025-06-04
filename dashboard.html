@@ -1620,7 +1620,7 @@ class ExperienceSearchBar {
       });
       
       console.log('✅ Experience search bar event listeners attached');
-    }      showModal(modalType, modalData = {}) {
+    }    showModal(modalType, modalData = {}) {
       // Hide any other visible modals first
       this.hideAllModals();
       
@@ -1644,8 +1644,7 @@ class ExperienceSearchBar {
       } else {
         console.error('Modal element not found');
       }
-    }
-      setupDateModal() {
+    }setupDateModal() {
       // Set modal title
       if (this.modalTitle) {
         this.modalTitle.textContent = 'Select dates';
@@ -1653,22 +1652,58 @@ class ExperienceSearchBar {
       
       // Clear previous content
       if (this.modalBody) {
-        this.modalBody.innerHTML = '';
+        // Get today's date for quick options
+        const today = new Date();
         
-        // Create date picker container
-        const datePickerContainer = document.createElement('div');
-        datePickerContainer.id = 'datepickerContainer';
-        datePickerContainer.className = 'date-picker-container';
-        this.modalBody.appendChild(datePickerContainer);
+        // Get tomorrow's date
+        const tomorrow = new Date();
+        tomorrow.setDate(today.getDate() + 1);
         
-        // Initialize flatpickr in the new container
-        if (window.flatpickr) {
+        // Get weekend (next Saturday)
+        const weekend = new Date();
+        weekend.setDate(today.getDate() + (6 - today.getDay()));
+        
+        // Create HTML for compact date picker layout
+        this.modalBody.innerHTML = `
+          <div class="date-picker-container">
+            <div class="date-quick-options">
+              <div class="quick-date-option" data-option="today">
+                <div class="quick-date-title">Today</div>
+                <div class="quick-date-subtitle">${this.formatDate(today)}</div>
+              </div>
+              <div class="quick-date-option" data-option="tomorrow">
+                <div class="quick-date-title">Tomorrow</div>
+                <div class="quick-date-subtitle">${this.formatDate(tomorrow)}</div>
+              </div>
+              <div class="quick-date-option" data-option="weekend">
+                <div class="quick-date-title">Weekend</div>
+                <div class="quick-date-subtitle">${this.formatDate(weekend)}</div>
+              </div>
+              <div class="quick-date-option" data-option="flexible">
+                <div class="quick-date-title">Flexible</div>
+                <div class="quick-date-subtitle">Any date</div>
+              </div>
+            </div>
+            <div class="calendar-container">
+              <div class="calendar-header">
+                <button class="calendar-nav" id="prevMonth">‹</button>
+                <div class="calendar-month-year" id="monthYear">${today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div>
+                <button class="calendar-nav" id="nextMonth">›</button>
+              </div>
+              <div id="datepickerContainer" class="flatpickr-container"></div>
+            </div>
+          </div>
+        `;
+        
+        // Initialize flatpickr in the container
+        const datepickerContainer = document.getElementById('datepickerContainer');
+        if (window.flatpickr && datepickerContainer) {
           if (this.calendar) {
             // Destroy previous instance if exists
             this.calendar.destroy();
           }
           
-          this.calendar = flatpickr(datePickerContainer, {
+          this.calendar = flatpickr(datepickerContainer, {
             mode: "single",
             dateFormat: "Y-m-d",
             minDate: "today",
@@ -1692,6 +1727,32 @@ class ExperienceSearchBar {
         } else {
           this.modalBody.innerHTML = '<p class="error-message">Date picker not available</p>';
         }
+        
+        // Add event listeners to quick date options
+        const quickDateOptions = this.modalBody.querySelectorAll('.quick-date-option');
+        quickDateOptions.forEach(option => {
+          option.addEventListener('click', () => {
+            const dateOption = option.dataset.option;
+            
+            // Remove selected class from all options
+            quickDateOptions.forEach(o => o.classList.remove('selected'));
+            
+            // Add selected class to clicked option
+            option.classList.add('selected');
+            
+            // Handle date selection based on option
+            this.selectDateOption(dateOption);
+            
+            // Auto-close after selection with a small delay for better UX
+            setTimeout(() => {
+              if (this.dateValue) {
+                this.dateValue.textContent = this.selectedDate;
+                this.dateValue.classList.add('has-value');
+              }
+              this.hideAllModals();
+            }, 300);
+          });
+        });
       }
       
       // Set confirm button action
@@ -1708,14 +1769,13 @@ class ExperienceSearchBar {
           this.hideAllModals();
         };
       }
-    }
-      setupGuestModal() {
+    }    setupGuestModal() {
       // Set modal title
       if (this.modalTitle) {
         this.modalTitle.textContent = 'Add guests';
       }
       
-      // Create guest counter HTML
+      // Create guest counter HTML with compact design
       if (this.modalBody) {
         this.modalBody.innerHTML = `
           <div class="guest-counter-container">
@@ -1956,7 +2016,7 @@ class ExperienceSearchBar {
   }
 </script>
 
-<!-- Experience Search Bar Modal System -->
+<!-- Experience Search Bar Modal System - Compact Design -->
 <div id="modal" class="modal">
     <div class="modal-content">
         <span class="close" id="closeModal">&times;</span>
