@@ -1,0 +1,70 @@
+/* Guest counter styles */
+.guest-counter-container {
+    margin: 20px 0;
+}
+
+.guest-type-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid #ebebeb;
+}
+
+.guest-type h3 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.guest-type p {
+    margin: 0;
+    color: #717171;
+    font-size: 14px;
+}
+
+.guest-count-controls {
+    display: flex;
+    align-items: center;
+}
+
+.count-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #b0b0b0;
+    background: white;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.count-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.guest-count {
+    margin: 0 16px;
+    font-size: 16px;
+    min-width: 24px;
+    text-align: center;
+}
+
+.confirm-btn {
+    background-color: #FF385C;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.confirm-btn:hover {
+    background-color: #e9223d;
+}

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Booking - I ❤️ Miami Concierge</title>    <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/fix-place-autocomplete.css">
+    <link rel="stylesheet" href="css/experience-modal.css">
     <!-- Development/Production Environment Styles -->
     <style>
       /* Hide dev-only elements by default (for production) */
@@ -105,7 +106,19 @@
       /* Experience Search Bar Styles */
       .experience-search-container { margin: 20px 0; width: 100%; }
       .experience-search-bar { background: white; border-radius: 32px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12); display: flex; align-items: center; border: 1px solid #dddddd; overflow: hidden; transition: all 0.3s ease; width: 100%; position: relative; }
-      .experience-search-bar:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }      .experience-search-bar .search-section { flex: 1; padding: 12px 20px; display: flex; flex-direction: column; justify-content: center; cursor: pointer; transition: background-color 0.2s ease; border-right: 1px solid #dddddd; min-height: 56px; position: relative; }
+      .experience-search-bar:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }      .experience-search-bar .search-section { 
+        flex: 1; 
+        padding: 12px 20px; 
+        display: flex; 
+        flex-direction: column; 
+        justify-content: center; 
+        cursor: pointer; 
+        transition: background-color 0.2s ease; 
+        border-right: 1px solid #dddddd; 
+        min-height: 56px; 
+        position: relative;
+        pointer-events: auto; /* Ensure clickable */
+      }
       .experience-search-bar .search-section:first-child { background-color: #f7f7f7; border-radius: 32px 0 0 32px; flex: 1.2; }
       .experience-search-bar .search-section:nth-child(2) { flex: 1; background-color: white; }
       .experience-search-bar .search-section:nth-child(3) { background-color: #f7f7f7; border-right: none; border-radius: 0 32px 32px 0; padding-right: 12px; }
@@ -131,10 +144,10 @@
         z-index: 100;
         transition: opacity 0.3s ease;
         opacity: 0;
-      }
-      .experience-modal-overlay.visible {
+      }      .experience-modal-overlay.visible {
         display: block;
         opacity: 1;
+        pointer-events: auto;
       }
 
       /* Modal Container Styles */
@@ -379,33 +392,343 @@
         box-shadow: 0 2px 8px rgba(230, 30, 77, 0.3);
       }
 
-      @media (max-width: 768px) {
-          .experience-search-bar { flex-direction: column; border-radius: 16px; }
-          .experience-search-bar .search-section { border-right: none; border-bottom: 1px solid #dddddd; padding: 14px 18px; min-height: 50px; background-color: white !important; border-radius: 0 !important; }
-          .experience-search-bar .search-section:first-child { border-radius: 16px 16px 0 0 !important; }
-          .experience-search-bar .search-section:last-child { border-bottom: none; border-radius: 0 0 16px 16px !important; }
-          .experience-search-bar .search-section:hover { border-radius: 0 !important; background-color: #f7f7f7 !important; }
-          .experience-search-bar .search-button { margin: 10px; width: 36px; height: 36px; align-self: center; }
-          .experience-search-bar .search-button svg { width: 12px; height: 12px; }
-          
-          .experience-modal {
-            width: 100%;
-            max-width: none;
-            top: auto;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            transform: translateY(100%);
-            border-radius: 16px 16px 0 0;
-            max-height: 95vh;
-          }
-          .experience-modal.visible {
-            transform: translateY(0);
-          }
-          .date-option {
-            flex: 1 0 calc(50% - 10px);
-          }
-      }
+      /* Modal Base Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 8% auto;
+    padding: 32px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 800px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease;
+    position: relative;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.close {
+    color: #717171;
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+    position: absolute;
+    top: 20px;
+    right: 24px;
+}
+
+.close:hover {
+    color: #222222;
+}
+
+.modal h2 {
+    margin-bottom: 24px;
+    color: #222222;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 0;
+}
+
+/* Date Picker Styles */
+.date-picker-container {
+    display: flex;
+    gap: 32px;
+    min-height: 400px;
+}
+
+.date-quick-options {
+    flex: 0 0 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.quick-date-option {
+    padding: 16px;
+    border: 1px solid #dddddd;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: white;
+    text-align: left;
+}
+
+.quick-date-option:hover {
+    border-color: #222222;
+    background-color: #f7f7f7;
+}
+
+.quick-date-option.selected {
+    border-color: #222222;
+    background-color: #f7f7f7;
+}
+
+.quick-date-title {
+    font-weight: 600;
+    color: #222222;
+    margin-bottom: 4px;
+}
+
+.quick-date-subtitle {
+    font-size: 14px;
+    color: #717171;
+}
+
+.calendar-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.calendar-nav {
+    background: none;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+
+.calendar-nav:hover {
+    background-color: #f7f7f7;
+}
+
+.calendar-month-year {
+    font-size: 18px;
+    font-weight: 600;
+    color: #222222;
+    flex: 1;
+    text-align: center;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    min-height: 40px;
+}
+
+.calendar-day:not(.disabled):hover {
+    background-color: #f7f7f7;
+}
+
+.calendar-day.selected {
+    background-color: #222222;
+    color: white;
+}
+
+.calendar-day.today {
+    background-color: #FF385C;
+    color: white;
+}
+
+.calendar-day.disabled {
+    color: #dddddd;
+    cursor: not-allowed;
+}
+
+.calendar-day-header {
+    font-weight: 600;
+    color: #717171;
+    font-size: 12px;
+    text-align: center;
+    padding: 8px 0;
+}
+
+/* Guest Counter Styles */
+.guest-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 0;
+    border-bottom: 1px solid #ebebeb;
+}
+
+.guest-controls:last-child {
+    border-bottom: none;
+}
+
+.guest-info {
+    flex: 1;
+}
+
+.guest-type {
+    font-size: 16px;
+    font-weight: 600;
+    color: #222222;
+    margin-bottom: 4px;
+}
+
+.guest-description {
+    font-size: 14px;
+    color: #717171;
+}
+
+.guest-counter-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.counter-button {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #b0b0b0;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 600;
+    color: #717171;
+    transition: all 0.2s ease;
+}
+
+.counter-button:hover:not(:disabled) {
+    border-color: #222222;
+    color: #222222;
+}
+
+.counter-button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.counter-value {
+    font-size: 16px;
+    font-weight: 400;
+    color: #222222;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* Modal Footer */
+.modal-footer {
+    margin-top: 32px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+}
+
+.confirm-btn {
+    background: #222222;
+    color: white;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.confirm-btn:hover {
+    background: #000000;
+}
+
+/* Experience Search Bar Clickability Fix */
+.experience-search-bar .search-section {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 1 !important;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.experience-search-bar .search-section:hover {
+    background-color: #ebebeb;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.experience-search-bar .search-section:active {
+    transform: translateY(0);
+}
+
+.experience-search-bar .search-value.has-value {
+    color: #222222;
+    font-weight: 500;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .modal-content {
+        margin: 5% auto;
+        width: 95%;
+        padding: 24px;
+    }
+    
+    .date-picker-container {
+        flex-direction: column;
+        gap: 24px;
+    }
+    
+    .date-quick-options {
+        flex: none;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .quick-date-option {
+        padding: 12px;
+    }
+}
     </style>
     <!-- Google Maps -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAd_O4s_73E_A8rq7TGCHKVEBFHzNecAHM&libraries=places&v=beta&loading=async"></script>
@@ -1051,316 +1374,6 @@ document.addEventListener('DOMContentLoaded', function() {
         ✅ Force To Valid
       </button>
       <button onclick="console.log('FormState:', window.formState)" 
-              style="display: block; margin: 3px 0; padding: 4px 8px; background: #3b82f6; color: white; border: none; border-radius: 3px; font-size: 11px;">
-        🔍 Check State
-      </button>
-    </div>
-    
-    <div style="margin-bottom: 10px;">
-      <strong style="color: #ff9800;">Event Monitor:</strong>
-      <button onclick="window.eventMonitor?.show()" 
-              style="display: block; margin: 3px 0; padding: 4px 8px; background: #9c27b0; color: white; border: none; border-radius: 3px; font-size: 11px;">
-        👁️ Show Monitor
-      </button>
-      <button onclick="window.eventMonitor?.toggle()" 
-              style="display: block; margin: 3px 0; padding: 4px 8px; background: #9c27b0; color: white; border: none; border-radius: 3px; font-size: 11px;">
-        🔄 Toggle Monitor
-      </button>
-      <button onclick="window.eventMonitor?.clear()" 
-              style="display: block; margin: 3px 0; padding: 4px 8px; background: #9c27b0; color: white; border: none; border-radius: 3px; font-size: 11px;">
-        🧹 Clear Events
-      </button>
-    </div>
-    
-    <div style="margin-bottom: 10px;">
-      <strong style="color: #f44336;">Test Events:</strong>
-      <button onclick="window.eventBus?.emit('error:show', {fieldId: 'test', message: 'Test error', severity: 'error'})" 
-              style="display: block; margin: 3px 0; padding:  4px 8px; background: #f44336; color: white; border: none; border-radius: 3px; font-size: 11px;">
-        🚨 Test Error
-      </button>
-      <button onclick="window.eventBus?.emit('form:submission:started', {test: true})" 
-              style="display: block; margin: 3px 0; padding: 4px 8px; background: #4caf50; color: white; border: none; border-radius: 3px; font-size: 11px;">
-        📝 Test Form Event
-      </button>
-    </div>
-    
-    <div style="font-size: 10px; color: #888; margin-top: 10px;">
-      Ctrl+Shift+E = Toggle Monitor<br>
-      Ctrl+Shift+D = Toggle Debug Panel
-    </div>
-  </div>
-</div>
-
-<!-- Debug Panel Toggle Button - Now positioned above the architecture badge -->
-<button id="debug-panel-toggle" style="position: fixed; bottom: 60px; left: 10px; background: rgba(220, 38, 38, 0.9); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer; z-index: 9997; display: none; box-shadow: 0 2px 4px rgba(0,0,0,0.3);" title="Toggle Debug Panel" class="dev-only">
-  🔧
-</button>
-
-<!-- Event-Driven Architecture Badge (Development Only) - Bottom Left Corner -->
-<div class="architecture-badge-floating dev-only" title="Built with Event-Driven Architecture" onclick="showEventArchitecture()">
-  <div class="badge-content">
-    <svg class="badge-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-      <path d="M12 7L7 10V14L12 17L17 14L12 7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-      <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
-    </svg>
-    <span class="badge-text">Event-Driven Architecture</span>
-    <div class="pulse-ring"></div>
-  </div>
-</div>
-
-<button id="inspector-toggle" class="inspector-toggle dev-only">🔍</button>
-<script>
-// Debug panel toggle functionality
-document.addEventListener('DOMContentLoaded', function() {
-  const debugPanel = document.getElementById('debug-controls');
-  const debugToggle = document.getElementById('debug-panel-toggle');
-  const debugMinimize = document.getElementById('debug-panel-minimize');
-  const debugClose = document.getElementById('debug-panel-close');
-  const debugContent = document.getElementById('debug-panel-content');
-  
-  // Only show debug controls in development environments
-  const isDevelopment = window.location.hostname === 'localhost' || 
-                        window.location.hostname === '127.0.0.1' ||
-                        window.location.hostname.includes('192.168.') ||
-                        window.location.hostname.includes('.local') ||
-                        window.location.search.includes('debug=true');
-                        
-  if (debugToggle && isDevelopment) {
-    // Show the toggle button only in development
-    debugToggle.style.display = 'block';
-    
-    // Toggle debug panel when button is clicked
-    debugToggle.addEventListener('click', function() {
-      if (debugPanel) {
-        debugPanel.style.display = 'block';
-        debugToggle.style.display = 'none';
-      }
-    });
-  }
-
-  if (debugClose) {
-    // Close debug panel when close button is clicked
-    debugClose.addEventListener('click', function() {
-      if (debugPanel) {
-        debugPanel.style.display = 'none';
-        debugToggle.style.display = 'block';
-      }
-    });
-  }
-
-  if (debugMinimize) {
-    // Minimize debug panel when button is clicked
-    debugMinimize.addEventListener('click', function() {
-      if (debugContent) {
-        if (debugContent.style.display === 'none') {
-          // Expand
-          debugContent.style.display = 'block';
-          debugMinimize.textContent = '_';
-          debugMinimize.title = 'Minimize panel';
-        } else {
-          // Minimize
-          debugContent.style.display = 'none';
-          debugMinimize.textContent = '□';
-          debugMinimize.title = 'Expand panel';
-        }
-      }
-    });
-  }
-  // Add keyboard shortcut to toggle debug panel (Ctrl+Shift+D) - only in development
-  if (isDevelopment) {
-    document.addEventListener('keydown', function(event) {
-      if (event.ctrlKey && event.shiftKey && event.key === 'D') {
-        event.preventDefault();
-        if (debugPanel.style.display === 'none') {
-          debugPanel.style.display = 'block';
-          debugToggle.style.display = 'none';
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 } else {
-          debugPanel.style.display = 'none';
-          debugToggle.style.display = 'block';
-        }
-      }    });
-  }
-});
-</script>
-
-<!-- Experience Search Bar Modals -->
-<!-- Modal Overlay -->
-<div class="experience-modal-overlay" id="experienceModalOverlay"></div>
-
-<!-- Location Modal -->
-<div class="experience-modal" id="experienceLocationModal">
-  <div class="experience-modal-header">
-    <h3>Where are you going?</h3>
-    <button class="experience-modal-close" id="locationModalClose">
-      <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-      </svg>
-    </button>
-  </div>
-  <div class="experience-modal-content">
-    <input type="text" class="location-search-input" id="locationSearchInput" placeholder="Search destinations">
-    <ul class="location-list" id="locationList">
-      <li class="location-item" data-location="Miami">
-        <div class="location-icon">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M8 1a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 4z"/>
-          </svg>
-        </div>
-        <div class="location-details">
-          <h4>Miami</h4>
-          <p>Florida, United States</p>
-        </div>
-      </li>
-      <li class="location-item" data-location="South Beach">
-        <div class="location-icon">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M8 1a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 4z"/>
-          </svg>
-        </div>
-        <div class="location-details">
-          <h4>South Beach</h4>
-          <p>Miami Beach, Florida</p>
-        </div>
-      </li>
-      <li class="location-item" data-location="Miami Design District">
-        <div class="location-icon">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M8 1a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 4z"/>
-          </svg>
-        </div>
-        <div class="location-details">
-          <h4>Miami Design District</h4>
-          <p>Miami, Florida</p>
-        </div>
-      </li>
-      <li class="location-item" data-location="Wynwood">
-        <div class="location-icon">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M8 1a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 4z"/>
-          </svg>
-        </div>
-        <div class="location-details">
-          <h4>Wynwood</h4>
-          <p>Miami, Florida</p>
-        </div>
-      </li>
-    </ul>
-  </div>
-  <div class="experience-modal-footer">
-    <button class="modal-clear-btn" id="locationClearBtn">Clear</button>
-    <button class="modal-save-btn" id="locationSaveBtn">Save</button>
-  </div>
-</div>
-
-<!-- Date Modal -->
-<div class="experience-modal" id="experienceDateModal">
-  <div class="experience-modal-header">
-    <h3>When do you want to go?</h3>
-    <button class="experience-modal-close" id="dateModalClose">
-      <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-      </svg>
-    </button>
-  </div>
-  <div class="experience-modal-content">
-    <div class="date-options">
-      <div class="date-option" data-date="today">
-        <h4>Today</h4>
-        <p id="todayDate"></p>
-      </div>
-      <div class="date-option" data-date="tomorrow">
-        <h4>Tomorrow</h4>
-        <p id="tomorrowDate"></p>
-      </div>
-      <div class="date-option" data-date="weekend">
-        <h4>This weekend</h4>
-        <p id="weekendDate"></p>
-      </div>
-      <div class="date-option" data-date="nextWeek">
-        <h4>Next week</h4>
-        <p id="nextWeekDate"></p>
-      </div>
-      <div class="date-option" data-date="nextMonth">
-        <h4>Next month</h4>
-        <p id="nextMonthDate"></p>
-      </div>
-      <div class="date-option" data-date="flexible">
-        <h4>I'm flexible</h4>
-        <p>Show calendar</p>
-      </div>
-    </div>
-    <div class="calendar-container" id="experienceCalendar"></div>
-  </div>
-  <div class="experience-modal-footer">
-    <button class="modal-clear-btn" id="dateClearBtn">Clear</button>
-    <button class="modal-save-btn" id="dateSaveBtn">Save</button>
-  </div>
-</div>
-
-<!-- Guest Modal -->
-<div class="experience-modal" id="experienceGuestModal">
-  <div class="experience-modal-header">
-    <h3>Who's coming?</h3>
-    <button class="experience-modal-close" id="guestModalClose">
-      <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-      </svg>
-    </button>
-  </div>
-  <div class="experience-modal-content">
-    <div class="guest-category">
-      <div class="guest-info">
-        <h4>Adults</h4>
-        <p>Ages 13+</p>
-      </div>
-      <div class="guest-count">
-        <button class="guest-button" id="adultDecrease" disabled>
-          <svg width="12" height="2" viewBox="0 0 12 2" fill="none">
-            <rect width="12" height="2" rx="1" fill="currentColor"/>
-          </svg>
-        </button>
-        <span class="guest-count-value" id="adultCount">0</span>
-        <button class="guest-button" id="adultIncrease">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <rect y="5" width="12" height="2" rx="1" fill="currentColor"/>
-            <rect x="5" width="2" height="12" rx="1" fill="currentColor"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div class="guest-category">
-      <div class="guest-info">
-        <h4>Children</h4>
-        <p>Ages 2-12</p>
-      </div>
-      <div class="guest-count">
-        <button class="guest-button" id="childDecrease" disabled>
-          <svg width="12" height="2" viewBox="0 0 12 2" fill="none">
-            <rect width="12" height="2" rx="1" fill="currentColor"/>
-          </svg>
-        </button>
-        <span class="guest-count-value" id="childCount">0</span>
-        <button class="guest-button" id="childIncrease">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <rect y="5" width="12" height="2" rx="1" fill="currentColor"/>
-            <rect x="5" width="2" height="12" rx="1" fill="currentColor"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div class="guest-category">
-      <div class="guest-info">
-        <h4>Infants</h4>
-        <p>Under 2</p>
-      </div>
-      <div class="guest-count">
-        <button class="guest-button" id="infantDecrease" disabled>
-          <svg width="12" height="2" viewBox="0 0 12 2" fill="none">
-            <rect width="12" height="2" rx="1" fill="currentColor"/>
-          </svg>
-        </button>
-        <span class="guest-count-value" id="infantCount">0</span>
         <button class="guest-button" id="infantIncrease">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
             <rect y="5" width="12" height="2" rx="1" fill="currentColor"/>
@@ -1378,7 +1391,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- Experience Search Bar JavaScript -->
 <script>  // ExperienceSearchBar class for experience search functionality
-  class ExperienceSearchBar {
+class ExperienceSearchBar {
     constructor() {
       // Search bar elements
       this.searchContainer = document.getElementById('experienceSearchContainer');
@@ -1392,11 +1405,19 @@ document.addEventListener('DOMContentLoaded', function() {
       this.dateValue = document.getElementById('experienceDateValue');
       this.guestValue = document.getElementById('experienceGuestValue');
       
-      // Modal elements
+      // Legacy modal elements (kept for backward compatibility)
       this.modalOverlay = document.getElementById('experienceModalOverlay');
       this.locationModal = document.getElementById('experienceLocationModal');
       this.dateModal = document.getElementById('experienceDateModal');
       this.guestModal = document.getElementById('experienceGuestModal');
+      
+      // New unified modal system elements
+      this.modal = document.getElementById('modal');
+      this.modalTitle = document.getElementById('modalTitle');
+      this.modalBody = document.getElementById('modalBody');
+      this.closeModalBtn = document.getElementById('closeModal');
+      this.confirmBtn = document.getElementById('confirmSelection');
+      this.currentModalType = null; // To track which modal is currently open: 'date' or 'guest'
       
       // State variables
       this.selectedLocation = '';
@@ -1407,15 +1428,19 @@ document.addEventListener('DOMContentLoaded', function() {
         infants: 0
       };
       
-      // Flatpickr instance      this.calendar = null;
-    }
-
-    init() {
+      // Flatpickr instance      
+      this.calendar = null;
+    }    init() {
       // Check if all required elements exist
       if (!this.searchContainer || !this.dateSection || 
           !this.guestSection || !this.searchButton) {
         console.warn('Experience search bar elements not found.');
         return;
+      }
+      
+      // Check if unified modal system exists
+      if (!this.modal || !this.modalTitle || !this.modalBody || !this.closeModalBtn || !this.confirmBtn) {
+        console.warn('Unified modal system elements not found. Will use legacy modals if available.');
       }
       
       // Initialize date format for quick options
@@ -1432,397 +1457,519 @@ document.addEventListener('DOMContentLoaded', function() {
       
       console.log('✅ Experience Search Bar initialized');
     }
+      initPlaceAutocomplete() {
+      // Get the place autocomplete element
+      const placeInput = document.getElementById('from-location-exp');
+      if (!placeInput) {
+        console.warn('Place autocomplete input not found');
+        return;
+      }
+      
+      // We don't need to initialize the autocomplete as it's already handled by Google Maps API
+      // Just add a listener to store the selected place
+      placeInput.addEventListener('gmp-placeselect', (event) => {
+        const place = event.target.place;
+        if (place) {
+          const name = place.displayName || place.name || place.formatted_address;
+          console.log('Selected place:', name);
+          this.selectedLocation = {
+            name: name,
+            placeId: place.id,
+            coordinates: place.geometry ? {
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng()
+            } : null
+          };
+        }
+      });
+      
+      console.log('✅ Place Autocomplete initialized');
+    }
+      attachEventListeners() {
+      console.log('🔄 Attaching experience search bar event listeners');
+      
+      // Add event listeners to search sections for opening modals
+      if (this.dateSection) {
+        this.dateSection.addEventListener('click', () => {
+          console.log('📅 Date section clicked');
+          this.showModal('date');
+        });
+      }
+      
+      if (this.guestSection) {
+        this.guestSection.addEventListener('click', () => {
+          console.log('👥 Guest section clicked');
+          this.showModal('guest');
+        });
+      }
+      
+      // Close modal when clicking on close button
+      if (this.closeModalBtn) {
+        this.closeModalBtn.addEventListener('click', () => {
+          this.hideAllModals();
+        });
+      }
+      
+      // Close modal when clicking outside the modal content
+      window.addEventListener('click', (event) => {
+        if (event.target === this.modal) {
+          this.hideAllModals();
+        }
+      });
+      
+      // Modal close buttons
+      const closeButtons = document.querySelectorAll('.experience-modal-close');
+      closeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          this.hideAllModals();
+        });
+      });
+      
+      // Date modal events
+      if (this.dateModal) {
+        // Date options click events
+        const dateOptions = this.dateModal.querySelectorAll('.date-option');
+        dateOptions.forEach(option => {
+          option.addEventListener('click', (e) => {
+            const dateType = e.currentTarget.dataset.date;
+            this.selectDateOption(dateType);
+          });
+        });
+        
+        // Save button
+        const dateSaveBtn = document.getElementById('dateSaveBtn');
+        if (dateSaveBtn) {
+          dateSaveBtn.addEventListener('click', () => {
+            this.dateValue.textContent = this.selectedDate || 'Add dates';
+            if (this.selectedDate) {
+              this.dateValue.classList.add('has-value');
+            }
+            this.hideAllModals();
+          });
+        }
+        
+        // Clear button
+        const dateClearBtn = document.getElementById('dateClearBtn');
+        if (dateClearBtn) {
+          dateClearBtn.addEventListener('click', () => {
+            this.selectedDate = '';
+            this.dateValue.textContent = 'Add dates';
+            this.dateValue.classList.remove('has-value');
+            this.hideAllModals();
+          });
+        }
+      }
+      
+      // Guest modal events
+      if (this.guestModal) {
+        // Adult counter buttons
+        const adultIncrease = document.getElementById('adultIncrease');
+        const adultDecrease = document.getElementById('adultDecrease');
+        
+        if (adultIncrease) {
+          adultIncrease.addEventListener('click', () => {
+            this.guests.adults++;
+            this.updateGuestCounter('adult');
+          });
+        }
+        
+        if (adultDecrease) {
+          adultDecrease.addEventListener('click', () => {
+            if (this.guests.adults > 0) {
+              this.guests.adults--;
+              this.updateGuestCounter('adult');
+            }
+          });
+        }
+        
+        // Child counter buttons
+        const childIncrease = document.getElementById('childIncrease');
+        const childDecrease = document.getElementById('childDecrease');
+        
+        if (childIncrease) {
+          childIncrease.addEventListener('click', () => {
+            this.guests.children++;
+            this.updateGuestCounter('child');
+          });
+        }
+        
+        if (childDecrease) {
+          childDecrease.addEventListener('click', () => {
+            if (this.guests.children > 0) {
+              this.guests.children--;
+              this.updateGuestCounter('child');
+            }
+          });
+        }
+        
+        // Save button
+        const guestSaveBtn = document.getElementById('guestSaveBtn');
+        if (guestSaveBtn) {
+          guestSaveBtn.addEventListener('click', () => {
+            this.updateGuestDisplay();
+            this.hideAllModals();
+          });
+        }
+      }
+      
+      // Clicking outside to close modals
+      this.modalOverlay.addEventListener('click', (e) => {
+        if (e.target === this.modalOverlay) {
+          this.hideAllModals();
+        }
+      });
+      
+      console.log('✅ Experience search bar event listeners attached');
+    }      showModal(modalType, modalData = {}) {
+      // Hide any other visible modals first
+      this.hideAllModals();
+      
+      // Set current modal type
+      this.currentModalType = modalType;
+      
+      // Configure the modal based on type
+      if (modalType === 'date') {
+        this.setupDateModal();
+      } else if (modalType === 'guest') {
+        this.setupGuestModal();
+      } else {
+        console.warn('Unknown modal type:', modalType);
+        return;
+      }
+      
+      // Show the modal
+      if (this.modal) {
+        this.modal.style.display = 'block';
+        console.log('🔍 Showing modal:', modalType);
+      } else {
+        console.error('Modal element not found');
+      }
+    }
+      setupDateModal() {
+      // Set modal title
+      if (this.modalTitle) {
+        this.modalTitle.textContent = 'Select dates';
+      }
+      
+      // Clear previous content
+      if (this.modalBody) {
+        this.modalBody.innerHTML = '';
+        
+        // Create date picker container
+        const datePickerContainer = document.createElement('div');
+        datePickerContainer.id = 'datepickerContainer';
+        datePickerContainer.className = 'date-picker-container';
+        this.modalBody.appendChild(datePickerContainer);
+        
+        // Initialize flatpickr in the new container
+        if (window.flatpickr) {
+          if (this.calendar) {
+            // Destroy previous instance if exists
+            this.calendar.destroy();
+          }
+          
+          this.calendar = flatpickr(datePickerContainer, {
+            mode: "single",
+            dateFormat: "Y-m-d",
+            minDate: "today",
+            inline: true,
+            onChange: (selectedDates, dateStr) => {
+              if (selectedDates.length > 0) {
+                this.selectedDate = this.formatDate(selectedDates[0]);
+                console.log('Calendar date selected:', this.selectedDate);
+                
+                // Auto-close after selection with a small delay for better UX
+                setTimeout(() => {
+                  if (this.dateValue) {
+                    this.dateValue.textContent = this.selectedDate;
+                    this.dateValue.classList.add('has-value');
+                  }
+                  this.hideAllModals();
+                }, 500);
+              }
+            }
+          });
+        } else {
+          this.modalBody.innerHTML = '<p class="error-message">Date picker not available</p>';
+        }
+      }
+      
+      // Set confirm button action
+      if (this.confirmBtn) {
+        this.confirmBtn.textContent = 'Select Date';
+        this.confirmBtn.onclick = () => {
+          if (this.selectedDate && this.dateValue) {
+            this.dateValue.textContent = this.selectedDate;
+            this.dateValue.classList.add('has-value');
+          } else if (this.dateValue) {
+            this.dateValue.textContent = 'Add dates';
+            this.dateValue.classList.remove('has-value');
+          }
+          this.hideAllModals();
+        };
+      }
+    }
+      setupGuestModal() {
+      // Set modal title
+      if (this.modalTitle) {
+        this.modalTitle.textContent = 'Add guests';
+      }
+      
+      // Create guest counter HTML
+      if (this.modalBody) {
+        this.modalBody.innerHTML = `
+          <div class="guest-counter-container">
+            <div class="guest-type-row">
+              <div class="guest-type">
+                <h3>Adults</h3>
+                <p>Ages 13 or above</p>
+              </div>
+              <div class="guest-count-controls">
+                <button id="adultDecrease" class="count-btn decrease" ${this.guests.adults <= 0 ? 'disabled' : ''}>-</button>
+                <span id="adultCount" class="guest-count">${this.guests.adults}</span>
+                <button id="adultIncrease" class="count-btn increase">+</button>
+              </div>
+            </div>
+            <div class="guest-type-row">
+              <div class="guest-type">
+                <h3>Children</h3>
+                <p>Ages 2-12</p>
+              </div>
+              <div class="guest-count-controls">
+                <button id="childDecrease" class="count-btn decrease" ${this.guests.children <= 0 ? 'disabled' : ''}>-</button>
+                <span id="childCount" class="guest-count">${this.guests.children}</span>
+                <button id="childIncrease" class="count-btn increase">+</button>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        // Attach event listeners to the guest counter buttons
+        const adultIncreaseBtn = document.getElementById('adultIncrease');
+        if (adultIncreaseBtn) {
+          adultIncreaseBtn.addEventListener('click', () => {
+            this.guests.adults++;
+            this.updateGuestCounter('adult');
+          });
+        }
+        
+        const adultDecreaseBtn = document.getElementById('adultDecrease');
+        if (adultDecreaseBtn) {
+          adultDecreaseBtn.addEventListener('click', () => {
+            if (this.guests.adults > 0) {
+              this.guests.adults--;
+              this.updateGuestCounter('adult');
+            }
+          });
+        }
+        
+        const childIncreaseBtn = document.getElementById('childIncrease');
+        if (childIncreaseBtn) {
+          childIncreaseBtn.addEventListener('click', () => {
+            this.guests.children++;
+            this.updateGuestCounter('child');
+          });
+        }
+        
+        const childDecreaseBtn = document.getElementById('childDecrease');
+        if (childDecreaseBtn) {
+          childDecreaseBtn.addEventListener('click', () => {
+            if (this.guests.children > 0) {
+              this.guests.children--;
+              this.updateGuestCounter('child');
+            }
+          });
+        }
+      }
+      
+      // Set confirm button action
+      if (this.confirmBtn) {
+        this.confirmBtn.textContent = 'Save';
+        this.confirmBtn.onclick = () => {
+          this.updateGuestDisplay();
+          this.hideAllModals();
+        };
+      }
+    }
+      hideAllModals() {
+      // Hide the new unified modal
+      if (this.modal) {
+        this.modal.style.display = 'none';
+        this.currentModalType = null;
+      }
+      
+      // For backward compatibility, also hide old modals
+      if (this.modalOverlay) {
+        this.modalOverlay.classList.remove('visible');
+      }
+      
+      // Hide all legacy modals
+      const modals = document.querySelectorAll('.experience-modal');
+      modals.forEach(modal => {
+        modal.classList.remove('visible');
+      });
+      
+      console.log('🔍 All modals hidden');
+    }
+      updateGuestCounter(type) {
+      const countElement = document.getElementById(`${type}Count`);
+      const decrementButton = document.getElementById(`${type}Decrease`);
+      
+      if (countElement) {
+        countElement.textContent = this.guests[type + 's']; // Add 's' to match the property name
+      }
+      
+      if (decrementButton) {
+        decrementButton.disabled = this.guests[type + 's'] <= 0;
+      }
+      
+      // Also update the guest display
+      this.updateGuestDisplay();
+    }
+    
+    updateGuestDisplay() {
+      if (!this.guestValue) return;
+      
+      const totalGuests = this.guests.adults + this.guests.children;
+      
+      if (totalGuests === 0) {
+        this.guestValue.textContent = 'Add guests';
+        this.guestValue.classList.remove('has-value');
+      } else {
+        let displayText = totalGuests === 1 ? '1 guest' : `${totalGuests} guests`;
+        this.guestValue.textContent = displayText;
+        this.guestValue.classList.add('has-value');
+      }
+    }
+    
+    selectDateOption(dateType) {
+      let selectedDate = '';
+      
+      const today = new Date();
+      
+      switch(dateType) {
+        case 'today':
+          selectedDate = this.formatDate(today);
+          break;
+        case 'tomorrow':
+          const tomorrow = new Date();
+          tomorrow.setDate(today.getDate() + 1);
+          selectedDate = this.formatDate(tomorrow);
+          break;
+        case 'weekend':
+          const thisWeekend = new Date();
+          // Find next Saturday
+          thisWeekend.setDate(today.getDate() + (6 - today.getDay()));
+          selectedDate = this.formatDate(thisWeekend);
+          break;
+        case 'nextWeek':
+          const nextWeek = new Date();
+          nextWeek.setDate(today.getDate() + 7);
+          selectedDate = this.formatDate(nextWeek);
+          break;
+        case 'nextMonth':
+          const nextMonth = new Date();
+          nextMonth.setMonth(today.getMonth() + 1);
+          selectedDate = this.formatDate(nextMonth);
+          break;
+        case 'flexible':
+          // Just open the calendar without setting a date
+          break;
+      }
+      
+      if (selectedDate) {
+        this.selectedDate = selectedDate;
+        console.log('📅 Selected date option:', dateType, selectedDate);
+      }
+    }
+      formatDate(date) {
+      const options = { weekday: 'short', month: 'short', day: 'numeric' };
+      return date.toLocaleDateString('en-US', options);
+    }
     
     initDateOptions() {
+      // Set up the date options with current dates
       const today = new Date();
+      
+      // Format and display today's date
+      const todayEl = document.getElementById('todayDate');
+      if (todayEl) {
+        todayEl.textContent = this.formatDate(today);
+      }
+      
+      // Tomorrow
       const tomorrow = new Date();
       tomorrow.setDate(today.getDate() + 1);
+      const tomorrowEl = document.getElementById('tomorrowDate');
+      if (tomorrowEl) {
+        tomorrowEl.textContent = this.formatDate(tomorrow);
+      }
       
-      // Find weekend (next Saturday)
+      // Weekend (next Saturday)
       const weekend = new Date();
-      weekend.setDate(today.getDate() + (6 - today.getDay() + 7) % 7);
+      weekend.setDate(today.getDate() + (6 - today.getDay()));
+      const weekendEl = document.getElementById('weekendDate');
+      if (weekendEl) {
+        weekendEl.textContent = this.formatDate(weekend);
+      }
       
       // Next week (7 days from now)
       const nextWeek = new Date();
       nextWeek.setDate(today.getDate() + 7);
+      const nextWeekEl = document.getElementById('nextWeekDate');
+      if (nextWeekEl) {
+        nextWeekEl.textContent = this.formatDate(nextWeek);
+      }
       
-      // Next month (first day of next month)
-      const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+      // Next month
+      const nextMonth = new Date();
+      nextMonth.setMonth(today.getMonth() + 1);
+      const nextMonthEl = document.getElementById('nextMonthDate');
+      if (nextMonthEl) {
+        nextMonthEl.textContent = this.formatDate(nextMonth);
+      }
       
-      // Format dates for display
-      document.getElementById('todayDate').textContent = this.formatDate(today);
-      document.getElementById('tomorrowDate').textContent = this.formatDate(tomorrow);
-      document.getElementById('weekendDate').textContent = this.formatDate(weekend);
-      document.getElementById('nextWeekDate').textContent = this.formatDate(nextWeek);
-      document.getElementById('nextMonthDate').textContent = this.formatDate(nextMonth);
-    }
-    
-    formatDate(date) {
-      const options = { month: 'short', day: 'numeric' };
-      return date.toLocaleDateString('en-US', options);
+      console.log('✅ Date options initialized');
     }
     
     initCalendar() {
-      if (typeof flatpickr !== 'undefined') {
-        this.calendar = flatpickr('#experienceCalendar', {
+      // Initialize the flatpickr calendar if available
+      const calendarContainer = document.getElementById('experienceCalendar');
+      
+      if (calendarContainer && window.flatpickr) {
+        this.calendar = flatpickr(calendarContainer, {
           inline: true,
-          mode: 'single',
-          dateFormat: 'Y-m-d',
           minDate: 'today',
-          onChange: (selectedDates) => {
+          dateFormat: 'Y-m-d',
+          onChange: (selectedDates, dateStr) => {
             if (selectedDates.length > 0) {
-              const date = selectedDates[0];
-              this.selectedDate = date;
-              
-              // Clear selection from quick options
-              const options = document.querySelectorAll('.date-option');
-              options.forEach(opt => opt.classList.remove('selected'));
+              this.selectedDate = this.formatDate(selectedDates[0]);
+              console.log('Calendar date selected:', this.selectedDate);
             }
           }
         });
+        console.log('✅ Calendar initialized');
       } else {
-        console.warn('Flatpickr library not loaded');
-        // Add fallback date input
-        document.getElementById('experienceCalendar').innerHTML =          '<input type="date" class="location-search-input" min="' + new Date().toISOString().split('T')[0] + '">';
+        console.log('⚠️ Flatpickr not available or calendar container not found');
       }
-    }
-
-    attachEventListeners() {
-      // Open modals on section click
-      // Location section removed - using Place Autocomplete directly
-      this.dateSection.addEventListener('click', () => this.openModal('date'));
-      this.guestSection.addEventListener('click', () => this.openModal('guest'));
-      
-      // Close modals
-      document.getElementById('locationModalClose').addEventListener('click', () => this.closeModal('location'));
-      document.getElementById('dateModalClose').addEventListener('click', () => this.closeModal('date'));
-      document.getElementById('guestModalClose').addEventListener('click', () => this.closeModal('guest'));
-      
-      // Modal overlay click to close
-      this.modalOverlay.addEventListener('click', () => this.closeAllModals());
-      
-      // Save buttons
-      document.getElementById('locationSaveBtn').addEventListener('click', () => this.saveLocation());
-      document.getElementById('dateSaveBtn').addEventListener('click', () => this.saveDate());
-      document.getElementById('guestSaveBtn').addEventListener('click', () => this.saveGuests());
-      
-      // Clear buttons
-      document.getElementById('locationClearBtn').addEventListener('click', () => this.clearLocation());
-      document.getElementById('dateClearBtn').addEventListener('click', () => this.clearDate());
-      document.getElementById('guestClearBtn').addEventListener('click', () => this.clearGuests());
-      
-      // Location search and selection
-      const locationItems = document.querySelectorAll('.location-item');
-      locationItems.forEach(item => {
-        item.addEventListener('click', () => {
-          locationItems.forEach(i => i.classList.remove('selected'));
-          item.classList.add('selected');
-          this.selectedLocation = item.getAttribute('data-location');
-        });
-      });
-      
-      // Location search input
-      document.getElementById('locationSearchInput').addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        locationItems.forEach(item => {
-          const location = item.getAttribute('data-location').toLowerCase();
-          const shouldShow = location.includes(searchTerm);
-          item.style.display = shouldShow ? 'flex' : 'none';
-        });
-      });
-      
-      // Date quick options
-      const dateOptions = document.querySelectorAll('.date-option');
-      dateOptions.forEach(option => {
-        option.addEventListener('click', () => {
-          dateOptions.forEach(opt => opt.classList.remove('selected'));
-          option.classList.add('selected');
-          
-          const dateType = option.getAttribute('data-date');
-          const today = new Date();
-          
-          switch (dateType) {
-            case 'today':
-              this.selectedDate = today;
-              break;
-            case 'tomorrow':
-              const tomorrow = new Date();
-              tomorrow.setDate(today.getDate() + 1);
-              this.selectedDate = tomorrow;
-              break;
-            case 'weekend':
-              const weekend = new Date();
-              weekend.setDate(today.getDate() + (6 - today.getDay() + 7) % 7);
-              this.selectedDate = weekend;
-              break;
-            case 'nextWeek':
-              const nextWeek = new Date();
-              nextWeek.setDate(today.getDate() + 7);
-              this.selectedDate = nextWeek;
-              break;
-            case 'nextMonth':
-              const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
-              this.selectedDate = nextMonth;
-              break;
-            case 'flexible':
-              // Just show the calendar
-              break;
-          }
-          
-          // Update calendar if needed
-          if (this.calendar && dateType !== 'flexible') {
-            this.calendar.setDate(this.selectedDate);
-          }
-        });
-      });
-      
-      // Guest count buttons
-      document.getElementById('adultIncrease').addEventListener('click', () => this.increaseCount('adult'));
-      document.getElementById('adultDecrease').addEventListener('click', () => this.decreaseCount('adult'));
-      document.getElementById('childIncrease').addEventListener('click', () => this.increaseCount('child'));
-      document.getElementById('childDecrease').addEventListener('click', () => this.decreaseCount('child'));
-      document.getElementById('infantIncrease').addEventListener('click', () => this.increaseCount('infant'));
-      document.getElementById('infantDecrease').addEventListener('click', () => this.decreaseCount('infant'));
-      
-      // Search button
-      this.searchButton.addEventListener('click', () => this.search());
-    }
-    
-    openModal(type) {
-      // Close any open modal first
-      this.closeAllModals();
-      
-      // Show overlay
-      this.modalOverlay.classList.add('visible');
-      
-      // Show appropriate modal
-      switch (type) {
-        case 'location':
-          this.locationModal.classList.add('visible');
-          setTimeout(() => document.getElementById('locationSearchInput').focus(), 100);
-          break;
-        case 'date':
-          this.dateModal.classList.add('visible');
-          break;
-        case 'guest':
-          this.guestModal.classList.add('visible');
-          break;
-      }
-      
-      // Update selected status
-      // Location section removed - using Place Autocomplete directly
-      this.dateSection.classList.toggle('selected', type === 'date');
-      this.guestSection.classList.toggle('selected', type === 'guest');
-    }
-    
-    closeModal(type) {
-      // Hide overlay and modal
-      this.modalOverlay.classList.remove('visible');
-      
-      switch (type) {
-        case 'location':
-          this.locationModal.classList.remove('visible');
-          break;
-        case 'date':
-          this.dateModal.classList.remove('visible');
-          break;
-        case 'guest':
-          this.guestModal.classList.remove('visible');
-          break;
-      }
-      
-      // Remove selected status
-      this.dateSection.classList.remove('selected');
-      this.guestSection.classList.remove('selected');
-    }
-    
-    closeAllModals() {
-      this.modalOverlay.classList.remove('visible');
-      this.locationModal.classList.remove('visible');
-      this.dateModal.classList.remove('visible');
-      this.guestModal.classList.remove('visible');
-      
-      // Location section removed - using Place Autocomplete directly
-      this.dateSection.classList.remove('selected');
-      this.guestSection.classList.remove('selected');
-    }
-    
-    saveLocation() {
-      if (this.selectedLocation) {
-        // We're now using the Google Maps Place Autocomplete directly
-        // so no need to update any display value
-        console.log('Selected location:', this.selectedLocation);
-      }
-      this.closeModal('location');
-    }
-    
-    saveDate() {
-      if (this.selectedDate) {
-        const options = { month: 'short', day: 'numeric' };
-        this.dateValue.textContent = this.selectedDate instanceof Date 
-          ? this.selectedDate.toLocaleDateString('en-US', options)
-          : new Date(this.selectedDate).toLocaleDateString('en-US', options);
-        this.dateValue.classList.add('has-value');
-      }
-      this.closeModal('date');
-    }
-    
-    saveGuests() {
-      let guestText = [];
-      const { adults, children, infants } = this.guests;
-      
-      if (adults > 0) {
-        guestText.push(`${adults} adult${adults > 1 ? 's' : ''}`);
-      }
-      
-      if (children > 0) {
-        guestText.push(`${children} child${children > 1 ? 'ren' : ''}`);
-      }
-      
-      if (infants > 0) {
-        guestText.push(`${infants} infant${infants > 1 ? 's' : ''}`);
-      }
-      
-      if (guestText.length > 0) {
-        this.guestValue.textContent = guestText.join(', ');
-        this.guestValue.classList.add('has-value');
-      } else {
-        this.clearGuests();
-      }
-      
-      this.closeModal('guest');
-    }
-    
-    clearLocation() {
-      this.selectedLocation = '';
-      this.locationValue.textContent = 'Search destinations';
-      this.locationValue.classList.remove('has-value');
-      
-      // Clear selected location in list
-      document.querySelectorAll('.location-item').forEach(item => {
-        item.classList.remove('selected');
-      });
-      
-      // Clear search input
-      document.getElementById('locationSearchInput').value = '';
-      
-      // Show all location items
-      document.querySelectorAll('.location-item').forEach(item => {
-        item.style.display = 'flex';
-      });
-    }
-    
-    clearDate() {
-      this.selectedDate = '';
-      this.dateValue.textContent = 'Add dates';
-      this.dateValue.classList.remove('has-value');
-      
-      // Clear selected date option
-      document.querySelectorAll('.date-option').forEach(option => {
-        option.classList.remove('selected');
-      });
-      
-      // Clear calendar selection if available
-      if (this.calendar) {
-        this.calendar.clear();
-      }
-    }
-    
-    clearGuests() {
-      this.guests = {
-        adults: 0,
-        children: 0,
-        infants: 0
-      };
-      
-      this.guestValue.textContent = 'Add guests';
-      this.guestValue.classList.remove('has-value');
-      
-      // Reset count displays
-      document.getElementById('adultCount').textContent = '0';
-      document.getElementById('childCount').textContent = '0';
-      document.getElementById('infantCount').textContent = '0';
-      
-      // Disable decrease buttons
-      document.getElementById('adultDecrease').disabled = true;
-      document.getElementById('childDecrease').disabled = true;
-      document.getElementById('infantDecrease').disabled = true;
-    }
-    
-    increaseCount(type) {
-      switch (type) {
-        case 'adult':
-          this.guests.adults++;
-          document.getElementById('adultCount').textContent = this.guests.adults;
-          document.getElementById('adultDecrease').disabled = this.guests.adults === 0;
-          break;
-        case 'child':
-          this.guests.children++;
-          document.getElementById('childCount').textContent = this.guests.children;
-          document.getElementById('childDecrease').disabled = this.guests.children === 0;
-          break;
-        case 'infant':
-          this.guests.infants++;
-          document.getElementById('infantCount').textContent = this.guests.infants;
-          document.getElementById('infantDecrease').disabled = this.guests.infants === 0;
-          break;
-      }
-    }
-    
-    decreaseCount(type) {
-      switch (type) {
-        case 'adult':
-          if (this.guests.adults > 0) {
-            this.guests.adults--;
-            document.getElementById('adultCount').textContent = this.guests.adults;
-            document.getElementById('adultDecrease').disabled = this.guests.adults === 0;
-          }
-          break;
-        case 'child':
-          if (this.guests.children > 0) {
-            this.guests.children--;
-            document.getElementById('childCount').textContent = this.guests.children;
-            document.getElementById('childDecrease').disabled = this.guests.children === 0;
-          }
-          break;
-        case 'infant':
-          if (this.guests.infants > 0) {
-            this.guests.infants--;
-            document.getElementById('infantCount').textContent = this.guests.infants;
-            document.getElementById('infantDecrease').disabled = this.guests.infants === 0;
-          }
-          break;
-      }
-    }
-    
-    search() {
-      // Get location from the place autocomplete if available
-      const locationName = this.selectedLocation && this.selectedLocation.name 
-        ? this.selectedLocation.name 
-        : document.getElementById('from-location-exp')?.value || 'any location';
-      
-      // Gather all search parameters
-      const searchParams = {
-        location: locationName,
-        date: this.selectedDate ? (this.selectedDate instanceof Date ? this.selectedDate.toISOString().split('T')[0] : this.selectedDate) : '',
-        guests: this.guests
-      };
-      
-      console.log('🔍 Experience search:', searchParams);
-      
-      // Emit event if eventBus is available
-      if (window.eventBus) {
-        window.eventBus.emit('experience:search', searchParams);
-      }
-      
-      // TODO: Implement actual search functionality or form submission
-      // For now, just log the search parameters
-      alert(`Searching for experiences in ${locationName} on ${searchParams.date || 'any date'} for ${this.getTotalGuests()} guests`);
-    }
-    
-    getTotalGuests() {
-      return this.guests.adults + this.guests.children + this.guests.infants || 0;
     }
   }
 </script>
+
+<!-- Experience Search Bar Modal System -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeModal">&times;</span>
+        <h2 id="modalTitle">Modal Title</h2>
+        <div id="modalBody">
+            <!-- Modal content will be dynamically inserted here -->
+        </div>
+        <div class="modal-footer">
+            <button id="confirmSelection" class="confirm-btn">Save</button>
+        </div>
+    </div>
+</div>
+
+  </body>
+</html>
 
