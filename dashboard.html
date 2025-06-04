@@ -1377,9 +1377,9 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <!-- Experience Search Bar JavaScript -->
-<script>
-  // ExperienceSearchBar class for experience search functionality
-  class ExperienceSearchBar {    constructor() {
+<script>  // ExperienceSearchBar class for experience search functionality
+  class ExperienceSearchBar {
+    constructor() {
       // Search bar elements
       this.searchContainer = document.getElementById('experienceSearchContainer');
       // Location section removed - using Place Autocomplete directly
@@ -1407,10 +1407,10 @@ document.addEventListener('DOMContentLoaded', function() {
         infants: 0
       };
       
-      // Flatpickr instance
-      this.calendar = null;
+      // Flatpickr instance      this.calendar = null;
     }
-      init() {
+
+    init() {
       // Check if all required elements exist
       if (!this.searchContainer || !this.dateSection || 
           !this.guestSection || !this.searchButton) {
@@ -1483,11 +1483,11 @@ document.addEventListener('DOMContentLoaded', function() {
       } else {
         console.warn('Flatpickr library not loaded');
         // Add fallback date input
-        document.getElementById('experienceCalendar').innerHTML = 
-          '<input type="date" class="location-search-input" min="' + new Date().toISOString().split('T')[0] + '">';
+        document.getElementById('experienceCalendar').innerHTML =          '<input type="date" class="location-search-input" min="' + new Date().toISOString().split('T')[0] + '">';
       }
     }
-      attachEventListeners() {
+
+    attachEventListeners() {
       // Open modals on section click
       // Location section removed - using Place Autocomplete directly
       this.dateSection.addEventListener('click', () => this.openModal('date'));

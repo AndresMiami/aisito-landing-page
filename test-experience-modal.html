@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experience Modal Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .status {
+            font-weight: bold;
+        }
+        .success {
+            color: #28a745;
+        }
+        .error {
+            color: #dc3545;
+        }
+        .test-iframe {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Experience Modal Functionality Test</h1>
+    
+    <div class="test-section">
+        <h2>Test Instructions</h2>
+        <p>This page will test the Experience Search Bar modal functionality on the dashboard.</p>
+        <ol>
+            <li>Click the "Load Dashboard" button below</li>
+            <li>Navigate to the Experience+ tab in the loaded dashboard</li>
+            <li>Click on the "Add dates" section - the date modal should open</li>
+            <li>Click on the "Add guests" section - the guest modal should open</li>
+            <li>Test the calendar functionality and guest counters</li>
+            <li>Check that search button emits EventBus events</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>Dashboard Test</h2>
+        <button class="test-button" onclick="loadDashboard()">Load Dashboard</button>
+        <button class="test-button" onclick="testConsole()">Test Console</button>
+        <div id="status" class="status">Ready to test</div>
+        
+        <iframe id="dashboardFrame" class="test-iframe" style="display:none;"></iframe>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="testResults">
+            <p>Test results will appear here after running tests.</p>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+
+        function loadDashboard() {
+            updateStatus('Loading dashboard...', 'info');
+            const iframe = document.getElementById('dashboardFrame');
+            iframe.src = 'http://localhost:8080/dashboard.html';
+            iframe.style.display = 'block';
+            
+            iframe.onload = function() {
+                updateStatus('Dashboard loaded successfully! Navigate to Experience+ tab and test modals.', 'success');
+                
+                // Try to access the iframe content and test the ExperienceSearchBar
+                try {
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    const searchBar = iframe.contentWindow.experienceSearchBar;
+                    
+                    if (searchBar) {
+                        updateStatus('✅ ExperienceSearchBar instance found and loaded!', 'success');
+                        logTestResult('ExperienceSearchBar Initialization', 'PASS', 'Instance created successfully');
+                    } else {
+                        updateStatus('⚠️ ExperienceSearchBar instance not found', 'error');
+                        logTestResult('ExperienceSearchBar Initialization', 'FAIL', 'Instance not found on window');
+                    }
+                } catch (e) {
+                    updateStatus('Cross-origin access blocked, but dashboard loaded', 'info');
+                    logTestResult('ExperienceSearchBar Access', 'INFO', 'Cross-origin policy prevents direct access');
+                }
+            };
+            
+            iframe.onerror = function() {
+                updateStatus('Error loading dashboard', 'error');
+                logTestResult('Dashboard Load', 'FAIL', 'Failed to load dashboard');
+            };
+        }
+
+        function testConsole() {
+            updateStatus('Check browser console for any JavaScript errors...', 'info');
+            logTestResult('Console Check', 'INFO', 'Manual console inspection required');
+        }
+
+        function logTestResult(testName, status, message) {
+            const results = document.getElementById('testResults');
+            const timestamp = new Date().toLocaleTimeString();
+            const statusClass = status === 'PASS' ? 'success' : status === 'FAIL' ? 'error' : 'info';
+            
+            results.innerHTML += `
+                <div style="margin: 10px 0; padding: 10px; border-left: 4px solid var(--border-color); background: #f8f9fa;">
+                    <strong>${testName}</strong> 
+                    <span class="${statusClass}">[${status}]</span> 
+                    <span style="color: #666; font-size: 0.9em;">${timestamp}</span><br>
+                    <em>${message}</em>
+                </div>
+            `;
+        }
+
+        // Log initial test start
+        document.addEventListener('DOMContentLoaded', function() {
+            logTestResult('Test Suite', 'START', 'Experience Modal Test Suite initialized');
+        });
+    </script>
+    
+    <style>
+        :root {
+            --border-color: #007bff;
+        }
+        .success {
+            --border-color: #28a745;
+        }
+        .error {
+            --border-color: #dc3545;
+        }
+    </style>
+</body>
+</html>
