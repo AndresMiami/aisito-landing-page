@@ -111,9 +111,11 @@
   animation: fadeIn 0.2s ease-in;
 }
 
-/* Add a specific class for tab content if you need custom styling */
+/* Tab content styling */
 .tab-content {
-  /* Add any tab content specific styling here */
+  padding: 1rem;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  background-color: var(--color-surface);
 }
 
 /* Restore the booking form gradient background */

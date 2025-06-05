@@ -1,5 +1,3 @@
-/miami-ai-concierge/miami-ai-concierge/css/components.css
-
 /* Components specific styles */
 
 /* Booking Form Styles */
@@ -18,6 +16,22 @@
     margin: 10px 0;
     border: 1px solid #ccc;
     border-radius: 4px;
+}
+
+/* Hide the Google Maps Autocomplete icon button */
+gmp-place-autocomplete button.autocomplete-icon {
+    display: none !important;
+}
+
+/* If the above doesn't work, this more specific selector might help */
+gmp-place-autocomplete [role="presentation"][tabindex="-1"] {
+    display: none !important;
+}
+
+/* General wide selector in case above selectors don't work due to shadow DOM */
+gmp-place-autocomplete *[aria-hidden="true"] svg,
+gmp-place-autocomplete button[aria-hidden="true"] {
+    display: none !important;
 }
 
 .booking-form button {
