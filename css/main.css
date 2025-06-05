@@ -37,6 +37,8 @@
 /* Import component styles - FIXED: consistent URL imports */
 @import url('./components/_header.css');
 @import url('./components/_tabs.css');
+@import url('./components/_enhanced-tab-navigation.css'); /* New enhanced tab navigation styles */
+@import url('./miami-brand-theme.css'); /* Miami-specific brand elements */
 @import url('./components/_booking-form.css');
 @import url('./components/_vehicle-cards.css');
 @import url('./components/_vehicle-selector.css'); 

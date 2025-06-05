@@ -1,0 +1,356 @@
+/* 
+ * Enhanced Tab Navigation - Aligned with ExperienceSearchBar Design
+ * Sophisticated design patterns matching the search bar experience
+ */
+
+/* Main Tab Navigation Container */
+#tab-navigation {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  overflow: hidden;
+  margin-bottom: 1rem;
+  transition: box-shadow 0.2s ease;
+}
+
+#tab-navigation:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+#tab-navigation nav {
+  display: flex;
+  padding: 8px;
+  gap: 4px;
+  border-radius: 16px;
+  overflow: visible;
+}
+
+/* Enhanced Tab Button Base Styles */
+.tab-button {
+  flex: 1;
+  padding: 14px 20px;
+  font-weight: 500;
+  font-size: 14px;
+  border: none;
+  border-radius: 24px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+  position: relative;
+  background-color: transparent;
+  color: #717171;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Enhanced Active Tab State */
+.tab-button.active,
+.tab-button[aria-selected="true"] {
+  background: linear-gradient(to right, #FF9933, #FF5733);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 6px rgba(255, 153, 51, 0.25), 0 2px 4px rgba(255, 87, 51, 0.15);
+  transform: translateY(-1px);
+  z-index: 2;
+}
+
+.tab-button.active:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(255, 153, 51, 0.3), 0 4px 6px rgba(255, 87, 51, 0.2);
+}
+
+/* Enhanced Inactive Tab State */
+.tab-button:not(.active):not([aria-selected="true"]) {
+  background-color: #f7f7f7;
+  color: #222222;
+  border: 1px solid transparent;
+}
+
+.tab-button:not(.active):not([aria-selected="true"]):hover {
+  background-color: #ebebeb;
+  color: #222222;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-color: #dddddd;
+}
+
+/* Focus States for Accessibility */
+.tab-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 153, 51, 0.3);
+}
+
+.tab-button.active:focus {
+  box-shadow: 0 4px 6px rgba(255, 153, 51, 0.25), 0 0 0 3px rgba(255, 153, 51, 0.3);
+}
+
+/* Individual Tab Specific Styling */
+#tab-button-oneway {
+  border-radius: 24px;
+}
+
+#tab-button-experience-plus {
+  border-radius: 24px;
+}
+
+#tab-button-yachts {
+  border-radius: 24px;
+}
+
+/* Enhanced Tab Panel Styling */
+.tab-panel {
+  display: block;
+  transition: opacity 0.2s ease;
+  animation: fadeIn 0.2s ease-in;
+}
+
+/* Add a specific class for tab content if you need custom styling */
+.tab-content {
+  /* Add any tab content specific styling here */
+}
+
+/* Restore the booking form gradient background */
+.booking-form-card {
+  background: linear-gradient(to bottom, rgba(157, 35, 35, 0.3), rgba(255, 255, 255, 0.8));
+  border-radius: var(--radius-xl);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  overflow: hidden;
+}
+
+/* Alternative Tab Navigation Styling (for _tab-navigation.css) */
+.tab-navigation__button {
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+  position: relative;
+  font-size: 14px;
+  padding: 14px 20px;
+  border-radius: 24px;
+  margin: 0 2px;
+  white-space: nowrap;
+  text-align: center;
+  color: #222222;
+  background-color: #f7f7f7;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tab-navigation__button--active {
+  background: linear-gradient(to right, #FF9933, #FF5733);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 6px rgba(255, 153, 51, 0.25);
+  transform: translateY(-1px);
+  z-index: 2;
+}
+
+.tab-navigation__button--active:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(255, 153, 51, 0.3);
+}
+
+.tab-navigation__button--inactive {
+  background-color: #f7f7f7;
+  color: #222222;
+  border: 1px solid transparent;
+}
+
+.tab-navigation__button--inactive:hover {
+  background-color: #ebebeb;
+  color: #222222;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-color: #dddddd;
+}
+
+/* Enhanced Mobile Responsive Design */
+@media (max-width: 768px) {
+  #tab-navigation {
+    border-radius: 12px;
+    margin: 0 8px 1rem 8px;
+  }
+  
+  #tab-navigation nav {
+    padding: 6px;
+    gap: 3px;
+  }
+  
+  .tab-button {
+    padding: 12px 16px;
+    font-size: 13px;
+    border-radius: 20px;
+    min-height: 44px;
+  }
+  
+  .tab-button.active {
+    transform: translateY(-0.5px);
+  }
+  
+  .tab-button:not(.active):hover {
+    transform: translateY(-0.5px);
+  }
+}
+
+@media (max-width: 450px) {
+  #tab-navigation nav {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .tab-button {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 16px;
+    text-align: center;
+  }
+  
+  .tab-button.active {
+    transform: none;
+    box-shadow: 0 2px 4px rgba(255, 153, 51, 0.25);
+  }
+  
+  .tab-button:not(.active):hover {
+    transform: none;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Enhanced Container Integration */
+.booking-form-card #tab-navigation {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+/* Loading and Transition States */
+.tab-button.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.tab-button.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Enhanced Visual Hierarchy */
+.tab-button .tab-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.tab-button.active .tab-icon {
+  opacity: 1;
+}
+
+.tab-button .tab-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #FF5733;
+  color: white;
+  border-radius: 10px;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: 600;
+  min-width: 16px;
+  text-align: center;
+}
+
+/* Dark Mode Support (Optional) */
+@media (prefers-color-scheme: dark) {
+  #tab-navigation {
+    background: rgba(30, 30, 30, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .tab-button:not(.active) {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  .tab-button:not(.active):hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+  }
+}
+
+/* Print Styles */
+@media print {
+  #tab-navigation {
+    box-shadow: none;
+    border: 1px solid #ccc;
+    background: white;
+  }
+  
+  .tab-button {
+    box-shadow: none;
+    transform: none;
+  }
+  
+  .tab-button.active {
+    background: #FF9933;
+    color: white;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .tab-button {
+    border: 2px solid transparent;
+  }
+  
+  .tab-button.active {
+    border-color: #FF5733;
+  }
+  
+  .tab-button:not(.active) {
+    border-color: #666;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .tab-button {
+    transition: background-color 0.2s ease, color 0.2s ease;
+    transform: none !important;
+  }
+  
+  .tab-button:hover,
+  .tab-button.active {
+    transform: none !important;
+  }
+  
+  #tab-navigation {
+    transition: box-shadow 0.2s ease;
+  }
+}
