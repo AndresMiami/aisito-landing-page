@@ -74,15 +74,8 @@
             </li>
           </ul>
         </div>
-        
-        <!-- Vehicle Selection Section -->
-        <h2 class="text-xl font-semibold text-gray-800 mb-3">Select Vehicle</h2>
-        <div id="vehicle-selection" class="space-y-3 mb-6">
-          <!-- Vehicle cards will be dynamically populated here -->
-        </div>
-        
-        <!-- Book Now Button -->
-        <button id="book-now-button" class="mt-6 w-full bg-[--color-gold] text-white py-3 rounded-lg font-semibold hover:bg-[--color-gold-dark] disabled:bg-gray-300 disabled:text-gray-600" disabled>
+          <!-- Book Now Button -->
+        <button id="book-now-button" class="mt-6 w-full bg-[--color-gold] text-white py-3 rounded-lg font-semibold hover:bg-[--color-gold-dark]">
           Book Now
         </button>
         
@@ -93,10 +86,8 @@
       </div>
     </main>
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const params = new URLSearchParams(window.location.search);
+      document.addEventListener('DOMContentLoaded', () => {        const params = new URLSearchParams(window.location.search);
         const summaryDetails = document.getElementById('summary-details');
-        const vehicleSelection = document.getElementById('vehicle-selection');
         const bookNowButton = document.getElementById('book-now-button');
         let map;
         let directionsService;
@@ -175,99 +166,13 @@
             }
           );
         }
-        
-        // Vehicle data
-        const vehicles = [
-          {
-            id: 'luxury-sedan',
-            name: 'Luxury Sedan',
-            image: 'images/luxury-sedan.jpg',
-            passengers: 2,
-            description: 'e.g., Tesla Model Y',
-            badges: ['EV Available'],
-            price: '$89'
-          },
-          {
-            id: 'premium-suv',
-            name: 'Premium SUV',
-            image: 'images/premium-suv-escalade.jpg',
-            passengers: 5,
-            description: 'e.g., Cadillac Escalade',
-            badges: ['EV Available'],
-            price: '$129'
-          },
-          {
-            id: 'vip-sprinter',
-            name: 'VIP Group Sprinter',
-            image: 'images/vip-sprinter.jpg',
-            passengers: 12,
-            description: 'e.g., Mercedes Sprinter',
-            badges: ['Mobile Lounge'],
-            price: '$199'
-          }
-        ];
-        
-        // Create vehicle cards
-        vehicles.forEach(vehicle => {
-          const vehicleCard = document.createElement('label');
-          vehicleCard.htmlFor = `vehicle-${vehicle.id}`;
-          vehicleCard.className = 'vehicle-card pt-3 flex items-center justify-between rounded-lg border border-transparent bg-white px-2 sm:px-3 py-3 sm:py-4 shadow-sm cursor-pointer transition duration-150 ease-in-out focus-within:ring-2 focus-within:ring-[--color-teal]';
-          
-          vehicleCard.innerHTML = `
-            <div class="vehicle-card-content flex items-center space-x-4 w-full">
-              <div class="vehicle-image-container flex-shrink-0 w-28 aspect-[4/3] overflow-hidden rounded-md">
-                <img src="${vehicle.image}" alt="${vehicle.name}" class="w-full h-full object-cover">
-              </div>
-              <div class="vehicle-card-details">
-                <div class="flex justify-between items-start">
-                  <p class="text-base font-medium text-gray-900">${vehicle.name}</p>
-                  <p class="text-lg font-bold text-[--color-teal]">${vehicle.price}</p>
-                </div>
-                <div class="flex items-center space-x-3 text-xs text-gray-500 mt-1">
-                  <span class="flex items-center">
-                    <svg class="w-3.5 h-3.5 mr-1 text-[--color-teal]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
-                    </svg>
-                    <span class="font-medium">${vehicle.passengers}</span>
-                  </span>
-                </div>
-                <p class="text-xs text-gray-500 mt-1">${vehicle.description}</p>
-                <div class="badge-container flex flex-wrap gap-2 mt-1.5">
-                  ${vehicle.badges.map(badge => 
-                    `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[--color-green-100] text-[--color-green-800]">${badge}</span>`
-                  ).join('')}
-                </div>
-              </div>
-            </div>
-            <input type="radio" name="vehicle_type" value="${vehicle.name}" id="vehicle-${vehicle.id}" class="sr-only" required>
-          `;
-          
-          vehicleSelection.appendChild(vehicleCard);
-          
-          // Add event listener to each vehicle card
-          vehicleCard.addEventListener('click', () => {
-            // Remove selected class from all cards
-            document.querySelectorAll('.vehicle-card').forEach(card => {
-              card.classList.remove('selected');
-            });
-            // Add selected class to clicked card
-            vehicleCard.classList.add('selected');
-            // Enable book now button
-            bookNowButton.disabled = false;
-          });
-        });
-        
-        // Book Now button functionality
+          // Book Now button functionality
         bookNowButton.addEventListener('click', () => {
-          const selectedVehicle = document.querySelector('input[name="vehicle_type"]:checked');
+          // Here you would typically submit the booking to your backend
+          alert('Booking successful! A confirmation will be sent to your email.');
           
-          if (selectedVehicle) {
-            // Here you would typically submit the booking to your backend
-            alert('Booking successful! A confirmation will be sent to your email.');
-            
-            // For demo purposes, you could redirect to a confirmation page
-            // window.location.href = 'confirmation.html';
-          }
+          // For demo purposes, you could redirect to a confirmation page
+          // window.location.href = 'confirmation.html';
         });
         
         // Initialize Google Maps when API is loaded
