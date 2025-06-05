@@ -44,15 +44,17 @@
 }
 
 .tab-navigation__button--active {
-  background: linear-gradient(135deg, #14b8a6, #0d9488);
+  background: linear-gradient(to right, #FF9933, #FF5733);
   color: white;
   border-bottom-color: #e4c07e;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(255, 153, 51, 0.25);
 }
 
 .tab-navigation__button--inactive:hover {
   background-color: rgba(28, 22, 4, 0.9);
   color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .tab-navigation__panel {
@@ -77,7 +79,10 @@
     padding: 10px 12px;
   }
   .tab-button.active {
-    border-left: 2px solid var(--color-teal, #0d9488);
+    background: linear-gradient(to right, #FF9933, #FF5733);
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 4px 6px rgba(255, 153, 51, 0.25);
     border-bottom: none;
   }
 }

@@ -81,6 +81,20 @@ gmp-place-autocomplete input {
   border-radius: var(--radius-lg) !important;
   font-family: inherit !important;
   height: 3rem !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Add focused state matching the tab button colors */
+gmp-place-autocomplete input:focus {
+  outline: none !important;
+  border-color: #FF9933 !important;
+  box-shadow: 0 0 0 2px rgba(255, 153, 51, 0.25) !important;
+}
+
+/* Apply a subtle gradient border on active/hover */
+gmp-place-autocomplete.active input,
+gmp-place-autocomplete input:active {
+  border: 1px solid #FF5733 !important;
 }
 
 /* Placeholder styling - note this may not work due to Shadow DOM */
@@ -363,4 +377,74 @@ gmp-place-autocomplete input::placeholder {
 #from-location-exp-container .google-maps-container .location-icon {
   width: 16px;  /* Make this specific icon smaller */
   height: 16px;
+}
+
+/* Add gradient background on autofilled input - matching tab button color scheme */
+gmp-place-autocomplete input:-webkit-autofill,
+gmp-place-autocomplete input:-webkit-autofill:focus {
+  transition: background-color 5000s ease-in-out 0s !important;
+  border: 1px solid #FF9933 !important;
+  box-shadow: 0 0 0px 1000px rgba(255, 153, 51, 0.05) inset !important;
+}
+
+/* Custom dropdown style for autocomplete dropdown to match the color scheme */
+.pac-container {
+  border-color: #FF9933 !important;
+  box-shadow: 0 4px 12px rgba(255, 153, 51, 0.2) !important;
+}
+
+.pac-item:hover {
+  background-color: rgba(255, 153, 51, 0.1) !important;
+}
+
+.pac-item-selected, .pac-item-selected:hover {
+  background: linear-gradient(to right, rgba(255, 153, 51, 0.2), rgba(255, 87, 51, 0.2)) !important;
+}
+
+/* Enhanced input field appearance */
+.google-maps-container {
+  position: relative;
+}
+
+.google-maps-container::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(to right, #FF9933, #FF5733);
+  opacity: 0;
+  transform: scaleX(0.8);
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+}
+
+.google-maps-container:focus-within::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* Hover effect for place inputs to match button hover styles */
+.google-maps-container:hover gmp-place-autocomplete input:not(:focus) {
+  border-color: rgba(255, 153, 51, 0.5) !important;
+  box-shadow: 0 2px 4px rgba(255, 153, 51, 0.1) !important;
+  transform: translateY(-1px);
+}
+
+/* Apply consistent styling to the labels as well */
+.location-label {
+  transition: color 0.3s ease;
+}
+
+.google-maps-container:focus-within .location-label {
+  color: #FF9933 !important;
+  font-weight: 500;
+}
+
+/* Mobile specific adjustments */
+@media (max-width: 768px) {
+  gmp-place-autocomplete input {
+    font-size: 14px !important;
+  }
 }

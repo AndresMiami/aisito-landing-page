@@ -239,9 +239,11 @@ select {
     transition: all 0.3s ease-in-out;
 }
 
-.tab-button.active-tab {
-    background-color:#9ba538d9; /* Semi-transparent yellow */
-    color: #000; /* darker text for contrast */
+.tab-button.active {
+  background: linear-gradient(to right, #FF9933, #FF5733); /* Match continue button gradient */
+  color: white;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(255, 153, 51, 0.25);
 }
 
 .tab-button:not(.active-tab) {
@@ -254,11 +256,31 @@ select {
 }
 
 .tab-button[aria-selected="true"] {
-    background-color: var(--color-gold);
+    background: linear-gradient(to right, #FF9933, #FF5733);
     color: white;
     font-weight: bold;
     transform: scale(1.05);
     z-index: 10;
+    box-shadow: 0 4px 6px rgba(255, 153, 51, 0.25);
+}
+
+/* Ensure both aria-selected and active class have the continue button styling */
+.tab-button[aria-selected="true"],
+.tab-button.active {
+  background: linear-gradient(to right, #FF9933, #FF5733);
+  color: white;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(255, 153, 51, 0.25);
+}
+
+/* Ensure proper tabs on page load */
+#tab-button-oneway[aria-selected="true"],
+#tab-button-experience-plus[aria-selected="true"],
+#tab-button-yachts[aria-selected="true"] {
+  background: linear-gradient(to right, #FF9933, #FF5733);
+  color: white;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(255, 153, 51, 0.25);
 }
 
 /* A container for the tabs if not already present */
@@ -625,7 +647,7 @@ main {
 /* General Button Styling - This is very broad and will affect all buttons. */
 /* It's generally better to style buttons with more specific classes or Tailwind utilities. */
 /* This will conflict with .booking-time-button and #submit-button styles. */
-/*
+/* 
 button {
     background-color: #FFC107;
     color: #FFFFFF;
@@ -755,27 +777,41 @@ input:focus, select:focus {
     position: relative;
     transition: all 0.2s ease;
   }
-
   /* One Way tab active state */
   #tab-button-oneway.active {
-    background: linear-gradient(to right, #FFC107, #FF9800);
+    background: linear-gradient(to right, #FF9933, #FF5733);
     color: white;
     font-weight: 500;
+    box-shadow: 0 4px 6px rgba(255, 153, 51, 0.25);
     border-top-left-radius: 0.75rem;
   }
-
   /* Experience+ tab active state */
   #tab-button-experience-plus.active {
-    background-color: #15B8A6;  /* Your teal color */
+    background: linear-gradient(to right, #FF9933, #FF5733);
     color: white;
     font-weight: 500;
+    box-shadow: 0 4px 6px rgba(255, 153, 51, 0.25);
     border-top-right-radius: 0.75rem;
   }
 
-  /* Inactive tab styling */
+  /* Yachts & Boats tab active state */
+  #tab-button-yachts.active {
+    background: linear-gradient(to right, #FF9933, #FF5733);
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 4px 6px rgba(255, 153, 51, 0.25);
+  }  /* Inactive tab styling */
   .tab-button:not(.active) {
     background: #f9fafb;
     color: #6b7280;
+    transition: all 0.3s ease;
+  }
+  
+  /* Hover effect for inactive tabs */
+  .tab-button:not(.active):hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: #f3f4f6;
   }
 
   /* Tab component styling */
@@ -802,10 +838,10 @@ input:focus, select:focus {
 }
 
 .tab-button[aria-selected="true"] {
-  background: linear-gradient(135deg, #14b8a6, #0d9488);
+  background: linear-gradient(to right, #FF9933, #FF5733);
   color: white;
   border-bottom: 2px solid #e4c07e;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(255, 153, 51, 0.25);
 }
 
 .tab-button[aria-selected="false"]:hover {
@@ -1227,3 +1263,30 @@ main {
   transform: translateY(0);
   margin-top: 1rem;
 }
+
+/* Consistent styling for interactive elements */
+.tab-button[aria-selected="true"],
+.search-button,
+gmp-place-autocomplete input:focus,
+#submit-button:not(:disabled) {
+  /* Apply consistent gradient and shadow */
+  background: linear-gradient(to right, #FF9933, #FF5733);
+  box-shadow: 0 4px 6px rgba(255, 153, 51, 0.25);
+}
+
+/* Override for input focus which can't use the gradient as background */
+gmp-place-autocomplete input:focus {
+  background: white !important;
+  border-color: #FF9933 !important;
+}
+
+/* Apply focus ring styling consistently */
+.tab-button:focus,
+.search-button:focus,
+gmp-place-autocomplete input:focus,
+#submit-button:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(255, 153, 51, 0.3), 0 4px 6px rgba(255, 153, 51, 0.2) !important;
+}
+
+/* Tab styling to match continue button */

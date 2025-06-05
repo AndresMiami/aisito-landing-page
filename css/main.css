@@ -182,7 +182,25 @@ label:not(.location-label) {
 }
 
 .tab-button[aria-selected="true"] {
-  border-bottom-color: var(--color-teal);
+  background: linear-gradient(to right, #FF9933, #FF5733);
+  color: white;
+  box-shadow: 0 4px 6px rgba(255, 153, 51, 0.25);
+}
+
+/* Add this to ensure tab buttons with active class have correct styling */
+.tab-button.active {
+  background: linear-gradient(to right, #FF9933, #FF5733);
+  color: white;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(255, 153, 51, 0.25);
+}
+
+/* Mobile specific tab styles */
+@media (max-width: 640px) {
+  .tab-button.active {
+    background: linear-gradient(to right, #FF9933, #FF5733);
+    box-shadow: 0 2px 4px rgba(255, 153, 51, 0.2);
+  }
 }
 
 /* Create consistent spacing between form sections */
