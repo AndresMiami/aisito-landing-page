@@ -106,6 +106,14 @@ export const EVENTS = {
     ERROR: 'system:error',
     DEBUG_ENABLED: 'system:debug:enabled',
     DEBUG_DISABLED: 'system:debug:disabled'
+  },
+  YACHT: {
+    TAB_ACTIVATED: 'yacht:tab_activated',
+    DATE_SELECTED: 'yacht:date_selected',
+    GUEST_UPDATED: 'yacht:guest_updated',
+    DATE_MODAL_OPENED: 'yacht:date_modal_opened',
+    GUEST_MODAL_OPENED: 'yacht:guest_modal_opened',
+    SEARCH: 'yacht:search'
   }
 };
 
@@ -158,6 +166,7 @@ export const ERROR_EVENTS = EVENTS.ERROR;
 export const UI_EVENTS = EVENTS.UI;
 export const ANALYTICS_EVENTS = EVENTS.ANALYTICS;
 export const SYSTEM_EVENTS = EVENTS.SYSTEM;
+export const YACHT_EVENTS = EVENTS.YACHT;
 
 // Utility functions
 export const getAllEvents = () => {
@@ -191,6 +200,7 @@ export default {
   UI_EVENTS,
   ANALYTICS_EVENTS,
   SYSTEM_EVENTS,
+  YACHT_EVENTS,
   createFormPayload,
   createLocationPayload,
   createFieldError,

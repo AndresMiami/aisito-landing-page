@@ -538,158 +538,69 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-/**
- * Element Inspector Functionality
- * Allows clicking on elements to get their IDs and controller information
- */
-function initializeElementInspector() {
-  console.log('🔍 Initializing Element Inspector...');
+// Add these lines to your existing tab initialization code
+document.addEventListener('DOMContentLoaded', function() {
+  // Existing tab code...
   
-  // Check if we're in a development environment - must match the check in HTML
-  const isDevelopment = window.location.hostname === 'localhost' || 
-                        window.location.hostname === '127.0.0.1' ||
-                        window.location.hostname.includes('192.168.') ||
-                        window.location.hostname.includes('.local') ||
-                        window.location.search.includes('debug=true');
-  
-  const inspectorToggle = document.getElementById('inspector-toggle');
-  if (!inspectorToggle) {
-    console.warn('⚠️ Inspector toggle button not found');
-    return;
+  // Add event handler for yachts tab
+  const yachtsTab = document.getElementById('tab-button-yachts');
+  if (yachtsTab) {
+    yachtsTab.addEventListener('click', function() {
+      switchTab('panel-yachts');
+    });
   }
   
-  // Only initialize the inspector in development environments
-  if (!isDevelopment) {
-    console.log('🔍 Element Inspector disabled in production environment');
-    return;
+  // Initialize the yachts search bar
+  const yachtsDateSection = document.getElementById('yachtsDateSection');
+  const yachtsGuestSection = document.getElementById('yachtsGuestSection');
+  const modal = document.getElementById('modal');
+  
+  if (yachtsDateSection) {
+    yachtsDateSection.addEventListener('click', function() {
+      if (modal) {
+        const modalTitle = document.getElementById('modalTitle');
+        modalTitle.textContent = 'Select yacht charter date';
+        modal.style.display = 'block';
+      }
+    });
   }
   
-  let isInspectorActive = false;
-  let hoveredElement = null;
-  let originalOutline = '';
-    // Style for the inspector toggle button
-  inspectorToggle.style.position = 'fixed';
-  inspectorToggle.style.bottom = '20px';
-  inspectorToggle.style.right = '20px';
-  inspectorToggle.style.zIndex = '9999';
-  inspectorToggle.style.background = '#3b82f6';
-  inspectorToggle.style.color = 'white';
-  inspectorToggle.style.border = 'none';
-  inspectorToggle.style.borderRadius = '50%';
-  inspectorToggle.style.width = '40px';
-  inspectorToggle.style.height = '40px';
-  inspectorToggle.style.fontSize = '18px';
-  inspectorToggle.style.cursor = 'pointer';
-  inspectorToggle.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-  inspectorToggle.style.display = 'block'; // Make visible in dev mode
-  
-  // Add tooltip
-  inspectorToggle.title = 'Click to inspect elements';
-  
-  // Toggle inspector on button click
-  inspectorToggle.addEventListener('click', function() {
-    isInspectorActive = !isInspectorActive;
-    
-    if (isInspectorActive) {
-      inspectorToggle.style.background = '#f44336';
-      document.body.style.cursor = 'crosshair';
-      console.log('🔍 Inspector activated. Click on any element to inspect.');
-    } else {
-      inspectorToggle.style.background = '#3b82f6';
-      document.body.style.cursor = '';
-      console.log('🔍 Inspector deactivated.');
-    }
+  if (yachtsGuestSection) {
+    yachtsGuestSection.addEventListener('click', function() {
+      if (modal) {
+        const modalTitle = document.getElementById('modalTitle');
+        modalTitle.textContent = 'Select number of guests';
+        modal.style.display = 'block';
+      }
+    });
+  }
+});
+
+// Helper function to switch tabs
+function switchTab(targetPanelId) {
+  // Hide all panels
+  document.querySelectorAll('.tab-panel').forEach(panel => {
+    panel.classList.add('hidden');
   });
   
-  // Add inspection functionality
-  document.addEventListener('mouseover', function(e) {
-    if (!isInspectorActive) return;
-    
-    // Reset previous element
-    if (hoveredElement && hoveredElement !== e.target) {
-      hoveredElement.style.outline = originalOutline;
-    }
-    
-    // Highlight current element
-    hoveredElement = e.target;
-    originalOutline = hoveredElement.style.outline;
-    hoveredElement.style.outline = '2px solid #f44336';
-    
-    e.stopPropagation();
-  }, true);
+  // Show target panel
+  document.getElementById(targetPanelId).classList.remove('hidden');
   
-  document.addEventListener('mouseout', function(e) {
-    if (!isInspectorActive || !hoveredElement) return;
-    
-    hoveredElement.style.outline = originalOutline;
-    e.stopPropagation();
-  }, true);
-  
-  document.addEventListener('click', function(e) {
-    if (!isInspectorActive) return;
-    
-    // Prevent default action
-    e.preventDefault();
-    e.stopPropagation();
-    
-    const element = e.target;
-    
-    // Gather element info
-    const id = element.id || 'no-id';
-    const classes = Array.from(element.classList).join(', ') || 'no-classes';
-    const tagName = element.tagName.toLowerCase();
-    const attributes = Array.from(element.attributes)
-      .map(attr => `${attr.name}="${attr.value}"`)
-      .join(', ');
-    
-    // Log element info
-    console.group('🔍 Element Inspection');
-    console.log('%cElement:', 'font-weight: bold;', element);
-    console.log('%cID:', 'font-weight: bold;', id);
-    console.log('%cClasses:', 'font-weight: bold;', classes);
-    console.log('%cTag:', 'font-weight: bold;', tagName);
-    console.log('%cAttributes:', 'font-weight: bold;', attributes);
-    
-    // Try to find the controller
-    if (window.findController && id) {
-      window.findController(id);
-    }
-    
-    console.groupEnd();
-    
-    // Add visual indicator
-    const originalBg = element.style.backgroundColor;
-    element.style.backgroundColor = 'rgba(244, 67, 54, 0.2)';
-    setTimeout(() => {
-      element.style.backgroundColor = originalBg;
-    }, 1000);
-    
-    return false;
-  }, true);
-    // Add keyboard shortcut (Alt+I) - only in development
-  document.addEventListener('keydown', function(e) {
-    if (e.altKey && e.key === 'i') {
-      e.preventDefault();
-      inspectorToggle.click();
-    }
+  // Update tab button states
+  document.querySelectorAll('.tab-button').forEach(button => {
+    button.classList.remove('active');
+    button.setAttribute('aria-selected', 'false');
   });
   
-  // Make inspector available globally
-  window.toggleInspector = function() {
-    inspectorToggle.click();
-    return isInspectorActive;
-  };
-  
-  console.log('✅ Element Inspector initialized. Click 🔍 button or press Alt+I to activate.');
+  // Set clicked tab as active
+  const selectedTab = document.querySelector(`[data-tab-target="#${targetPanelId}"]`);
+  selectedTab.classList.add('active');
+  selectedTab.setAttribute('aria-selected', 'true');
 }
 
-// Add this line to the debug section of your initialization code
-if (window.location.search.includes('debug=true')) {
-  // Initialize element inspector functionality
-  initializeElementInspector();
-  
-  console.log('🔧 Element Inspector available. Use Alt+I or click the 🔍 button.');
-}
+// ========================================
+// EMERGENCY FIX AND DEBUGGING FUNCTIONS
+// ========================================
 
 // Emergency reset function
 function emergencyReset() {

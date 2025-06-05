@@ -492,6 +492,9 @@
     <button type="button" id="tab-button-experience-plus" data-tab-target="#panel-experience-plus" 
             class="tab-button" 
             role="tab" aria-selected="false" aria-controls="panel-experience-plus">Experience +</button>
+    <button type="button" id="tab-button-yachts" data-tab-target="#panel-yachts" 
+            class="tab-button" 
+            role="tab" aria-selected="false" aria-controls="panel-yachts">Yachts & Boats</button>
   </nav>
 </div>
 
@@ -733,6 +736,42 @@
                     </div>
                   </div>
                 </div>
+                <div id="panel-yachts" class="tab-panel space-y-3 hidden" role="tabpanel" tabindex="0" aria-labelledby="tab-button-yachts">
+  <!-- YACHTS & BOATS TAB: Similar to Experience+ tab -->
+  <div id="location-fields-container-yachts" class="space-y-4">
+    <!-- Starting Location Only -->
+    <div class="relative">
+      <div class="google-maps-container">
+        <label for="from-location-yachts" class="location-label">Starting Marina</label>
+        <span class="location-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+          </svg>
+        </span>
+        <gmp-place-autocomplete id="from-location-yachts" placeholder="Enter marina or dock location..." style="max-width: 100%; width: 100%; height: auto;"></gmp-place-autocomplete>
+      </div>
+      <span id="from-location-yachts-error" class="mt-1 block text-xs text-red-600 hidden"></span>
+    </div>
+    <!-- Enhanced Airbnb-style Search Bar -->
+    <div class="experience-search-container">
+      <div class="experience-search-bar" id="yachtsSearchContainer">
+        <div class="search-section" id="yachtsDateSection">
+          <div class="search-label">Date</div>
+          <div class="search-value" id="yachtsDateValue">Add dates</div>
+        </div>
+        <div class="search-section" id="yachtsGuestSection">
+          <div class="search-label">Who</div>
+          <div class="search-value" id="yachtsGuestValue">Add guests</div>
+        </div>
+        <button class="search-button" id="yachtsSearchButton">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
               </div>
 
               <div class="form-action-buttons">
@@ -993,6 +1032,91 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 </div>
 
+<!-- Add this script right before the closing </body> tag -->
+<script type="module">
+  import YachtsSearchBar from './js/components/YachtsSearchBar.js';
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    // Create and initialize the YachtsSearchBar component
+    window.yachtsSearchBar = new YachtsSearchBar(
+      'yachtsSearchContainer', 
+      window.eventBus, 
+      { dateFormat: 'M d' }
+    );
+    
+    // Initialize the component after DOM is loaded
+    setTimeout(() => window.yachtsSearchBar.initialize(), 100);
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Modal date section handlers
+    const dateSection = document.getElementById('experienceDateSection');
+    const yachtsDateSection = document.getElementById('yachtsDateSection');
+    const guestSection = document.getElementById('experienceGuestSection');
+    const yachtsGuestSection = document.getElementById('yachtsGuestSection');
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    const closeModal = document.getElementById('closeModal');
+    const confirmBtn = document.getElementById('confirmSelection');
+    
+    // Common function to open modal
+    function openModal(type, context) {
+      if (modal) {
+        if (type === 'date') {
+          modalTitle.textContent = context === 'yachts' ? 
+            'Select yacht charter date' : 'Select experience date';
+        } else if (type === 'guest') {
+          modalTitle.textContent = 'Select number of guests';
+        }
+        modal.style.display = 'block';
+      }
+    }
+    
+    // Experience date section
+    if (dateSection) {
+      dateSection.addEventListener('click', function() {
+        openModal('date', 'experience');
+      });
+    }
+    
+    // Yachts date section
+    if (yachtsDateSection) {
+      yachtsDateSection.addEventListener('click', function() {
+        openModal('date', 'yachts');
+      });
+    }
+    
+    // Experience guest section
+    if (guestSection) {
+      guestSection.addEventListener('click', function() {
+        openModal('guest', 'experience');
+      });
+    }
+    
+    // Yachts guest section
+    if (yachtsGuestSection) {
+      yachtsGuestSection.addEventListener('click', function() {
+        openModal('guest', 'yachts');
+      });
+    }
+    
+    // Close modal when clicking close button
+    if (closeModal) {
+      closeModal.addEventListener('click', function() {
+        if (modal) modal.style.display = 'none';
+      });
+    }
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+  });
+</script>
   </body>
 </html>
 
