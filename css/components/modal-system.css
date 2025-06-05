@@ -1,0 +1,506 @@
+/* 
+ * Modal System Component
+ * Unified modal system with consistent styling and animations
+ */
+
+/* Base Modal Structure */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: var(--z-modal);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-slow), visibility var(--transition-slow);
+}
+
+.modal.modal--visible,
+.modal.visible {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Modal Content Container */
+.modal__content,
+.modal-content {
+  background-color: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modalSlideIn var(--transition-slow) ease;
+}
+
+/* Modal Sizes */
+.modal__content--small {
+  max-width: 400px;
+}
+
+.modal__content--medium {
+  max-width: 600px;
+}
+
+.modal__content--large {
+  max-width: 800px;
+}
+
+.modal__content--compact {
+  max-width: 480px;
+  padding: var(--spacing-lg);
+}
+
+/* Modal Header */
+.modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.modal__title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  margin: 0;
+  padding-right: var(--spacing-md);
+}
+
+/* Modal Close Button */
+.modal__close,
+.close {
+  background: none;
+  border: none;
+  color: var(--color-gray-500);
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius-full);
+  transition: all var(--transition-base);
+  line-height: 1;
+}
+
+.modal__close:hover,
+.close:hover {
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-900);
+}
+
+/* Modal Body */
+.modal__body {
+  padding: var(--spacing-lg);
+}
+
+.modal__body--no-padding {
+  padding: 0;
+}
+
+/* Modal Footer */
+.modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg) var(--spacing-lg);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+/* Modal Buttons */
+.modal__button {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  border: 1px solid transparent;
+}
+
+.modal__button--primary {
+  background-color: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.modal__button--primary:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.modal__button--secondary {
+  background: none;
+  color: var(--color-gray-700);
+  border-color: var(--color-gray-300);
+}
+
+.modal__button--secondary:hover {
+  background-color: var(--color-gray-100);
+}
+
+/* Experience Modal Specific Styles */
+.experience-modal {
+  max-width: 500px;
+}
+
+.experience-modal .modal__content {
+  padding: var(--spacing-lg);
+}
+
+/* Date Picker Modal */
+.date-picker-modal {
+  max-width: 700px;
+}
+
+.date-picker-modal .modal__content {
+  padding: var(--spacing-lg);
+}
+
+/* Guest Selection Modal */
+.guest-modal .modal__content {
+  max-width: 400px;
+  padding: var(--spacing-lg);
+}
+
+/* Calendar Styles within Modals */
+.modal .calendar-container {
+  margin-top: var(--spacing-md);
+}
+
+.modal .calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.modal .calendar-nav {
+  background: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--border-radius-full);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--transition-base);
+}
+
+.modal .calendar-nav:hover {
+  background-color: var(--color-gray-100);
+}
+
+.modal .calendar-month-year {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  flex: 1;
+  text-align: center;
+}
+
+.modal .calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+.modal .calendar-day-header {
+  padding: var(--spacing-xs) 4px;
+  text-align: center;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-500);
+}
+
+.modal .calendar-day {
+  aspect-ratio: 1;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: var(--border-radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-900);
+  transition: all var(--transition-base);
+}
+
+.modal .calendar-day:not(.disabled):hover {
+  background-color: var(--color-gray-100);
+}
+
+.modal .calendar-day.selected {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.modal .calendar-day.today {
+  background-color: var(--color-secondary);
+  color: white;
+}
+
+.modal .calendar-day.disabled {
+  color: var(--color-gray-300);
+  cursor: not-allowed;
+}
+
+/* Guest Counter Styles */
+.modal .guest-counter-container {
+  margin: var(--spacing-md) 0;
+}
+
+.modal .guest-type-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) 0;
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.modal .guest-type-row:last-child {
+  border-bottom: none;
+}
+
+.modal .guest-type h3 {
+  margin: 0 0 4px 0;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+}
+
+.modal .guest-type p {
+  margin: 0;
+  color: var(--color-gray-500);
+  font-size: var(--font-size-sm);
+}
+
+.modal .guest-counter-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.modal .counter-button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-full);
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-700);
+  transition: all var(--transition-base);
+}
+
+.modal .counter-button:hover:not(:disabled) {
+  border-color: var(--color-gray-900);
+  color: var(--color-gray-900);
+}
+
+.modal .counter-button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.modal .counter-value {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-900);
+  min-width: 24px;
+  text-align: center;
+}
+
+/* Quick Options Styles */
+.modal .quick-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-md);
+}
+
+.modal .quick-option {
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  background: white;
+  text-align: center;
+}
+
+.modal .quick-option:hover {
+  border-color: var(--color-gray-900);
+  background-color: var(--color-gray-50);
+}
+
+.modal .quick-option.selected {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-light);
+}
+
+.modal .quick-option-title {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  margin-bottom: 2px;
+  font-size: var(--font-size-sm);
+}
+
+.modal .quick-option-subtitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+}
+
+/* Modal Animations */
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .modal__content,
+  .modal-content {
+    width: 95%;
+    max-width: 360px;
+    margin: 10% auto;
+  }
+  
+  .modal__header {
+    padding: var(--spacing-md);
+  }
+  
+  .modal__body {
+    padding: var(--spacing-md);
+  }
+  
+  .modal__footer {
+    padding: var(--spacing-md);
+  }
+  
+  .modal .calendar-grid {
+    max-width: 240px;
+  }
+  
+  .modal .calendar-day {
+    min-height: 28px;
+    font-size: var(--font-size-xs);
+  }
+  
+  .modal .quick-options {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    max-width: 240px;
+    margin: 0 auto var(--spacing-md);
+  }
+  
+  .modal .quick-option {
+    padding: var(--spacing-xs);
+  }
+  
+  .modal .quick-option-title {
+    font-size: var(--font-size-xs);
+  }
+  
+  .modal .quick-option-subtitle {
+    font-size: 11px;
+  }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .modal-content {
+    margin: 5% auto;
+    width: 95%;
+    padding: var(--space-lg);
+  }
+  
+  .date-picker-container {
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+  
+  .date-quick-options {
+    flex: none;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-xs);
+  }
+  
+  .quick-date-option {
+    padding: var(--space-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    margin: 2% auto;
+    width: 98%;
+    padding: var(--space-md);
+  }
+  
+  .date-quick-options {
+    grid-template-columns: 1fr;
+    gap: var(--space-xs);
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .modal {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+  
+  .modal__content,
+  .modal-content {
+    border: 2px solid var(--color-gray-900);
+  }
+  
+  .modal .calendar-day.selected {
+    border: 2px solid var(--color-gray-900);
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .modal {
+    transition: none;
+  }
+  
+  .modal__content,
+  .modal-content {
+    animation: none;
+  }
+  
+  .modal__button:hover {
+    transform: none;
+  }
+}
