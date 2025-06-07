@@ -520,13 +520,7 @@
                           <circle cx="12.5" cy="12" r="10" fill="#ff0000" />
                         </svg>
                       </span>
-                      <gmp-place-autocomplete id="to-address"
-                        address-filter="country:us"
-                        type-filter="establishment,geocode,airport,lodging,point_of_interest,tourist_attraction" 
-                        placeholder="Enter drop-off location"
-                        required
-                        aria-describedby="to-address-error">
-                      </gmp-place-autocomplete>
+                      <input type="text" id="to-address" placeholder="Enter drop-off location" aria-describedby="to-address-error" />
                       <span id="to-address-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                     </div>
                   </div>                  <div id="date-time-container-oneway" class="relative">
@@ -1017,6 +1011,8 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <!-- Add this after your existing module imports -->
+<!-- Core Services - Load First -->
+<script type="module" src="./js/location-service-init.js"></script>
 <script type="module" src="./js/form-validation-integration.js"></script>
 
 <!-- Add these styles for validation states -->
@@ -1051,9 +1047,6 @@ document.addEventListener('DOMContentLoaded', function() {
   color: #FF5733;
 }
 </style>
-
-<!-- Add this after your other module imports -->
-<script type="module" src="./js/location-service-init.js"></script>
 <script type="module">
   import YachtsSearchBar from './js/components/YachtsSearchBar.js';
   

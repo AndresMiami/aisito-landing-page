@@ -147,6 +147,52 @@ class LocationService {
     }
 
     /**
+     * Initialize Google Maps services with proper configuration
+     * @private
+     */
+    _initializeGoogleServices() {
+        try {
+            // Instead of using deprecated AutocompleteService, use Places API with SessionToken
+            this.placesService = new google.maps.places.PlacesService(this._getMapElement());
+            this.sessionToken = new google.maps.places.AutocompleteSessionToken();
+            this.geocoder = new google.maps.Geocoder();
+            
+            // Add warning about deprecation
+            console.warn('🔶 Note: Google Maps Places API components are being deprecated. The LocationService implements a custom solution as a replacement.');
+            
+            return true;
+        } catch (error) {
+            console.error('Failed to initialize Google Maps services:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Get or create a map element for PlacesService
+     * @private
+     */
+    _getMapElement() {
+        // Check if we already have a map element
+        if (this._mapElement) {
+            return this._mapElement;
+        }
+        
+        // Create a hidden map element
+        this._mapElement = document.createElement('div');
+        this._mapElement.style.display = 'none';
+        document.body.appendChild(this._mapElement);
+        
+        // Initialize a map on the element
+        this._hiddenMap = new google.maps.Map(this._mapElement, {
+            center: this.config.biasLocation,
+            zoom: 10,
+            disableDefaultUI: true
+        });
+        
+        return this._mapElement;
+    }
+
+    /**
      * Search for places with autocomplete functionality
      * @param {string} query - Search query
      * @param {Object} options - Search options

@@ -97,6 +97,22 @@ class DOMManager {
   }
   
   /**
+   * Get a single element by selector (querySelector wrapper)
+   * @param {string} selector - CSS selector
+   * @param {Element} context - Optional context element (defaults to document)
+   * @returns {Element|null} First matching DOM element or null if not found
+   */
+  static querySelector(selector, context = document) {
+    try {
+      console.log(`🔍 DOMManager.querySelector: "${selector}"`);
+      return context.querySelector(selector);
+    } catch (error) {
+      console.error(`❌ DOMManager.querySelector error for "${selector}":`, error);
+      return null;
+    }
+  }
+  
+  /**
    * Get element by ID with caching
    * @param {string} id - Element ID
    * @param {boolean} useCache - Whether to use cache
@@ -392,19 +408,32 @@ class DOMManager {
   }
   
   /**
-   * Set text content of an element
-   * @param {string|Element} element - Element ID, selector, or DOM element
-   * @param {string} text - Text content
-   * @returns {boolean} Success status
+   * Set the text content of an element
+   * @param {string|Element} selector - Element or selector
+   * @param {string} text - Text content to set
+   * @returns {boolean} - Success or failure
    */
-  static setText(element, text) {
-    const el = this._resolveElement(element);
-    
-    if (el) {
-      el.textContent = text;
+  static setTextContent(selector, text) {
+    try {
+      const element = this.getElement(selector);
+      if (!element) {
+        console.warn(`DOMManager: Element not found for setTextContent: ${selector}`);
+        return false;
+      }
+      
+      element.textContent = text;
       return true;
+    } catch (error) {
+      console.error(`DOMManager: Error setting text content: ${error.message}`);
+      return false;
     }
-    return false;
+  }
+
+  /**
+   * Alias for setTextContent for compatibility
+   */
+  static setText(selector, text) {
+    return this.setTextContent(selector, text);
   }
   
   /**

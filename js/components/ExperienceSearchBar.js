@@ -53,16 +53,189 @@ class ExperienceSearchBar extends BaseComponent {
     initialize() {
         console.log('🔄 Initializing Experience Search Bar component');
         this.initializeElements();
-        this.attachEventListeners();
+        this.bindEvents();
+        this.initDateOptions();
+        this.initCalendar();
+        this.initPlaceAutocomplete();
+        console.log('✅ Experience Search Bar component initialized');
+    }
+    
+    /**
+     * Initialize the component - alias for initialize for backward compatibility
+     */
+    init() {
+      return this.initialize();
+    }
+
+    /**
+     * Bind all event handlers
+     * @private
+     */
+    bindEvents() {
+      try {
+        const dateSection = document.getElementById('experienceDateSection');
+        const guestSection = document.getElementById('experienceGuestSection');
         
-        // Add direct event handlers for immediate use
-        if (this.dateSection) {
-            this.dateSection.addEventListener('click', () => this.showDateModal());
+        if (dateSection) {
+          dateSection.addEventListener('click', this.handleDateSectionClick.bind(this));
         }
         
-        if (this.guestSection) {
-            this.guestSection.addEventListener('click', () => this.showGuestModal());
+        if (guestSection) {
+          guestSection.addEventListener('click', this.handleGuestSectionClick.bind(this));
         }
+        
+        // Bind search button click
+        const searchButton = document.getElementById('experienceSearchButton');
+        if (searchButton) {
+          searchButton.addEventListener('click', this.handleSearchButtonClick.bind(this));
+        }
+        
+        console.log('✅ ExperienceSearchBar: Events bound successfully');
+        return true;
+      } catch (error) {
+        console.error('❌ ExperienceSearchBar: Failed to bind events:', error);
+        return false;
+      }
+    }
+
+    /**
+     * Handle date section click
+     * @private
+     */
+    handleDateSectionClick(event) {
+      console.log('Date section clicked');
+      this.openModal('date');
+    }
+
+    /**
+     * Handle guest section click
+     * @private
+     */
+    handleGuestSectionClick(event) {
+      console.log('Guest section clicked');
+      this.openModal('guest');
+    }
+
+    /**
+     * Handle search button click
+     * @private
+     */
+    handleSearchButtonClick(event) {
+      console.log('Search button clicked');
+      // Emit search event with current values
+      this.emitSearchEvent();
+    }
+
+    /**
+     * Open modal with specified type
+     * @private
+     */
+    openModal(type) {
+      const modal = document.getElementById('modal');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalBody = document.getElementById('modalBody');
+      
+      if (!modal || !modalTitle || !modalBody) {
+        console.error('Modal elements not found');
+        return;
+      }
+      
+      // Set modal content based on type
+      if (type === 'date') {
+        modalTitle.textContent = 'Select experience date';
+        modalBody.innerHTML = this.renderDateSelector();
+      } else if (type === 'guest') {
+        modalTitle.textContent = 'Select number of guests';
+        modalBody.innerHTML = this.renderGuestSelector();
+      }
+      
+      // Show modal
+      modal.style.display = 'block';
+    }
+
+    /**
+     * Emit search event with current values
+     * @private
+     */
+    emitSearchEvent() {
+      if (!this.eventBus) return;
+      
+      const dateValue = document.getElementById('experienceDateValue').textContent;
+      const guestValue = document.getElementById('experienceGuestValue').textContent;
+      
+      this.eventBus.emit('EXPERIENCE_SEARCH', {
+        date: dateValue !== 'Add dates' ? dateValue : null,
+        guests: guestValue !== 'Add guests' ? guestValue : null,
+        timestamp: Date.now()
+      });
+    }
+
+    /**
+     * Render date selector HTML
+     * @private
+     */
+    renderDateSelector() {
+      return `
+        <div class="date-selector">
+          <div class="date-picker-container">
+            <!-- Date picker will be initialized here -->
+            <div id="experience-date-picker" class="experience-date-picker"></div>
+            
+            <div class="date-quick-options">
+              <button class="quick-date-option" data-value="today">Today</button>
+              <button class="quick-date-option" data-value="tomorrow">Tomorrow</button>
+              <button class="quick-date-option" data-value="weekend">This Weekend</button>
+              <button class="quick-date-option" data-value="flexible">I'm flexible</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /**
+     * Render guest selector HTML
+     * @private
+     */
+    renderGuestSelector() {
+      return `
+        <div class="guest-selector">
+          <div class="guest-controls">
+            <div class="guest-info">
+              <div class="guest-type">Adults</div>
+              <div class="guest-description">Ages 13+</div>
+            </div>
+            <div class="guest-counter-controls">
+              <button class="counter-button" id="adultDecrease" ${this.guests.adults <= 1 ? 'disabled' : ''}>-</button>
+              <span class="counter-value" id="adultCount">${this.guests.adults}</span>
+              <button class="counter-button" id="adultIncrease">+</button>
+            </div>
+          </div>
+          
+          <div class="guest-controls">
+            <div class="guest-info">
+              <div class="guest-type">Children</div>
+              <div class="guest-description">Ages 2-12</div>
+            </div>
+            <div class="guest-counter-controls">
+              <button class="counter-button" id="childDecrease" ${this.guests.children <= 0 ? 'disabled' : ''}>-</button>
+              <span class="counter-value" id="childCount">${this.guests.children}</span>
+              <button class="counter-button" id="childIncrease">+</button>
+            </div>
+          </div>
+          
+          <div class="guest-controls">
+            <div class="guest-info">
+              <div class="guest-type">Infants</div>
+              <div class="guest-description">Under 2</div>
+            </div>
+            <div class="guest-counter-controls">
+              <button class="counter-button" id="infantDecrease" ${this.guests.infants <= 0 ? 'disabled' : ''}>-</button>
+              <span class="counter-value" id="infantCount">${this.guests.infants}</span>
+              <button class="counter-button" id="infantIncrease">+</button>
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     /**
@@ -570,6 +743,17 @@ class ExperienceSearchBar extends BaseComponent {
                     <button id="childIncrease" class="count-btn increase">+</button>
                   </div>
                 </div>
+                <div class="guest-type-row">
+                  <div class="guest-type">
+                    <h3>Infants</h3>
+                    <p>Under 2</p>
+                  </div>
+                  <div class="guest-count-controls">
+                    <button id="infantDecrease" class="count-btn decrease" ${this.guests.infants <= 0 ? 'disabled' : ''}>-</button>
+                    <span id="infantCount" class="guest-count">${this.guests.infants}</span>
+                    <button id="infantIncrease" class="count-btn increase">+</button>
+                  </div>
+                </div>
               </div>
             `;
             
@@ -606,6 +790,24 @@ class ExperienceSearchBar extends BaseComponent {
                     if (this.guests.children > 0) {
                         this.guests.children--;
                         this.updateGuestCounter('child');
+                    }
+                });
+            }
+            
+            const infantIncreaseBtn = document.getElementById('infantIncrease');
+            if (infantIncreaseBtn) {
+                infantIncreaseBtn.addEventListener('click', () => {
+                    this.guests.infants++;
+                    this.updateGuestCounter('infant');
+                });
+            }
+            
+            const infantDecreaseBtn = document.getElementById('infantDecrease');
+            if (infantDecreaseBtn) {
+                infantDecreaseBtn.addEventListener('click', () => {
+                    if (this.guests.infants > 0) {
+                        this.guests.infants--;
+                        this.updateGuestCounter('infant');
                     }
                 });
             }
