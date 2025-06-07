@@ -714,3 +714,27 @@ console.log('✅ Dashboard.js: Module loaded successfully');
 // Make available globally (NO DUPLICATES)
 window.MiamiEvents = EventDefinitions;
 window.DOMManager = DOMManager;
+
+// Add this to your dashboard.js or component initialization
+document.addEventListener('DOMContentLoaded', async () => {
+    // Wait for LocationService to be ready
+    if (window.miamiLocationService) {
+        // Initialize location autocomplete for each input
+        const locationInputs = [
+            { inputId: 'from-location', placeholder: 'Enter pickup location...' },
+            { inputId: 'to-address', placeholder: 'Enter destination...' },
+            { inputId: 'from-location-exp', placeholder: 'Enter location...' }
+        ];
+        
+        locationInputs.forEach(config => {
+            const component = new LocationAutocompleteComponent({
+                componentId: `autocomplete-${config.inputId}`,
+                inputId: config.inputId,
+                placeholder: config.placeholder,
+                eventBus: window.eventBus
+            });
+            
+            component.onInitialize();
+        });
+    }
+});

@@ -43,6 +43,7 @@
 @import url('./components/_vehicle-selector.css'); 
 @import url('./components/_buttons.css');
 @import url('./components/_google-maps.css');
+@import url('./components/location-autocomplete.css'); /* New location autocomplete styles */
 
 /* Import global error styles - FIXED: add proper path */
 @import url('./global-errors.css');

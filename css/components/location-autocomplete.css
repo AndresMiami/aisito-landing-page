@@ -1,0 +1,314 @@
+/**
+ * LocationAutocompleteComponent Styles
+ * Custom styling for the Miami AI Concierge location autocomplete
+ */
+
+/* Main Container */
+.location-autocomplete-container {
+    position: relative;
+    width: 100%;
+}
+
+.location-autocomplete-miami {
+    border-radius: var(--radius-lg, 8px);
+    transition: all 0.2s ease;
+}
+
+/* Input Styling */
+.location-autocomplete-input {
+    width: 100%;
+    padding: 12px 40px 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: var(--radius-lg, 8px);
+    font-size: 16px;
+    line-height: 1.5;
+    transition: all 0.2s ease;
+    background-color: white;
+}
+
+.location-autocomplete-input:focus {
+    outline: none;
+    border-color: #FF9933;
+    box-shadow: 0 0 0 3px rgba(255, 153, 51, 0.1);
+}
+
+.location-autocomplete-container.has-selection .location-autocomplete-input {
+    border-color: #10b981;
+    background-color: #f0fdf4;
+}
+
+.location-autocomplete-container.loading .location-autocomplete-input {
+    background-color: #f9fafb;
+}
+
+/* Clear Button */
+.location-clear-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: #6b7280;
+    color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    line-height: 1;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.location-clear-btn:hover {
+    background: #374151;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.location-clear-btn.hidden {
+    display: none;
+}
+
+/* Current Location Button */
+.location-current-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    margin-top: 8px;
+    background: none;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    color: #FF9933;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.location-current-btn:hover {
+    background-color: #fff7ed;
+    border-color: #FF9933;
+}
+
+/* Loading Indicator */
+.location-loading {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #6b7280;
+    font-size: 14px;
+    z-index: 5;
+}
+
+.loading-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #e5e7eb;
+    border-top: 2px solid #FF9933;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Dropdown Styling */
+.location-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--radius-lg, 8px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    max-height: 320px;
+    overflow-y: auto;
+    z-index: 50;
+    margin-top: 4px;
+}
+
+.location-dropdown.hidden {
+    display: none;
+}
+
+/* Dropdown Scrollbar */
+.location-dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+
+.location-dropdown::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.location-dropdown::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.location-dropdown::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Suggestion Items */
+.suggestion-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background-color 0.15s ease;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover,
+.suggestion-item.selected {
+    background-color: rgba(255, 153, 51, 0.1);
+}
+
+.suggestion-item.selected {
+    border-left: 3px solid #FF9933;
+}
+
+/* Suggestion Content */
+.suggestion-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.suggestion-name {
+    font-weight: 500;
+    color: #1f2937;
+    font-size: 15px;
+}
+
+.suggestion-address {
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.airport-badge {
+    background: #dbeafe;
+    color: #1d4ed8;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+/* No Results State */
+.no-results {
+    padding: 24px 16px;
+    text-align: center;
+    color: #6b7280;
+}
+
+.no-results-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.no-results-text {
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.no-results-suggestion {
+    font-size: 14px;
+}
+
+/* Error State */
+.search-error {
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #dc2626;
+    background-color: #fef2f2;
+    border-radius: 6px;
+    margin: 8px;
+}
+
+.error-icon {
+    font-size: 18px;
+}
+
+.error-text {
+    font-size: 14px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .location-dropdown {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-height: 60vh;
+        border-radius: 16px 16px 0 0;
+        border: none;
+        box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .suggestion-item {
+        padding: 16px;
+        min-height: 48px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .location-current-btn {
+        padding: 12px;
+        justify-content: center;
+    }
+    
+    /* Prevent body scroll when dropdown is open */
+    body.dropdown-open {
+        overflow: hidden;
+    }
+}
+
+/* Focus Management */
+.location-autocomplete-container:focus-within {
+    z-index: 51;
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .location-autocomplete-input {
+        border-width: 3px;
+    }
+    
+    .suggestion-item.selected {
+        background-color: #000;
+        color: #fff;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .location-autocomplete-input,
+    .suggestion-item,
+    .location-clear-btn {
+        transition: none;
+    }
+    
+    .loading-spinner {
+        animation: none;
+    }
+}

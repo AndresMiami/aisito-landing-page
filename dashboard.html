@@ -510,7 +510,7 @@
                             <circle cx="12.5" cy="12" r="10" fill="#00cc44" />
                           </svg>
                         </span>
-                        <gmp-place-autocomplete id="from-location" placeholder="Enter pickup location..."></gmp-place-autocomplete>
+                        <input type="text" id="from-location" placeholder="Enter pickup location..." />
                       </div>
                       <span id="from-location-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                     </div>
@@ -1016,7 +1016,44 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 </div>
 
-<!-- Add this script right before the closing </body> tag -->
+<!-- Add this after your existing module imports -->
+<script type="module" src="./js/form-validation-integration.js"></script>
+
+<!-- Add these styles for validation states -->
+<style>
+.validation-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+.validation-success {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+}
+
+.continue-button-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.trip-summary {
+  background: linear-gradient(to right, rgba(255, 153, 51, 0.1), rgba(255, 87, 51, 0.1));
+  border: 1px solid rgba(255, 153, 51, 0.3);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.pricing-display {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #FF5733;
+}
+</style>
+
+<!-- Add this after your other module imports -->
+<script type="module" src="./js/location-service-init.js"></script>
 <script type="module">
   import YachtsSearchBar from './js/components/YachtsSearchBar.js';
   

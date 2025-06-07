@@ -28,7 +28,13 @@ export const EVENTS = {
     LOADING_STARTED: 'form:loading:started',
     LOADING_ENDED: 'form:loading:ended',
     DATA_PROCESSED: 'form:data:processed',
-    RESET: 'form:reset'
+    RESET: 'form:reset',
+    VALIDATION_STARTED: 'form:validation:started',
+    VALIDATION_COMPLETED: 'form:validation:completed',
+    TRIP_CALCULATION_STARTED: 'form:trip:calculation:started',
+    TRIP_CALCULATION_COMPLETED: 'form:trip:calculation:completed',
+    TRIP_CALCULATION_FAILED: 'form:trip:calculation:failed',
+    CONTINUE_BUTTON_UPDATED: 'form:continue:button:updated'
   },
   BOOKING: {
     REQUESTED: 'booking:requested',
@@ -44,7 +50,10 @@ export const EVENTS = {
     AVAILABILITY_CHECKED: 'booking:availability:checked',
     AVAILABILITY_CONFIRMED: 'booking:availability:confirmed',
     EXPERIENCE_SELECTED: 'booking:experience:selected',
-    EXPERIENCE_CONFIGURED: 'booking:experience:configured'
+    EXPERIENCE_CONFIGURED: 'booking:experience:configured',
+    TRIP_SUMMARY_READY: 'booking:trip_summary_ready',
+    ROUTE_CALCULATED: 'booking:route:calculated',
+    PRICING_UPDATED: 'booking:pricing:updated'
   },
   VEHICLE: {
     SELECTED: 'vehicle:selected',
@@ -114,6 +123,14 @@ export const EVENTS = {
     DATE_MODAL_OPENED: 'yacht:date_modal_opened',
     GUEST_MODAL_OPENED: 'yacht:guest_modal_opened',
     SEARCH: 'yacht:search'
+  },
+  VALIDATION: {
+    LOCATION_VALIDATED: 'validation:location:validated',
+    VEHICLE_VALIDATED: 'validation:vehicle:validated',
+    TIMING_VALIDATED: 'validation:timing:validated',
+    FORM_STATE_CHANGED: 'validation:form:state:changed',
+    CONTINUE_ENABLED: 'validation:continue:enabled',
+    CONTINUE_DISABLED: 'validation:continue:disabled'
   }
 };
 
@@ -156,6 +173,24 @@ export const createAnalyticsPayload = (event, properties = {}) => ({
   }
 });
 
+export const createValidationPayload = (fieldId, isValid, data = null, errors = []) => ({
+  fieldId,
+  isValid,
+  data,
+  errors,
+  timestamp: Date.now(),
+  source: 'form-validation'
+});
+
+export const createTripDataPayload = (distance, duration, pricing, route) => ({
+  distance,
+  duration,
+  pricing,
+  route,
+  timestamp: Date.now(),
+  source: 'trip-calculation'
+});
+
 // ONLY ONE DECLARATION OF EACH - Individual domain exports
 export const FORM_EVENTS = EVENTS.FORM;
 export const BOOKING_EVENTS = EVENTS.BOOKING;
@@ -167,6 +202,7 @@ export const UI_EVENTS = EVENTS.UI;
 export const ANALYTICS_EVENTS = EVENTS.ANALYTICS;
 export const SYSTEM_EVENTS = EVENTS.SYSTEM;
 export const YACHT_EVENTS = EVENTS.YACHT;
+export const VALIDATION_EVENTS = EVENTS.VALIDATION;
 
 // Utility functions
 export const getAllEvents = () => {
@@ -201,10 +237,13 @@ export default {
   ANALYTICS_EVENTS,
   SYSTEM_EVENTS,
   YACHT_EVENTS,
+  VALIDATION_EVENTS,
   createFormPayload,
   createLocationPayload,
   createFieldError,
   createAnalyticsPayload,
+  createValidationPayload,
+  createTripDataPayload,
   getAllEvents,
   getEventsByCategory,
   validateEventName
