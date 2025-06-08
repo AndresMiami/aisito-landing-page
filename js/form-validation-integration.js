@@ -39,6 +39,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 inputId: 'from-location-exp',
                 placeholder: 'Enter experience location...',
                 componentId: 'experience-location-autocomplete'
+            },
+            {
+                inputId: 'from-location-yachts',
+                placeholder: 'Enter marina or dock location...',
+                componentId: 'yacht-location-autocomplete'
             }
         ];
         

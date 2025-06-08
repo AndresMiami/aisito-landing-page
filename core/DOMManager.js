@@ -409,22 +409,33 @@ class DOMManager {
   
   /**
    * Set the text content of an element
-   * @param {string|Element} selector - Element or selector
+   * @param {string|Element} element - Element or selector
    * @param {string} text - Text content to set
    * @returns {boolean} - Success or failure
    */
-  static setTextContent(selector, text) {
+  static setTextContent(element, text) {
     try {
-      const element = this.getElement(selector);
-      if (!element) {
-        console.warn(`DOMManager: Element not found for setTextContent: ${selector}`);
-        return false;
+      // If element is already a DOM element, use it directly
+      if (element instanceof Element) {
+        element.textContent = text;
+        return true;
       }
       
-      element.textContent = text;
-      return true;
+      // If element is a string selector, find the element first
+      if (typeof element === 'string') {
+        const foundElement = this.querySelector(element);
+        if (!foundElement) {
+          console.warn(`DOMManager: Element not found for setTextContent: ${element}`);
+          return false;
+        }
+        foundElement.textContent = text;
+        return true;
+      }
+      
+      console.warn(`DOMManager: Invalid element type for setTextContent:`, element);
+      return false;
     } catch (error) {
-      console.error(`DOMManager: Error setting text content: ${error.message}`);
+      console.error(`DOMManager: Error setting text content:`, error.message);
       return false;
     }
   }
@@ -432,8 +443,22 @@ class DOMManager {
   /**
    * Alias for setTextContent for compatibility
    */
-  static setText(selector, text) {
-    return this.setTextContent(selector, text);
+  static setText(element, text) {
+    return this.setTextContent(element, text);
+  }
+  
+  /**
+   * Helper method to find an element using querySelector
+   * @param {string} selector - CSS selector
+   * @returns {Element|null} - Found element or null
+   */
+  static querySelector(selector) {
+    try {
+      return document.querySelector(selector);
+    } catch (error) {
+      console.error(`DOMManager: Error with querySelector: ${error.message}`);
+      return null;
+    }
   }
   
   /**

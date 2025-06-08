@@ -117,31 +117,45 @@ class LocationAutocompleteComponent {
             return false;
         }
     }
-    
-    /**
+      /**
      * Wait for LocationService to be available
      * @private
      */
     async waitForLocationService() {
-        let attempts = 0;
-        const maxAttempts = 50;
-        
-        return new Promise((resolve, reject) => {
-            const checkService = () => {
-                attempts++;
-                
-                if (window.miamiLocationService && window.miamiLocationService.isInitialized) {
-                    console.log('✅ LocationService is ready');
-                    resolve();
-                } else if (attempts >= maxAttempts) {
-                    reject(new Error('LocationService not available after timeout'));
-                } else {
-                    setTimeout(checkService, 100);
-                }
-            };
+        try {
+            // Use the global helper function if available
+            if (typeof window.waitForLocationService === 'function') {
+                console.log(`🔄 Using global waitForLocationService helper for ${this.inputId}`);
+                await window.waitForLocationService(10000); // 10 second timeout
+                console.log('✅ LocationService is ready');
+                return;
+            }
             
-            checkService();
-        });
+            // Fallback to manual check
+            console.log(`🔄 Using fallback LocationService check for ${this.inputId}`);
+            let attempts = 0;
+            const maxAttempts = 100;
+            
+            return new Promise((resolve, reject) => {
+                const checkService = () => {
+                    attempts++;
+                    
+                    if (window.miamiLocationService && window.miamiLocationService.isInitialized) {
+                        console.log('✅ LocationService is ready');
+                        resolve();
+                    } else if (attempts >= maxAttempts) {
+                        reject(new Error('LocationService not available after timeout'));
+                    } else {
+                        setTimeout(checkService, 100);
+                    }
+                };
+                
+                checkService();
+            });
+        } catch (error) {
+            console.error(`❌ Error waiting for LocationService: ${error.message}`);
+            throw new Error(`LocationService initialization failed: ${error.message}`);
+        }
     }
     
     /**

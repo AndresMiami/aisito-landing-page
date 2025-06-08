@@ -693,7 +693,7 @@
                             <circle cx="12.5" cy="12" r="10" fill="#00cc44" />
                           </svg>
                         </span>
-                        <gmp-place-autocomplete id="from-location-exp" placeholder="Enter starting location..." style="max-width: 100%; width: 100%; height: auto;"></gmp-place-autocomplete>
+                        <input type="text" id="from-location-exp" placeholder="Enter starting location..." style="max-width: 100%; width: 100%; height: auto;" />
                       </div>
                       <span id="from-location-exp-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                     </div>
@@ -726,7 +726,7 @@
             <circle cx="12.5" cy="12" r="10" fill="#00cc44" />
           </svg>
         </span>
-        <gmp-place-autocomplete id="from-location-yachts" placeholder="Enter marina or dock location..." style="max-width: 100%; width: 100%; height: auto;"></gmp-place-autocomplete>
+        <input type="text" id="from-location-yachts" placeholder="Enter marina or dock location..." style="max-width: 100%; width: 100%; height: auto;" />
       </div>
       <span id="from-location-yachts-error" class="mt-1 block text-xs text-red-600 hidden"></span>
     </div>
@@ -855,18 +855,34 @@ document.addEventListener('DOMContentLoaded', function() {
         // Check initial state
         updateInputState(timeInput);
     }
-      // Enhanced Flatpickr configuration for date picker only
+    
+    // Enhanced Flatpickr configuration for date picker only
     if (dateInput && typeof flatpickr !== 'undefined') {
-        flatpickr(dateInput, {
-            dateFormat: "M j, Y",
-            minDate: "today",
-            theme: "airbnb",
-            animate: true,
-            onChange: function(selectedDates, dateStr, instance) {
-                updateInputState(dateInput);
-                console.log('Date selected:', dateStr);
-            }
-        });
+        try {
+            flatpickr(dateInput, {
+                dateFormat: "M j, Y",
+                minDate: "today",
+                theme: "airbnb",
+                allowInput: true,
+                animate: true,
+                onChange: function(selectedDates, dateStr, instance) {
+                    updateInputState(dateInput);
+                    console.log('Date selected:', dateStr);
+                    
+                    // Emit event for validation
+                    if (window.eventBus) {
+                        window.eventBus.emit('BOOKING_TIME_SELECTED', {
+                            preference: 'later',
+                            date: dateStr,
+                            time: timeInput ? timeInput.value : null,
+                            timestamp: Date.now()
+                        });
+                    }
+                }
+            });
+        } catch (err) {
+            console.error('Error initializing Flatpickr:', err);
+        }
     }
     
     // Time picker now using standard dropdown select - no Flatpickr needed
@@ -874,6 +890,16 @@ document.addEventListener('DOMContentLoaded', function() {
         timeInput.addEventListener('change', function() {
             updateInputState(timeInput);
             console.log('Time selected:', timeInput.value);
+            
+            // Emit event for validation when time is selected
+            if (window.eventBus && dateInput && dateInput.value) {
+                window.eventBus.emit('BOOKING_TIME_SELECTED', {
+                    preference: 'later',
+                    date: dateInput.value,
+                    time: timeInput.value,
+                    timestamp: Date.now()
+                });
+            }
         });
     }
 });
