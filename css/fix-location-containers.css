@@ -1,0 +1,53 @@
+/* Miami AI Concierge - Location Input Text Visibility Fix */
+.location-autocomplete-container input,
+.location-autocomplete-miami input,
+input[id*="location"],
+input[id*="address"] {
+    color: #222222 !important;
+    background-color: transparent !important;
+    z-index: 10 !important;
+    position: relative !important;
+}
+
+/* Fix the green/red location icons */
+.google-maps-container {
+    position: relative !important;
+}
+
+.google-maps-container .location-icon {
+    position: absolute !important;
+    left: 12px !important;
+    top: 39px !important;
+    z-index: 20 !important;
+    pointer-events: none !important;
+}
+
+/* Fix the nested containers issue */
+.location-autocomplete-container .location-autocomplete-container,
+.location-autocomplete-miami .location-autocomplete-miami,
+.location-autocomplete-container .location-autocomplete-miami,
+.location-autocomplete-miami .location-autocomplete-container {
+    opacity: 0.01 !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Make input padding account for the icon */
+.google-maps-container input {
+    padding-left: 40px !important;
+}
+
+/* Ensure dropdown appears properly */
+.location-dropdown:not(.hidden) {
+    display: block !important;
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000 !important;
+    background: white !important;
+}

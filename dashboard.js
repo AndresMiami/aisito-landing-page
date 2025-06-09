@@ -30,42 +30,13 @@ detectDevelopmentEnvironment();
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('🚀 Dashboard: Starting initialization...');
   
-  try {
-    // Check that required services are available
-    if (!window.miamiLocationService) {
-      console.warn('⚠️ LocationService not found, waiting for it to initialize...');
-      try {
-        // Wait for LocationService to be initialized
-        await new Promise((resolve, reject) => {
-          let attempts = 0;
-          const maxAttempts = 50; // 5 seconds
-          
-          const checkService = () => {
-            if (window.miamiLocationService) {
-              console.log('✅ LocationService found');
-              resolve();
-            } else if (++attempts >= maxAttempts) {
-              reject(new Error('LocationService not available after timeout'));
-            } else {
-              setTimeout(checkService, 100);
-            }
-          };
-          
-          checkService();
-        });
-      } catch (error) {
-        console.error('❌ Failed to find LocationService:', error);
-      }
-    }
-    
-    // Initialize dashboard-specific functionality
-    initializeVehicleSelection();
-    initializeResetFunctionality();
-    
-    console.log('✅ Dashboard: Initialization completed');
-  } catch (error) {
-    console.error('❌ Dashboard initialization failed:', error);
-  }
+  // Initialize dashboard-specific functionality
+  initializeVehicleSelection();
+  initializeResetFunctionality();
+  
+  console.log('✅ Dashboard: Initialization completed');
+  
+  // IMPORTANT: Don't access components here - they'll be already set up by dashboard-components.js
 });
 
 // ========================================
@@ -743,27 +714,3 @@ console.log('✅ Dashboard.js: Module loaded successfully');
 // Make available globally (NO DUPLICATES)
 window.MiamiEvents = EventDefinitions;
 window.DOMManager = DOMManager;
-
-// Add this to your dashboard.js or component initialization
-document.addEventListener('DOMContentLoaded', async () => {
-    // Wait for LocationService to be ready
-    if (window.miamiLocationService) {
-        // Initialize location autocomplete for each input
-        const locationInputs = [
-            { inputId: 'from-location', placeholder: 'Enter pickup location...' },
-            { inputId: 'to-address', placeholder: 'Enter destination...' },
-            { inputId: 'from-location-exp', placeholder: 'Enter location...' }
-        ];
-        
-        locationInputs.forEach(config => {
-            const component = new LocationAutocompleteComponent({
-                componentId: `autocomplete-${config.inputId}`,
-                inputId: config.inputId,
-                placeholder: config.placeholder,
-                eventBus: window.eventBus
-            });
-            
-            component.onInitialize();
-        });
-    }
-});

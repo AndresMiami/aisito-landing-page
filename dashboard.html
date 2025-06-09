@@ -510,7 +510,7 @@
                             <circle cx="12.5" cy="12" r="10" fill="#00cc44" />
                           </svg>
                         </span>
-                        <input type="text" id="from-location" placeholder="Enter pickup location..." />
+                        <gmp-place-autocomplete id="from-location" placeholder="Enter pickup location..."></gmp-place-autocomplete>
                       </div>
                       <span id="from-location-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                     </div>
@@ -520,7 +520,13 @@
                           <circle cx="12.5" cy="12" r="10" fill="#ff0000" />
                         </svg>
                       </span>
-                      <input type="text" id="to-address" placeholder="Enter drop-off location" aria-describedby="to-address-error" />
+                      <gmp-place-autocomplete id="to-address"
+                        address-filter="country:us"
+                        type-filter="establishment,geocode,airport,lodging,point_of_interest,tourist_attraction" 
+                        placeholder="Enter drop-off location"
+                        required
+                        aria-describedby="to-address-error">
+                      </gmp-place-autocomplete>
                       <span id="to-address-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                     </div>
                   </div>                  <div id="date-time-container-oneway" class="relative">
@@ -693,7 +699,7 @@
                             <circle cx="12.5" cy="12" r="10" fill="#00cc44" />
                           </svg>
                         </span>
-                        <input type="text" id="from-location-exp" placeholder="Enter starting location..." style="max-width: 100%; width: 100%; height: auto;" />
+                        <gmp-place-autocomplete id="from-location-exp" placeholder="Enter starting location..." style="max-width: 100%; width: 100%; height: auto;"></gmp-place-autocomplete>
                       </div>
                       <span id="from-location-exp-error" class="mt-1 block text-xs text-red-600 hidden"></span>
                     </div>
@@ -726,7 +732,7 @@
             <circle cx="12.5" cy="12" r="10" fill="#00cc44" />
           </svg>
         </span>
-        <input type="text" id="from-location-yachts" placeholder="Enter marina or dock location..." style="max-width: 100%; width: 100%; height: auto;" />
+        <gmp-place-autocomplete id="from-location-yachts" placeholder="Enter marina or dock location..." style="max-width: 100%; width: 100%; height: auto;"></gmp-place-autocomplete>
       </div>
       <span id="from-location-yachts-error" class="mt-1 block text-xs text-red-600 hidden"></span>
     </div>
@@ -855,34 +861,18 @@ document.addEventListener('DOMContentLoaded', function() {
         // Check initial state
         updateInputState(timeInput);
     }
-    
-    // Enhanced Flatpickr configuration for date picker only
+      // Enhanced Flatpickr configuration for date picker only
     if (dateInput && typeof flatpickr !== 'undefined') {
-        try {
-            flatpickr(dateInput, {
-                dateFormat: "M j, Y",
-                minDate: "today",
-                theme: "airbnb",
-                allowInput: true,
-                animate: true,
-                onChange: function(selectedDates, dateStr, instance) {
-                    updateInputState(dateInput);
-                    console.log('Date selected:', dateStr);
-                    
-                    // Emit event for validation
-                    if (window.eventBus) {
-                        window.eventBus.emit('BOOKING_TIME_SELECTED', {
-                            preference: 'later',
-                            date: dateStr,
-                            time: timeInput ? timeInput.value : null,
-                            timestamp: Date.now()
-                        });
-                    }
-                }
-            });
-        } catch (err) {
-            console.error('Error initializing Flatpickr:', err);
-        }
+        flatpickr(dateInput, {
+            dateFormat: "M j, Y",
+            minDate: "today",
+            theme: "airbnb",
+            animate: true,
+            onChange: function(selectedDates, dateStr, instance) {
+                updateInputState(dateInput);
+                console.log('Date selected:', dateStr);
+            }
+        });
     }
     
     // Time picker now using standard dropdown select - no Flatpickr needed
@@ -890,16 +880,6 @@ document.addEventListener('DOMContentLoaded', function() {
         timeInput.addEventListener('change', function() {
             updateInputState(timeInput);
             console.log('Time selected:', timeInput.value);
-            
-            // Emit event for validation when time is selected
-            if (window.eventBus && dateInput && dateInput.value) {
-                window.eventBus.emit('BOOKING_TIME_SELECTED', {
-                    preference: 'later',
-                    date: dateInput.value,
-                    time: timeInput.value,
-                    timestamp: Date.now()
-                });
-            }
         });
     }
 });
@@ -1036,43 +1016,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 </div>
 
-<!-- Add this after your existing module imports -->
-<!-- Core Services - Load First -->
-<script type="module" src="./js/location-service-init.js"></script>
-<script type="module" src="./js/form-validation-integration.js"></script>
-
-<!-- Add these styles for validation states -->
-<style>
-.validation-error {
-  border-color: #ef4444 !important;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
-}
-
-.validation-success {
-  border-color: #10b981 !important;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
-}
-
-.continue-button-disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-.trip-summary {
-  background: linear-gradient(to right, rgba(255, 153, 51, 0.1), rgba(255, 87, 51, 0.1));
-  border: 1px solid rgba(255, 153, 51, 0.3);
-  border-radius: 8px;
-  padding: 16px;
-  margin: 16px 0;
-}
-
-.pricing-display {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #FF5733;
-}
-</style>
+<!-- Add this script right before the closing </body> tag -->
 <script type="module">
   import YachtsSearchBar from './js/components/YachtsSearchBar.js';
   

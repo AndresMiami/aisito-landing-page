@@ -24,6 +24,38 @@ import EventDefinitions from '../core/EventDefinitions.js';
  */
 class LocationAutocompleteComponent {
     /**
+     * Static cleanup method to remove duplicate containers
+     * @param {string} inputId - Optional input ID to clean up specific components
+     * @returns {number} - Number of containers processed
+     */
+    static cleanup(inputId = null) {
+        console.log('🧹 Cleaning up LocationAutocompleteComponent containers');
+        
+        let processedCount = 0;
+        
+        // Remove nested containers immediately
+        document.querySelectorAll('.location-autocomplete-container .location-autocomplete-container').forEach(nested => {
+            nested.remove();
+            processedCount++;
+        });
+        
+        document.querySelectorAll('.location-autocomplete-miami .location-autocomplete-miami').forEach(nested => {
+            nested.remove();
+            processedCount++;
+        });
+        
+        // Force input visibility
+        document.querySelectorAll('input[id*="location"], input[id*="address"]').forEach(input => {
+            input.style.display = 'block';
+            input.style.opacity = '1';
+            input.style.visibility = 'visible';
+        });
+        
+        console.log(`🧹 Cleaned up ${processedCount} duplicate containers`);
+        return processedCount;
+    }
+
+    /**
      * Create a LocationAutocompleteComponent instance
      * @param {Object} config - Configuration object
      * @param {string} config.componentId - Unique component identifier
@@ -71,15 +103,30 @@ class LocationAutocompleteComponent {
     /**
      * Initialize the component
      * @returns {Promise<boolean>} Success status
-     */
-    async onInitialize() {
+     */    async onInitialize() {
         try {
             console.log(`🔄 Initializing LocationAutocompleteComponent for ${this.inputId}`);
+            
+            // Check if component is already initialized for this input
+            if (window.initializedLocationInputs && window.initializedLocationInputs.has(this.inputId)) {
+                console.log(`⚠️ LocationAutocompleteComponent already initialized for ${this.inputId}, skipping`);
+                return false;
+            }
             
             // Find and validate input element
             this.input = DOMManager.getElementById(this.inputId);
             if (!this.input) {
                 throw new Error(`Input element with ID "${this.inputId}" not found`);
+            }
+            
+            // Check if this input is already inside a location container
+            const existingContainer = this.input.closest('.location-autocomplete-container, .location-autocomplete-miami');
+            if (existingContainer) {
+                console.log(`⚠️ Input ${this.inputId} is already in a container, cleaning up`);
+                if (existingContainer.parentNode) {
+                    existingContainer.parentNode.insertBefore(this.input, existingContainer);
+                    existingContainer.remove();
+                }
             }
             
             // Wait for LocationService to be available
@@ -96,8 +143,11 @@ class LocationAutocompleteComponent {
             
             // Apply initial styling
             this.applyInitialStyling();
+              this.isInitialized = true;
             
-            this.isInitialized = true;
+            // Track initialized inputs globally
+            if (!window.initializedLocationInputs) window.initializedLocationInputs = new Set();
+            window.initializedLocationInputs.add(this.inputId);
             
             // Emit initialization event
             this.emitEvent(EventDefinitions.EVENTS.SYSTEM.COMPONENT_INITIALIZED, {
@@ -123,30 +173,29 @@ class LocationAutocompleteComponent {
      */
     async waitForLocationService() {
         try {
-            // Use the global helper function if available
-            if (typeof window.waitForLocationService === 'function') {
-                console.log(`🔄 Using global waitForLocationService helper for ${this.inputId}`);
-                await window.waitForLocationService(10000); // 10 second timeout
-                console.log('✅ LocationService is ready');
-                return;
-            }
-            
-            // Fallback to manual check
-            console.log(`🔄 Using fallback LocationService check for ${this.inputId}`);
-            let attempts = 0;
-            const maxAttempts = 100;
-            
             return new Promise((resolve, reject) => {
+                const maxAttempts = 50; // Reduced from 100
+                let attempts = 0;
+                
                 const checkService = () => {
                     attempts++;
+                    console.log(`🔄 Checking for LocationService (attempt ${attempts}/${maxAttempts})`);
                     
                     if (window.miamiLocationService && window.miamiLocationService.isInitialized) {
-                        console.log('✅ LocationService is ready');
-                        resolve();
+                        console.log('✅ LocationService found and initialized');
+                        resolve(window.miamiLocationService);
+                    } else if (window.miamiLocationService && window.miamiLocationService.error) {
+                        console.error('❌ LocationService has error:', window.miamiLocationService.error);
+                        reject(new Error(`LocationService error: ${window.miamiLocationService.error}`));
+                    } else if (window.miamiLocationService && !window.miamiLocationService.isInitialized) {
+                        console.log('⏳ LocationService found but not yet initialized, waiting...');
+                        setTimeout(checkService, 200); // Increased interval
                     } else if (attempts >= maxAttempts) {
+                        console.error('❌ LocationService not available after timeout');
                         reject(new Error('LocationService not available after timeout'));
                     } else {
-                        setTimeout(checkService, 100);
+                        console.log('⏳ LocationService not yet available, retrying...');
+                        setTimeout(checkService, 200); // Increased interval
                     }
                 };
                 
@@ -157,17 +206,34 @@ class LocationAutocompleteComponent {
             throw new Error(`LocationService initialization failed: ${error.message}`);
         }
     }
-    
-    /**
+      /**
      * Create the container structure around the input
      * @private
-     */
-    createContainerStructure() {
+     */    createContainerStructure() {
+        // Remove any nested containers first
+        document.querySelectorAll('.location-autocomplete-container .location-autocomplete-container').forEach(nested => nested.remove());
+        
+        // Check if input is already in ANY container (more robust)
+        const existingContainer = this.input.closest('.location-autocomplete-container, .location-autocomplete-miami');
+        if (existingContainer) {
+            console.log(`Container already exists for ${this.inputId}, using existing one`);
+            this.container = existingContainer;
+            return;
+        }
+        
         // Create main container
         this.container = DOMManager.createElement('div', {
             className: 'location-autocomplete-container',
             'data-component-id': this.componentId
         });
+        
+        // Remove any classname attribute (common error in the HTML)
+        if (this.input.hasAttribute('classname')) {
+            this.input.removeAttribute('classname');
+        }
+        
+        // Add proper class to input
+        DOMManager.addClass(this.input, 'location-autocomplete-input');
         
         // Wrap the existing input
         const parent = this.input.parentNode;
@@ -566,7 +632,7 @@ class LocationAutocompleteComponent {
      * Navigate dropdown with keyboard
      * @private
      */
-    navigateDropdown(direction) {
+    navigateDropdown(direction = 1) {
         const newIndex = this.selectedIndex + direction;
         
         if (newIndex >= -1 && newIndex < this.suggestions.length) {
@@ -897,7 +963,6 @@ class LocationAutocompleteComponent {
                 clearTimeout(this.debounceTimer);
             }
             
-            // Remove event listeners - DOMManager handles cleanup
             // Remove dropdown from DOM
             if (this.dropdown && this.dropdown.parentNode) {
                 this.dropdown.parentNode.removeChild(this.dropdown);
@@ -915,7 +980,6 @@ class LocationAutocompleteComponent {
             this.dropdown = null;
             this.suggestions = [];
             this.selectedPlace = null;
-            
             this.isInitialized = false;
             
             console.log(`✅ LocationAutocompleteComponent destroyed for ${this.inputId}`);
